@@ -1,0 +1,128 @@
+[
+  {
+    "state": "shop",
+    "url": "/shop",
+    "name": "门店管理",
+    "templateUrl": "assets/views/dashboard/other.html",
+    "icon": "fa-bank",
+    "children": [
+      {
+        "state": "other2",
+        "url": "/other2",
+        "name": "门店列表",
+        "templateUrl": "assets/views/dashboard/other.html"
+      },
+      {
+        "state": "other3",
+        "url": "/other4",
+        "name": "编辑商户",
+        "templateUrl": "assets/views/dashboard/other.html"
+      }
+    ]
+  },
+  {
+    "state": "equipment",
+    "url": "/equipment",
+    "name": "设备管理",
+    "templateUrl": "assets/views/dashboard/other.html",
+    "icon": "fa-camera-retro",
+    "children": [
+      {
+        "state": "equipment_type",
+        "url": "/equipment_type",
+        "name": "设备类型",
+        "templateUrl": "assets/views/dashboard/other.html"
+      },
+      {
+        "state": "computer_list",
+        "url": "/computer_list",
+        "name": "主板列表",
+        "templateUrl": "assets/views/dashboard/other.html"
+      },
+      {
+        "state": "equipment_list",
+        "url": "/equipment_list",
+        "name": "设备列表",
+        "templateUrl": "assets/views/dashboard/other.html"
+      }
+    ]
+  },
+  {
+    "state": "profile",
+    "url": "/profile",
+    "name": "餐厅配置",
+    "templateUrl": "assets/views/dashboard/other.html",
+    "icon": "fa-cutlery",
+    "children": [
+      {
+        "state": "desk_type",
+        "url": "/desk_type",
+        "name": "餐桌类型",
+        "templateUrl": "assets/views/dashboard/other.html"
+      },
+      {
+        "state": "desk_list",
+        "url": "/desk_list",
+        "name": "餐桌列表",
+        "templateUrl": "assets/views/dashboard/other.html"
+      }
+    ]
+  },
+  {
+    "state": "business",
+    "url": "/business",
+    "name": "业务管理",
+
+    "templateUrl": "assets/views/dashboard/other.html",
+    "icon": "fa-flask",
+    "children": [
+      {
+        "state": "resource",
+        "url": "/resource",
+        "name": "资源管理",
+        "templateUrl": "assets/views/dashboard/other.html"
+      },
+      {
+        "state": "log_push",
+        "url": "/log_push",
+        "name": "推送日志",
+        "templateUrl": "assets/views/dashboard/other.html"
+      }
+    ]
+  },
+  {
+    "state": "chart",
+    "url": "/chart",
+    "name": "统计报表",
+    "templateUrl": "assets/views/dashboard/other.html",
+    "icon": "fa-bar-chart"
+  },
+  {
+    "state": "user",
+    "url": "/user",
+    "name": "账号管理",
+    "templateUrl": "assets/views/dashboard/dashboard.html",
+    "icon": "fa-group",
+    "children": [
+      {
+        "state": "user_list",
+        "url": "/user_list",
+        "name": "用户管理",
+        "templateUrl": "assets/views/user/user_list.html"
+      },
+      {
+        "state": "role_list",
+        "url": "/role_list",
+        "name": "角色管理",
+        "templateUrl": "assets/views/user/role_list.html"
+      }
+    ]
+  },
+  {
+    "state": "control",
+    "url": "/control",
+    "name": "控制中心",
+    "templateUrl": "assets/views/dashboard/other.html",
+    "icon": "fa-cog"
+  }
+]

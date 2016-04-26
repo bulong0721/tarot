@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.myee.tarot</groupId>
+    <artifactId>tarot</artifactId>
+    <version>0.7</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java-version>1.7</java-version>
+        <jdk-version>1.7</jdk-version>
+        <version.querydsl>4.1.0</version.querydsl>
+        <version.hibernate>4.3.5.Final</version.hibernate>
+        <version.fastjson>1.2.9</version.fastjson>
+        <version.guava>18.0</version.guava>
+        <version.spring>4.2.2.RELEASE</version.spring>
+        <version.security>4.0.1.RELEASE</version.security>
+        <version.joda>2.8.2</version.joda>
+        <version.c3p0>0.9.1.2</version.c3p0>
+        <version.aspectj>1.8.7</version.aspectj>
+    </properties>
+
+    <modules>
+        <module>website</module>
+        <module>common</module>
+    </modules>
+
+</project>

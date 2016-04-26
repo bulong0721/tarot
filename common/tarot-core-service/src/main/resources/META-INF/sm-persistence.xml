@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
+    <persistence-unit name="sm-unit">
+        <class>com.myee.tarot.admin.domain.AdminModule</class>
+        <class>com.myee.tarot.admin.domain.AdminUser</class>
+        <class>com.myee.tarot.admin.domain.AdminRole</class>
+        <class>com.myee.tarot.admin.domain.AdminPermission</class>
+        <class>com.myee.tarot.admin.domain.AdminPermissionQualifiedEntity</class>
+        <class>com.myee.tarot.admin.domain.AdminUserAttribute</class>
+        <class>com.myee.tarot.admin.domain.ForgotPasswordSecurityToken</class>
+        <class>com.myee.tarot.admin.domain.AdminSection</class>
+
+        <class>com.myee.tarot.cms.domain.Page</class>
+        <class>com.myee.tarot.cms.domain.PageAttribute</class>
+        <class>com.myee.tarot.cms.domain.PageField</class>
+        <class>com.myee.tarot.cms.domain.PageItemCriteria</class>
+        <class>com.myee.tarot.cms.domain.PageTemplate</class>
+        <class>com.myee.tarot.cms.domain.PageTemplateFieldGroupXref</class>
+
+        <class>com.myee.tarot.profile.domain.Country</class>
+        <class>com.myee.tarot.profile.domain.CountrySubdivision</class>
+        <class>com.myee.tarot.profile.domain.CountrySubdivisionCategory</class>
+        <class>com.myee.tarot.i18n.domain.ISOCountry</class>
+        <class>com.myee.tarot.locale.domain.Locale</class>
+        <class>com.myee.tarot.media.domain.Media</class>
+
+        <class>com.myee.tarot.menu.domain.Menu</class>
+        <class>com.myee.tarot.menu.domain.MenuItem</class>
+
+        <class>com.myee.tarot.profile.domain.Address</class>
+        <class>com.myee.tarot.profile.domain.ChallengeQuestion</class>
+        <class>com.myee.tarot.profile.domain.Customer</class>
+        <class>com.myee.tarot.profile.domain.CustomerAddress</class>
+        <class>com.myee.tarot.profile.domain.CustomerAttribute</class>
+        <class>com.myee.tarot.profile.domain.CustomerPayment</class>
+        <class>com.myee.tarot.profile.domain.CustomerPhone</class>
+        <class>com.myee.tarot.profile.domain.CustomerRole</class>
+        <class>com.myee.tarot.profile.domain.Phone</class>
+        <class>com.myee.tarot.profile.domain.Role</class>
+    </persistence-unit>
+</persistence>
