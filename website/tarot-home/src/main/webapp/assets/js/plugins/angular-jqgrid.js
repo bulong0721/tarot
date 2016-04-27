@@ -1,53 +1,44 @@
 angular.module('angular-jqgrid', ['ng']).directive('ngJqgrid', function ($window) {
     return {
-        restrict: 'EA',
+        restrict: 'A',
         replace: true,
         scope: {
             config: '=',
-            modeldata: '=',
-            insert: '=?',
             api: '=?'
         },
         link: function (scope, element, attrs) {
             var table, div;
             scope.$watch('config', function (value) {
                 element.children().empty();
-                table = angular.element('<table id="' + attrs.gridid + '"></table>');
-                element.append(table);
-                if (attrs.pagerid) {
-                    value.pager = '#' + attrs.pagerid;
-                    var pager = angular.element(value.pager);
-                    if (pager.length == 0) {
-                        div = angular.element('<div id="' + attrs.pagerid + '"></div>');
-                        element.append(div);
-                    }
-                }
-                table.jqGrid(value);
-                table.jqGrid("navGrid", '#' + attrs.pagerid, {addParams: {position: "last"}});
+                table = element;
+                value.pager = attrs.pager;
+                $(window).on('resize.jqGrid', function () {
+                    table.jqGrid( 'setGridWidth', $(".page-content").width() );
+                })
+                table.jqGrid(value).navGrid(attrs.pager, {
+                    edit: true,
+                    editicon: 'ace-icon fa fa-pencil blue',
+                    add: true,
+                    addicon: 'ace-icon fa fa-plus-circle purple',
+                    del: true,
+                    delicon: 'ace-icon fa fa-trash-o red',
+                    search: true,
+                    searchicon: 'ace-icon fa fa-search orange',
+                    refresh: true,
+                    refreshicon: 'ace-icon fa fa-refresh green',
+                    view: true,
+                    viewicon : 'ace-icon fa fa-search-plus grey'
+                });
                 scope.vapi = function () {
                     var args = Array.prototype.slice.call(arguments, 0);
                     return table.jqGrid.apply(table, args);
                 };
                 scope.api = {
-                    insert: function (rows) {
+                    loadData: function (rows) {
                         if (rows) {
-                            for (var i = 0; i < rows.length; i++) {
-                                scope.modeldata.push(rows[i]);
-                            }
-                            table.jqGrid('setGridParam', {data: scope.modeldata})
+                            table.jqGrid('setGridParam', {data: rows})
                                 .trigger('reloadGrid');
                         }
-                    },
-                    clear: function () {
-                        scope.modeldata.length = 0;
-                        table.jqGrid('clearGridData', {data: scope.modeldata})
-                            .trigger('reloadGrid');
-                    },
-                    refresh: function () {
-                        table
-                            .jqGrid('clearGridData')
-                            .jqGrid('setGridParam', {data: scope.modeldata})
-                            .trigger('reloadGrid');
                     }
                 };
             });

@@ -14,7 +14,6 @@ function config($stateProvider, $urlRouterProvider, $httpProvider) {
     };
 
     $.getJSON("../assets/route.json", function (data) {
-        console.log(data);
         configState(data);
     });
 }

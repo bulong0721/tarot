@@ -17,7 +17,7 @@
     <mvc:interceptors>
         <!-- Changes the locale when a 'locale' request parameter is sent; e.g. /?locale=de -->
         <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
-        <bean class="org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor" />
+        <bean class="org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor"/>
 
         <mvc:interceptor>
             <mvc:mapping path="/shop/**"/>
@@ -35,5 +35,16 @@
         </mvc:interceptor>
     </mvc:interceptors>
 
-    <mvc:annotation-driven/>
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <bean class="com.myee.tarot.core.support.MappingFastJsonHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json;charset=UTF-8</value>
+                        <value>text/html;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
 </beans>

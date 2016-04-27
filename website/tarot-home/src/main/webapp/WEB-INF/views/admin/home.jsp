@@ -11,14 +11,14 @@
     <!-- bootstrap & fontawesome -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="assets/font-awesome/4.2.0/css/font-awesome.min.css"/>
-    <!-- text fonts -->
-    <link rel="stylesheet" href="assets/fonts/fonts.googleapis.com.css"/>
-    <!-- ace styles -->
-    <link rel="stylesheet" href="assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style"/>
     <!-- page specific plugin styles -->
     <link rel="stylesheet" href="assets/css/jquery-ui.min.css" />
     <link rel="stylesheet" href="assets/css/datepicker.min.css" />
     <link rel="stylesheet" href="assets/css/ui.jqgrid.min.css" />
+    <!-- text fonts -->
+    <link rel="stylesheet" href="assets/fonts/fonts.googleapis.com.css"/>
+    <!-- ace styles -->
+    <link rel="stylesheet" href="assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style"/>
     <!--[if lte IE 9]>
     <link rel="stylesheet" href="assets/css/ace-part2.min.css" class="ace-main-stylesheet"/>
     <![endif]-->
@@ -75,7 +75,7 @@
 <!-- Angular plugins-->
 <script src="assets/js/ace/bootstrap-datepicker.min.js"></script>
 <script src="assets/js/ace/jquery.jqGrid.min.js"></script>
-<script src="assets/js/ace/grid.locale-en.js"></script>
+<script src="assets/js/ace/grid.locale-cn.js"></script>
 <script src="assets/js/plugins/angular-jqgrid.js"></script>
 
 <!-- Anglar App Script -->

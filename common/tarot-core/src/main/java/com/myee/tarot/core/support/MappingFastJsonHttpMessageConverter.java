@@ -19,7 +19,6 @@ public class MappingFastJsonHttpMessageConverter extends AbstractHttpMessageConv
     private              SerializerFeature[] serializerFeature = new SerializerFeature[0];
 
     public MappingFastJsonHttpMessageConverter() {
-        super(new MediaType("application", "json", DEFAULT_CHARSET));
     }
 
     public SerializerFeature[] getSerializerFeature() {
@@ -51,7 +50,7 @@ public class MappingFastJsonHttpMessageConverter extends AbstractHttpMessageConv
             HttpMessageNotReadableException {
         long contentLength = inputMessage.getHeaders().getContentLength();
         ByteArrayOutputStream baos =
-            new ByteArrayOutputStream(contentLength >= 0 ? (int) contentLength : StreamUtils.BUFFER_SIZE);
+                new ByteArrayOutputStream(contentLength >= 0 ? (int) contentLength : StreamUtils.BUFFER_SIZE);
         StreamUtils.copy(inputMessage.getBody(), baos);
         String requestBody = baos.toString("utf-8");
         if (clazz.equals(String.class)) {

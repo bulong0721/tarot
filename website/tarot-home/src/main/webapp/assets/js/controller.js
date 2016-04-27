@@ -6,30 +6,36 @@ function indexCtrl($scope, ConstService) {
 }
 
 function userCtrl($scope, ConstService) {
-    $scope.patientdata = [];
-    $scope.gridapi = {};
+    $scope.api = {};
 
     $scope.config = {
-        datatype: "local",
-        colNames: ['名称', '用户', '电话号码', '电子邮件', '激活'],
+        datatype: "json",
+        url: "/admin/users/paging.html",
+        colNames: [' ', '名称', '用户', '电话号码', '电子邮件', '激活'],
         colModel: [
-            {name: 'name', index: 'name', width: 80, editable: true},
-            {name: 'login', index: 'login', width: 100},
+            {name:'myac',index:'', width:80, fixed:true, sortable:false, resize:false,
+                formatter:'actions',
+                formatoptions:{
+                    keys:true,
+                    delOptions:{recreateForm: true},
+                    editformbutton:true,
+                    editOptions:{recreateForm: true}
+                }
+            },
+            {name: 'name', index: 'name', width: 85, editable: true},
+            {name: 'login', index: 'login', width: 60, editable: true},
             {name: 'phoneNumber', index: 'phone', width: 65, editable: true},
             {name: 'adminEmail', index: 'email', width: 100, editable: true},
-            {name: 'activeStatusFlag', index: 'active', width: 40, align: 'center', editable: true}
+            {name: 'activeStatusFlag', index: 'active', width: 40, editable: true}
         ],
-        altRows: true,
         multiselect: true,
         viewrecords: true,
         rowNum: 10,
         rowList: [10, 20, 30],
-        autowidth: true,
-        caption: '用户管理',
-        height: '100%'
+        autowidth: true
     };
 
-    $scope.modeldata = [
+    $scope.myData = [
         {
             name: "徐步龙",
             login: "bulong0721",
@@ -40,7 +46,7 @@ function userCtrl($scope, ConstService) {
     ];
 
     $scope.loadrecord = function () {
-        $scope.gridapi.insert($scope.modeldata);
+        $scope.api.loadData($scope.myData);
     }
 }
 

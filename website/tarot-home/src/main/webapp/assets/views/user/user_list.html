@@ -44,37 +44,33 @@
                 </h1>
             </div>
             <!-- /.page-header -->
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="ibox-content">
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <select class="form-control" style="width:80px;" ng-model="where.waitState">
-                                    <option value="">状态</option>
-                                    <option value="3">就餐</option>
-                                    <option value="4">过号</option>
-                                    <option value="1">等待</option>
-                                </select>
-                            </div>
-                            <div class="form-group m-l">
-                                <input placeholder="开始日期" class="form-control" style="width:150px;" date-time
-                                       ng-model="where.beginDate" format="yyyy-MM-dd" min-view="date" view="date">
-                                <i class="fa fa-exchange"></i>
-                            </div>
-                            <div class="form-group">
-                                <input type="datetime" placeholder="结束日期" class="form-control" style="width:150px;" date-time
-                                       ng-model="where.endDate" format="yyyy-MM-dd" view="date" min-view="date"></div>
-                            <button class="btn btn-sm btn-danger m-l" type="button" ng-click="loadrecord()"><i
-                                    class="fa fa-search"></i><span class="bold">搜索</span></button>
-                        </div>
+            <div class="alert alert-info">
+                <div class="form-inline">
+                    <div class="form-group">
+                        <select class="form-control" style="width:80px;" ng-model="where.waitState">
+                            <option value="">状态</option>
+                            <option value="3">就餐</option>
+                            <option value="4">过号</option>
+                            <option value="1">等待</option>
+                        </select>
                     </div>
+                    <div class="form-group m-l">
+                        <input placeholder="开始日期" class="form-control" style="width:150px;" date-time
+                               ng-model="where.beginDate" format="yyyy-MM-dd" min-view="date" view="date">
+                        <i class="fa fa-exchange"></i>
+                    </div>
+                    <div class="form-group">
+                        <input type="datetime" placeholder="结束日期" class="form-control" style="width:150px;" date-time
+                               ng-model="where.endDate" format="yyyy-MM-dd" view="date" min-view="date"></div>
+                    <button class="btn btn-sm btn-danger m-l" type="button" ng-click="loadrecord()"><i
+                            class="fa fa-search"></i><span class="bold">搜索</span></button>
                 </div>
             </div>
             <div class="row">
                 <div class="col-xs-12">
                     <!-- PAGE CONTENT BEGINS -->
-                    <ng-jqgrid config="config" modeldata="patientdata" gridid="patientgrid" pagerid="patientpager"
-                               api="gridapi"></ng-jqgrid>
+                    <table ng-jqgrid id="grid" pager="#grid_pager" config="config" api="api"></table>
+                    <div id="grid_pager"></div>
                     <!-- PAGE CONTENT ENDS -->
                 </div>
                 <!-- /.col -->
