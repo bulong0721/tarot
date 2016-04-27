@@ -24,9 +24,9 @@ function userCtrl($scope, ConstService) {
             },
             {name: 'name', index: 'name', width: 85, editable: true},
             {name: 'login', index: 'login', width: 60, editable: true},
-            {name: 'phoneNumber', index: 'phone', width: 65, editable: true},
-            {name: 'adminEmail', index: 'email', width: 100, editable: true},
-            {name: 'activeStatusFlag', index: 'active', width: 40, editable: true}
+            {name: 'phone', index: 'phone', width: 65, editable: true},
+            {name: 'email', index: 'email', width: 100, editable: true},
+            {name: 'active', index: 'active', width: 40, editable: true}
         ],
         multiselect: true,
         viewrecords: true,

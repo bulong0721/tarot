@@ -11,23 +11,24 @@
             <ul class="breadcrumb">
                 <li>
                     <i class="ace-icon fa fa-home home-icon"></i>
-                    <a href="#">Home</a>
+                    <a href="#">主页</a>
                 </li>
 
                 <li>
-                    <a href="#">Tables</a>
+                    <a href="#">账号管理</a>
                 </li>
-                <li class="active">jqGrid plugin</li>
+                <li class="active">用户管理</li>
             </ul>
             <!-- /.breadcrumb -->
 
             <div class="nav-search" id="nav-search">
                 <form class="form-search">
-								<span class="input-icon">
-									<input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input"
-                                           autocomplete="off"/>
-									<i class="ace-icon fa fa-search nav-search-icon"></i>
-								</span>
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search ..." class="nav-search-input"
+                               id="nav-search-input"
+                               autocomplete="off"/>
+                        <i class="ace-icon fa fa-search nav-search-icon"></i>
+                    </span>
                 </form>
             </div>
             <!-- /.nav-search -->
@@ -36,32 +37,19 @@
         <div class="page-content" ng-controller="userCtrl">
             <div class="page-header">
                 <h1>
-                    jqGrid
+                    用户管理
                     <small>
                         <i class="ace-icon fa fa-angle-double-right"></i>
-                        Dynamic tables and grids using jqGrid plugin
+                       内部用户列表
                     </small>
                 </h1>
             </div>
             <!-- /.page-header -->
             <div class="alert alert-info">
                 <div class="form-inline">
-                    <div class="form-group">
-                        <select class="form-control" style="width:80px;" ng-model="where.waitState">
-                            <option value="">状态</option>
-                            <option value="3">就餐</option>
-                            <option value="4">过号</option>
-                            <option value="1">等待</option>
-                        </select>
-                    </div>
                     <div class="form-group m-l">
-                        <input placeholder="开始日期" class="form-control" style="width:150px;" date-time
-                               ng-model="where.beginDate" format="yyyy-MM-dd" min-view="date" view="date">
-                        <i class="fa fa-exchange"></i>
+                        <input placeholder="用户名" class="form-control" style="width:200px;" />
                     </div>
-                    <div class="form-group">
-                        <input type="datetime" placeholder="结束日期" class="form-control" style="width:150px;" date-time
-                               ng-model="where.endDate" format="yyyy-MM-dd" view="date" min-view="date"></div>
                     <button class="btn btn-sm btn-danger m-l" type="button" ng-click="loadrecord()"><i
                             class="fa fa-search"></i><span class="bold">搜索</span></button>
                 </div>

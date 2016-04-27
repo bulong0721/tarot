@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Martin on 2016/4/21.
@@ -44,12 +46,20 @@ public class UserController {
     @RequestMapping(value = "/admin/users/paging.html", method = RequestMethod.GET)
     public
     @ResponseBody
-    JQGridResponse pageUsers(@ModelAttribute JQGridRequest user, Model model, HttpServletRequest request) {
+    JQGridResponse pageUsers(@ModelAttribute JQGridRequest req, Model model, HttpServletRequest request) {
         JQGridResponse resp = new JQGridResponse();
         String currentUser = request.getRemoteUser();
         try {
             List<AdminUser> userList = userService.list();
-            resp.setRows(userList);
+            for (AdminUser user : userList) {
+                Map entry = new HashMap();
+                entry.put("login", user.getLogin());
+                entry.put("name", user.getName());
+                entry.put("email", user.getEmail());
+                entry.put("phone", user.getPhoneNumber());
+                entry.put("active", user.getActiveStatusFlag());
+                resp.addDataEntry(entry);
+            }
         } catch (Exception e) {
             LOGGER.error("Error while paging products", e);
         }
