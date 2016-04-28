@@ -7,16 +7,16 @@
     "icon": "fa-bank",
     "children": [
       {
-        "state": "other2",
-        "url": "/other2",
+        "state": "shop_list",
+        "url": "/shop_list",
         "name": "门店列表",
-        "templateUrl": "assets/views/dashboard/other.html"
+        "templateUrl": "assets/views/merchant/store_list.html"
       },
       {
-        "state": "other3",
-        "url": "/other4",
+        "state": "shop_merchant",
+        "url": "/shop_merchant",
         "name": "编辑商户",
-        "templateUrl": "assets/views/dashboard/other.html"
+        "templateUrl": "assets/views/merchant/merchant_detail.html"
       }
     ]
   },

@@ -31,6 +31,7 @@
     <script src="assets/js/ace/html5shiv.min.js"></script>
     <script src="assets/js/ace/respond.min.js"></script>
     <![endif]-->
+    <link rel="stylesheet" href="assets/css/tarot.css"/>
 </head>
 
 <!-- ControllerAs syntax -->
