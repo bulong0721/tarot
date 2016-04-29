@@ -12,12 +12,12 @@ import org.springframework.stereotype.Service;
  * Created by Martin on 2016/4/21.
  */
 @Service
-public class AdminUserServiceServiceImpl extends GenericEntityServiceImpl<Long, AdminUser> implements AdminUserService {
+public class AdminUserServiceImpl extends GenericEntityServiceImpl<Long, AdminUser> implements AdminUserService {
 
     protected AdminUserDao adminUserDao;
 
     @Autowired
-    public AdminUserServiceServiceImpl(AdminUserDao adminUserDao) {
+    public AdminUserServiceImpl(AdminUserDao adminUserDao) {
         super(adminUserDao);
         this.adminUserDao = adminUserDao;
     }

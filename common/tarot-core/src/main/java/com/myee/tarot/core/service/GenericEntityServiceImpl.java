@@ -34,7 +34,7 @@ public abstract class GenericEntityServiceImpl<K extends Serializable & Comparab
         return genericDao.getEntity(clazz, id);
     }
 
-    public E getById(K id) {
+    public E findById(K id) {
         return genericDao.getById(id);
     }
 

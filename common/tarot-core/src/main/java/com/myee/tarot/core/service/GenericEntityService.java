@@ -18,7 +18,7 @@ public interface GenericEntityService<K extends Serializable & Comparable<K>, E 
 
     E refresh(E entity);
 
-    E getById(K id);
+    E findById(K id);
 
     List<E> list();
 
