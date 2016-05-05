@@ -6,10 +6,7 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Martin on 2016/4/11.
@@ -44,6 +41,14 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
 
     @Column(name = "ACTIVE_STATUS_FLAG")
     protected Boolean activeStatusFlag = Boolean.TRUE;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "LAST_ACCESS")
+    protected Date lastAccess;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "LOGIN_ACCESS")
+    protected Date lastLoin;
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminRole.class)
     @JoinTable(name = "C_ADMIN_USER_ROLE_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"))
@@ -123,5 +128,21 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
 
     public void setActiveStatusFlag(Boolean activeStatusFlag) {
         this.activeStatusFlag = activeStatusFlag;
+    }
+
+    public Date getLastAccess() {
+        return lastAccess;
+    }
+
+    public void setLastAccess(Date lastAccess) {
+        this.lastAccess = lastAccess;
+    }
+
+    public Date getLastLoin() {
+        return lastLoin;
+    }
+
+    public void setLastLoin(Date lastLoin) {
+        this.lastLoin = lastLoin;
     }
 }

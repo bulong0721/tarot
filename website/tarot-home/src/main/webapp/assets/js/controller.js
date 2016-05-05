@@ -11,7 +11,7 @@ function userCtrl($scope, ConstService) {
     $scope.config = {
         datatype: "json",
         url: "/admin/users/paging.html",
-        colNames: ['操作', '名称', '用户', '电话号码', '电子邮件', '激活'],
+        colNames: ['操作', '名称', '用户名', '账号类型', '最后登录时间', '最后登录IP', '电话号码', '电子邮件', '状态'],
         colModel: [
             {name:'myac',index:'', width:80, fixed:true, sortable:false, resize:false,
                 formatter:'actions',
@@ -24,6 +24,9 @@ function userCtrl($scope, ConstService) {
             },
             {name: 'name', index: 'name', width: 85, editable: true},
             {name: 'login', index: 'login', width: 60, editable: true},
+            {name: 'userType', index: 'userType', width: 55, editable: true, sortable:false},
+            {name: 'dateLeast', index: 'dateLeast', width: 70, editable: false, sortable:false},
+            {name: 'ipLeast', index: 'ipLeast', width: 70, editable: false, sortable:false},
             {name: 'phone', index: 'phone', width: 65, editable: true},
             {name: 'email', index: 'email', width: 100, editable: true},
             {name: 'active', index: 'active', width: 40, editable: true}
