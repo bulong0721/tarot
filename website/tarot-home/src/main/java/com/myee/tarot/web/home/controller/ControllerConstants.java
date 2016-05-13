@@ -25,7 +25,7 @@ public interface ControllerConstants
         }
 
         interface Product {
-            final static String product = "product";
+            final static String product = "device";
         }
 
         interface Customer {

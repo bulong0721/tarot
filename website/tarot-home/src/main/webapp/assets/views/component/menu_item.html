@@ -1,5 +1,5 @@
 <a ui-sref="{{item.state}}" ng-click="expand(item, $event);" ng-class="{true:'dropdown-toggle', false:''} [!isLeaf(item)]">
-    <i ng-if="!isLeaf(item)" class="menu-icon fa {{itemIcon(item)}}"></i>
+    <i class="menu-icon fa {{itemIcon(item)}}"></i>
     <span class='menu-text' ng-click="warpCallback('itemClicked', item, $event);">{{item.name}}</span>
     <b ng-if="!isLeaf(item)" class="arrow fa fa-angle-down"></b>
 </a>

@@ -65,17 +65,17 @@
                                     <form method="post" action="/admin/j_spring_security_check">
                                         <fieldset>
                                             <label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input type="text" name="username" class="form-control" placeholder="用户"/>
-															<i class="ace-icon fa fa-user"></i>
-														</span>
+                                                <span class="block input-icon input-icon-right">
+                                                    <input type="text" name="username" class="form-control" placeholder="用户"/>
+                                                    <i class="ace-icon fa fa-user"></i>
+                                                </span>
                                             </label>
 
                                             <label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input type="password" name="password" class="form-control" placeholder="密码"/>
-															<i class="ace-icon fa fa-lock"></i>
-														</span>
+                                                <span class="block input-icon input-icon-right">
+                                                    <input type="password" name="password" class="form-control" placeholder="密码"/>
+                                                    <i class="ace-icon fa fa-lock"></i>
+                                                </span>
                                             </label>
 
                                             <div class="space"></div>

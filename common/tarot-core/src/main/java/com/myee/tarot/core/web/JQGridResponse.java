@@ -10,7 +10,7 @@ import java.util.Map;
  * Created by Martin on 2016/4/27.
  */
 public class JQGridResponse<T> implements Serializable {
-    private List<Map<String, String>> rows = new ArrayList<Map<String, String>>();
+    private List<Object> rows = new ArrayList<Object>();
     private int page;
     private int records;
     private int total;
@@ -33,7 +33,7 @@ public class JQGridResponse<T> implements Serializable {
         this.records = records;
     }
 
-    public List<Map<String, String>> getRows() {
+    public List<?> getRows() {
         return rows;
     }
 

@@ -14,11 +14,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-public class MappingFastJsonHttpMessageConverter extends AbstractHttpMessageConverter<Object> {
+public class FastJsonHttpMessageConverter extends AbstractHttpMessageConverter<Object> {
     private static final Charset             DEFAULT_CHARSET   = Charset.forName("UTF-8");
     private              SerializerFeature[] serializerFeature = new SerializerFeature[0];
 
-    public MappingFastJsonHttpMessageConverter() {
+    public FastJsonHttpMessageConverter() {
     }
 
     public SerializerFeature[] getSerializerFeature() {

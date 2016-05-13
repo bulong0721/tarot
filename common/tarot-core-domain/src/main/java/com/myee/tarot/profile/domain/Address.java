@@ -1,7 +1,7 @@
 package com.myee.tarot.profile.domain;
 
 import com.myee.tarot.core.GenericEntity;
-import com.myee.tarot.i18n.domain.ISOCountry;
+import com.myee.tarot.reference.domain.ISOCountry;
 
 import javax.persistence.*;
 

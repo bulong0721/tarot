@@ -2,7 +2,7 @@ package com.myee.tarot.menu.domain;
 
 import com.myee.tarot.cms.domain.Page;
 import com.myee.tarot.core.GenericEntity;
-import com.myee.tarot.media.domain.Media;
+import com.myee.tarot.reference.domain.Media;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;

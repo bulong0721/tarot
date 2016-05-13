@@ -1,4 +1,4 @@
-package com.myee.tarot.i18n.domain;
+package com.myee.tarot.reference.domain;
 
 import com.myee.tarot.core.GenericEntity;
 

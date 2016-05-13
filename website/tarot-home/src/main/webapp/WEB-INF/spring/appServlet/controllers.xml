@@ -37,7 +37,7 @@
 
     <mvc:annotation-driven>
         <mvc:message-converters register-defaults="true">
-            <bean class="com.myee.tarot.core.support.MappingFastJsonHttpMessageConverter">
+            <bean class="com.myee.tarot.core.support.FastJsonHttpMessageConverter">
                 <property name="supportedMediaTypes">
                     <list>
                         <value>application/json;charset=UTF-8</value>

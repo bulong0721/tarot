@@ -91,6 +91,13 @@
     ]
   },
   {
+    "state": "explorer",
+    "url": "/explorer",
+    "name": "资源管理",
+    "templateUrl": "assets/views/explorer/explorer.html",
+    "icon": "fa-share-alt"
+  },
+  {
     "state": "chart",
     "url": "/chart",
     "name": "统计报表",

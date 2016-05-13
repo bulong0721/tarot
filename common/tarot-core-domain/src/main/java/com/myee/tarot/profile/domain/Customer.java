@@ -2,8 +2,7 @@ package com.myee.tarot.profile.domain;
 
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.core.audit.Auditable;
-import com.myee.tarot.locale.domain.Locale;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import com.myee.tarot.reference.domain.Locale;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
 

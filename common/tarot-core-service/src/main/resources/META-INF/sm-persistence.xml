@@ -22,9 +22,9 @@
         <class>com.myee.tarot.profile.domain.Country</class>
         <class>com.myee.tarot.profile.domain.CountrySubdivision</class>
         <class>com.myee.tarot.profile.domain.CountrySubdivisionCategory</class>
-        <class>com.myee.tarot.i18n.domain.ISOCountry</class>
-        <class>com.myee.tarot.locale.domain.Locale</class>
-        <class>com.myee.tarot.media.domain.Media</class>
+        <class>com.myee.tarot.reference.domain.ISOCountry</class>
+        <class>com.myee.tarot.reference.domain.Locale</class>
+        <class>com.myee.tarot.reference.domain.Media</class>
 
         <class>com.myee.tarot.menu.domain.Menu</class>
         <class>com.myee.tarot.menu.domain.MenuItem</class>

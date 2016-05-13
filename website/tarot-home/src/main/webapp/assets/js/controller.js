@@ -13,20 +13,21 @@ function userCtrl($scope, ConstService) {
         url: "/admin/users/paging.html",
         colNames: ['操作', '名称', '用户名', '账号类型', '最后登录时间', '最后登录IP', '电话号码', '电子邮件', '状态'],
         colModel: [
-            {name:'myac',index:'', width:80, fixed:true, sortable:false, resize:false,
-                formatter:'actions',
-                formatoptions:{
-                    keys:true,
-                    delOptions:{recreateForm: true},
-                    editformbutton:true,
-                    editOptions:{recreateForm: true}
+            {
+                name: 'myac', index: '', width: 80, fixed: true, sortable: false, resize: false,
+                formatter: 'actions',
+                formatoptions: {
+                    keys: true,
+                    delOptions: {recreateForm: true},
+                    editformbutton: true,
+                    editOptions: {recreateForm: true}
                 }
             },
             {name: 'name', index: 'name', width: 85, editable: true},
             {name: 'login', index: 'login', width: 60, editable: true},
-            {name: 'userType', index: 'userType', width: 55, editable: true, sortable:false},
-            {name: 'dateLeast', index: 'dateLeast', width: 70, editable: false, sortable:false},
-            {name: 'ipLeast', index: 'ipLeast', width: 70, editable: false, sortable:false},
+            {name: 'userType', index: 'userType', width: 55, editable: true, sortable: false},
+            {name: 'dateLeast', index: 'dateLeast', width: 70, editable: false, sortable: false},
+            {name: 'ipLeast', index: 'ipLeast', width: 70, editable: false, sortable: false},
             {name: 'phone', index: 'phone', width: 65, editable: true},
             {name: 'email', index: 'email', width: 100, editable: true},
             {name: 'active', index: 'active', width: 40, editable: true}
@@ -59,15 +60,16 @@ function storeCtrl($scope, ConstService) {
     $scope.config = {
         datatype: "json",
         url: "/admin/users/paging.html",
-        colNames: ['操作', '门店ID', '门店名称', '省份', '城市', '区县','商圈','商场','地址','服务类型','联系电话','创建时间','状态'],
+        colNames: ['操作', '门店ID', '门店名称', '省份', '城市', '区县', '商圈', '商场', '地址', '服务类型', '联系电话', '创建时间', '状态'],
         colModel: [
-            {name:'myac',index:'', width:80, fixed:true, sortable:false, resize:false,
-                formatter:'actions',
-                formatoptions:{
-                    keys:true,
-                    delOptions:{recreateForm: true},
-                    editformbutton:true,
-                    editOptions:{recreateForm: true}
+            {
+                name: 'myac', index: '', width: 80, fixed: true, sortable: false, resize: false,
+                formatter: 'actions',
+                formatoptions: {
+                    keys: true,
+                    delOptions: {recreateForm: true},
+                    editformbutton: true,
+                    editOptions: {recreateForm: true}
                 }
             },
             {name: 'storeId', index: 'name', width: 45, editable: true},
@@ -91,8 +93,43 @@ function storeCtrl($scope, ConstService) {
     };
 }
 
+function explorerCtrl($scope, ConstService) {
+    $scope.api = {};
+
+    $scope.config = {
+        datatype: "json",
+        url: "/admin/files/list.html",
+        colNames: ['资源路径', '修改时间', '文件类型', '大小'],
+        colModel: [
+            {name: 'name', index: 'name', width: 80, editable: true},
+            {name: 'modified', index: 'modified', width: 45, editable: true},
+            {name: 'type', index: 'type', width: 30, editable: true},
+            {name: 'size', index: 'size', width: 40, editable: true}
+        ],
+        treeGrid: true,
+        treeGridModel: 'adjacency',
+        treeIcons: {
+            plus: 'ace-icon fa fa-caret-right bigger-160 blue',
+            minus: 'ace-icon fa fa-caret-down bigger-160 blue',
+            leaf: 'ace-icon fa fa-tags orange'
+        },
+        loadonce: false,
+        ExpandColClick: true,
+        ExpandColumn: 'name',
+        mtype: "POST",
+        treeReader: {
+            level_field: 'level',
+            leaf_field: 'leaf',
+            expanded_field: 'expanded',
+            parent_id_field: 'parent',
+        },
+        autowidth: true
+    };
+}
+
 angular
     .module('clover')
     .controller('indexCtrl', indexCtrl)
     .controller('storeCtrl', storeCtrl)
+    .controller('explorerCtrl', explorerCtrl)
     .controller('userCtrl', userCtrl);

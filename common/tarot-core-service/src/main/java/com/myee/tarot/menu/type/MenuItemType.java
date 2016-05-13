@@ -40,7 +40,7 @@ public class MenuItemType implements Serializable {
     public static final MenuItemType CATEGORY = new MenuItemType("CATEGORY", "Category");
     public static final MenuItemType PAGE     = new MenuItemType("PAGE", "Page");
     public static final MenuItemType SUBMENU  = new MenuItemType("SUBMENU", "Sub MenuService");
-    public static final MenuItemType PRODUCT  = new MenuItemType("PRODUCT", "Product");
+    public static final MenuItemType PRODUCT  = new MenuItemType("PRODUCT", "Device");
     public static final MenuItemType CUSTOM   = new MenuItemType("CUSTOM", "Custom");
 
 

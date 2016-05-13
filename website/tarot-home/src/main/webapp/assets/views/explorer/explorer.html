@@ -1,0 +1,36 @@
+<div class="main-content">
+    <div class="main-content-inner">
+        <div class="page-content" ng-controller="explorerCtrl">
+            <div class="page-header">
+                <h1>
+                    资源管理
+                    <small>
+                        <i class="ace-icon fa fa-angle-double-right"></i>
+                       资源管理器
+                    </small>
+                </h1>
+            </div>
+            <!-- /.page-header -->
+            <div class="alert alert-info">
+                <div class="form-inline">
+                    <div class="form-group">
+                        <input placeholder="用户名" type="text" class="form-control" style="width:200px;" />
+                    </div>
+                    <button class="btn btn-sm btn-danger m-l" type="button" ng-click="loadrecord()"><i
+                            class="fa fa-search"></i><span class="bold">搜索</span></button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <!-- PAGE CONTENT BEGINS -->
+                    <table ng-jqgrid id="grid" pager="#grid_pager" config="config" api="api"></table>
+                    <div id="grid_pager"></div>
+                    <!-- PAGE CONTENT ENDS -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.page-content -->
+    </div>
+</div><!-- /.main-content -->

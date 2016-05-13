@@ -50,7 +50,7 @@
         <intercept-url pattern="/admin/*.html*" access="hasRole('AUTH')"/>
         <intercept-url pattern="/admin/*/*.html*" access="hasRole('AUTH')"/>
         <intercept-url pattern="/admin/*/*/*.html*" access="hasRole('AUTH')"/>
-        <csrf disabled="true" />
+        <csrf disabled="true"/>
         <form-login
                 login-processing-url="/admin/j_spring_security_check"
                 login-page="/admin/login.html"

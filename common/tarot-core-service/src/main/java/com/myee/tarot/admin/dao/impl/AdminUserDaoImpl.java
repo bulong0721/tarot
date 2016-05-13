@@ -6,7 +6,6 @@ import com.myee.tarot.admin.domain.QAdminUser;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

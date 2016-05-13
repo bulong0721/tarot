@@ -42,13 +42,13 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
     @Column(name = "ACTIVE_STATUS_FLAG")
     protected Boolean activeStatusFlag = Boolean.TRUE;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "LAST_ACCESS")
-    protected Date lastAccess;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "LOGIN_ACCESS")
-    protected Date lastLoin;
+//    @Temporal(TemporalType.TIMESTAMP)
+//    @Column(name = "LAST_ACCESS")
+//    protected Date lastAccess;
+//
+//    @Temporal(TemporalType.TIMESTAMP)
+//    @Column(name = "LOGIN_ACCESS")
+//    protected Date lastLoin;
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminRole.class)
     @JoinTable(name = "C_ADMIN_USER_ROLE_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"))
@@ -130,19 +130,19 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
         this.activeStatusFlag = activeStatusFlag;
     }
 
-    public Date getLastAccess() {
-        return lastAccess;
-    }
-
-    public void setLastAccess(Date lastAccess) {
-        this.lastAccess = lastAccess;
-    }
-
-    public Date getLastLoin() {
-        return lastLoin;
-    }
-
-    public void setLastLoin(Date lastLoin) {
-        this.lastLoin = lastLoin;
-    }
+//    public Date getLastAccess() {
+//        return lastAccess;
+//    }
+//
+//    public void setLastAccess(Date lastAccess) {
+//        this.lastAccess = lastAccess;
+//    }
+//
+//    public Date getLastLoin() {
+//        return lastLoin;
+//    }
+//
+//    public void setLastLoin(Date lastLoin) {
+//        this.lastLoin = lastLoin;
+//    }
 }

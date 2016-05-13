@@ -1,8 +1,7 @@
 package com.myee.tarot.cms.domain;
 
 import com.myee.tarot.core.GenericEntity;
-import com.myee.tarot.locale.domain.Locale;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import com.myee.tarot.reference.domain.Locale;
 
 import javax.persistence.*;
 import java.util.ArrayList;

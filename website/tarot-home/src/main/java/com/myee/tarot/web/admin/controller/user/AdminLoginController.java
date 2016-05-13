@@ -36,7 +36,7 @@ public class AdminLoginController extends AdminAbstractController {
     }
 
     @RequestMapping(value="/changePassword", method=RequestMethod.POST)
-    public String processchangePassword(HttpServletRequest request, HttpServletResponse response, Model model,
+    public String processChangePassword(HttpServletRequest request, HttpServletResponse response, Model model,
                                         @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm) {
         GenericResponse errorResponse = adminUserService.changePassword(resetPasswordForm.getUsername(),
                 resetPasswordForm.getOldPassword(),
