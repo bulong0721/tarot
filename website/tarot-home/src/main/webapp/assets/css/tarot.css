@@ -240,3 +240,9 @@ body.modal-open {
 .ui-jqgrid .ui-jqgrid-labels th {
     text-align: center !important;
 }
+
+.ui-jqgrid .tree-wrap-ltr {
+    margin: 0;
+    float: left;
+    display: inline;
+}

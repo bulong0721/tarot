@@ -26,15 +26,15 @@ import java.util.Map;
 @Controller
 public class FilesController {
 
-    private static final String DOWNLOAD_HOME = "F:/martin";
+    private static final File DOWNLOAD_HOME = new File("F:/Games");
 
     @RequestMapping(value = "/admin/files/list.html")
     public @ResponseBody JQGridResponse processListFiles(HttpServletRequest req, Model model,  String parentNode) {
         JQGridResponse resp = new JQGridResponse();
         if ("root".equals(parentNode)) {
-            FileDTO root = new FileDTO();
-            root.setName("/");
-            resp.getRows().add(root);
+//            FileDTO root = new FileDTO();
+//            root.setName("/");
+//            resp.getRows().add(root);
         } else {
             File template = getResFile(100L, "");
             Map<String, FileDTO> resMap = Maps.newLinkedHashMap();
@@ -52,24 +52,10 @@ public class FilesController {
         if (!parentFile.exists() || !parentFile.isDirectory() || null == parentFile.listFiles()) {
             return;
         }
-        String prefix = FilenameUtils.concat(DOWNLOAD_HOME, Long.toString(orgID));
         for (File file : parentFile.listFiles()) {
-            FileDTO resourceVo = toResourceModel(file, orgID);
+            FileDTO resourceVo = new FileDTO(file, DOWNLOAD_HOME);
             resMap.put(file.getName(), resourceVo);
         }
-    }
-
-    static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-    public static FileDTO toResourceModel(File file, Long salt) {
-        FileDTO resVo = new FileDTO();
-        resVo.setSalt(Long.toString(salt));
-        resVo.setName(file.getName());
-        resVo.setModified(format.format(file.lastModified()));
-        resVo.setName(file.getName());
-        resVo.setParent(file.getParent());
-        resVo.setSize(file.length());
-        return resVo;
     }
 
     String trimStart(String absPath, String prefix) {

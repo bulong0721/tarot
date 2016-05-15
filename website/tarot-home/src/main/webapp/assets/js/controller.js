@@ -109,9 +109,9 @@ function explorerCtrl($scope, ConstService) {
         treeGrid: true,
         treeGridModel: 'adjacency',
         treeIcons: {
-            plus: 'ace-icon fa fa-caret-right bigger-160 blue',
-            minus: 'ace-icon fa fa-caret-down bigger-160 blue',
-            leaf: 'ace-icon fa fa-tags orange'
+            plus: 'ace-icon fa fa-caret-right bigger-160',
+            minus: 'ace-icon fa fa-caret-down bigger-160',
+            leaf: 'ace-icon fa fa-file'
         },
         loadonce: false,
         ExpandColClick: true,
@@ -123,6 +123,17 @@ function explorerCtrl($scope, ConstService) {
             expanded_field: 'expanded',
             parent_id_field: 'parent',
         },
+        prmNames: {
+            page: "page",    // 表示请求页码的参数名称
+            rows: "rows",    // 表示请求行数的参数名称
+            sort: "sidx", // 表示用于排序的列名的参数名称
+            order: "sord", // 表示采用的排序方式的参数名称
+            search: "_search", // 表示是否是搜索请求的参数名称
+            nd: "nd", // 表示已经发送请求的次数的参数名称
+            id: "id", // 表示当在编辑数据模块中发送数据时，使用的id的名称
+            oper: "oper"
+        },
+        height: 'auto',
         autowidth: true
     };
 }
