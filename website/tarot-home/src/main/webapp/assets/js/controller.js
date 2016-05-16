@@ -99,12 +99,24 @@ function explorerCtrl($scope, ConstService) {
     $scope.config = {
         datatype: "json",
         url: "/admin/files/list.html",
-        colNames: ['资源路径', '修改时间', '文件类型', '大小'],
+        colNames: ['路径', '资源名称', '选择', '操作', '修改时间', '文件类型', '大小'],
         colModel: [
-            {name: 'name', index: 'name', width: 80, editable: true},
-            {name: 'modified', index: 'modified', width: 45, editable: true},
-            {name: 'type', index: 'type', width: 30, editable: true},
-            {name: 'size', index: 'size', width: 40, editable: true}
+            {name: 'id', index: 'id', width: 10, editable: false, key:true, hidden:true },
+            {name: 'name', index: 'name', width: 80, editable: false},
+            {name: 'check', index: 'check', width: 75, editable: true, align: 'center', fixed: true, formatter: 'checkbox', formatoptions: {disabled: false} },
+            {
+                name: 'myac', index: '', width: 120, fixed: true, sortable: false, resize: false, align: 'center',
+                formatter: 'actions',
+                formatoptions: {
+                    keys: true,
+                    delOptions: {recreateForm: true},
+                    editformbutton: true,
+                    editOptions: {recreateForm: true}
+                }
+            },
+            {name: 'mtime', index: 'mtime', width: 45, editable: false, align: 'center', formatter: ConstService.dateFormatter},
+            {name: 'type', index: 'type', width: 30, editable: false, align: 'center',},
+            {name: 'size', index: 'size', width: 30, editable: false, align: 'center', formatter: ConstService.sizeFormatter}
         ],
         treeGrid: true,
         treeGridModel: 'adjacency',
@@ -122,16 +134,6 @@ function explorerCtrl($scope, ConstService) {
             leaf_field: 'leaf',
             expanded_field: 'expanded',
             parent_id_field: 'parent',
-        },
-        prmNames: {
-            page: "page",    // 表示请求页码的参数名称
-            rows: "rows",    // 表示请求行数的参数名称
-            sort: "sidx", // 表示用于排序的列名的参数名称
-            order: "sord", // 表示采用的排序方式的参数名称
-            search: "_search", // 表示是否是搜索请求的参数名称
-            nd: "nd", // 表示已经发送请求的次数的参数名称
-            id: "id", // 表示当在编辑数据模块中发送数据时，使用的id的名称
-            oper: "oper"
         },
         height: 'auto',
         autowidth: true

@@ -12,6 +12,8 @@ public class JQGridRequest implements Serializable {
     private String  sidx;
     private String  sord;
     private String  nd;
+    private String  parentid;
+    private String  nodeid;
 
     public String getNd() {
         return nd;
@@ -59,5 +61,21 @@ public class JQGridRequest implements Serializable {
 
     public void setSord(String sord) {
         this.sord = sord;
+    }
+
+    public String getNodeid() {
+        return nodeid;
+    }
+
+    public void setNodeid(String nodeid) {
+        this.nodeid = nodeid;
+    }
+
+    public String getParentid() {
+        return parentid;
+    }
+
+    public void setParentid(String parentid) {
+        this.parentid = parentid;
     }
 }
