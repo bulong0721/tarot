@@ -96,10 +96,14 @@ function storeCtrl($scope, ConstService) {
 function explorerCtrl($scope, ConstService) {
     $scope.api = {};
 
+    $scope.search = function() {
+        alert('test search');
+    };
+
     $scope.config = {
         datatype: "json",
         url: "/admin/files/list.html",
-        colNames: ['路径', '资源名称', '选择', '操作', '修改时间', '文件类型', '大小'],
+        colNames: ['路径', '资源名称', '选择', '操作', '操作1', '修改时间', '文件类型', '大小'],
         colModel: [
             {name: 'id', index: 'id', width: 10, editable: false, key:true, hidden:true },
             {name: 'name', index: 'name', width: 80, editable: false},
@@ -110,8 +114,14 @@ function explorerCtrl($scope, ConstService) {
                 formatoptions: {
                     keys: true,
                     delOptions: {recreateForm: true},
-                    editformbutton: true,
-                    editOptions: {recreateForm: true}
+                    editformbutton: false,
+                    editOptions: {recreateForm: false}
+                }
+            },
+            {
+                name: 'myac1', index: '', width: 120, fixed: true, sortable: false, resize: false, align: 'center',
+                formatter: function(value, opts, row) {
+                    return '<button class="btn btn-sm btn-danger" type="button" ng-click="search()"><i class="fa fa-search"></i><span class="bold">搜索</span></button>';
                 }
             },
             {name: 'mtime', index: 'mtime', width: 45, editable: false, align: 'center', formatter: ConstService.dateFormatter},
