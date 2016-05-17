@@ -1,10 +1,12 @@
 /**
- * Created by Martin on 2016/4/12.
+ * INSPINIA - Responsive Admin Theme
+ *
  */
 (function () {
-    angular.module('clover', [
+    angular.module('inspinia', [
         'ui.router',                    // Routing
-        'ngResource',                   // Resource
-        'angular-jqgrid'                //jQuery Grid
+        'oc.lazyLoad',                  // ocLazyLoad
+        'ui.bootstrap',                 // Ui Bootstrap
     ])
 })();
+
