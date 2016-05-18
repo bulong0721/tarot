@@ -1,0 +1,107 @@
+<div class="main-content">
+    <div class="main-content-inner">
+        <div class="page-content" ng-controller="storeCtrl">
+            <div class="page-header">
+                <h1>
+                    门店管理
+                    <small>
+                        <i class="ace-icon fa fa-angle-double-right"></i>
+                        编辑商户
+                    </small>
+                </h1>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <!-- PAGE CONTENT BEGINS -->
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">
+                                <span class="red">*</span>商户名称</label>
+
+                            <div class="col-sm-5">
+                                <input type="text" id="form-field-1" placeholder="商户名称" class="col-xs-10 col-sm-5"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right">
+                                <span class="red">*</span>商户类型</label>
+
+                            <div class="col-sm-5">
+                                <select value>
+                                    <option value="">--请选择--</option>
+                                    <option value="AL">商场</option>
+                                    <option value="AK">餐饮</option>
+                                    <option value="AZ">零售</option>
+                                    <option value="AR">其他</option>
+                                    <option value="CA">商圈</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="space-4"></div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-2">
+                                <span class="red">*</span>商户菜系</label>
+
+                            <div class="col-sm-5">
+                                <input type="text" id="form-field-2" placeholder="商户菜系" class="col-xs-10 col-sm-5"/>
+                            </div>
+                        </div>
+
+                        <div class="space-4"></div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right">
+                                <span class="red">*</span>商户图标</label>
+
+                            <div class="col-sm-5">
+                                <img src="http://img1.9now.cn/Files/201410/1122/1413038660446.jpg?ID=20227">
+                                <div class="space-6 cearfix"></div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <input multiple="" ng-ace-file type="file" id="id-input-file-3" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-4"></div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-4">商家描述</label>
+
+                            <div class="col-sm-5">
+
+                                <textarea id="form-field-4" maxlength="500" name="description" class="autosize-transition form-control" placeholder="描述最多500个字符"
+                                          style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 150px;"/>
+
+                                <div class="space-2"></div>
+
+                                <div class="help-block" id="input-size-slider"></div>
+                            </div>
+                        </div>
+
+                        <div class="clearfix form-actions">
+                            <div class="col-md-offset-3 col-md-4">
+                                <button class="btn btn-info" type="button">
+                                    <i class="ace-icon fa fa-check bigger-110"></i>
+                                    提交
+                                </button>
+
+                                &nbsp; &nbsp; &nbsp;
+                                <button class="btn" type="reset">
+                                    <i class="ace-icon fa fa-undo bigger-110"></i>
+                                    重置
+                                </button>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.page-content -->
+        </div>
+    </div>
+    <!-- /.main-content -->

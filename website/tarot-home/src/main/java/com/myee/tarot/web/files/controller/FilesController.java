@@ -3,7 +3,6 @@ package com.myee.tarot.web.files.controller;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.myee.tarot.core.web.JQGridRequest;
 import com.myee.tarot.core.web.JQGridResponse;
 import com.myee.tarot.web.files.FileDTO;
 import org.apache.commons.io.FileUtils;
@@ -29,12 +28,12 @@ public class FilesController {
     @RequestMapping(value = "/admin/files/list.html")
     public
     @ResponseBody
-    JQGridResponse processListFiles(@ModelAttribute JQGridRequest req, HttpServletRequest http) {
+    JQGridResponse processListFiles(HttpServletRequest http) {
         JQGridResponse resp = new JQGridResponse();
         File dir = DOWNLOAD_HOME;
-        if (null != req.getNodeid()) {
-            dir = FileUtils.getFile(req.getNodeid());
-        }
+//        if (null != req.getNodeid()) {
+//            dir = FileUtils.getFile(req.getNodeid());
+//        }
         Map<String, FileDTO> resMap = Maps.newHashMap();
         listFiles(dir, resMap);
         List<FileDTO> dtos = Lists.newArrayList(resMap.values());

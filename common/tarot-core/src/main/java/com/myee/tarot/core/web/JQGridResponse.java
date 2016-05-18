@@ -11,27 +11,10 @@ import java.util.Map;
  */
 public class JQGridResponse<T> implements Serializable {
     private List<Object> rows = new ArrayList<Object>();
-    private int page;
-    private int records;
-    private int total;
-
-    private Map<String, Object> userdata;
-
-    public int getPage() {
-        return page;
-    }
-
-    public void setPage(int page) {
-        this.page = page;
-    }
-
-    public int getRecords() {
-        return records;
-    }
-
-    public void setRecords(int records) {
-        this.records = records;
-    }
+    private long   draw;
+    private long   recordsTotal;
+    private long   recordsFiltered;
+    private String error;
 
     public List<?> getRows() {
         return rows;
@@ -39,21 +22,23 @@ public class JQGridResponse<T> implements Serializable {
 
     public void addDataEntry(Map<String, String> dataEntry) {
         this.rows.add(dataEntry);
+        this.recordsFiltered = rows.size();
+        this.recordsTotal = rows.size();
     }
 
-    public int getTotal() {
-        return total;
+    public long getDraw() {
+        return draw;
     }
 
-    public void setTotal(int total) {
-        this.total = total;
+    public String getError() {
+        return error;
     }
 
-    public Map<String, Object> getUserdata() {
-        return userdata;
+    public long getRecordsFiltered() {
+        return recordsFiltered;
     }
 
-    public void setUserdata(Map<String, Object> userdata) {
-        this.userdata = userdata;
+    public long getRecordsTotal() {
+        return recordsTotal;
     }
 }

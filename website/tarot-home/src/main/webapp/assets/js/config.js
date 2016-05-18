@@ -7,7 +7,7 @@
  *
  */
 function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
-    $urlRouterProvider.otherwise("/index/main");
+    $urlRouterProvider.otherwise("/merchant/shop_list");
 
     $ocLazyLoadProvider.config({
         // Set to true if you want to see what and when is dynamically loaded
@@ -15,21 +15,89 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
     });
 
     $stateProvider
-
-        .state('index', {
+        .state('merchant', {
             abstract: true,
-            url: "/index",
-            templateUrl: "assets/views/common/content.html",
+            url: "/merchant",
+            templateUrl: "assets/views/content.html",
         })
-        .state('index.main', {
-            url: "/main",
-            templateUrl: "assets/views/main.html",
-            data: { pageTitle: 'Main view' }
+        .state('merchant.shop_list', {
+            url: "/shop_list",
+            templateUrl: "assets/views/merchant/shop_list.html",
+            data: { pageTitle: '店铺列表' }
         })
-        .state('index.minor', {
-            url: "/minor",
-            templateUrl: "assets/views/minor.html",
-            data: { pageTitle: 'Minor view' }
+        .state('merchant.merchant', {
+            url: "/merchant",
+            templateUrl: "assets/views/merchant/merchant.html",
+            data: { pageTitle: '编辑商户' }
+        })
+        .state('equipment', {
+            abstract: true,
+            url: "/equipment",
+            templateUrl: "assets/views/content.html",
+        })
+        .state('equipment.type', {
+            url: "/type",
+            templateUrl: "assets/views/equipment/type.html",
+            data: { pageTitle: '设备类型' }
+        })
+        .state('equipment.list', {
+            url: "/list",
+            templateUrl: "assets/views/equipment/list.html",
+            data: { pageTitle: '设备列表' }
+        })
+        .state('explorer', {
+            abstract: true,
+            url: "/explorer",
+            templateUrl: "assets/views/content.html",
+        })
+        .state('explorer.explorer', {
+            url: "/explorer",
+            templateUrl: "assets/views/explorer/explorer.html",
+            data: { pageTitle: '资源管理' }
+        })
+        .state('explorer.push', {
+            url: "/push",
+            templateUrl: "assets/views/explorer/explorer.html",
+            data: { pageTitle: '推送日志' }
+        })
+        .state('user', {
+            abstract: true,
+            url: "/user",
+            templateUrl: "assets/views/content.html",
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        {
+                            serie: true,
+                            files: ['assets/js/plugins/dataTables/datatables.min.js','assets/css/plugins/dataTables/datatables.min.css']
+                        },
+                        {
+                            serie: true,
+                            name: 'datatables',
+                            files: ['assets/js/plugins/dataTables/angular-datatables.min.js']
+                        },
+                        {
+                            serie: true,
+                            name: 'datatables.buttons',
+                            files: ['assets/js/plugins/dataTables/angular-datatables.buttons.min.js']
+                        },
+                        {
+                            serie: true,
+                            files: ['assets/js/plugins/dataTables/dataTables.editor.min.js']
+                        }
+                    ]);
+                }
+            }
+        })
+        .state('user.user_list', {
+            url: "/user_list",
+            templateUrl: "assets/views/user/user_list.html",
+            data: { pageTitle: '用户列表' }
+        })
+        .state('user.role_list', {
+            url: "/role_list",
+            templateUrl: "assets/views/user/role_list.html",
+            data: { pageTitle: '角色管理' }
         })
 }
 angular

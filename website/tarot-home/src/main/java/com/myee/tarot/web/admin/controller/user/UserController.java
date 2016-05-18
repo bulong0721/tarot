@@ -46,7 +46,7 @@ public class UserController {
     @RequestMapping(value = "/admin/users/paging.html", method = RequestMethod.GET)
     public
     @ResponseBody
-    JQGridResponse pageUsers(@ModelAttribute JQGridRequest req, Model model, HttpServletRequest request) {
+    JQGridResponse pageUsers(Model model, HttpServletRequest request) {
         JQGridResponse resp = new JQGridResponse();
         String currentUser = request.getRemoteUser();
         try {

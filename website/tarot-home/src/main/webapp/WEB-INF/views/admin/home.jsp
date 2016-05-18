@@ -50,15 +50,16 @@
 
 <!-- Main Angular scripts-->
 <script src="assets/js/angular/angular.min.js"></script>
+<script src="assets/js/angular/angular-sanitize.js"></script>
 <script src="assets/js/plugins/oclazyload/dist/ocLazyLoad.min.js"></script>
 <script src="assets/js/ui-router/angular-ui-router.min.js"></script>
 <script src="assets/js/bootstrap/ui-bootstrap-tpls-1.1.2.min.js"></script>
-
 
 <!-- Anglar App Script -->
 <script src="assets/js/app.js"></script>
 <script src="assets/js/config.js"></script>
 <script src="assets/js/directives.js"></script>
+<script src="assets/js/services.js"></script>
 <script src="assets/js/controllers.js"></script>
 
 </body>
