@@ -2,9 +2,9 @@
  * Created by Martin on 2016/4/12.
  */
 function constServiceCtor($filter) {
-    var me = this;
+    var vm = this;
 
-    me.sizeFormatter = function (value, opts, row) {
+    vm.sizeFormatter = function (value, opts, row) {
         if (!row.leaf || 0 == value) {
             return '-';
         }
@@ -20,40 +20,11 @@ function constServiceCtor($filter) {
         return value + 'B';
     };
 
-    me.dateFormatter = function (value, opts, row) {
+    vm.dateFormatter = function (value, opts, row) {
         return $filter('date')(new Date(value), 'yyyy-MM-dd HH:mm:ss');
     };
 
-    me.tableEditor = new $.fn.dataTable.Editor({
-        ajax: "../php/staff.php",
-        table: "#example",
-        fields: [{
-            label: "First name:",
-            name: "first_name"
-        }, {
-            label: "Last name:",
-            name: "last_name"
-        }, {
-            label: "Position:",
-            name: "position"
-        }, {
-            label: "Office:",
-            name: "office"
-        }, {
-            label: "Extension:",
-            name: "extn"
-        }, {
-            label: "Start date:",
-            name: "start_date",
-            type: "datetime"
-        }, {
-            label: "Salary:",
-            name: "salary"
-        }
-        ]
-    });
-
-    me.defaultOptions = {
+    vm.defaultOptions = {
         info: true,
         lengthChange: false,
         pagingType: "simple_numbers",
@@ -63,8 +34,7 @@ function constServiceCtor($filter) {
         processing: true,
         dom: 'Brtip',
         buttons: [
-            {extend: 'csv', text: '导出CSV'},
-            {extend: 'create', editor: me.tableEditor, text: '新增'}
+            {extend: 'csv', text: '导出CSV'}
         ],
         language: {
             sInfo: "显示 _START_ - _END_条，共 _TOTAL_ 条",
@@ -86,14 +56,14 @@ function constServiceCtor($filter) {
         }
     };
 
-    me.buildOption = function (url, bindWhere) {
+    vm.buildOption = function (url, bindWhere) {
         return angular.extend({
             ajax: {
                 url: url,
                 dataSrc: "rows",
                 data: bindWhere
             }
-        }, me.defaultOptions);
+        }, vm.defaultOptions);
     }
 }
 
