@@ -22,11 +22,24 @@ function datatablesCtrl($scope, DTOptionsBuilder, Constants) {
         {data: 'name', title: '名称', width: 85, orderable: false, className: 'dt-center'},
         {data: 'login', title: '用户名', width: 60, orderable: false},
         {data: 'type', title: '账号类型', width: 55, orderable: false},
-        {data: 'dateLeast', title: '最后登录时间', width: 70, orderable: false},
+        {data: 'dateLeast', title: '最后登录时间', width: 70, orderable: false, align:'center'},
         {data: 'ipLeast', title: '最后登录IP', width: 70, orderable: false},
         {data: 'phone', title: '电话号码', width: 65, orderable: false},
         {data: 'email', title: '电子邮件', width: 100, orderable: false},
         {data: 'active', title: '状态', width: 40, orderable: false},
+    ];
+
+    $scope.dtColumnDefs = [
+        {
+            targets: 3,
+            render: function (data, type, full, meta) {
+                return "<span class=\"label label-primary\">" + "废弃" + "</span>";
+            }
+        },
+        {
+            targets: 4,
+            defaultContent: "<button class=\"btn btn-xs btn-danger\" type=\"button\"><span class=\"bold\">搜索</span></button>",
+        }
     ];
 
     $scope.dtOptions = Constants.buildOption("/admin/users/paging.html", function (data) {
@@ -61,14 +74,18 @@ function uiGridCtrl($scope) {
         useExternalPagination: true,
         useExternalSorting: true,
         columnDefs: [
-            {name: 'name'},
-            {name: 'gender'},
-            {name: 'company'},
-            {name: 'widgets'}
+            {name: 'name', displayName: '名称', width: 85, orderable: false, className: 'dt-center'},
+            {name: 'login', displayName: '用户名', width: 60, orderable: false},
+            {name: 'type', displayName: '账号类型', width: 55, orderable: false},
+            {name: 'dateLeast', displayName: '最后登录时间', width: 70, orderable: false, align:'center'},
+            {name: 'ipLeast', displayName: '最后登录IP', width: 70, orderable: false},
+            {name: 'phone', displayName: '电话号码', width: 65, orderable: false},
+            {name: 'email', displayName: '电子邮件', width: 100, orderable: false},
+            {name: 'active', displayName: '状态', width: 40, orderable: false}
         ],
-        onRegisterApi: function(gridApi) {
+        onRegisterApi: function (gridApi) {
             $scope.gridApi = gridApi;
-            $scope.gridApi.core.on.sortChanged($scope, function(grid, sortColumns) {
+            $scope.gridApi.core.on.sortChanged($scope, function (grid, sortColumns) {
                 if (sortColumns.length == 0) {
                     paginationOptions.sort = null;
                 } else {
@@ -84,7 +101,7 @@ function uiGridCtrl($scope) {
         }
     };
 
-    var getPage = function() {
+    var getPage = function () {
         $scope.gridOptions.totalItems = 100;
         var firstRow = (paginationOptions.pageNumber - 1) * paginationOptions.pageSize;
         $scope.gridOptions.data = $scope.data;
