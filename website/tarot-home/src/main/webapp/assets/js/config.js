@@ -79,12 +79,26 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
                         {
                             serie: true,
                             name: 'datatables',
-                            files: ['assets/js/plugins/dataTables/angular-datatables.min.js']
+                            files: ['assets/js/plugins/dataTables/angular-datatables.min.js', 'assets/css/plugins/dataTables/angular-datatables.min.css']
                         },
                         {
                             serie: true,
                             name: 'datatables.buttons',
                             files: ['assets/js/plugins/dataTables/angular-datatables.buttons.min.js']
+                        },
+                        {
+                            serie: true,
+                            files: ['assets/js/plugins/formly/api-check.min.js']
+                        },
+                        {
+                            serie: true,
+                            name: 'formly',
+                            files: ['assets/js/plugins/formly/formly.min.js']
+                        },
+                        {
+                            serie: true,
+                            name: 'formlyBootstrap',
+                            files: ['assets/js/plugins/formly/angular-formly-templates-bootstrap.min.js']
                         }
                     ]);
                 }

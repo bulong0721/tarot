@@ -1,7 +1,7 @@
 /**
  * Created by Martin on 2016/4/12.
  */
-function constServiceCtor($filter) {
+function constServiceCtor($filter, $compile, DTOptionsBuilder) {
     var vm = this;
 
     vm.sizeFormatter = function (value, opts, row) {
@@ -26,44 +26,50 @@ function constServiceCtor($filter) {
 
     vm.defaultOptions = {
         info: true,
+        searching: false,
         lengthChange: false,
-        pagingType: "simple_numbers",
-        pageLength: 20,
         serverSide: true,
+        pagingType: "simple_numbers",
+        pageLength: 10,
         deferLoading: 0,
-        processing: true,
         dom: 'Brtip',
         buttons: [
             {extend: 'csv', text: '导出CSV'}
         ],
         language: {
-            sInfo: "显示 _START_ - _END_条，共 _TOTAL_ 条",
-            sInfoEmpty: "显示 0 - 0条，共 0 条",
-            sEmptyTable: "没有查找到数据",
-            sLoadingRecords: "加载中...",
-            sProcessing: "处理中...",
-            sZeroRecords: "没找到匹配的记录",
-            oPaginate: {
-                sFirst: "第一页",
-                sLast: "最后页",
-                sNext: "下一页>",
-                sPrevious: "<上一页"
+            info: "显示 _START_ - _END_条，共 _TOTAL_ 条",
+            infoEmpty: "显示 0 - 0条，共 0 条",
+            emptyTable: "没有查找到数据",
+            loadingRecords: "加载中...",
+            processing: "处理中...",
+            zeroRecords: "没找到匹配的记录",
+            paginate: {
+                first: "第一页",
+                last: "最后页",
+                next: "下一页>",
+                previous: "<上一页"
             },
-            oAria: {
-                sSortAscending: ": 升序",
-                sSortDescending: ": 降序"
+            aria: {
+                sortAscending: ": 升序",
+                sortDescending: ": 降序"
             }
         }
     };
 
-    vm.buildOption = function (url, bindWhere) {
-        return angular.extend({
-            ajax: {
-                url: url,
-                dataSrc: "rows",
-                data: bindWhere
-            }
-        }, vm.defaultOptions);
+    vm.compile4Row = function(row, data, dataIndex) {
+        $compile(angular.element(row).contents())($scope);
+    };
+
+    vm.buildOption = function (url, bindWhere, compile4Row) {
+        return angular.extend(
+            {
+                ajax: {
+                    url: url,
+                    dataSrc: "rows",
+                    data: bindWhere
+                },
+                createdRow: compile4Row
+            }, vm.defaultOptions);
     }
 }
 
