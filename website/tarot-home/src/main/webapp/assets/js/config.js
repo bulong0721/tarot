@@ -53,7 +53,20 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         .state('explorer.explorer', {
             url: "/explorer",
             templateUrl: "assets/views/explorer/explorer.html",
-            data: {pageTitle: '资源管理'}
+            data: {pageTitle: '资源管理'},
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        {
+                            files: ['assets/js/plugins/jsTree/style.min.css','assets/js/plugins/jsTree/jstree.min.js']
+                        },
+                        {
+                            name: 'ngJsTree',
+                            files: ['assets/js/plugins/jsTree/ngJsTree.min.js']
+                        }
+                    ]);
+                }
+            }
         })
         .state('explorer.push', {
             url: "/push",

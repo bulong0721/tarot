@@ -31,13 +31,13 @@ function datatablesCtrl($scope, $compile, $uibModal, Constants) {
         {title: '动作', width: 35, render: actionsHtml}
     ];
 
-    $scope.edit = function() {
+    $scope.edit = function () {
         var result = $uibModal.open({
             templateUrl: 'assets/views/modalContent.html',
             controller: 'modalInstanceCtrl',
             controllerAs: 'vm',
             resolve: {
-                formData: function() {
+                formData: function () {
                     return {
                         fields: vm.getFormFields()
                     }
@@ -46,11 +46,11 @@ function datatablesCtrl($scope, $compile, $uibModal, Constants) {
         }).result;
     };
 
-    vm.getFormFields = function() {
+    vm.getFormFields = function () {
         return [
-            {'key':'name','type':'input','templateOptions':{'label':'名称','placeholder':'名称'}},
-            {'key':'login','type':'input','templateOptions':{'label':'用户名','placeholder':'用户名'}},
-            {'key':'type','type':'input','templateOptions':{'label':'类型','placeholder':'类型'}}
+            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', 'placeholder': '名称'}},
+            {'key': 'login', 'type': 'input', 'templateOptions': {'label': '用户名', 'placeholder': '用户名'}},
+            {'key': 'type', 'type': 'input', 'templateOptions': {'label': '类型', 'placeholder': '类型'}}
         ];
     };
 
@@ -160,9 +160,38 @@ function uiGridCtrl($scope) {
     getPage();
 }
 
+function explorerCtrl($scope) {
+    $scope.treeConfig = {
+        plugins: ['types', 'themes', 'json_data'],
+        types: {
+            default: {
+                icon: 'fa fa-folder'
+            }
+        },
+        data: [
+            {data: 'Kit 1', attr: {id: 'kit1'}}
+        ],
+        json_data: {
+            ajax: {
+                type: 'GET',
+                url: '/admin/users/paging.html',
+                data: function (data1) {
+                    return [
+                        {data: 'folder01', state: 'closed'},
+                        {data: 'folder02', state: 'closed'}
+                    ];
+                }
+            }
+        }
+    };
+
+    $scope.treeInstance = {};
+}
+
 angular
     .module('inspinia')
     .controller('modalInstanceCtrl', modalInstanceCtrl)
     .controller('datatablesCtrl', datatablesCtrl)
+    .controller('explorerCtrl', explorerCtrl)
     .controller('uiGridCtrl', uiGridCtrl)
     .controller('MainCtrl', MainCtrl);
