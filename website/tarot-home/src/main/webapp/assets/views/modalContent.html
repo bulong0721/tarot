@@ -1,26 +1,11 @@
 <div class="modal-header">
-    <h3 class="modal-title">I'm a modal!</h3>
+    <h3 class="modal-title">编辑</h3>
 </div>
 <div class="modal-body">
     <formly-form model="vm.formData.model" fields="vm.formData.fields" form="vm.form" options="vm.formData.options">
     </formly-form>
-    <hr/>
-    <label>
-        <input type="checkbox" ng-model="vm.showData"/> Show form data
-    </label>
-
-    <div ng-if="vm.showData">
-        <h2>Model Value</h2>
-        <pre>{{vm.formData.model | json}}</pre>
-        <h2>Fields
-            <small>(note, functions are not shown)</small>
-        </h2>
-        <pre>{{vm.originalFields | json}}</pre>
-        <h2>Form</h2>
-        <pre>{{vm.form | json}}</pre>
-    </div>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" ng-click="vm.ok()"><i class="fa fa-sm fa-bank"></i>提交</button>
-    <button class="btn btn-warning" ng-click="vm.cancel()">取消</button>
+    <button class="btn btn-primary" ng-click="vm.ok()"><i class="fa fa-sm fa-check"></i>&nbsp;提交</button>
+    <button class="btn btn-warning" ng-click="vm.cancel()"><i class="fa fa-sm fa-close"></i>&nbsp;取消</button>
 </div>
