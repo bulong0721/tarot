@@ -111,7 +111,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
                         {
                             serie: true,
                             name: 'formlyBootstrap',
-                            files: ['assets/js/plugins/formly/angular-formly-templates-bootstrap.min.js']
+                            files: ['assets/js/plugins/formly/angular-formly-templates-bootstrap.js']
                         }
                     ]);
                 }
