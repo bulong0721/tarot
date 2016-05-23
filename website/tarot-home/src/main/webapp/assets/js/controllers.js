@@ -161,31 +161,22 @@ function uiGridCtrl($scope) {
 }
 
 function explorerCtrl($scope) {
-    $scope.treeConfig = {
-        plugins: ['types', 'themes', 'json_data'],
+    $('#folderTree').jstree({
+        core: {
+            data: {
+                //url: '/admin/files/list.html',
+                //data: function (node) {
+                //    return {id: node.id};
+                //}
+            }
+        },
+        plugins: ['state', 'types', 'json_data'],
         types: {
             default: {
                 icon: 'fa fa-folder'
             }
-        },
-        data: [
-            {data: 'Kit 1', attr: {id: 'kit1'}}
-        ],
-        json_data: {
-            ajax: {
-                type: 'GET',
-                url: '/admin/users/paging.html',
-                data: function (data1) {
-                    return [
-                        {data: 'folder01', state: 'closed'},
-                        {data: 'folder02', state: 'closed'}
-                    ];
-                }
-            }
         }
-    };
-
-    $scope.treeInstance = {};
+    });
 }
 
 angular

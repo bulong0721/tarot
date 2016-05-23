@@ -11,38 +11,27 @@
                 </h1>
             </div>
             <div class="row">
-                <div class="col-lg-3">
+                <div class="col-lg-2">
                     <div class="ibox float-e-margins">
                         <div class="ibox-content">
                             <div class="file-manager">
-                                <h5>Show:</h5>
-                                <a href="" class="file-control active">Ale</a>
-                                <a href="" class="file-control">Documents</a>
-                                <a href="" class="file-control">Audio</a>
-                                <a href="" class="file-control">Images</a>
-
-                                <div class="hr-line-dashed"></div>
-                                <button class="btn btn-primary btn-block">Upload Files</button>
-                                <div class="hr-line-dashed"></div>
-                                <h5>Folders</h5>
-                                <div js-tree="treeConfig" tree="treeInstance"></div>
-                                <h5 class="tag-title">Tags</h5>
-                                <ul class="tag-list" style="padding: 0">
-                                    <li><a href="">Family</a></li>
-                                    <li><a href="">Work</a></li>
-                                    <li><a href="">Home</a></li>
-                                    <li><a href="">Children</a></li>
-                                    <li><a href="">Holidays</a></li>
-                                    <li><a href="">Music</a></li>
-                                    <li><a href="">Photography</a></li>
-                                    <li><a href="">Film</a></li>
-                                </ul>
+                                <div id="folderTree"/>
                                 <div class="clearfix"></div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-9 animated fadeInRight">
+                <div class="col-lg-10 animated fadeInRight">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="alert alert-info">
+                                <div class="btn-group">
+                                    <button class="btn btn-danger" type="button"><i
+                                            class="fa fa-cloud-upload"></i><span class="bold">&nbsp;搜索</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="file-box">
@@ -54,7 +43,7 @@
                                             <i class="fa fa-file"></i>
                                         </div>
                                         <div class="file-name">
-                                            Document_2014.doc
+                                            beautiful.mp3
                                             <br/>
                                             <small>Added: Jan 11, 2014</small>
                                         </div>

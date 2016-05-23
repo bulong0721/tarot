@@ -41,4 +41,24 @@ public class JQGridResponse<T> implements Serializable {
     public long getRecordsTotal() {
         return recordsTotal;
     }
+
+    public void setDraw(long draw) {
+        this.draw = draw;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public void setRecordsFiltered(long recordsFiltered) {
+        this.recordsFiltered = recordsFiltered;
+    }
+
+    public void setRecordsTotal(long recordsTotal) {
+        this.recordsTotal = recordsTotal;
+    }
+
+    public void setRows(List<Object> rows) {
+        this.rows = rows;
+    }
 }

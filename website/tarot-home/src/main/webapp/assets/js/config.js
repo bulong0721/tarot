@@ -30,19 +30,19 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             templateUrl: "assets/views/merchant/merchant.html",
             data: {pageTitle: '编辑商户'}
         })
-        .state('equipment', {
+        .state('device', {
             abstract: true,
-            url: "/equipment",
+            url: "/device",
             templateUrl: "assets/views/content.html",
         })
-        .state('equipment.type', {
+        .state('device.type', {
             url: "/type",
-            templateUrl: "assets/views/equipment/type.html",
+            templateUrl: "assets/views/device/type.html",
             data: {pageTitle: '设备类型'}
         })
-        .state('equipment.list', {
+        .state('device.list', {
             url: "/list",
-            templateUrl: "assets/views/equipment/list.html",
+            templateUrl: "assets/views/device/list.html",
             data: {pageTitle: '设备列表'}
         })
         .state('explorer', {
@@ -59,10 +59,6 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
                     return $ocLazyLoad.load([
                         {
                             files: ['assets/js/plugins/jsTree/style.min.css','assets/js/plugins/jsTree/jstree.min.js']
-                        },
-                        {
-                            name: 'ngJsTree',
-                            files: ['assets/js/plugins/jsTree/ngJsTree.min.js']
                         }
                     ]);
                 }
