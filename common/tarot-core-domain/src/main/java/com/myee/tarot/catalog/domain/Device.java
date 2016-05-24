@@ -41,10 +41,6 @@ public class Device extends GenericEntity<Long, Device> {
     @MapKey(name = "name")
     protected Map<String, DeviceAttribute> productAttributes = new HashMap<String, DeviceAttribute>();
 
-    @OneToMany(targetEntity = DeviceOptionXref.class, mappedBy = "device",
-            cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    protected List<DeviceOptionXref> productOptions = new ArrayList<DeviceOptionXref>();
-
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     @JoinTable(name = "C_PRODUCT_CATEGORY",
             joinColumns = {@JoinColumn(name = "PRODUCT_ID", nullable = false, updatable = false)},
@@ -56,7 +52,7 @@ public class Device extends GenericEntity<Long, Device> {
             org.hibernate.annotations.CascadeType.REFRESH,
             org.hibernate.annotations.CascadeType.REPLICATE
     })
-    private Set<Category> categories = new HashSet<Category>();
+    private Set<ProductUsed> categories = new HashSet<ProductUsed>();
 
     @Override
     public Long getId() {
@@ -92,14 +88,6 @@ public class Device extends GenericEntity<Long, Device> {
         this.productAttributes = productAttributes;
     }
 
-    public List<DeviceOptionXref> getProductOptions() {
-        return productOptions;
-    }
-
-    public void setProductOptions(List<DeviceOptionXref> productOptions) {
-        this.productOptions = productOptions;
-    }
-
     public String getUrl() {
         return url;
     }
@@ -124,11 +112,11 @@ public class Device extends GenericEntity<Long, Device> {
         this.useWithoutOptions = useWithoutOptions;
     }
 
-    public Set<Category> getCategories() {
+    public Set<ProductUsed> getCategories() {
         return categories;
     }
 
-    public void setCategories(Set<Category> categories) {
+    public void setCategories(Set<ProductUsed> categories) {
         this.categories = categories;
     }
 }

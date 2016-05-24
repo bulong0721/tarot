@@ -8,12 +8,12 @@ import javax.persistence.*;
  * Created by Martin on 2016/4/11.
  */
 @Entity
-@Table(name = "C_DEVICE_ATTRIBUTE")
-public class DeviceAttribute extends GenericEntity<Long, DeviceAttribute> {
+@Table(name = "C_DEVICE_USED_ATTRIBUTE")
+public class DeviceUsedAttribute extends GenericEntity<Long, DeviceUsedAttribute> {
 
     @Id
-    @Column(name = "DEVICE_ATTR_ID", unique = true, nullable = false)
-    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "DEVICE_ATTR_SEQ_NEXT_VAL")
+    @Column(name = "DEV_USED_ATTR_ID", unique = true, nullable = false)
+    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "DEV_USED_ATTR_SEQ_NEXT_VAL")
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     protected Long id;
 
@@ -26,9 +26,9 @@ public class DeviceAttribute extends GenericEntity<Long, DeviceAttribute> {
     @Column(name = "SEARCHABLE")
     protected boolean searchable = false;
 
-    @ManyToOne(targetEntity = Device.class, optional = false, cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "DEVICE_ID")
-    protected Device device;
+    @ManyToOne(targetEntity = DeviceUsed.class, optional = false, cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "DEVICE_USED_ID")
+    protected DeviceUsed device;
 
     @Override
     public Long getId() {
@@ -48,11 +48,11 @@ public class DeviceAttribute extends GenericEntity<Long, DeviceAttribute> {
         this.name = name;
     }
 
-    public Device getDevice() {
+    public DeviceUsed getDevice() {
         return device;
     }
 
-    public void setDevice(Device device) {
+    public void setDevice(DeviceUsed device) {
         this.device = device;
     }
 
@@ -78,7 +78,7 @@ public class DeviceAttribute extends GenericEntity<Long, DeviceAttribute> {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
-        DeviceAttribute that = (DeviceAttribute) o;
+        DeviceUsedAttribute that = (DeviceUsedAttribute) o;
 
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (value != null ? !value.equals(that.value) : that.value != null) return false;

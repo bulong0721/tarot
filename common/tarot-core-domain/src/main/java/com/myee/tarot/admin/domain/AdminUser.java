@@ -2,6 +2,7 @@ package com.myee.tarot.admin.domain;
 
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.core.audit.AuditableListener;
+import com.myee.tarot.merchant.domain.MerchantStore;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -41,6 +42,10 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
 
     @Column(name = "ACTIVE_STATUS_FLAG")
     protected Boolean activeStatusFlag = Boolean.TRUE;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MERCHANT_ID", nullable = false)
+    private MerchantStore merchantStore;
 
 //    @Temporal(TemporalType.TIMESTAMP)
 //    @Column(name = "LAST_ACCESS")
@@ -130,7 +135,15 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
         this.activeStatusFlag = activeStatusFlag;
     }
 
-//    public Date getLastAccess() {
+    public MerchantStore getMerchantStore() {
+        return merchantStore;
+    }
+
+    public void setMerchantStore(MerchantStore merchantStore) {
+        this.merchantStore = merchantStore;
+    }
+
+    //    public Date getLastAccess() {
 //        return lastAccess;
 //    }
 //

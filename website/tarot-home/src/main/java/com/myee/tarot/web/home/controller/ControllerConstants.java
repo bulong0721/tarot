@@ -21,7 +21,7 @@ public interface ControllerConstants
         }
 
         interface Category {
-            final static String category = "category";
+            final static String category = "product";
         }
 
         interface Product {

@@ -27,7 +27,6 @@ public class CustomerAddress extends GenericEntity<Long, CustomerAddress> {
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = Address.class, optional = false)
     @JoinColumn(name = "ADDRESS_ID")
-    @org.hibernate.annotations.Index(name = "CUSTOMERADDRESS_ADDRESS_INDEX", columnNames = {"ADDRESS_ID"})
     protected Address address;
 
     @Override

@@ -3,7 +3,6 @@ package com.myee.tarot.web.admin.controller.user;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.admin.service.AdminUserService;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
-import com.myee.tarot.core.web.JQGridRequest;
 import com.myee.tarot.core.web.JQGridResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

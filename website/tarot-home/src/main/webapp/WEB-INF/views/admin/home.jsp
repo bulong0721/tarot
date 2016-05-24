@@ -3,7 +3,6 @@
 <html ng-app="inspinia">
 
 <head>
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,8 +19,6 @@
     <!-- Main Inspinia CSS files -->
     <link href="assets/css/animate.css" rel="stylesheet">
     <link id="loadBefore" href="assets/css/style.css" rel="stylesheet">
-
-
 </head>
 
 <!-- ControllerAs syntax -->

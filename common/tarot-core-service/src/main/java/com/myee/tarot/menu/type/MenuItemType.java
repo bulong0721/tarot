@@ -37,7 +37,7 @@ public class MenuItemType implements Serializable {
     private static final Map<String, MenuItemType> TYPES = new HashMap<String, MenuItemType>();
 
     public static final MenuItemType LINK     = new MenuItemType("LINK", "Link");
-    public static final MenuItemType CATEGORY = new MenuItemType("CATEGORY", "Category");
+    public static final MenuItemType CATEGORY = new MenuItemType("CATEGORY", "ProductUsed");
     public static final MenuItemType PAGE     = new MenuItemType("PAGE", "Page");
     public static final MenuItemType SUBMENU  = new MenuItemType("SUBMENU", "Sub MenuService");
     public static final MenuItemType PRODUCT  = new MenuItemType("PRODUCT", "Device");

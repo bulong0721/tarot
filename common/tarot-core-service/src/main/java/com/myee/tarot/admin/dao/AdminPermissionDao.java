@@ -6,7 +6,7 @@ import com.myee.tarot.core.dao.GenericEntityDao;
 /**
  * Created by Martin on 2016/4/11.
  */
-public interface AdminPermssionDao extends GenericEntityDao<Long, AdminPermission> {
+public interface AdminPermissionDao extends GenericEntityDao<Long, AdminPermission> {
 
     AdminPermission getByName(String name);
 

@@ -7,5 +7,5 @@ import com.myee.tarot.core.service.GenericEntityService;
 /**
  * Created by Martin on 2016/4/11.
  */
-public interface AdminPermessionService extends GenericEntityService<Long, AdminPermission> {
+public interface AdminPermissionService extends GenericEntityService<Long, AdminPermission> {
 }

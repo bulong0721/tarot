@@ -1,6 +1,7 @@
 package com.myee.tarot.merchant.domain;
 
 import com.myee.tarot.core.GenericEntity;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 
@@ -17,6 +18,24 @@ public class Merchant extends GenericEntity<Long, Merchant> {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     private Long id;
 
+    @NotEmpty
+    @Column(name = "NAME", length=60)
+    private String name;
+
+    @Column(name = "LOGO_URL")
+    private String logo;
+
+    @NotEmpty
+    @Column(name = "BUSINESS_TYPE", length = 10)
+    private String businessType;
+
+    @NotEmpty
+    @Column(name = "CUISINE_TYPE", length = 10)
+    private String cuisineType;
+
+    @Column(name = "DESCRIPTION")
+    private String description;
+
     @Override
     public Long getId() {
         return id;
@@ -25,5 +44,45 @@ public class Merchant extends GenericEntity<Long, Merchant> {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getBusinessType() {
+        return businessType;
+    }
+
+    public void setBusinessType(String businessType) {
+        this.businessType = businessType;
+    }
+
+    public String getCuisineType() {
+        return cuisineType;
+    }
+
+    public void setCuisineType(String cuisineType) {
+        this.cuisineType = cuisineType;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

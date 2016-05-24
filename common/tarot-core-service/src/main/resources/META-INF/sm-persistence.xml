@@ -19,9 +19,7 @@
         <class>com.myee.tarot.cms.domain.PageTemplate</class>
         <class>com.myee.tarot.cms.domain.PageTemplateFieldGroupXref</class>
 
-        <class>com.myee.tarot.profile.domain.Country</class>
-        <class>com.myee.tarot.profile.domain.CountrySubdivision</class>
-        <class>com.myee.tarot.profile.domain.CountrySubdivisionCategory</class>
+        <class>com.myee.tarot.reference.domain.GeoZone</class>
         <class>com.myee.tarot.reference.domain.ISOCountry</class>
         <class>com.myee.tarot.reference.domain.Locale</class>
         <class>com.myee.tarot.reference.domain.Media</class>
@@ -39,5 +37,8 @@
         <class>com.myee.tarot.profile.domain.CustomerRole</class>
         <class>com.myee.tarot.profile.domain.Phone</class>
         <class>com.myee.tarot.profile.domain.Role</class>
+
+        <class>com.myee.tarot.merchant.domain.Merchant</class>
+        <class>com.myee.tarot.merchant.domain.MerchantStore</class>
     </persistence-unit>
 </persistence>
