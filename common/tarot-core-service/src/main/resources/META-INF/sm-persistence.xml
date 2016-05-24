@@ -40,5 +40,11 @@
 
         <class>com.myee.tarot.merchant.domain.Merchant</class>
         <class>com.myee.tarot.merchant.domain.MerchantStore</class>
+
+        <class>com.myee.tarot.catalog.domain.Device</class>
+        <class>com.myee.tarot.catalog.domain.DeviceAttribute</class>
+        <class>com.myee.tarot.catalog.domain.DeviceUsed</class>
+        <class>com.myee.tarot.catalog.domain.DeviceUsedAttribute</class>
+        <class>com.myee.tarot.catalog.domain.ProductUsed</class>
     </persistence-unit>
 </persistence>
