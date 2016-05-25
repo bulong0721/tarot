@@ -23,11 +23,11 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
     protected MerchantStore store;
 
     @ManyToOne(targetEntity = ProductUsed.class, optional = false)
-    @JoinTable(name = "C_PRODUCT_DEV_XREF",
+    @JoinTable(name = "C_PRODUCT_USED_DEV_XREF",
             joinColumns = {@JoinColumn(name = "DEVICE_USED_ID", nullable = false, updatable = false)},
             inverseJoinColumns = {@JoinColumn(name = "PRODUCT_USED_ID", nullable = false, updatable = false)}
     )
-    protected ProductUsed product;
+    protected ProductUsed productUsed;
 
     @Override
     public Long getId() {
@@ -39,12 +39,12 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
         this.id = id;
     }
 
-    public ProductUsed getProduct() {
-        return product;
+    public ProductUsed getProductUsed() {
+        return productUsed;
     }
 
-    public void setProduct(ProductUsed product) {
-        this.product = product;
+    public void setProductUsed(ProductUsed productUsed) {
+        this.productUsed = productUsed;
     }
 
     public MerchantStore getStore() {

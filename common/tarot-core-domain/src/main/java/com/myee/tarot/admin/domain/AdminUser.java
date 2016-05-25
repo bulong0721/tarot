@@ -44,7 +44,7 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
     protected Boolean activeStatusFlag = Boolean.TRUE;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MERCHANT_ID", nullable = false)
+    @JoinColumn(name = "MERCHANT_ID")
     private MerchantStore merchantStore;
 
 //    @Temporal(TemporalType.TIMESTAMP)

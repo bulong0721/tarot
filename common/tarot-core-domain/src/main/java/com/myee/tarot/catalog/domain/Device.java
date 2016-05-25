@@ -13,12 +13,12 @@ import java.util.*;
  * Created by Martin on 2016/4/11.
  */
 @Entity
-@Table(name = "C_PRODUCT")
+@Table(name = "C_DEVICE")
 public class Device extends GenericEntity<Long, Device> {
 
     @Id
-    @Column(name = "PRODUCT_ID", unique = true, nullable = false)
-    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "PRODUCT_SEQ_NEXT_VAL")
+    @Column(name = "DEVICE_ID", unique = true, nullable = false)
+    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "DEVICE_SEQ_NEXT_VAL")
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     protected Long id;
 
@@ -40,19 +40,6 @@ public class Device extends GenericEntity<Long, Device> {
     @OneToMany(mappedBy = "device", targetEntity = DeviceAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
     @MapKey(name = "name")
     protected Map<String, DeviceAttribute> productAttributes = new HashMap<String, DeviceAttribute>();
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
-    @JoinTable(name = "C_PRODUCT_CATEGORY",
-            joinColumns = {@JoinColumn(name = "PRODUCT_ID", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "CATEGORY_ID", nullable = false, updatable = false)}
-    )
-    @Cascade({
-            org.hibernate.annotations.CascadeType.DETACH,
-            org.hibernate.annotations.CascadeType.LOCK,
-            org.hibernate.annotations.CascadeType.REFRESH,
-            org.hibernate.annotations.CascadeType.REPLICATE
-    })
-    private Set<ProductUsed> categories = new HashSet<ProductUsed>();
 
     @Override
     public Long getId() {
@@ -110,13 +97,5 @@ public class Device extends GenericEntity<Long, Device> {
 
     public void setUseWithoutOptions(boolean useWithoutOptions) {
         this.useWithoutOptions = useWithoutOptions;
-    }
-
-    public Set<ProductUsed> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(Set<ProductUsed> categories) {
-        this.categories = categories;
     }
 }

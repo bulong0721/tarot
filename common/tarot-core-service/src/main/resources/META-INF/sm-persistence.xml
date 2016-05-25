@@ -46,5 +46,9 @@
         <class>com.myee.tarot.catalog.domain.DeviceUsed</class>
         <class>com.myee.tarot.catalog.domain.DeviceUsedAttribute</class>
         <class>com.myee.tarot.catalog.domain.ProductUsed</class>
+
+        <class>com.myee.tarot.catering.domain.Table</class>
+        <class>com.myee.tarot.catering.domain.TableType</class>
+        <class>com.myee.tarot.catering.domain.TableZone</class>
     </persistence-unit>
 </persistence>

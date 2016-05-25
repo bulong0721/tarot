@@ -50,7 +50,7 @@ public class AdminFilter extends HandlerInterceptorAdapter {
                 user = userService.getByUserName(userName);
                 request.getSession().setAttribute(Constants.ADMIN_USER, user);
                 if (user != null) {
-                    storeCode = user.getMerchantStore().getCode();
+//                    storeCode = user.getMerchantStore().getCode();
                 } else {
                     LOGGER.warn("User name not found " + userName);
                 }
@@ -65,7 +65,7 @@ public class AdminFilter extends HandlerInterceptorAdapter {
             if (!user.getName().equals(userName)) {
                 user = userService.getByUserName(userName);
                 if (user != null) {
-                    storeCode = user.getMerchantStore().getCode();
+//                    storeCode = user.getMerchantStore().getCode();
                 } else {
                     LOGGER.warn("User name not found " + userName);
                 }
@@ -74,8 +74,8 @@ public class AdminFilter extends HandlerInterceptorAdapter {
         }
 
         if (store == null) {
-            store = merchantService.getByCode(storeCode);
-            request.getSession().setAttribute(Constants.ADMIN_STORE, store);
+//            store = merchantService.getByCode(storeCode);
+//            request.getSession().setAttribute(Constants.ADMIN_STORE, store);
         }
         request.setAttribute(Constants.ADMIN_STORE, store);
 
