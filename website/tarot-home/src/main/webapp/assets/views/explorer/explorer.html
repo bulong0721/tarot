@@ -11,63 +11,55 @@
                 </h1>
             </div>
             <div class="row">
-                <div class="col-lg-2">
+                <div class="col-lg-3">
                     <div class="ibox float-e-margins">
                         <div class="ibox-content">
                             <div class="file-manager">
+                                <input type="text" id="folderTree_q" value="" class="search-input" ng-keyup="search()">
                                 <div id="folderTree"/>
                                 <div class="clearfix"></div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-10 animated fadeInRight">
+                <div class="col-lg-9 animated fadeInRight">
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="alert alert-info">
                                 <div class="btn-group">
                                     <button class="btn btn-danger" type="button"><i
                                             class="fa fa-cloud-upload"></i><span class="bold">&nbsp;搜索</span></button>
+                                    <button class="btn btn-danger" type="button" ng-click="addFolder()"><i
+                                            class="fa fa-plus"></i><span class="bold">&nbsp;添加文件夹</span></button>
+                                    <button class="btn btn-danger" type="button" ng-click="addFile()"><i
+                                            class="fa fa-plus"></i><span class="bold">&nbsp;添加文件</span></button>
+                                    <button class="btn btn-danger" type="button" ng-click="delete()"><i
+                                            class="fa fa-remove"></i><span class="bold">&nbsp;删除</span></button>
+                                    <button class="btn btn-danger" type="button" ng-click="rename()"><i
+                                            class="fa fa-pencil"></i><span class="bold">&nbsp;重命名</span></button>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-12">
-                            <div class="file-box">
+                        <div class="col-lg-12" id="showDetail" >
+                            <div class="file-box" ng-repeat="detail in details" >
                                 <div class="file">
                                     <a href="">
                                         <span class="corner"></span>
 
                                         <div class="icon">
-                                            <i class="fa fa-file"></i>
+                                            <i class="fa fa-file" ng-if="detail.type=='file'"></i>
+                                            <i class="fa fa-folder" ng-if="detail.type=='default'"></i>
                                         </div>
                                         <div class="file-name">
-                                            beautiful.mp3
+                                            {{detail.text}}
                                             <br/>
-                                            <small>Added: Jan 11, 2014</small>
+                                            <small>Added: {{ detail.lastModify | date : format : timezone}}</small>
                                         </div>
                                     </a>
                                 </div>
-
                             </div>
-                            <div class="file-box">
-                                <a href="">
-                                    <div class="file">
-                                        <span class="corner"></span>
-
-                                        <div class="icon">
-                                            <i class="fa fa-bar-chart-o"></i>
-                                        </div>
-                                        <div class="file-name">
-                                            Annual report 2014.xls
-                                            <br/>
-                                            <small>Added: Fab 22, 2014</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-
                         </div>
                     </div>
                 </div>

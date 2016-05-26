@@ -50,6 +50,7 @@
 <script src="assets/js/angular/angular-sanitize.js"></script>
 <script src="assets/js/plugins/oclazyload/dist/ocLazyLoad.min.js"></script>
 <script src="assets/js/ui-router/angular-ui-router.min.js"></script>
+<script src="assets/js/angular/angular-resource.min.js"></script>
 <script src="assets/js/bootstrap/ui-bootstrap-tpls-1.1.2.min.js"></script>
 
 <!-- Anglar App Script -->
