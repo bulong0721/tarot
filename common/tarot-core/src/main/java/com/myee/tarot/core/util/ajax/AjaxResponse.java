@@ -35,7 +35,7 @@ public class AjaxResponse implements Serializable {
         this.status = status;
     }
 
-    protected List<Map<String,String>> getData() {
+    public List<Map<String,String>> getData() {
         return data;
     }
 
