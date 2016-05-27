@@ -188,7 +188,7 @@ function explorerCtrl($scope, $resource, $uibModal) {
             check_callback :true,
         },
 
-        plugins: ['state','types','checkbox','dnd','unique','search','contextmenu'],
+        plugins: ['types','checkbox','dnd','unique','search','contextmenu'],
         types: {
             default: {
                 icon: 'fa fa-folder'
