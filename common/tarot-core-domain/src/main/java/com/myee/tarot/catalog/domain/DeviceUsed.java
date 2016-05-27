@@ -4,6 +4,8 @@ import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Martin on 2016/4/18.
@@ -18,6 +20,21 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     protected Long id;
 
+    @Column(name = "NAME")
+    protected String name;
+
+    @Column(name = "HEARTBEAT")
+    protected String heartbeat;
+
+    @Column(name = "BOARD_NO")
+    protected String boardNo;
+
+    @Column(name = "DEVICE_NUM")
+    protected String deviceNum;
+
+    @Column(name = "DESCRIPTION")
+    protected String description;
+
     @ManyToOne(targetEntity = MerchantStore.class, optional = false)
     @JoinColumn(name = "STORE_ID")
     protected MerchantStore store;
@@ -28,6 +45,10 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
             inverseJoinColumns = {@JoinColumn(name = "PRODUCT_USED_ID", nullable = false, updatable = false)}
     )
     protected ProductUsed productUsed;
+
+    @OneToMany(mappedBy = "deviceUsed", targetEntity = DeviceAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @MapKey(name = "name")
+    protected Map<String, DeviceUsedAttribute> deviceUsedAttribute = new HashMap<String, DeviceUsedAttribute>();
 
     @Override
     public Long getId() {
@@ -54,4 +75,49 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
     public void setStore(MerchantStore store) {
         this.store = store;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getHeartbeat() {
+        return heartbeat;
+    }
+
+    public void setHeartbeat(String heartbeat) {
+        this.heartbeat = heartbeat;
+    }
+
+    public String getBoardNo() {
+        return boardNo;
+    }
+
+    public void setBoardNo(String boardNo) {
+        this.boardNo = boardNo;
+    }
+
+    public String getDeviceNum() {
+        return deviceNum;
+    }
+
+    public void setDeviceNum(String deviceNum) {
+        this.deviceNum = deviceNum;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Map<String, DeviceUsedAttribute> getDeviceUsedAttribute() {
+        return deviceUsedAttribute;
+    }
+
 }
