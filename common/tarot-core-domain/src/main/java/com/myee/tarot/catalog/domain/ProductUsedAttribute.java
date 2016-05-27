@@ -26,7 +26,7 @@ public class ProductUsedAttribute extends GenericEntity<Long, ProductUsedAttribu
     @Column(name = "SEARCHABLE")
     protected boolean searchable = false;
 
-    @ManyToOne(targetEntity = DeviceUsed.class, optional = false, cascade = CascadeType.REFRESH)
+    @ManyToOne(targetEntity = ProductUsed.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_USED_ID")
     protected ProductUsed productUsed;
 

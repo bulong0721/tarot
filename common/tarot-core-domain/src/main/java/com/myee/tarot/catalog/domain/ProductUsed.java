@@ -39,21 +39,17 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
     @Column(name = "DEVICE_NUM")
     protected String deviceNum;
 
-//    @OneToMany(mappedBy = "productUsed", targetEntity = DeviceAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
-//    @MapKey(name = "name")
-//    protected Map<String, ProductUsedAttribute> productUsedAttribute = new HashMap<String, ProductUsedAttribute>();
+    @OneToMany(mappedBy = "productUsed", targetEntity = ProductUsedAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
+    @MapKey(name = "name")
+    protected Map<String, ProductUsedAttribute> productUsedAttribute = new HashMap<String, ProductUsedAttribute>();
 
-//    @OneToMany(mappedBy = "productUsed", targetEntity = DeviceUsed.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
-//    @MapKey(name = "name")
-//    protected Map<String, DeviceUsed> deviceUsed = new HashMap<String, DeviceUsed>();
-
-//    @OneToMany(mappedBy = "productUsed", targetEntity = DeviceUsed.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
-//    @JoinTable(name = "C_PRODUCT_USED_DEV_XREF",
-//            joinColumns = {@JoinColumn(name = "PRODUCT_USED_ID", nullable = false, updatable = false)},
-//            inverseJoinColumns = {@JoinColumn(name = "DEVICE_USED_ID", nullable = false, updatable = false)}
-//    )
-//    @MapKey(name = "name")
-//    protected Map<String, DeviceUsed> deviceUsed;
+    @OneToMany(targetEntity = DeviceUsed.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinTable(name = "C_PRODUCT_USED_DEV_XREF",
+            joinColumns = {@JoinColumn(name = "PRODUCT_USED_ID", nullable = false, updatable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "DEVICE_USED_ID", nullable = false, updatable = false)}
+    )
+    @MapKey(name = "name")
+    protected Map<String, DeviceUsed> deviceUsed = new HashMap<String, DeviceUsed>();
 
     @Override
     public Long getId() {
@@ -97,9 +93,9 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
         this.description = description;
     }
 
-//    public Map<String, ProductUsedAttribute> getProductUsedAttribute() {
-//        return productUsedAttribute;
-//    }
+    public Map<String, ProductUsedAttribute> getProductUsedAttribute() {
+        return productUsedAttribute;
+    }
 
     public String getDeviceNum() {
         return deviceNum;
@@ -109,8 +105,8 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
         this.deviceNum = deviceNum;
     }
 
-//    public Map<String, DeviceUsed> getDeviceUsed() {
-//        return deviceUsed;
-//    }
+    public Map<String, DeviceUsed> getDeviceUsed() {
+        return deviceUsed;
+    }
 
 }

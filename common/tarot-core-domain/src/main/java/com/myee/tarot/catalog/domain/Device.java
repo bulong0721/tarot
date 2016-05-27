@@ -27,7 +27,7 @@ public class Device extends GenericEntity<Long, Device> {
     @Column(name = "DESCRIPTION")
     protected String description;
 
-    @OneToMany(mappedBy = "device", targetEntity = DeviceAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "device", targetEntity = DeviceAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
     @MapKey(name = "name")
     protected Map<String, DeviceAttribute> deviceAttribute = new HashMap<String, DeviceAttribute>();
 

@@ -46,9 +46,9 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
     )
     protected ProductUsed productUsed;
 
-//    @OneToMany(mappedBy = "deviceUsed", targetEntity = DeviceAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
-//    @MapKey(name = "name")
-//    protected Map<String, DeviceUsedAttribute> deviceUsedAttribute = new HashMap<String, DeviceUsedAttribute>();
+    @OneToMany(mappedBy = "deviceUsed", targetEntity = DeviceUsedAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
+    @MapKey(name = "name")
+    protected Map<String, DeviceUsedAttribute> deviceUsedAttribute = new HashMap<String, DeviceUsedAttribute>();
 
     @Override
     public Long getId() {
@@ -116,8 +116,8 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
         this.description = description;
     }
 
-//    public Map<String, DeviceUsedAttribute> getDeviceUsedAttribute() {
-//        return deviceUsedAttribute;
-//    }
+    public Map<String, DeviceUsedAttribute> getDeviceUsedAttribute() {
+        return deviceUsedAttribute;
+    }
 
 }
