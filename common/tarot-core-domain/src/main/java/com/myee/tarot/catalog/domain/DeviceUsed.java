@@ -32,7 +32,6 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
     @Column(name = "DEVICE_NUM")
     protected String deviceNum;
 
-
     @Column(name = "DESCRIPTION")
     protected String description;
 

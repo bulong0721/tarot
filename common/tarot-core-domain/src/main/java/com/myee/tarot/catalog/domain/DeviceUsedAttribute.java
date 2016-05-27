@@ -23,7 +23,6 @@ public class DeviceUsedAttribute extends GenericEntity<Long, DeviceUsedAttribute
     @Column(name = "VALUE")
     protected String value;
 
-
     @Column(name = "SEARCHABLE")
     protected boolean searchable = false;
 
