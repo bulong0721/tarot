@@ -19,11 +19,21 @@ public class JsTreeResponse {
 
     private Date lastModify;
 
+    private String status;
+
     public JsTreeResponse() {
     }
 
     public JsTreeResponse(String id) {
         this.id = id;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Date getLastModify() {

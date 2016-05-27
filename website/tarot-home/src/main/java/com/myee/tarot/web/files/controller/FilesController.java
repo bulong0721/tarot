@@ -1,19 +1,21 @@
 package com.myee.tarot.web.files.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.myee.tarot.core.web.JsTreeResponse;
 import com.myee.tarot.web.files.FileDTO;
-
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Martin on 2016/4/21.
@@ -40,8 +42,9 @@ public class FilesController {
         return resp;
     }*/
 
-    @RequestMapping(value = "/admin/files/list.html")
-    public void processListFiles(HttpServletRequest http,HttpServletResponse response) {
+    @RequestMapping(value = "/admin/files/list")
+    @ResponseBody
+    public List<JsTreeResponse> processListFiles(HttpServletRequest http,HttpServletResponse response) {
         Map<String,Object> resp = Maps.newHashMap();
         List<JsTreeResponse> tree = Lists.newArrayList();
         String id = http.getParameter("id");
@@ -67,28 +70,19 @@ public class FilesController {
             jt.setText(dto.getName());
             jt.setType(dto.isLeaf() ? "file":"default");
             jt.setLastModify(new Date(dto.getMtime()));
-            //jt.setIcon(dto.isLeaf()?"file":"default");
             tree.add(jt);
         }
 
-        try {
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(JSON.toJSONString(tree));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return tree;
     }
 
-    @RequestMapping(value = "/admin/files/change.html")
-    public void changeFile(HttpServletRequest request,HttpServletResponse response) {
+    @RequestMapping(value = "/admin/files/change")
+    @ResponseBody
+    public JsTreeResponse changeFile(HttpServletRequest request,HttpServletResponse response) {
         String operation = request.getParameter("operation");
         String id = request.getParameter("id");
         String text = request.getParameter("text");
         String type = request.getParameter("type");
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
         if(operation.equals("create_node")){
             File file = new File(id,text);
             try {
@@ -106,7 +100,7 @@ public class FilesController {
                     }
                 }
                 if(isNew){
-                    response.getWriter().write(JSON.toJSONString(new JsTreeResponse(file.getPath())));
+                    return new JsTreeResponse(file.getPath());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -117,11 +111,11 @@ public class FilesController {
                 File file = new File(id);
                 boolean isDelete = delete(file);
                 if(isDelete){
-                    Map<String,Object> map = new HashMap<String,Object>();
-                    map.put("status","OK");
-                    response.getWriter().write(JSON.toJSONString(map));
+                    JsTreeResponse tree = new JsTreeResponse();
+                    tree.setStatus("OK");
+                    return tree;
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -136,15 +130,16 @@ public class FilesController {
                         isRename = file.renameTo(newFile);
                     }
                     if(isRename){
-                        response.getWriter().write(JSON.toJSONString(new JsTreeResponse(newFile.getPath())));
+                        return new JsTreeResponse(newFile.getPath());
                     }
                 }else{
-                    response.getWriter().write(JSON.toJSONString(new JsTreeResponse(newFile.getPath())));
+                    return new JsTreeResponse(newFile.getPath());
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        return null;
     }
 
     private void listFiles(File parentFile, Map<String, FileDTO> resMap) {
