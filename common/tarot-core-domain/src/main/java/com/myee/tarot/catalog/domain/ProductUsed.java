@@ -1,5 +1,6 @@
 package com.myee.tarot.catalog.domain;
 
+import com.myee.tarot.catalog.type.ProductType;
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -30,8 +31,8 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
     protected MerchantStore store;
 
     @NotEmpty
-    @Column(name = "NAME")
-    protected String name;
+    @Column(name = "TYPE")
+    protected String type;
 
     @Column(name = "DESCRIPTION")
     protected String description;
@@ -77,12 +78,9 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
         this.store = store;
     }
 
+    @Transient
     public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        return ProductType.getName(this.type);
     }
 
     public String getDescription() {

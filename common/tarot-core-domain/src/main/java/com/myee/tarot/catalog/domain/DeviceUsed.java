@@ -39,6 +39,10 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
     @JoinColumn(name = "STORE_ID")
     protected MerchantStore store;
 
+    @ManyToOne(targetEntity = Device.class, optional = false)
+    @JoinColumn(name = "DEVICE_ID")
+    protected Device device;
+
     @ManyToOne(targetEntity = ProductUsed.class, optional = false)
     @JoinTable(name = "C_PRODUCT_USED_DEV_XREF",
             joinColumns = {@JoinColumn(name = "DEVICE_USED_ID", nullable = false, updatable = false)},

@@ -48,6 +48,14 @@ public class ProductType implements GenericEnumType, Comparable<ProductType>, Se
         return friendlyType;
     }
 
+    public static String getName(final String type){
+        String name = null;
+        if (TYPES.containsKey(type)) {
+            name = TYPES.get(type).getFriendlyType();
+        }
+        return name;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
