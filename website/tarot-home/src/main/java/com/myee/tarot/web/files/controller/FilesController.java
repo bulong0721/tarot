@@ -1,27 +1,18 @@
 package com.myee.tarot.web.files.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.myee.tarot.core.support.FastJsonHttpMessageConverter;
-import com.myee.tarot.core.web.JQGridResponse;
 import com.myee.tarot.core.web.JsTreeResponse;
 import com.myee.tarot.web.files.FileDTO;
-import com.sun.deploy.net.HttpResponse;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.hibernate.secure.internal.JaccSecurityListener;
+
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileStore;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -126,7 +117,7 @@ public class FilesController {
                 File file = new File(id);
                 boolean isDelete = delete(file);
                 if(isDelete){
-                    Map<String,Object> map = new HashMap<>();
+                    Map<String,Object> map = new HashMap<String,Object>();
                     map.put("status","OK");
                     response.getWriter().write(JSON.toJSONString(map));
                 }
