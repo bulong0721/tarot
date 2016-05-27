@@ -33,6 +33,7 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
     @Column(name = "NAME")
     protected String name;
 
+
     @Column(name = "DESCRIPTION")
     protected String description;
 
