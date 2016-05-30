@@ -65,7 +65,7 @@ function datatablesCtrl($scope, $compile, $uibModal, Constants) {
             '</button>';
     }
 
-    $scope.dtOptions = Constants.buildOption("/admin/users/paging.html", function (data) {
+    $scope.dtOptions = Constants.buildOption("/admin/users/paging", function (data) {
         angular.extend(data, $scope.where);
     }, function (row, data, dataIndex) {
         var elem = angular.element(row);
@@ -81,6 +81,86 @@ function datatablesCtrl($scope, $compile, $uibModal, Constants) {
         }
     };
 }
+
+function editMerchantCtrl($scope,$resource) {
+    var vm = $scope;
+
+    //获取一个商户信息请求
+    $resource('/admin/merchant/get').get({
+        id: '100'//以后从右上角的切换门店取商户ID
+    }, function(resp) {
+        // 处理响应成功
+        vm.list = resp.data[0];
+        vm.setModel(vm.list);
+        console.log(vm.model);
+    }, function(err) {
+        // 处理错误
+
+    });
+
+    vm.setModel = function(list){
+        //设置formly的初始值
+        vm.model = {
+            name: list.name,
+            businessType: list.businessType,
+            cuisineType: list.cuisineType,
+            description: list.description
+        };
+    };
+
+    vm.options = {
+    };
+
+    vm.fields =  [
+            {'key': 'name', 'type': 'input', 'templateOptions': {'type':'text','label': '商户名称', 'placeholder': '商户名称'}},
+            {'key': 'businessType', 'type': 'select',
+                'templateOptions': {
+                    'label': '商户类型',
+                    'options': [
+                        {name: '商场', value: 'AL'},
+                        {name: '餐饮', value: 'AK'},
+                        {name: '零售', value: 'AZ'},
+                        {name: '其他', value: 'AR'},
+                        {name: '商圈', value: 'CA'}
+                    ]
+                }
+            },
+            {'key': 'cuisineType', 'type': 'input', 'templateOptions': {'type':'text','label': '商户菜系', 'placeholder': '商户菜系'}},
+            {'key': 'imgFile', 'type': 'input', 'templateOptions': {'type':'file','label': '商户图标', 'placeholder': '商户图标'}},
+            {'key': 'description', 'type': 'textarea', 'templateOptions': {'label': '商户描述', 'placeholder': '商户描述',"rows": 10}}
+    ];
+
+    //提交到后台修改门店信息
+    $scope.onSubmit = function() {
+        alert(123);
+        console.log(vm.model.id);
+        $resource('/admin/merchant/edit').save(
+
+            {
+                id:'100',//以后从右上角的切换门店取商户ID
+                name:vm.model.name,
+                businessType: vm.model.businessType,
+                cuisineType: vm.model.cuisineType,
+                description: vm.model.description
+            },
+            {},
+            function(response) {
+            // 处理响应成功
+            }, function(response) {
+            // 处理非成功响应
+            }
+        );
+    };
+
+    //重置参数为初始状态
+    $scope.onReset = function(){
+        vm.setModel(vm.list);
+    };
+
+
+}
+
+
 
 function modalInstanceCtrl($uibModalInstance, formData) {
     var vm = this;
@@ -276,6 +356,7 @@ angular
     .module('inspinia')
     .controller('modalInstanceCtrl', modalInstanceCtrl)
     .controller('datatablesCtrl', datatablesCtrl)
+    .controller('editMerchantCtrl', editMerchantCtrl)
     .controller('explorerCtrl', explorerCtrl)
     .controller('uiGridCtrl', uiGridCtrl)
     .controller('MainCtrl', MainCtrl);

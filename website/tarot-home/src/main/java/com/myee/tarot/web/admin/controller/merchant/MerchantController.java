@@ -1,5 +1,7 @@
 package com.myee.tarot.web.admin.controller.merchant;
 
+import com.myee.tarot.admin.domain.AdminUser;
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.service.MerchantService;
@@ -8,6 +10,7 @@ import com.myee.tarot.web.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -28,11 +31,17 @@ public class MerchantController {
     @Autowired
     private MerchantService merchantService;
 
-    @RequestMapping(value = "/admin/merchant/save.html", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/merchant/save", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse saveMerchant(@ModelAttribute Merchant merchant) throws Exception {
+    public AjaxResponse saveMerchant(@ModelAttribute Merchant merchant,HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
+//            AdminUser adminUser = getUserInfo(request);
+//            if(adminUser == null){
+//                //抛出用户未登录异常
+//                resp.setErrorString("未登录");
+//                return resp;
+//            }
             merchantService.save(merchant);
         } catch (Exception e) {
             e.printStackTrace();
@@ -41,18 +50,23 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/merchant/edit.html", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/merchant/edit", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse editMerchant(@ModelAttribute Merchant merchant) throws Exception {
+    public AjaxResponse editMerchant(@ModelAttribute Merchant merchant,HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
-            Long numFind = merchantService.getCountById( merchant);
+            if(merchant.getId() == null ){
+                //抛出异常给异常处理机制
+                resp.setErrorString("参数错误！");
+                return resp;
+            }
+            Long numFind = merchantService.getCountById(merchant);
             if (numFind <= 0L) {
                 //抛出异常给异常处理机制
                 resp.setErrorString("要修改的商户不存在");
                 return resp;
             }
-            Merchant merchantOld = merchantService.getEntity(Merchant.class,merchant.getId());
+            Merchant merchantOld = merchantService.getEntity(Merchant.class, merchant.getId());
             merchantOld.setName(StringUtil.nullToString(merchant.getName())); //不能为空
             merchantOld.setLogo(merchant.getLogo());
             merchantOld.setCuisineType(StringUtil.nullToString(merchant.getCuisineType()));//不能为空
@@ -66,12 +80,15 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/merchant/get.html", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/merchant/get", method = RequestMethod.GET)
     @ResponseBody
-    public AjaxResponse getMerchant(@RequestParam Long id) throws Exception {
+    public AjaxResponse getMerchant(@RequestParam Long id,HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
-            Merchant merchant1 = merchantService.getEntity(Merchant.class, id);
+            AdminUser adminUser = getUserInfo(request);
+            //验证adminUser不为空，权限等.....
+
+            Merchant merchant1 = merchantService.getEntity(Merchant.class, id);//id由前端切换商户传进来
             resp.addDataEntry(objectToEntry(merchant1));
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,13 +97,13 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/merchant/delete.html", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/merchant/delete", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse deleteMerchant(@RequestParam Long id) throws Exception {
+    public AjaxResponse deleteMerchant(@RequestParam Long id,HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
-            Merchant merchant = merchantService.getEntity(Merchant.class,id);
-            if(merchant!= null)merchantService.delete(merchant);
+            Merchant merchant = merchantService.getEntity(Merchant.class, id);
+            if (merchant != null) merchantService.delete(merchant);
         } catch (Exception e) {
             e.printStackTrace();
             resp.setErrorString("删除出错");
@@ -94,9 +111,9 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/merchant/list.html", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/merchant/list", method = RequestMethod.GET)
     @ResponseBody
-    public AjaxResponse listMerchant() throws Exception {
+    public AjaxResponse listMerchant(HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
             List<Merchant> merchantList = merchantService.list();
@@ -111,9 +128,9 @@ public class MerchantController {
     }
 
     //把类转换成entry返回给前端，解耦和
-    private Map objectToEntry(Merchant merchant){
+    private Map objectToEntry(Merchant merchant) {
         Map entry = new HashMap();
-        entry.put("id",merchant.getId());
+        entry.put("id", merchant.getId());
         entry.put("name", merchant.getName());
         entry.put("businessType", merchant.getBusinessType());
         entry.put("cuisineType", merchant.getCuisineType());
@@ -122,5 +139,8 @@ public class MerchantController {
         return entry;
     }
 
+    AdminUser getUserInfo(HttpServletRequest req){
+        return (AdminUser) req.getSession().getAttribute(Constants.ADMIN_USER);//正式用
+    }
 
 }

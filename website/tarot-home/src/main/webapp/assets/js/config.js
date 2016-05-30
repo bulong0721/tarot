@@ -14,6 +14,25 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         debug: false
     });
 
+    // set templates here
+    //formlyConfigProvider.setWrapper({
+    //    name: 'horizontalBootstrapLabel',
+    //    template: [
+    //        '<label for="{{::id}}" class="col-sm-2 control-label">',
+    //        '{{to.label}} {{to.required ? "*" : ""}}',
+    //        '</label>',
+    //        '<div class="col-sm-8">',
+    //        '<formly-transclude></formly-transclude>',
+    //        '</div>'
+    //    ].join(' ')
+    //});
+    //
+    //formlyConfigProvider.setType({
+    //    name: 'horizontalInput',
+    //    extends: 'input',
+    //    wrapper: ['horizontalBootstrapLabel', 'bootstrapHasError']
+    //});
+
     $stateProvider
         .state('merchant', {
             abstract: true,
@@ -28,7 +47,32 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         .state('merchant.merchant', {
             url: "/merchant",
             templateUrl: "assets/views/merchant/merchant.html",
-            data: {pageTitle: '编辑商户'}
+            controller:"editMerchantCtrl",
+            data: {pageTitle: '编辑商户'},
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        {
+                            serie: true,
+                            files: ['assets/js/plugins/formly/api-check.min.js']
+                        },
+                        {
+                            serie: true,
+                            name: 'formly',
+                            files: ['assets/js/plugins/formly/formly.min.js']
+                        },
+                        {
+                            serie: true,
+                            name: 'formlyBootstrap',
+                            files: ['assets/js/plugins/formly/angular-formly-templates-bootstrap.js']
+                        }//,
+                        //{
+                        //    serie: true,
+                        //    files: ['assets/js/plugins/dropzone/dropzone.js']
+                        //}
+                    ]);
+                }
+            }
         })
         .state('device', {
             abstract: true,
