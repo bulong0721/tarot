@@ -4,6 +4,8 @@ import com.myee.tarot.core.GenericEntity;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Martin on 2016/4/11.
@@ -35,6 +37,10 @@ public class Merchant extends GenericEntity<Long, Merchant> {
 
     @Column(name = "DESCRIPTION")
     private String description;
+
+    @OneToMany(mappedBy = "merchant", targetEntity = MerchantStore.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
+    @MapKey(name = "name")
+    protected Map<String, MerchantStore> merchantStore = new HashMap<String, MerchantStore>();
 
     @Override
     public Long getId() {
@@ -85,4 +91,9 @@ public class Merchant extends GenericEntity<Long, Merchant> {
     public void setName(String name) {
         this.name = name;
     }
+
+    public Map<String, MerchantStore> getMerchantStore() {
+        return merchantStore;
+    }
+
 }
