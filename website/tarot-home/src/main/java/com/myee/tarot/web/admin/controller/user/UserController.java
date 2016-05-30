@@ -31,7 +31,7 @@ public class UserController {
     @Autowired
     private AdminUserService userService;
 
-    @RequestMapping(value = "/admin/users/save.html", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/users/save", method = RequestMethod.POST)
     public String addUser(@Valid @ModelAttribute AdminUser user, Model model, HttpServletRequest request) throws Exception {
 
         AdminUser dbUser = userService.getByUserName(user.getName());
@@ -42,7 +42,7 @@ public class UserController {
         return "/admin/login";
     }
 
-    @RequestMapping(value = "/admin/users/paging.html", method = RequestMethod.GET)
+    @RequestMapping(value = "/admin/users/paging", method = RequestMethod.GET)
     public
     @ResponseBody
     JQGridResponse pageUsers(Model model, HttpServletRequest request) {
