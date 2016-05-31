@@ -55,65 +55,40 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         debug: false
     });
 
-    // set templates here
-    //formlyConfigProvider.setWrapper({
-    //    name: 'horizontalBootstrapLabel',
-    //    template: [
-    //        '<label for="{{::id}}" class="col-sm-2 control-label">',
-    //        '{{to.label}} {{to.required ? "*" : ""}}',
-    //        '</label>',
-    //        '<div class="col-sm-8">',
-    //        '<formly-transclude></formly-transclude>',
-    //        '</div>'
-    //    ].join(' ')
-    //});
-    //
-    //formlyConfigProvider.setType({
-    //    name: 'horizontalInput',
-    //    extends: 'input',
-    //    wrapper: ['horizontalBootstrapLabel', 'bootstrapHasError']
-    //});
-
     $stateProvider
         .state('merchant', {
             abstract: true,
             url: "/merchant",
             templateUrl: "assets/views/content.html",
+            data: {pageTitle: '门店管理'},
+            resolve: {
+                loadPlugin: managerLoader
+            }
         })
-        .state('merchant.shop_list', {
-            url: "/shop_list",
-            templateUrl: "assets/views/merchant/shop_list.html",
-            data: {pageTitle: '店铺列表'}
+        .state('merchant.shop', {
+            url: "/user",
+            templateUrl: "assets/views/manager.html",
+            controller: 'datatablesCtrl'
+        })
+        .state('merchant.shop.datatable', {
+            url: '/datatable',
+            templateUrl: 'assets/views/merchant/shop_datatable.html',
+            data: {subTitle: '门店列表'}
+        })
+        .state('merchant.shop.editor', {
+            url: '/editor',
+            templateUrl: 'assets/views/formly/basic_editor.html',
+            data: {subTitle: '编辑门店'}
         })
         .state('merchant.merchant', {
-            url: "/merchant",
-            templateUrl: "assets/views/merchant/merchant.html",
-            controller:"editMerchantCtrl",
-            data: {pageTitle: '编辑商户'},
-            resolve: {
-                loadPlugin: function ($ocLazyLoad) {
-                    return $ocLazyLoad.load([
-                        {
-                            serie: true,
-                            files: ['assets/js/plugins/formly/api-check.min.js']
-                        },
-                        {
-                            serie: true,
-                            name: 'formly',
-                            files: ['assets/js/plugins/formly/formly.min.js']
-                        },
-                        {
-                            serie: true,
-                            name: 'formlyBootstrap',
-                            files: ['assets/js/plugins/formly/angular-formly-templates-bootstrap.js']
-                        }//,
-                        //{
-                        //    serie: true,
-                        //    files: ['assets/js/plugins/dropzone/dropzone.js']
-                        //}
-                    ]);
-                }
-            }
+            url: "/user",
+            templateUrl: "assets/views/manager.html",
+            controller: 'datatablesCtrl'
+        })
+        .state('merchant.merchant.editor', {
+            url: '/editor',
+            templateUrl: 'assets/views/formly/basic_editor.html',
+            data: {subTitle: '编辑商户'}
         })
         .state('device', {
             abstract: true,
