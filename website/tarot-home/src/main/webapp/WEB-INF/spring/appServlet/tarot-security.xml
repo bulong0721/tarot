@@ -44,12 +44,10 @@
         <intercept-url pattern="/admin/unauthorized.html" access="permitAll"/>
         <intercept-url pattern="/admin/users/resetPassword.html*" access="permitAll"/>
         <intercept-url pattern="/admin/users/resetPasswordSecurityQtn.html*" access="permitAll"/>
-        <intercept-url pattern="/admin/users/save.html" access="permitAll"/>
+        <intercept-url pattern="/admin/assets/**" access="permitAll"/>
         <intercept-url pattern="/admin" access="hasRole('AUTH')"/>
         <intercept-url pattern="/admin/" access="hasRole('AUTH')"/>
-        <intercept-url pattern="/admin/*.html*" access="hasRole('AUTH')"/>
-        <intercept-url pattern="/admin/*/*.html*" access="hasRole('AUTH')"/>
-        <intercept-url pattern="/admin/*/*/*.html*" access="hasRole('AUTH')"/>
+        <intercept-url pattern="/admin/**" access="hasRole('AUTH')"/>
         <csrf disabled="true"/>
         <form-login
                 login-processing-url="/admin/j_spring_security_check"
@@ -76,10 +74,7 @@
         <intercept-url pattern="/shop/customer/j_spring_security_check" access="permitAll"/>
         <intercept-url pattern="/shop/customer" access="hasRole('AUTH_CUSTOMER')"/>
         <intercept-url pattern="/shop/customer/" access="hasRole('AUTH_CUSTOMER')"/>
-        <intercept-url pattern="/shop/customer/*.html*" access="hasRole('AUTH_CUSTOMER')"/>
-        <intercept-url pattern="/shop/customer/*.html*" access="hasRole('AUTH_CUSTOMER')"/>
-        <intercept-url pattern="/shop/customer/*/*.html*" access="hasRole('AUTH_CUSTOMER')"/>
-        <intercept-url pattern="/shop/customer/*/*/*.html*" access="hasRole('AUTH_CUSTOMER')"/>
+        <intercept-url pattern="/shop/customer/**" access="hasRole('AUTH_CUSTOMER')"/>
         <logout invalidate-session="false"
                 logout-success-url="/shop/"
                 logout-url="/shop/customer/j_spring_security_logout"/>
