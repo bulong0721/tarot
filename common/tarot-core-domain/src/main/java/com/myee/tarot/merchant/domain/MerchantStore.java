@@ -53,6 +53,10 @@ public class MerchantStore extends GenericEntity<Long, MerchantStore> {
     @Column(name = "EXPERIENCE")
     private boolean experience = false;
 
+    @ManyToOne(targetEntity = Merchant.class, optional = false, cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "MERCHANT_ID")
+    protected Merchant merchant;
+
     @Override
     public Long getId() {
         return id;
@@ -134,4 +138,9 @@ public class MerchantStore extends GenericEntity<Long, MerchantStore> {
     public void setCode(String code) {
         this.code = code;
     }
+
+    public Merchant getMerchant() {
+        return merchant;
+    }
+
 }

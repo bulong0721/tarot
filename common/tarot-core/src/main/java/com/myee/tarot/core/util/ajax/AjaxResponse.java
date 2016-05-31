@@ -15,15 +15,15 @@ public class AjaxResponse implements Serializable {
     public final static int CODE_ALREADY_EXIST                = 9998;
 
     private int status;
-    private List<Map<String, String>> data               = new ArrayList<Map<String, String>>();
-    private Map<String, String>       dataMap            = new HashMap<String, String>();
-    private Map<String, String>       validationMessages = new HashMap<String, String>();
+    private List<Map<String, Object>> data               = new ArrayList<Map<String, Object>>();
+    private Map<String, Object>       dataMap            = new HashMap<String, Object>();
+    private Map<String, Object>       validationMessages = new HashMap<String, Object>();
 
-    public Map<String, String> getValidationMessages() {
+    public Map<String, Object> getValidationMessages() {
         return validationMessages;
     }
 
-    public void setValidationMessages(Map<String, String> validationMessages) {
+    public void setValidationMessages(Map<String, Object> validationMessages) {
         this.validationMessages = validationMessages;
     }
 
@@ -35,11 +35,11 @@ public class AjaxResponse implements Serializable {
         this.status = status;
     }
 
-    public List<Map<String,String>> getData() {
+    public List<Map<String,Object>> getData() {
         return data;
     }
 
-    public void addDataEntry(Map<String,String> dataEntry) {
+    public void addDataEntry(Map<String,Object> dataEntry) {
         this.data.add(dataEntry);
     }
 
@@ -69,11 +69,11 @@ public class AjaxResponse implements Serializable {
         this.statusMessage = statusMessage;
     }
 
-    public Map<String, String> getDataMap() {
+    public Map<String, Object> getDataMap() {
         return dataMap;
     }
 
-    public void setDataMap(Map<String, String> dataMap) {
+    public void setDataMap(Map<String, Object> dataMap) {
         this.dataMap = dataMap;
     }
 

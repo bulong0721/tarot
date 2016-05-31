@@ -1,12 +1,8 @@
 package com.myee.tarot.catalog.domain;
 
 import com.myee.tarot.core.GenericEntity;
-import org.hibernate.annotations.*;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.*;
 
 /**
@@ -22,24 +18,18 @@ public class Device extends GenericEntity<Long, Device> {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     protected Long id;
 
-    @Column(name = "URL")
-    protected String url;
+    @Column(name = "NAME")
+    protected String name;
 
-    @Column(name = "URL_KEY")
-    protected String urlKey;
+    @Column(name = "VERSION_NUM")
+    protected String versionNum;
 
-    @Column(name = "DISPLAY_TEMPLATE")
-    protected String displayTemplate;
+    @Column(name = "DESCRIPTION")
+    protected String description;
 
-    @Column(name = "MODEL")
-    protected String model;
-
-    @Column(name = "USE_WITHOUT_OPTIONS")
-    protected boolean useWithoutOptions = false;
-
-    @OneToMany(mappedBy = "device", targetEntity = DeviceAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "device", targetEntity = DeviceAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
     @MapKey(name = "name")
-    protected Map<String, DeviceAttribute> productAttributes = new HashMap<String, DeviceAttribute>();
+    protected Map<String, DeviceAttribute> deviceAttribute = new HashMap<String, DeviceAttribute>();
 
     @Override
     public Long getId() {
@@ -51,51 +41,32 @@ public class Device extends GenericEntity<Long, Device> {
         this.id = id;
     }
 
-    public String getDisplayTemplate() {
-        return displayTemplate;
+    public String getName() {
+        return name;
     }
 
-    public void setDisplayTemplate(String displayTemplate) {
-        this.displayTemplate = displayTemplate;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getModel() {
-        return model;
+    public String getVersionNum() {
+        return versionNum;
     }
 
-    public void setModel(String model) {
-        this.model = model;
+    public void setVersionNum(String versionNum) {
+        this.versionNum = versionNum;
     }
 
-    public Map<String, DeviceAttribute> getProductAttributes() {
-        return productAttributes;
+    public String getDescription() {
+        return description;
     }
 
-    public void setProductAttributes(Map<String, DeviceAttribute> productAttributes) {
-        this.productAttributes = productAttributes;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getUrl() {
-        return url;
+    public Map<String, DeviceAttribute> getDeviceAttribute() {
+        return deviceAttribute;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getUrlKey() {
-        return urlKey;
-    }
-
-    public void setUrlKey(String urlKey) {
-        this.urlKey = urlKey;
-    }
-
-    public boolean isUseWithoutOptions() {
-        return useWithoutOptions;
-    }
-
-    public void setUseWithoutOptions(boolean useWithoutOptions) {
-        this.useWithoutOptions = useWithoutOptions;
-    }
 }

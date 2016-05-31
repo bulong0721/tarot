@@ -1,14 +1,13 @@
 package com.myee.tarot.catalog.domain;
 
+import com.myee.tarot.catalog.type.ProductType;
 import com.myee.tarot.core.GenericEntity;
-import com.myee.tarot.core.audit.Auditable;
-import com.myee.tarot.core.audit.AuditableListener;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Martin on 2016/4/18.
@@ -30,6 +29,28 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
     @ManyToOne(targetEntity = MerchantStore.class, optional = false)
     @JoinColumn(name = "STORE_ID")
     protected MerchantStore store;
+
+    @NotEmpty
+    @Column(name = "TYPE")
+    protected String type;
+
+    @Column(name = "DESCRIPTION")
+    protected String description;
+
+    @Column(name = "DEVICE_NUM")
+    protected String deviceNum;
+
+    @OneToMany(mappedBy = "productUsed", targetEntity = ProductUsedAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
+    @MapKey(name = "name")
+    protected Map<String, ProductUsedAttribute> productUsedAttribute = new HashMap<String, ProductUsedAttribute>();
+
+    @OneToMany(targetEntity = DeviceUsed.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinTable(name = "C_PRODUCT_USED_DEV_XREF",
+            joinColumns = {@JoinColumn(name = "PRODUCT_USED_ID", nullable = false, updatable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "DEVICE_USED_ID", nullable = false, updatable = false)}
+    )
+    @MapKey(name = "name")
+    protected Map<String, DeviceUsed> deviceUsed = new HashMap<String, DeviceUsed>();
 
     @Override
     public Long getId() {
@@ -56,4 +77,34 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
     public void setStore(MerchantStore store) {
         this.store = store;
     }
+
+    @Transient
+    public String getName() {
+        return ProductType.getName(this.type);
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Map<String, ProductUsedAttribute> getProductUsedAttribute() {
+        return productUsedAttribute;
+    }
+
+    public String getDeviceNum() {
+        return deviceNum;
+    }
+
+    public void setDeviceNum(String deviceNum) {
+        this.deviceNum = deviceNum;
+    }
+
+    public Map<String, DeviceUsed> getDeviceUsed() {
+        return deviceUsed;
+    }
+
 }
