@@ -28,6 +28,7 @@ public class DeviceUsedAttribute extends GenericEntity<Long, DeviceUsedAttribute
 
     @ManyToOne(targetEntity = DeviceUsed.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "DEVICE_USED_ID")
+    @org.hibernate.annotations.Index(name = "DEVICEUSEDATTRIBUTE_INDEX", columnNames = {"DEVICE_USED_ID"})
     protected DeviceUsed deviceUsed;
 
     @Override

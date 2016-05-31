@@ -40,9 +40,9 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
     @Column(name = "DEVICE_NUM")
     protected String deviceNum;
 
-    @OneToMany(mappedBy = "productUsed", targetEntity = ProductUsedAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
-    @MapKey(name = "name")
-    protected Map<String, ProductUsedAttribute> productUsedAttribute = new HashMap<String, ProductUsedAttribute>();
+//    @OneToMany(mappedBy = "productUsed", targetEntity = ProductUsedAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
+//    @MapKey(name = "name")
+//    protected Map<String, ProductUsedAttribute> productUsedAttribute = new HashMap<String, ProductUsedAttribute>();
 
     @OneToMany(targetEntity = DeviceUsed.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinTable(name = "C_PRODUCT_USED_DEV_XREF",
@@ -91,9 +91,9 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
         this.description = description;
     }
 
-    public Map<String, ProductUsedAttribute> getProductUsedAttribute() {
-        return productUsedAttribute;
-    }
+//    public Map<String, ProductUsedAttribute> getProductUsedAttribute() {
+//        return productUsedAttribute;
+//    }
 
     public String getDeviceNum() {
         return deviceNum;

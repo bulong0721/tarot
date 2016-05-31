@@ -28,6 +28,7 @@ public class ProductUsedAttribute extends GenericEntity<Long, ProductUsedAttribu
 
     @ManyToOne(targetEntity = ProductUsed.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_USED_ID")
+    @org.hibernate.annotations.Index(name = "PRODUCTUSEDATTRIBUTE_INDEX", columnNames = {"PRODUCT_USED_ID"})
     protected ProductUsed productUsed;
 
     @Override
