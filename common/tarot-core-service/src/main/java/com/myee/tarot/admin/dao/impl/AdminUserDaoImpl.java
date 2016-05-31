@@ -27,6 +27,7 @@ public class AdminUserDaoImpl extends GenericEntityDaoImpl<Long, AdminUser> impl
                 .where(qUser.name.eq(userName));
 
         AdminUser user = query.fetchFirst();
+
         return user;
     }
 

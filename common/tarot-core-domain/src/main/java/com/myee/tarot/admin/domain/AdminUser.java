@@ -23,21 +23,21 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     private Long id;
 
-    @Column(name = "NAME", nullable = false)
+    @Column(name = "NAME", length = 20, nullable = false)
     private String name;
 
-    @Column(name = "LOGIN", nullable = false)
+    @Column(name = "LOGIN", length = 40, nullable = false)
     private String login;
 
     @NotEmpty
-    @Column(name = "PASSWORD", length = 50)
+    @Column(name = "PASSWORD", length = 40)
     private String password;
 
-    @Column(name = "PHONE_NUMBER")
+    @Column(name = "PHONE_NUMBER", length = 20)
     protected String phoneNumber;
 
     @NotEmpty
-    @Column(name = "ADMIN_EMAIL")
+    @Column(name = "ADMIN_EMAIL", length = 60)
     protected String email;
 
     @Column(name = "ACTIVE_STATUS_FLAG")
@@ -47,13 +47,13 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
     @JoinColumn(name = "MERCHANT_ID")
     private MerchantStore merchantStore;
 
-//    @Temporal(TemporalType.TIMESTAMP)
-//    @Column(name = "LAST_ACCESS")
-//    protected Date lastAccess;
-//
-//    @Temporal(TemporalType.TIMESTAMP)
-//    @Column(name = "LOGIN_ACCESS")
-//    protected Date lastLoin;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "LAST_ACCESS")
+    protected Date lastAccess;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "LOGIN_ACCESS")
+    protected Date lastLoin;
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminRole.class)
     @JoinTable(name = "C_ADMIN_USER_ROLE_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"))
@@ -143,19 +143,19 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
         this.merchantStore = merchantStore;
     }
 
-    //    public Date getLastAccess() {
-//        return lastAccess;
-//    }
-//
-//    public void setLastAccess(Date lastAccess) {
-//        this.lastAccess = lastAccess;
-//    }
-//
-//    public Date getLastLoin() {
-//        return lastLoin;
-//    }
-//
-//    public void setLastLoin(Date lastLoin) {
-//        this.lastLoin = lastLoin;
-//    }
+    public Date getLastAccess() {
+        return lastAccess;
+    }
+
+    public void setLastAccess(Date lastAccess) {
+        this.lastAccess = lastAccess;
+    }
+
+    public Date getLastLoin() {
+        return lastLoin;
+    }
+
+    public void setLastLoin(Date lastLoin) {
+        this.lastLoin = lastLoin;
+    }
 }

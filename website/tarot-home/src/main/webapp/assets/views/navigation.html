@@ -47,9 +47,9 @@
 
             <li ng-class="{active: $state.includes('user')}">
                 <a href="user.user_list"><i class="fa fa-lg fa-group"></i> <span class="nav-label">账号管理</span> <span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level" ng-class="{in: $state.includes('equipment')}">
-                    <li ui-sref-active="active"><a ui-sref="user.user_list">用户管理</a></li>
-                    <li ui-sref-active="active"><a ui-sref="user.role_list">角色管理</a></li>
+                <ul class="nav nav-second-level" ng-class="{in: $state.includes('user')}">
+                    <li ng-class="{active: $state.includes('user.user')}"><a ui-sref="user.user.datatable">用户管理</a></li>
+                    <li ng-class="{active: $state.includes('user.role')}"><a ui-sref="user.role.datatable">角色管理</a></li>
                 </ul>
             </li>
         </ul>

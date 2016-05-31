@@ -6,6 +6,47 @@
  * Initial there are written state for all view in theme.
  *
  */
+function treeLoader($ocLazyLoad) {
+    return $ocLazyLoad.load([
+        {
+            files: ['assets/js/plugins/jsTree/style.min.css', 'assets/js/plugins/jsTree/jstree.min.js']
+        }
+    ]);
+}
+
+function managerLoader($ocLazyLoad) {
+    return $ocLazyLoad.load([
+        {
+            serie: true,
+            files: ['assets/js/plugins/dataTables/datatables.min.js', 'assets/css/plugins/dataTables/datatables.min.css']
+        },
+        {
+            serie: true,
+            name: 'datatables',
+            files: ['assets/js/plugins/dataTables/angular-datatables.min.js', 'assets/css/plugins/dataTables/angular-datatables.min.css']
+        },
+        {
+            serie: true,
+            name: 'datatables.buttons',
+            files: ['assets/js/plugins/dataTables/angular-datatables.buttons.min.js']
+        },
+        {
+            serie: true,
+            files: ['assets/js/plugins/formly/api-check.min.js']
+        },
+        {
+            serie: true,
+            name: 'formly',
+            files: ['assets/js/plugins/formly/formly.min.js']
+        },
+        {
+            serie: true,
+            name: 'formlyBootstrap',
+            files: ['assets/js/plugins/formly/angular-formly-templates-bootstrap.js']
+        }
+    ]);
+}
+
 function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
     $urlRouterProvider.otherwise("/merchant/shop_list");
 
@@ -55,13 +96,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             templateUrl: "assets/views/explorer/explorer.html",
             data: {pageTitle: '资源管理'},
             resolve: {
-                loadPlugin: function ($ocLazyLoad) {
-                    return $ocLazyLoad.load([
-                        {
-                            files: ['assets/js/plugins/jsTree/style.min.css','assets/js/plugins/jsTree/jstree.min.js']
-                        }
-                    ]);
-                }
+                loadPlugin: treeLoader
             }
         })
         .state('explorer.push', {
@@ -72,71 +107,42 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         .state('user', {
             abstract: true,
             url: "/user",
-            templateUrl: "assets/views/content.html"
-        })
-        .state('user.user_list', {
-            url: "/user_list",
-            templateUrl: "assets/views/user/user_list.html",
-            data: {pageTitle: '用户列表'},
+            templateUrl: "assets/views/content.html",
             resolve: {
-                loadPlugin: function ($ocLazyLoad) {
-                    return $ocLazyLoad.load([
-                        {
-                            serie: true,
-                            files: ['assets/js/plugins/dataTables/datatables.min.js', 'assets/css/plugins/dataTables/datatables.min.css']
-                        },
-                        {
-                            serie: true,
-                            name: 'datatables',
-                            files: ['assets/js/plugins/dataTables/angular-datatables.min.js', 'assets/css/plugins/dataTables/angular-datatables.min.css']
-                        },
-                        {
-                            serie: true,
-                            name: 'datatables.buttons',
-                            files: ['assets/js/plugins/dataTables/angular-datatables.buttons.min.js']
-                        },
-                        {
-                            serie: true,
-                            files: ['assets/js/plugins/formly/api-check.min.js']
-                        },
-                        {
-                            serie: true,
-                            name: 'formly',
-                            files: ['assets/js/plugins/formly/formly.min.js']
-                        },
-                        {
-                            serie: true,
-                            name: 'formlyBootstrap',
-                            files: ['assets/js/plugins/formly/angular-formly-templates-bootstrap.js']
-                        }
-                    ]);
-                }
+                loadPlugin: managerLoader
             }
         })
-        .state('user.role_list', {
-            url: "/role_list",
-            templateUrl: "assets/views/user/role_list.html",
-            data: {pageTitle: '角色管理'},
-            resolve: {
-                loadPlugin: function ($ocLazyLoad) {
-                    return $ocLazyLoad.load([
-                        {
-                            serie: true,
-                            name: 'ui.grid',
-                            files: ['assets/js/plugins/ui-grid/ui-grid.min.js', 'assets/js/plugins/ui-grid/ui-grid.min.css']
-                        },
-                        {
-                            name: 'ui.grid.selection',
-                            files: ['assets/js/plugins/ui-grid/ui-grid.min.js']
-                        },
-                        {
-                            name: 'ui.grid.pagination',
-                            files: ['assets/js/plugins/ui-grid/ui-grid.min.js']
-                        }
-                    ]);
-                }
-            }
+        .state('user.user', {
+            url: "/user",
+            templateUrl: "assets/views/manager.html",
+            controller: 'datatablesCtrl',
+            data: {pageTitle: '用户管理'}
         })
+        .state('user.user.datatable', {
+            url: '/datatable',
+            templateUrl: 'assets/views/user/user_datatable.html',
+            data: {subTitle: '用户列表'}
+        })
+        .state('user.user.editor', {
+            url: '/editor',
+            templateUrl: 'assets/views/formly/user_editor.html',
+            data: {subTitle: '编辑用户'}
+        })
+        .state('user.role', {
+            url: "/role",
+            templateUrl: "assets/views/manager.html",
+            controller: 'datatablesCtrl',
+            data: {pageTitle: '角色管理'}
+        })
+        .state('user.role.datatable', {
+            url: "/datatable",
+            templateUrl: "assets/views/user/role_datatable.html",
+            data: {subTitle: '角色列表'}
+        }).state('user.role.editor', {
+            url: '/editor',
+            templateUrl: 'assets/views/formly/basic_editor.html',
+            data: {subTitle: '编辑角色'}
+        });
 }
 angular
     .module('inspinia')

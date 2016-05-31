@@ -42,7 +42,7 @@ public class UserController {
         return "/admin/login";
     }
 
-    @RequestMapping(value = "/admin/users/paging.html", method = RequestMethod.GET)
+    @RequestMapping(value = "/admin/users/paging", method = RequestMethod.GET)
     public
     @ResponseBody
     JQGridResponse pageUsers(Model model, HttpServletRequest request) {
