@@ -48,7 +48,7 @@ function managerLoader($ocLazyLoad) {
 }
 
 function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
-    $urlRouterProvider.otherwise("/merchant/shop_list");
+    $urlRouterProvider.otherwise("/merchant/shop/datatable");
 
     $ocLazyLoadProvider.config({
         // Set to true if you want to see what and when is dynamically loaded
@@ -66,7 +66,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             }
         })
         .state('merchant.shop', {
-            url: "/user",
+            url: "/shop",
             templateUrl: "assets/views/manager.html",
             controller: 'datatablesCtrl'
         })
