@@ -1,7 +1,7 @@
 package com.myee.tarot.profile.domain;
 
 import com.myee.tarot.core.GenericEntity;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import com.myee.tarot.reference.domain.Address;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.Type;

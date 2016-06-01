@@ -2,6 +2,7 @@ package com.myee.tarot.profile.domain;
 
 
 import com.myee.tarot.core.GenericEntity;
+import com.myee.tarot.reference.domain.Address;
 
 import javax.persistence.*;
 

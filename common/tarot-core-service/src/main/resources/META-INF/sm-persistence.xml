@@ -27,7 +27,7 @@
         <class>com.myee.tarot.menu.domain.Menu</class>
         <class>com.myee.tarot.menu.domain.MenuItem</class>
 
-        <class>com.myee.tarot.profile.domain.Address</class>
+        <class>com.myee.tarot.reference.domain.Address</class>
         <class>com.myee.tarot.profile.domain.ChallengeQuestion</class>
         <class>com.myee.tarot.profile.domain.Customer</class>
         <class>com.myee.tarot.profile.domain.CustomerAddress</class>
@@ -35,8 +35,8 @@
         <class>com.myee.tarot.profile.domain.CustomerPayment</class>
         <class>com.myee.tarot.profile.domain.CustomerPhone</class>
         <class>com.myee.tarot.profile.domain.CustomerRole</class>
-        <class>com.myee.tarot.profile.domain.Phone</class>
-        <class>com.myee.tarot.profile.domain.Role</class>
+        <class>com.myee.tarot.reference.domain.Phone</class>
+        <class>com.myee.tarot.reference.domain.Role</class>
 
         <class>com.myee.tarot.merchant.domain.Merchant</class>
         <class>com.myee.tarot.merchant.domain.MerchantStore</class>

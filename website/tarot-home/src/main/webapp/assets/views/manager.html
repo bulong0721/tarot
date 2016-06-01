@@ -1,11 +1,11 @@
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
         <h1>
-        {{$state.$current.data.pageTitle}}
-        <small>
-            <i class="fa fa-angle-double-right"></i>
-            {{$state.$current.data.subTitle}}
-        </small>
+            {{$state.$current.data.pageTitle}}
+            <small>
+                <i class="fa fa-angle-double-right"></i>
+                {{$state.$current.data.subTitle}}
+            </small>
         </h1>
     </div>
     <div class="col-lg-2">
@@ -13,6 +13,13 @@
 </div>
 <div class="wrapper wrapper-content">
     <div class="row">
-        <div id="manager-views" ui-view></div>
+        <uib-tabset type="bareheaded">
+            <uib-tab heading="table" active="showDataTable">
+                <div ng-include="$state.$current.data.datatable"/>
+            </uib-tab>
+            <uib-tab heading="editor" active="showEditor">
+                <div ng-include="$state.$current.data.editor || 'assets/views/formly/basic_editor.html'"/>
+            </uib-tab>
+        </uib-tabset>
     </div>
 </div>

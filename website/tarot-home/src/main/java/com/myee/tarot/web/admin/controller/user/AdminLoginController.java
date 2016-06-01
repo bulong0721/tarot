@@ -28,14 +28,14 @@ public class AdminLoginController extends AdminAbstractController {
         return "/admin/login";
     }
 
-    @RequestMapping(value="/admin/forgotUsername", method=RequestMethod.POST)
+    @RequestMapping(value = "/admin/forgotUsername", method = RequestMethod.POST)
     @ResponseBody
     public String processForgotUserName(HttpServletRequest request,
                                         @RequestParam("emailAddress") String email) {
         return null;
     }
 
-    @RequestMapping(value="/changePassword", method=RequestMethod.POST)
+    @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
     public String processChangePassword(HttpServletRequest request, HttpServletResponse response, Model model,
                                         @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm) {
         GenericResponse errorResponse = adminUserService.changePassword(resetPasswordForm.getUsername(),

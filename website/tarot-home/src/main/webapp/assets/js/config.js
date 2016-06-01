@@ -135,32 +135,22 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             url: "/user",
             templateUrl: "assets/views/manager.html",
             controller: 'datatablesCtrl',
-            data: {pageTitle: '用户管理'}
-        })
-        .state('user.user.datatable', {
-            url: '/datatable',
-            templateUrl: 'assets/views/user/user_datatable.html',
-            data: {subTitle: '用户列表'}
-        })
-        .state('user.user.editor', {
-            url: '/editor',
-            templateUrl: 'assets/views/formly/user_editor.html',
-            data: {subTitle: '编辑用户'}
+            data: {
+                pageTitle: '用户管理',
+                subTitle: '用户管理',
+                datatable: 'assets/views/user/user_datatable.html',
+                editor: 'assets/views/formly/user_editor.html'
+            }
         })
         .state('user.role', {
             url: "/role",
             templateUrl: "assets/views/manager.html",
-            controller: 'datatablesCtrl',
-            data: {pageTitle: '角色管理'}
-        })
-        .state('user.role.datatable', {
-            url: "/datatable",
-            templateUrl: "assets/views/user/role_datatable.html",
-            data: {subTitle: '角色列表'}
-        }).state('user.role.editor', {
-            url: '/editor',
-            templateUrl: 'assets/views/formly/basic_editor.html',
-            data: {subTitle: '编辑角色'}
+            controller: 'roleMgrCtrl',
+            data: {
+                pageTitle: '角色管理',
+                subTitle: '角色管理',
+                datatable: 'assets/views/user/role_datatable.html'
+            }
         });
 }
 angular

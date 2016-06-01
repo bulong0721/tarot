@@ -1,4 +1,4 @@
-package com.myee.tarot.profile.domain;
+package com.myee.tarot.reference.domain;
 
 import com.myee.tarot.core.GenericEntity;
 
@@ -13,12 +13,15 @@ import javax.persistence.*;
 public class Role extends GenericEntity<Long, Role> {
     @Id
     @Column(name = "ROLE_ID", unique = true, nullable = false)
-    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "ROLE_SEQ_NEXT_VAL")
+    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "ROLE_SEQ_NEXT_VAL", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     protected Long id;
 
-    @Column(name = "ROLE_NAME", nullable = false)
+    @Column(name = "ROLE_NAME", length = 20, nullable = false)
     protected String roleName;
+
+    @Column(name = "DESCRIPTION")
+    protected String description;
 
     @Override
     public Long getId() {
@@ -38,6 +41,14 @@ public class Role extends GenericEntity<Long, Role> {
         this.roleName = roleName;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -47,7 +58,6 @@ public class Role extends GenericEntity<Long, Role> {
         Role role = (Role) o;
 
         return !(roleName != null ? !roleName.equals(role.roleName) : role.roleName != null);
-
     }
 
     @Override

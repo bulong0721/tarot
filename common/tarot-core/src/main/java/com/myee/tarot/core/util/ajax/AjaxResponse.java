@@ -1,8 +1,5 @@
 package com.myee.tarot.core.util.ajax;
 
-import com.alibaba.fastjson.JSON;
-import org.apache.commons.collections.CollectionUtils;
-
 import java.io.Serializable;
 import java.util.*;
 
@@ -15,9 +12,9 @@ public class AjaxResponse implements Serializable {
     public final static int CODE_ALREADY_EXIST                = 9998;
 
     private int status;
-    private List<Map<String, Object>> data               = new ArrayList<Map<String, Object>>();
-    private Map<String, Object>       dataMap            = new HashMap<String, Object>();
-    private Map<String, Object>       validationMessages = new HashMap<String, Object>();
+    private List<Object>        data               = new ArrayList<Object>();
+    private Map<String, Object> dataMap            = new HashMap<String, Object>();
+    private Map<String, Object> validationMessages = new HashMap<String, Object>();
 
     public Map<String, Object> getValidationMessages() {
         return validationMessages;
@@ -35,11 +32,11 @@ public class AjaxResponse implements Serializable {
         this.status = status;
     }
 
-    public List<Map<String,Object>> getData() {
-        return data;
+    public void setData(List<Object> data) {
+        this.data = data;
     }
 
-    public void addDataEntry(Map<String,Object> dataEntry) {
+    public void addDataEntry(Map<String, Object> dataEntry) {
         this.data.add(dataEntry);
     }
 
@@ -75,6 +72,18 @@ public class AjaxResponse implements Serializable {
 
     public void setDataMap(Map<String, Object> dataMap) {
         this.dataMap = dataMap;
+    }
+
+    public static AjaxResponse success() {
+        AjaxResponse response = new AjaxResponse();
+        response.setStatus(RESPONSE_STATUS_SUCCESS);
+        return response;
+    }
+
+    public static AjaxResponse failed(int statusCode) {
+        AjaxResponse response = new AjaxResponse();
+        response.setStatus(statusCode);
+        return response;
     }
 
 }

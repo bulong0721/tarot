@@ -1,7 +1,7 @@
 /**
  * Created by Martin on 2016/4/12.
  */
-function constServiceCtor($filter, $compile, DTOptionsBuilder) {
+function constServiceCtor($filter, $compile, $resource) {
     var vm = this;
 
     vm.sizeFormatter = function (value, opts, row) {
@@ -56,7 +56,7 @@ function constServiceCtor($filter, $compile, DTOptionsBuilder) {
         }
     };
 
-    vm.compile4Row = function(row, data, dataIndex) {
+    vm.compile4Row = function (row, data, dataIndex) {
         $compile(angular.element(row).contents())($scope);
     };
 
@@ -70,7 +70,74 @@ function constServiceCtor($filter, $compile, DTOptionsBuilder) {
                 },
                 createdRow: compile4Row
             }, vm.defaultOptions);
-    }
+    };
+
+    vm.initMgrCtrl = function (mgrData, scope) {
+        var vm = scope;
+        scope.where = {};
+        scope.dtInstance = null;
+        scope.formData = {
+            fields: mgrData.fields
+        };
+        scope.showDataTable = true;
+        scope.showEditor = false;
+
+        scope.goDataTable = function () {
+            scope.showDataTable = true;
+            scope.showEditor = false;
+        };
+
+        scope.goEditor = function (rowIndex) {
+            var api = this.dtInstance;
+            if (api) {
+                scope.dtApi = api;
+            }
+            scope.addNew = true;
+            if (scope.dtApi && rowIndex > -1) {
+                var data = scope.dtApi.DataTable.row(rowIndex).data();
+                scope.formData.model = data;
+                scope.addNew = false;
+                scope.rowIndex = rowIndex;
+            } else {
+                scope.formData.model = {}
+            }
+            scope.showDataTable = false;
+            scope.showEditor = true;
+        };
+
+        function saveSuccess(response) {
+            if (0 != response.status) {
+                return;
+            }
+            var data = scope.formData.model;
+            if(!scope.addNew) {
+                scope.dtApi.DataTable.row(scope.rowIndex).remove();
+            }
+            scope.dtApi.DataTable.rows.add(data).draw();
+            scope.goDataTable();
+        }
+
+        function saveFailed(response) {
+            console.log(response);
+            alert('saveFailed');
+        }
+
+        scope.processSubmit = function () {
+            var formly = scope.formData;
+            if (formly.form.$valid) {
+                formly.options.updateInitialValue();
+                $resource(mgrData.api.update).save({}, formly.model, saveSuccess, saveFailed);
+            }
+        };
+
+        scope.search = function () {
+            var api = this.dtInstance;
+            if (api) {
+                scope.dtApi = api;
+                api.reloadData();
+            }
+        };
+    };
 }
 
 angular

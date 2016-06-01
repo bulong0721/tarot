@@ -1,8 +1,7 @@
 package com.myee.tarot.merchant.domain;
 
 import com.myee.tarot.core.GenericEntity;
-import com.myee.tarot.profile.domain.Address;
-import com.myee.tarot.reference.domain.GeoZone;
+import com.myee.tarot.reference.domain.Address;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
