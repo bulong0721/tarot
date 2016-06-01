@@ -2,6 +2,7 @@ package com.myee.tarot.admin.domain;
 
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.core.audit.AuditableListener;
+import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -19,7 +20,7 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
 
     @Id
     @Column(name = "ADMIN_USER_ID", unique = true, nullable = false)
-    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "ADMIN_USER_SEQ_NEXT_VAL")
+    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "ADMIN_USER_SEQ_NEXT_VAL",allocationSize=1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     private Long id;
 
@@ -44,8 +45,12 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
     protected Boolean activeStatusFlag = Boolean.TRUE;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MERCHANT_ID")
+    @JoinColumn(name = "MERCHANTSTORE_ID")
     private MerchantStore merchantStore;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MERCHANT_ID")
+    private Merchant merchant;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "LAST_ACCESS")
