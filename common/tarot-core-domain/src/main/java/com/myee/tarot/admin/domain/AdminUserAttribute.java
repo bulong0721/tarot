@@ -14,7 +14,7 @@ public class AdminUserAttribute extends GenericEntity<Long, AdminUserAttribute> 
 
     @Id
     @Column(name = "ATTRIBUTE_ID", unique = true, nullable = false)
-    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "ADMIN_USER_ADDTL_FIELDS_SEQ_NEXT_VAL")
+    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "ADMIN_USER_ADDTL_FIELDS_SEQ_NEXT_VAL",allocationSize=1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     private Long id;
 

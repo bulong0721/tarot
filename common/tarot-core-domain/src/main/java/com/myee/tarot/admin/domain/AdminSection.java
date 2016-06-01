@@ -16,7 +16,7 @@ public class AdminSection extends GenericEntity<Long, AdminSection> {
 
     @Id
     @Column(name = "ADMIN_SECTION_ID", unique = true, nullable = false)
-    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "ADMIN_SECTION_SEQ_NEXT_VAL")
+    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "ADMIN_SECTION_SEQ_NEXT_VAL",allocationSize=1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     private Long id;
 
