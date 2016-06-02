@@ -48,10 +48,6 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
     @JoinColumn(name = "MERCHANTSTORE_ID")
     private MerchantStore merchantStore;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MERCHANT_ID")
-    private Merchant merchant;
-
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "LAST_ACCESS")
     protected Date lastAccess;
