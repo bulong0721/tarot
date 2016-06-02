@@ -332,9 +332,39 @@ function explorerCtrl($scope, $resource) {
 
 }
 
+function tableTypeMgrCtrl($scope, Constants) {
+    function actionsHtml(data, type, full, meta) {
+        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
+    }
+
+    var mgrData = {
+        columns: [
+            {data: 'id', visible: false},
+            {data: 'name', title: '名称', width: 85, orderable: false},
+            {data: 'description', title: '描述', width: 60, orderable: false},
+            {data: 'capacity', title: '容纳人数', width: 70, orderable: false},
+            {data: 'minimum', title: '最小就坐', width: 70, orderable: false},
+            {title: '操作', width: 35, render: actionsHtml, orderable: false, className: 'center'}
+        ],
+        fields: [
+            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
+            {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', required: true, 'placeholder': '描述'}},
+            {'key': 'capacity', 'type': 'input', 'templateOptions': {'label': '容纳人数', 'placeholder': '容纳人数'}},
+            {'key': 'minimum', 'type': 'input', 'templateOptions': {'label': '最小就坐', required: true, 'placeholder': '最小就坐'}}
+        ],
+        api: {
+            read: '/admin/catering/type/paging',
+            update: '/admin/catering/type/save'
+        }
+    };
+
+    Constants.initMgrCtrl(mgrData, $scope);
+}
+
 angular
     .module('inspinia')
     .controller('datatablesCtrl', datatablesCtrl)
+    .controller('tableTypeMgrCtrl', tableTypeMgrCtrl)
     .controller('userMgrCtrl', userMgrCtrl)
     .controller('roleMgrCtrl', roleMgrCtrl)
     .controller('editMerchantCtrl', editMerchantCtrl)

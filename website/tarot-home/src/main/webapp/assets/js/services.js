@@ -127,7 +127,6 @@ function constServiceCtor($filter, $compile, $resource) {
 
         function saveFailed(response) {
             console.log(response);
-            alert('saveFailed');
         }
 
         scope.processSubmit = function () {

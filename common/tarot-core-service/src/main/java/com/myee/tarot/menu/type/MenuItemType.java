@@ -30,7 +30,7 @@ import java.util.Map;
  * @author bpolster
  *
  */
-public class MenuItemType implements Serializable {
+public class  MenuItemType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
