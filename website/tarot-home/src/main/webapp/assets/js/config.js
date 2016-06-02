@@ -134,7 +134,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         .state('user.user', {
             url: "/user",
             templateUrl: "assets/views/manager.html",
-            controller: 'datatablesCtrl',
+            controller: 'userMgrCtrl',
             data: {
                 pageTitle: '用户管理',
                 subTitle: '用户管理',

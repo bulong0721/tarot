@@ -1,32 +1,40 @@
 package com.myee.tarot.core.util.ajax;
 
+import java.util.Map;
+
 public class AjaxPageableResponse extends AjaxResponse {
-    private int startRow;
-    private int endRow;
-    private int totalRow;
+    private long draw;
+    private long recordsTotal;
+    private long recordsFiltered;
 
-    public int getStartRow() {
-        return startRow;
+    @Override
+    public void addDataEntry(Map<String, Object> dataEntry) {
+        super.addDataEntry(dataEntry);
+        recordsFiltered = rows.size();
+        recordsTotal = rows.size();
     }
 
-    public void setStartRow(int startRow) {
-        this.startRow = startRow;
+    public long getDraw() {
+        return draw;
     }
 
-    public int getEndRow() {
-        return endRow;
+    public void setDraw(long draw) {
+        this.draw = draw;
     }
 
-    public void setEndRow(int endRow) {
-        this.endRow = endRow;
+    public long getRecordsFiltered() {
+        return recordsFiltered;
     }
 
-    public int getTotalRow() {
-        return totalRow;
+    public void setRecordsFiltered(long recordsFiltered) {
+        this.recordsFiltered = recordsFiltered;
     }
 
-    public void setTotalRow(int totalRow) {
-        this.totalRow = totalRow;
+    public long getRecordsTotal() {
+        return recordsTotal;
     }
 
+    public void setRecordsTotal(long recordsTotal) {
+        this.recordsTotal = recordsTotal;
+    }
 }

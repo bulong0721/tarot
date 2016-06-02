@@ -16,4 +16,6 @@ public interface AdminUserDao extends GenericEntityDao<Long, AdminUser> {
     List<AdminUser> listByEmail(String emailAddress);
 
     List<AdminUser> listByIds(Set<Long> ids);
+
+    AdminUser getByLogin(String login);
 }

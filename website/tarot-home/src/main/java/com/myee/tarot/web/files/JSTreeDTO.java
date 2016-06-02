@@ -1,11 +1,11 @@
-package com.myee.tarot.core.web;
+package com.myee.tarot.web.files;
 
 import java.util.Date;
 
 /**
  * Created by Administrator on 2016/5/23.
  */
-public class JsTreeResponse {
+public class JSTreeDTO {
 
     private String id;
 
@@ -21,10 +21,10 @@ public class JsTreeResponse {
 
     private String status;
 
-    public JsTreeResponse() {
+    public JSTreeDTO() {
     }
 
-    public JsTreeResponse(String id) {
+    public JSTreeDTO(String id) {
         this.id = id;
     }
 

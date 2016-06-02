@@ -25,7 +25,7 @@ function roleMgrCtrl($scope, $compile, Constants) {
             {data: 'id', visible: false},
             {data: 'roleName', title: '角色名', width: 60, orderable: false},
             {data: 'description', title: '描述', width: 100, orderable: false},
-            {title: '动作', width: 20, render: actionsHtml, className: 'center'}
+            {title: '动作', width: 20, render: actionsHtml, orderable: false, className: 'center'}
         ],
         fields: [
             {'key': 'roleName', 'type': 'input', 'templateOptions': {'label': '角色名', required: true, 'placeholder': '角色名'}},
@@ -50,6 +50,49 @@ function roleMgrCtrl($scope, $compile, Constants) {
     });
 }
 
+function userMgrCtrl($scope, Constants) {
+    function actionsHtml(data, type, full, meta) {
+        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
+    }
+
+    function statusHtml(data, type, full, meta) {
+        var text = "冻结", style = "label-danger";
+        if (full && full['activeStatusFlag']) {
+            text = "激活";
+            style = "label-primary";
+        }
+        return '<span class="label ' + style + '">' + text + '</span>';
+    }
+
+    var mgrData = {
+        columns: [
+            {data: 'id', visible: false},
+            {data: 'name', title: '昵称', width: 85, orderable: false},
+            {data: 'login', title: '登录名', width: 60, orderable: false},
+            {data: 'lastLogin', title: '最后登录时间', width: 70, orderable: false},
+            {data: 'loginIP', title: '最后登录IP', width: 70, orderable: false},
+            {data: 'phoneNumber', title: '电话号码', width: 65, orderable: false},
+            {data: 'email', title: '电子邮件', width: 100, orderable: false},
+            {data: 'activeStatusFlag', title: '状态', width: 40, orderable: false, render: statusHtml, className: 'center'},
+            {title: '操作', width: 35, render: actionsHtml, orderable: false, className: 'center'}
+        ],
+        fields: [
+            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '昵称', required: true, 'placeholder': '昵称'}},
+            {'key': 'login', 'type': 'input', 'templateOptions': {'label': '登录名', required: true, 'placeholder': '登录名'}},
+            {'key': 'phoneNumber', 'type': 'input', 'templateOptions': {'label': '电话号码', 'placeholder': '电话号码'}},
+            {'key': 'email', 'type': 'input', 'templateOptions': {type: 'email', 'label': '电子邮件', required: true, 'placeholder': '电子邮件'}},
+            {'key': 'activeStatusFlag', 'type': 'checkbox', 'templateOptions': {'label': '状态', 'placeholder': '状态'}}
+        ],
+        api: {
+            read: '/admin/users/paging',
+            update: '/admin/users/save'
+        }
+
+    };
+
+    Constants.initMgrCtrl(mgrData, $scope);
+}
+
 function datatablesCtrl($scope, $resource, $compile, Constants) {
     var mgrData = {
         columns: [
@@ -61,7 +104,7 @@ function datatablesCtrl($scope, $resource, $compile, Constants) {
             {data: 'phone', title: '电话号码', width: 65, orderable: false},
             {data: 'email', title: '电子邮件', width: 100, orderable: false},
             {data: 'active', title: '状态', width: 40, orderable: false},
-            {title: '动作', width: 35, render: actionsHtml, className: 'center'}
+            {title: '动作', width: 35, render: actionsHtml, orderable: false, className: 'center'}
         ],
         fields: [
             {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', 'placeholder': '名称'}},
@@ -75,7 +118,7 @@ function datatablesCtrl($scope, $resource, $compile, Constants) {
 
     };
 
-    Constants.initMgrCtrl(mgrData, $scope, $resource, $compile);
+    Constants.initMgrCtrl(mgrData, $scope);
 
     $scope.dtColumns = mgrData.columns;
 
@@ -292,6 +335,7 @@ function explorerCtrl($scope, $resource) {
 angular
     .module('inspinia')
     .controller('datatablesCtrl', datatablesCtrl)
+    .controller('userMgrCtrl', userMgrCtrl)
     .controller('roleMgrCtrl', roleMgrCtrl)
     .controller('editMerchantCtrl', editMerchantCtrl)
     .controller('explorerCtrl', explorerCtrl)

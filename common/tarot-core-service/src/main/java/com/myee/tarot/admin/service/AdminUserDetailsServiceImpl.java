@@ -2,6 +2,7 @@ package com.myee.tarot.admin.service;
 
 import com.myee.tarot.admin.domain.AdminPermission;
 import com.myee.tarot.admin.domain.AdminRole;
+import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.core.service.TransactionalAspectAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -25,7 +26,7 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService, Transact
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-        com.myee.tarot.admin.domain.AdminUser adminUser = userService.getByUserName(username);
+        AdminUser adminUser = userService.getByLogin(username);
         if (adminUser == null || adminUser.getActiveStatusFlag() == null || !adminUser.getActiveStatusFlag()) {
             throw new UsernameNotFoundException("The user was not found");
         }

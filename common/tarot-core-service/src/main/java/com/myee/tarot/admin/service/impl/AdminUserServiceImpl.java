@@ -31,4 +31,9 @@ public class AdminUserServiceImpl extends GenericEntityServiceImpl<Long, AdminUs
     public GenericResponse changePassword(String username, String oldPassword, String password, String confirmPassword) {
         return null;
     }
+
+    @Override
+    public AdminUser getByLogin(String login) {
+        return adminUserDao.getByLogin(login);
+    }
 }

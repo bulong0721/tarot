@@ -12,4 +12,6 @@ public interface AdminUserService extends GenericEntityService<Long, AdminUser> 
     AdminUser getByUserName(String username);
 
     GenericResponse changePassword(String username, String oldPassword, String password, String confirmPassword);
+
+    AdminUser getByLogin(String username);
 }

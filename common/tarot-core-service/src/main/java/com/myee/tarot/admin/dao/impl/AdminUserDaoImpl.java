@@ -40,4 +40,18 @@ public class AdminUserDaoImpl extends GenericEntityDaoImpl<Long, AdminUser> impl
     public List<AdminUser> listByIds(Set<Long> ids) {
         return null;
     }
+
+    @Override
+    public AdminUser getByLogin(String login) {
+        QAdminUser qUser = QAdminUser.adminUser;
+
+        JPQLQuery<AdminUser> query = new JPAQuery(getEntityManager());
+
+        query.from(qUser)
+                .where(qUser.login.eq(login));
+
+        AdminUser user = query.fetchFirst();
+
+        return user;
+    }
 }
