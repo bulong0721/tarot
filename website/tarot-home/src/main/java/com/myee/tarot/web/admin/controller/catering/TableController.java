@@ -1,10 +1,16 @@
 package com.myee.tarot.web.admin.controller.catering;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.admin.service.AdminUserService;
 import com.myee.tarot.admin.service.RoleService;
+import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.catering.domain.TableType;
+import com.myee.tarot.catering.domain.TableZone;
+import com.myee.tarot.catering.service.TableService;
 import com.myee.tarot.catering.service.TableTypeService;
+import com.myee.tarot.catering.service.TableZoneService;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.reference.domain.Role;
@@ -15,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -29,10 +36,16 @@ import java.util.Map;
 @Controller
 @RequestMapping("/admin/catering")
 public class TableController {
-    private static final Logger LOGGER           = LoggerFactory.getLogger(TableController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TableController.class);
 
     @Autowired
     private TableTypeService typeService;
+
+    @Autowired
+    private TableZoneService zoneService;
+
+    @Autowired
+    private TableService tableService;
 
     @RequestMapping(value = "/type/save", method = RequestMethod.POST)
     @ResponseBody
@@ -44,7 +57,7 @@ public class TableController {
     @RequestMapping(value = "/type/paging", method = RequestMethod.GET)
     public
     @ResponseBody
-    AjaxPageableResponse pageUsers(Model model, HttpServletRequest request) {
+    AjaxPageableResponse pageTypes(Model model, HttpServletRequest request) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         List<TableType> typeList = typeService.list();
         for (TableType type : typeList) {
@@ -57,6 +70,83 @@ public class TableController {
             resp.addDataEntry(entry);
         }
         return resp;
+    }
+
+    @RequestMapping(value = "/zone/save", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse addTableZone(@RequestBody TableZone zone, HttpServletRequest request) throws Exception {
+        zoneService.update(zone);
+        return AjaxResponse.success();
+    }
+
+    @RequestMapping(value = "/zone/paging", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    AjaxPageableResponse pageZones(Model model, HttpServletRequest request) {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
+        List<TableZone> typeList = zoneService.list();
+        for (TableZone zone : typeList) {
+            Map entry = new HashMap();
+            entry.put("id", zone.getId());
+            entry.put("name", zone.getName());
+            entry.put("description", zone.getDescription());
+            resp.addDataEntry(entry);
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "/table/save", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse addTable(@RequestBody Table table, HttpServletRequest request) throws Exception {
+        tableService.update(table);
+        return AjaxResponse.success();
+    }
+
+    @RequestMapping(value = "/table/paging", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    AjaxPageableResponse pageTables(Model model, HttpServletRequest request) {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
+        List<Table> typeList = tableService.list();
+        for (Table table : typeList) {
+            Map entry = new HashMap();
+            entry.put("id", table.getId());
+            entry.put("name", table.getName());
+            entry.put("description", table.getDescription());
+            entry.put("tableType", new TypeDTO(table.getTableType()));
+            entry.put("tableZone", new ZoneDTO(table.getTableZone()));
+            resp.addDataEntry(entry);
+        }
+        return resp;
+    }
+
+
+    @RequestMapping(value = "/type/options", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    List<TypeDTO> typeOptions(Model model, HttpServletRequest request) {
+        List<TableType> typeList = typeService.list();
+        return Lists.transform(typeList, new Function<TableType, TypeDTO>() {
+            @Nullable
+            @Override
+            public TypeDTO apply(TableType input) {
+                return new TypeDTO(input);
+            }
+        });
+    }
+
+    @RequestMapping(value = "/zone/options", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    List<ZoneDTO> zoneOptions(Model model, HttpServletRequest request) {
+        List<TableZone> typeList = zoneService.list();
+        return Lists.transform(typeList, new Function<TableZone, ZoneDTO>() {
+            @Nullable
+            @Override
+            public ZoneDTO apply(TableZone input) {
+                return new ZoneDTO(input);
+            }
+        });
     }
 
     @ExceptionHandler({SQLException.class, Exception.class})

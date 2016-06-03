@@ -25,8 +25,8 @@ public class TableZone extends GenericEntity<Long, TableZone> {
     protected String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MERCHANT_ID")
-    private MerchantStore merchantStore;
+    @JoinColumn(name = "STORE_ID")
+    private MerchantStore store;
 
     public String getDescription() {
         return description;
@@ -46,12 +46,12 @@ public class TableZone extends GenericEntity<Long, TableZone> {
         this.id = id;
     }
 
-    public MerchantStore getMerchantStore() {
-        return merchantStore;
+    public MerchantStore getStore() {
+        return store;
     }
 
-    public void setMerchantStore(MerchantStore merchantStore) {
-        this.merchantStore = merchantStore;
+    public void setStore(MerchantStore store) {
+        this.store = store;
     }
 
     public String getName() {

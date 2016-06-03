@@ -138,25 +138,25 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             controller: 'tableTypeMgrCtrl',
             data: {
                 subTitle: '餐桌类型',
-                datatable: 'assets/views/catering/user_datatable.html'
+                datatable: 'assets/views/catering/type_datatable.html'
             }
         })
         .state('cater.zone', {
             url: "/zone",
             templateUrl: "assets/views/manager.html",
-            controller: 'userMgrCtrl',
+            controller: 'tableZoneMgrCtrl',
             data: {
                 subTitle: '餐桌区域',
-                datatable: 'assets/views/catering/user_datatable.html'
+                datatable: 'assets/views/catering/zone_datatable.html'
             }
         })
         .state('cater.table', {
             url: "/table",
             templateUrl: "assets/views/manager.html",
-            controller: 'userMgrCtrl',
+            controller: 'tableMgrCtrl',
             data: {
                 subTitle: '餐桌管理',
-                datatable: 'assets/views/catering/user_datatable.html'
+                datatable: 'assets/views/catering/table_datatable.html'
             }
         })
         .state('user', {

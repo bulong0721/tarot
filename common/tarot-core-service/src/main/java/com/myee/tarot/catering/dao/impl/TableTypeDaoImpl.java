@@ -20,7 +20,7 @@ import java.util.List;
 public class TableTypeDaoImpl extends GenericEntityDaoImpl<Long, TableType> implements TableTypeDao {
 
     @Override
-    public List<TableType> queryByStore(long storeId) {
+    public List<TableType> listByStore(long storeId) {
         QTableType qTableType = QTableType.tableType;
 
         JPQLQuery<TableType> query = new JPAQuery(getEntityManager());

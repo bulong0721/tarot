@@ -8,6 +8,8 @@ import com.myee.tarot.core.service.GenericEntityServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by Martin on 2016/4/21.
  */
@@ -20,5 +22,10 @@ public class TableTypeServiceImpl extends GenericEntityServiceImpl<Long, TableTy
     public TableTypeServiceImpl(TableTypeDao tableTypeDao) {
         super(tableTypeDao);
         this.tableTypeDao = tableTypeDao;
+    }
+
+    @Override
+    public List<TableType> listByStore(long storeId) {
+        return tableTypeDao.listByStore(storeId);
     }
 }

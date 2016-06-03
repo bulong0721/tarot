@@ -1,7 +1,7 @@
 /**
  * Created by Martin on 2016/4/12.
  */
-function constServiceCtor($filter, $compile, $resource) {
+function constServiceCtor($filter, $compile, $resource, $state) {
     var vm = this;
 
     vm.sizeFormatter = function (value, opts, row) {
@@ -36,6 +36,11 @@ function constServiceCtor($filter, $compile, $resource) {
         buttons: [
             {extend: 'csv', text: '导出CSV'}
         ],
+        statusCode: {
+            302: function () {
+              $state.go('/');
+            }
+        },
         language: {
             info: "显示 _START_ - _END_条，共 _TOTAL_ 条",
             infoEmpty: "显示 0 - 0条，共 0 条",
@@ -118,10 +123,10 @@ function constServiceCtor($filter, $compile, $resource) {
                 return;
             }
             var data = scope.formData.model;
-            if(!scope.addNew) {
+            if (!scope.addNew) {
                 scope.dtApi.DataTable.row(scope.rowIndex).remove();
             }
-            scope.dtApi.DataTable.rows.add(data).draw();
+            scope.dtApi.DataTable.row.add(data).draw(false);
             scope.goDataTable();
         }
 

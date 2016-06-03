@@ -14,7 +14,7 @@
         <java-version>1.7</java-version>
         <jdk-version>1.7</jdk-version>
         <version.querydsl>4.1.0</version.querydsl>
-        <version.hibernate>4.3.5.Final</version.hibernate>
+        <version.hibernate>4.3.11.Final</version.hibernate>
         <version.fastjson>1.2.9</version.fastjson>
         <version.guava>18.0</version.guava>
         <version.spring>4.2.2.RELEASE</version.spring>

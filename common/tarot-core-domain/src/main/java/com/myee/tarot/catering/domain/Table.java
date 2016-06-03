@@ -24,13 +24,17 @@ public class Table extends GenericEntity<Long, Table> {
     @Column(name = "DESCRIPTION")
     protected String description;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = TableZone.class)
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity = TableType.class)
     @JoinColumn(name = "TABLE_TYPE", nullable = false)
     private TableType tableType;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = TableZone.class)
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity = TableZone.class)
     @JoinColumn(name = "TABLE_ZONE")
     private TableZone tableZone;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "STORE_ID")
+    private MerchantStore store;
 
     public String getDescription() {
         return description;
@@ -72,5 +76,13 @@ public class Table extends GenericEntity<Long, Table> {
 
     public void setTableZone(TableZone tableZone) {
         this.tableZone = tableZone;
+    }
+
+    public MerchantStore getStore() {
+        return store;
+    }
+
+    public void setStore(MerchantStore store) {
+        this.store = store;
     }
 }

@@ -361,10 +361,71 @@ function tableTypeMgrCtrl($scope, Constants) {
     Constants.initMgrCtrl(mgrData, $scope);
 }
 
+function tableZoneMgrCtrl($scope, Constants) {
+    function actionsHtml(data, type, full, meta) {
+        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
+    }
+
+    var mgrData = {
+        columns: [
+            {data: 'id', visible: false},
+            {data: 'name', title: '名称', width: 85, orderable: false},
+            {data: 'description', title: '描述', width: 60, orderable: false},
+            {title: '操作', width: 35, render: actionsHtml, orderable: false, className: 'center'}
+        ],
+        fields: [
+            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
+            {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', required: true, 'placeholder': '描述'}},
+        ],
+        api: {
+            read: '/admin/catering/zone/paging',
+            update: '/admin/catering/zone/save'
+        }
+    };
+
+    Constants.initMgrCtrl(mgrData, $scope);
+}
+
+function tableMgrCtrl($scope, $resource, Constants) {
+    function actionsHtml(data, type, full, meta) {
+        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
+    }
+
+    var typeOpts = $resource('/admin/catering/type/options').query();
+
+    var zoneOpts = $resource('/admin/catering/zone/options').query();
+
+    var mgrData = {
+        columns: [
+            {data: 'id', visible: false},
+            {data: 'name', title: '名称', width: 85, orderable: false},
+            {data: 'description', title: '描述', width: 120, orderable: false},
+            {data: 'tableType.name', title: '桌型', width: 75, orderable: false},
+            {data: 'tableZone.name', title: '区域', width: 75, orderable: false},
+            {title: '操作', width: 35, render: actionsHtml, orderable: false, className: 'center'}
+        ],
+        fields: [
+            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
+            {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', required: true, 'placeholder': '描述'}},
+            {'key': 'tableType.id', 'type': 'select', 'templateOptions': {'label': '桌型', valueProp: 'id', options: typeOpts, required: true, 'placeholder': '桌型'}},
+            {'key': 'tableZone.id', 'type': 'select', 'templateOptions': {'label': '区域', valueProp: 'id', options: zoneOpts, 'placeholder': '区域'}},
+        ],
+        api: {
+            read: '/admin/catering/table/paging',
+            update: '/admin/catering/table/save'
+        }
+    };
+
+    Constants.initMgrCtrl(mgrData, $scope);
+}
+
+
 angular
     .module('inspinia')
     .controller('datatablesCtrl', datatablesCtrl)
     .controller('tableTypeMgrCtrl', tableTypeMgrCtrl)
+    .controller('tableZoneMgrCtrl', tableZoneMgrCtrl)
+    .controller('tableMgrCtrl', tableMgrCtrl)
     .controller('userMgrCtrl', userMgrCtrl)
     .controller('roleMgrCtrl', roleMgrCtrl)
     .controller('editMerchantCtrl', editMerchantCtrl)
