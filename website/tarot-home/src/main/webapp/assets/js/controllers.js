@@ -393,8 +393,107 @@ function tableTypeMgrCtrl($scope, Constants) {
     Constants.initMgrCtrl(mgrData, $scope);
 }
 
+function deviceCtrl($scope, $compile, $resource, Constants) {
+
+    function actionsHtml(data, type, full, meta) {
+        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
+    }
+    var mgrData = {
+        columns: [
+            {data: 'name', title: '名称', width: 40, orderable: false},
+            {data: 'versionNum', title: '版本号', width: 40, orderable: false},
+            {data: 'description', title: '描绘', width: 60, orderable: false},
+            {title: '动作', width: 35, render: actionsHtml,className: 'center'}
+
+        ],
+        fields: [
+            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', 'placeholder': '名称'}},
+            {'key': 'versionNum', 'type': 'input', 'templateOptions': {'label': '版本号', 'placeholder': '版本号'}},
+            {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}}
+        ],
+        api: {
+            read: '/device/paging',
+            update: '/device/update'
+        }
+
+    };
+
+    Constants.initMgrCtrl(mgrData, $scope, $resource, $compile);
+
+    $scope.dtColumns = mgrData.columns;
+
+    $scope.dtOptions = Constants.buildOption(mgrData.api.read, function (data) {
+        angular.extend(data, $scope.where);
+    }, function (row, data, dataIndex) {
+        var elem = angular.element(row);
+        var content = elem.contents();
+        var scope = $scope;
+        $compile(content)(scope);
+    });
+}
+
+function deviceUsedCtrl($scope, $compile, $resource, Constants) {
+
+    function actionsHtml(data, type, full, meta) {
+        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
+    }
+
+    function getDeviceList() {
+        var data = $resource("/device/list").query();
+        return data;
+    }
+
+    function getStoreList() {
+        var data = $resource("/admin/merchantStore/listByMerchantForSelect").query();
+        return data;
+    }
+
+    var mgrData = {
+        columns: [
+            {data: 'name', title: '名称', width: 40, orderable: false},
+            {data: 'heartbeat', title: '心跳', width: 40, orderable: false},
+            {data: 'boardNo', title: '牌号', width: 60, orderable: false},
+            {data: 'deviceNum', title: '设备号', width: 60, orderable: false},
+            {data: 'description', title: '描绘', width: 60, orderable: false},
+            {data: 'device.name', title: '设备名', width: 60, orderable: false},
+            {data: 'store.name', title: '商户名', width: 60, orderable: false},
+            {title: '动作', width: 35, render: actionsHtml,className: 'center'}
+
+        ],
+        fields: [
+            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', 'placeholder': '名称'}},
+            {'key': 'heartbeat', 'type': 'input', 'templateOptions': {'label': '心跳', 'placeholder': '心跳'}},
+            {'key': 'boardNo', 'type': 'input', 'templateOptions': {'label': '牌号', 'placeholder': '牌号'}},
+            {'key': 'deviceNum', 'type': 'input', 'templateOptions': {'label': '设备号', 'placeholder': '设备号'}},
+            {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}},
+            {'key': 'device.id', 'type': 'select', 'templateOptions': {'label': '选择设备','options': getDeviceList()}},
+            {'key': 'store.id', 'type': 'select', 'templateOptions': {'label': '门户名', 'options': getStoreList()}}
+        ],
+        api: {
+            read: '/deviceUsed/paging',
+            update: '/deviceUsed/update'
+        }
+
+    };
+
+    Constants.initMgrCtrl(mgrData, $scope, $resource, $compile);
+
+    $scope.dtColumns = mgrData.columns;
+
+    $scope.dtOptions = Constants.buildOption(mgrData.api.read, function (data) {
+        angular.extend(data, $scope.where);
+    }, function (row, data, dataIndex) {
+        var elem = angular.element(row);
+        var content = elem.contents();
+        var scope = $scope;
+        $compile(content)(scope);
+    });
+}
+
 angular
     .module('inspinia')
+    .controller('deviceCtrl', deviceCtrl)
+    .controller('deviceUsedCtrl', deviceUsedCtrl)
     .controller('datatablesCtrl', datatablesCtrl)
     .controller('tableTypeMgrCtrl', tableTypeMgrCtrl)
     .controller('userMgrCtrl', userMgrCtrl)

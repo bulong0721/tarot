@@ -1,5 +1,6 @@
 package com.myee.tarot.web.admin.controller.merchant;
 
+import com.google.common.collect.Lists;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
@@ -7,19 +8,14 @@ import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantService;
 import com.myee.tarot.merchant.service.MerchantStoreService;
-import com.myee.tarot.web.util.DateUtil;
 import com.myee.tarot.web.util.StringUtil;
-import org.hibernate.criterion.Expression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -346,6 +342,34 @@ public class MerchantController {
             resp.setErrorString("出错");
         }
         return resp;
+    }
+
+    @RequestMapping(value = "/admin/merchantStore/listByMerchantForSelect", method = RequestMethod.GET)
+    @ResponseBody
+    public List listMerchantStoreByMerchantForSelect(HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
+        try {
+            //从session中取账号关联的商户信息
+            if(request.getSession().getAttribute(Constants.ADMIN_MERCHANT) == null ){
+                resp.setErrorString("请先切换商户");
+                Map entry = new HashMap();
+                entry.put("error","请先切换商户");
+                resp.addDataEntry(entry);
+            }
+
+            Merchant merchant = (Merchant)request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
+            List<MerchantStore> merchantStoreList = merchantStoreService.listByMerchant(merchant.getId());
+            for (MerchantStore merchantStore : merchantStoreList) {
+                Map entry = new HashMap();
+                entry.put("name",merchantStore.getName());
+                entry.put("value",merchantStore.getId());
+                resp.addDataEntry(entry);
+            }
+            return resp.getRows();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     //把类转换成entry返回给前端，解耦和

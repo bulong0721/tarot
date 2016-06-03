@@ -90,17 +90,31 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             abstract: true,
             url: "/device",
             templateUrl: "assets/views/content.html",
+            resolve: {
+                loadPlugin: managerLoader
+            }
         })
         .state('device.type', {
             url: "/type",
             templateUrl: "assets/views/device/type.html",
-            data: {pageTitle: '设备类型'}
+            controller: 'deviceCtrl',
+            data: {
+                pageTitle: '设备管理',
+                subTitle:'设备类型',
+                datatable:'assets/views/device/device_datatable.html'
+            }
         })
         .state('device.list', {
             url: "/list",
             templateUrl: "assets/views/device/list.html",
-            data: {pageTitle: '设备列表'}
+            controller: "deviceUsedCtrl",
+            data: {
+                pageTitle: '设备管理',
+                subTitle: '设备列表',
+                datatable:'assets/views/device/deviceUsed_datatable.html'
+            }
         })
+
         .state('explorer', {
             abstract: true,
             url: "/explorer",
