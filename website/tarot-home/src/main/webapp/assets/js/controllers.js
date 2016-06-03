@@ -136,80 +136,112 @@ function datatablesCtrl($scope, $resource, $compile, Constants) {
     });
 }
 
-function editMerchantCtrl($scope, $resource) {
-    var vm = $scope;
+function merchantShopCtrl($scope, $resource, $compile, Constants) {
+    function actionsHtml(data, type, full, meta) {
+        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
+    }
 
-    //获取一个商户信息请求
-    $resource('/admin/merchant/get').get({
-        id: '100'//以后从右上角的切换门店取商户ID
-    }, function (resp) {
-        // 处理响应成功
-        vm.list = resp.data[0];
-        vm.setModel(vm.list);
-        console.log(vm.model);
-    }, function (err) {
-        // 处理错误
+    var key = ['id','name','address.province','address.city','address.county','address.circle','address.mall','address.address', 'phone','code','active'];
+    var title = ['门店ID','门店名称', '省份','城市','区县','商圈','商场','地址','联系电话','门店码', '操作','动作'];
+    var mgrData = {
+        columns: [
+            {data: 'id', title: '门店ID', width: 85, orderable: true},
+            {data: 'name', title: '门店名称', width: 85, orderable: false},
+            {data: 'address.province', title: '省份', width: 60, orderable: true},
+            {data: 'address.city', title: '城市', width: 55, orderable: true},
+            {data: 'address.county', title: '区县', width: 70, orderable: false, align: 'center'},
+            {data: 'address.circle', title: '商圈', width: 70, orderable: false},
+            {data: 'address.mall', title: '商场', width: 65, orderable: false},
+            {data: 'address.address', title: '地址', width: 100, orderable: false},
+            {data: 'phone', title: '联系电话', width: 40, orderable: false},
+            {data: 'code', title: '门店码', width: 40, orderable: false},
+            {data: 'active', title: '操作', width: 40, orderable: false},
+            {title: '动作', width: 35, render: actionsHtml}
+        ],
+        fields: [
+            {'key': 'merchant.name', 'type': 'input', 'templateOptions': {'disabled':true,'label': '商户名称', 'placeholder': '商户名称'}},
+            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '门店名称', 'placeholder': '门店名称'}},
+            {'key': 'address.province', 'type': 'input', 'templateOptions': {'label': '省份', 'placeholder': '省份'}},
+            {'key': 'address.city', 'type': 'input', 'templateOptions': {'label': '城市', 'placeholder': '城市'}},
+            {'key': 'address.county', 'type': 'input', 'templateOptions': {'label': '区县', 'placeholder': '区县'}},
+            {'key': 'address.circle', 'type': 'input', 'templateOptions': {'label': '商圈', 'placeholder': '商圈'}},
+            {'key': 'address.mall', 'type': 'input', 'templateOptions': {'label': '商场', 'placeholder': '商场'}},
+            {'key': 'address.address', 'type': 'input', 'templateOptions': {'label': '地址', 'placeholder': '地址'}},
+            {'key': 'phone', 'type': 'input', 'templateOptions': {'label': '联系电话', 'placeholder': '联系电话'}},
+            {'key': 'code', 'type': 'input', 'templateOptions': {'label': '门店码', 'placeholder': '门店码'}},
+        ],
+        api: {
+            read: '/admin/merchantStore/listByMerchant',
+            update: '/admin/merchantStore/save'
+        }
 
+    };
+
+    Constants.initMgrCtrl(mgrData, $scope, $resource, $compile);
+
+    $scope.dtColumns = mgrData.columns;
+
+    $scope.dtOptions = Constants.buildOption(mgrData.api.read, function (data) {
+        angular.extend(data, $scope.where);
+    }, function (row, data, dataIndex) {
+        var elem = angular.element(row);
+        var content = elem.contents();
+        var scope = $scope;
+        $compile(content)(scope);
     });
 
-    vm.setModel = function (list) {
-        //设置formly的初始值
-        vm.model = {
-            name: list.name,
-            businessType: list.businessType,
-            cuisineType: list.cuisineType,
-            description: list.description
-        };
-    };
+}
 
-    vm.options = {};
+function merchantCtrl($scope, $resource, $compile, Constants) {
 
-    vm.fields = [
-        {'key': 'name', 'type': 'input', 'templateOptions': {'type': 'text', 'label': '商户名称', 'placeholder': '商户名称'}},
-        {
-            'key': 'businessType', 'type': 'select',
-            'templateOptions': {
-                'label': '商户类型',
-                'options': [
-                    {name: '商场', value: 'AL'},
-                    {name: '餐饮', value: 'AK'},
-                    {name: '零售', value: 'AZ'},
-                    {name: '其他', value: 'AR'},
-                    {name: '商圈', value: 'CA'}
-                ]
-            }
-        },
-        {'key': 'cuisineType', 'type': 'input', 'templateOptions': {'type': 'text', 'label': '商户菜系', 'placeholder': '商户菜系'}},
-        {'key': 'imgFile', 'type': 'input', 'templateOptions': {'type': 'file', 'label': '商户图标', 'placeholder': '商户图标'}},
-        {'key': 'description', 'type': 'textarea', 'templateOptions': {'label': '商户描述', 'placeholder': '商户描述', "rows": 10}}
-    ];
+    function actionsHtml(data, type, full, meta) {
+        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
+    }
 
-    //提交到后台修改门店信息
-    $scope.onSubmit = function () {
-        alert(123);
-        console.log(vm.model.id);
-        $resource('/admin/merchant/edit').save(
-            {
-                id: '100',//以后从右上角的切换门店取商户ID
-                name: vm.model.name,
-                businessType: vm.model.businessType,
-                cuisineType: vm.model.cuisineType,
-                description: vm.model.description
+    //var type={};
+    //$resource('/admin/merchant/typeList').get({},function(resp){type = resp.data;console.log(type);});
+    //console.log(type);
+
+    console.log("aaaaaa"+$scope.merchantType);
+    var mgrData = {
+        columns: [
+            {data: 'id', title: '商户ID', width: 85, orderable: true},
+            {data: 'name', title: '商户名称', width: 85, orderable: true},
+            {data: 'businessType', title: '商户类型', width: 60, orderable: true},
+            {data: 'cuisineType', title: '商户菜系', width: 55, orderable: true},
+            {data: 'imgFile', title: '商户图标', width: 70, orderable: false, align: 'center'},
+            {data: 'description', title: '商户描述', width: 70, orderable: false},
+            {title: '动作', width: 35, render: actionsHtml}
+        ],
+        fields: [
+            {'key': 'name', 'type': 'input', 'templateOptions': {'type':'text','label': '商户名称', 'placeholder': '商户名称'}},
+            {'key': 'businessType', 'type': 'select',
+                'templateOptions': {
+                    'label': '商户类型',
+                    'options': Constants.merchantType
+                }
             },
-            {},
-            function (response) {
-                // 处理响应成功
-            }, function (response) {
-                // 处理非成功响应
-            }
-        );
+            {'key': 'cuisineType', 'type': 'input', 'templateOptions': {'type':'text','label': '商户菜系', 'placeholder': '商户菜系'}},
+            {'key': 'imgFile', 'type': 'input', 'templateOptions': {'type':'file','label': '商户图标', 'placeholder': '商户图标'}},
+            {'key': 'description', 'type': 'textarea', 'templateOptions': {'label': '商户描述', 'placeholder': '商户描述',"rows": 10}}
+        ],
+        api: {
+            read: '/admin/merchant/list',
+            update: '/admin/merchant/save'
+        }
     };
+    Constants.initMgrCtrl(mgrData, $scope);
 
-    //重置参数为初始状态
-    $scope.onReset = function () {
-        vm.setModel(vm.list);
-    };
+    $scope.dtColumns = mgrData.columns;
 
+    $scope.dtOptions = Constants.buildOption(mgrData.api.read, function (data) {
+        angular.extend(data, $scope.where);
+    }, function (row, data, dataIndex) {
+        var elem = angular.element(row);
+        var content = elem.contents();
+        var scope = $scope;
+        $compile(content)(scope);
+    });
 
 }
 
@@ -367,7 +399,8 @@ angular
     .controller('tableTypeMgrCtrl', tableTypeMgrCtrl)
     .controller('userMgrCtrl', userMgrCtrl)
     .controller('roleMgrCtrl', roleMgrCtrl)
-    .controller('editMerchantCtrl', editMerchantCtrl)
+    .controller('merchantCtrl', merchantCtrl)
+    .controller('merchantShopCtrl', merchantShopCtrl)
     .controller('explorerCtrl', explorerCtrl)
     .controller('uiGridCtrl', uiGridCtrl)
     .controller('MainCtrl', MainCtrl);
