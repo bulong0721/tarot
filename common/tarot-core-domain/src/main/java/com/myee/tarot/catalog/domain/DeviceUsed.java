@@ -120,6 +120,13 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
         this.description = description;
     }
 
+    public Device getDevice() {
+        return device;
+    }
+
+    public void setDevice(Device device) {
+        this.device = device;
+    }
 //    public Map<String, DeviceUsedAttribute> getDeviceUsedAttribute() {
 //        return deviceUsedAttribute;
 //    }

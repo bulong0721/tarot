@@ -86,5 +86,4 @@ public class AjaxResponse implements Serializable {
         response.setStatus(statusCode);
         return response;
     }
-
 }

@@ -17,23 +17,23 @@ public class Address extends GenericEntity<Long, Address> {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     protected Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = GeoZone.class)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},targetEntity = GeoZone.class)
     @JoinColumn(name = "PROVINCE_ZONE")
     private GeoZone province;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = GeoZone.class)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},targetEntity = GeoZone.class)
     @JoinColumn(name = "CITY_ZONE")
     private GeoZone city;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = GeoZone.class)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},targetEntity = GeoZone.class)
     @JoinColumn(name = "COUNTY_ZONE")
     private GeoZone county;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = GeoZone.class)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},targetEntity = GeoZone.class)
     @JoinColumn(name = "CIRCLE_ZONE")
     private GeoZone circle;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = GeoZone.class)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},targetEntity = GeoZone.class)
     @JoinColumn(name = "MALL_ZONE")
     private GeoZone mall;
 

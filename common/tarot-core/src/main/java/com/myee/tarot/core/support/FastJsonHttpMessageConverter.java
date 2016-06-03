@@ -16,7 +16,7 @@ import java.nio.charset.Charset;
 
 public class FastJsonHttpMessageConverter extends AbstractHttpMessageConverter<Object> {
     private static final Charset             DEFAULT_CHARSET   = Charset.forName("UTF-8");
-    private              SerializerFeature[] serializerFeature = new SerializerFeature[0];
+    private              SerializerFeature[] serializerFeature = {SerializerFeature.DisableCircularReferenceDetect};
 
     public FastJsonHttpMessageConverter() {
     }

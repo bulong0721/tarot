@@ -77,6 +77,14 @@ function constServiceCtor($filter, $compile, $resource, $state) {
             }, vm.defaultOptions);
     };
 
+    //先写死，后面再从后台拿
+    vm.merchantType = [
+        {name: '商场', value: 'AL'},
+        {name: '餐饮', value: 'AK'},
+        {name: '零售', value: 'AZ'},
+        {name: '其他', value: 'AR'},
+        {name: '商圈', value: 'CA'}];
+
     vm.initMgrCtrl = function (mgrData, scope) {
         scope.where = {};
 
@@ -149,6 +157,7 @@ function constServiceCtor($filter, $compile, $resource, $state) {
                 api.reloadData();
             }
         };
+
     };
 }
 

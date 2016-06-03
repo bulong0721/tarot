@@ -1,0 +1,24 @@
+package com.myee.tarot.device.service.impl;
+
+import com.myee.tarot.catalog.domain.Device;
+import com.myee.tarot.core.service.GenericEntityServiceImpl;
+import com.myee.tarot.device.dao.DeviceDao;
+import com.myee.tarot.device.service.DeviceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+/**
+ * Created by Administrator on 2016/5/31.
+ */
+@Service
+public class DeviceServiceImpl extends GenericEntityServiceImpl<Long, Device>implements DeviceService{
+
+    protected DeviceDao deviceDao;
+
+    @Autowired
+    public DeviceServiceImpl(DeviceDao deviceDao) {
+        super(deviceDao);
+        this.deviceDao = deviceDao;
+    }
+
+}

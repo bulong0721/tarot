@@ -2,6 +2,7 @@ package com.myee.tarot.merchant.domain;
 
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.reference.domain.Address;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -12,12 +13,13 @@ import javax.validation.constraints.Pattern;
  */
 @Entity
 @Table(name = "C_MERCHANT_STORE")
+@DynamicUpdate //hibernate部分更新
 public class MerchantStore extends GenericEntity<Long, MerchantStore> {
     public static final String DEFAULT_STORE = "DEFAULT";
 
     @Id
     @Column(name = "STORE_ID", unique = true, nullable = false)
-    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "STORE_SEQ_NEXT_VAL")
+    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "STORE_SEQ_NEXT_VAL",allocationSize=1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     private Long id;
 
@@ -43,6 +45,7 @@ public class MerchantStore extends GenericEntity<Long, MerchantStore> {
     @Column(name = "RATINGS")
     private Float ratings;
 
+    //人均消费
     @Column(name = "STORE_CPP")
     private Integer cpp;
 
@@ -52,8 +55,9 @@ public class MerchantStore extends GenericEntity<Long, MerchantStore> {
     @Column(name = "EXPERIENCE")
     private boolean experience = false;
 
-    @ManyToOne(targetEntity = Merchant.class, optional = false, cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "MERCHANT_ID")
+    //关联join的门店详细信息
+    @ManyToOne(targetEntity = Merchant.class, optional = false, cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @JoinColumn(name = "MERCHANT_ID",referencedColumnName = "MERCHANT_ID")
     protected Merchant merchant;
 
     @Override
@@ -142,4 +146,7 @@ public class MerchantStore extends GenericEntity<Long, MerchantStore> {
         return merchant;
     }
 
+    public void setMerchant(Merchant merchant) {
+        this.merchant = merchant;
+    }
 }
