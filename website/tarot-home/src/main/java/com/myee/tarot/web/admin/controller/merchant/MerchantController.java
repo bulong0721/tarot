@@ -3,7 +3,6 @@ package com.myee.tarot.web.admin.controller.merchant;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
-import com.myee.tarot.core.web.JQGridResponse;
 import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantService;
@@ -44,18 +43,18 @@ public class MerchantController {
     //切换商户接口
     @RequestMapping(value = "/admin/merchant/switch", method = RequestMethod.POST)
     @ResponseBody
-    public JQGridResponse switchMerchant(@ModelAttribute Merchant merchant,HttpServletRequest request) throws Exception {
-        JQGridResponse resp = new JQGridResponse();
+    public AjaxResponse switchMerchant(@ModelAttribute Merchant merchant,HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
         try {
             if(merchant == null || merchant.getId() == null ){
                 //抛出异常给异常处理机制
-                resp.setError("请切换商户！");
+                resp.setErrorString("请切换商户！");
                 return resp;
             }
             Long numFind = merchantService.getCountById(merchant);
             if (numFind != 1L) {
                 //抛出异常给异常处理机制
-                resp.setError("要切换的商户信息错误");
+                resp.setErrorString("要切换的商户信息错误");
                 return resp;
             }
             Merchant merchantOld = merchantService.getEntity(Merchant.class, merchant.getId());
@@ -63,7 +62,7 @@ public class MerchantController {
             request.getSession().setAttribute(Constants.ADMIN_MERCHANT, merchantOld);
         } catch (Exception e) {
             e.printStackTrace();
-            resp.setError("切换出错");
+            resp.setErrorString("切换出错");
         }
         return resp;
     }
@@ -93,8 +92,8 @@ public class MerchantController {
 
 //    @RequestMapping(value = "/admin/merchant/edit", method = RequestMethod.POST)
 //    @ResponseBody
-//    public JQGridResponse editMerchant(@RequestBody Merchant merchant,HttpServletRequest request) throws Exception {
-//        JQGridResponse resp = new JQGridResponse();
+//    public AjaxResponse editMerchant(@RequestBody Merchant merchant,HttpServletRequest request) throws Exception {
+//        AjaxResponse resp = new AjaxResponse();
 //        try {
 //            if(merchant.getId() == null ){
 //                //抛出异常给异常处理机制
@@ -123,55 +122,55 @@ public class MerchantController {
 
     @RequestMapping(value = "/admin/merchant/get", method = RequestMethod.GET)
     @ResponseBody
-    public JQGridResponse getMerchant(@RequestParam Long id,HttpServletRequest request) throws Exception {
-        JQGridResponse resp = new JQGridResponse();
+    public AjaxResponse getMerchant(@RequestParam Long id,HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
         try {
             Merchant merchant1 = merchantService.getEntity(Merchant.class, id);//id由前端切换商户传进来
             resp.addDataEntry(objectToEntry(merchant1));
         } catch (Exception e) {
             e.printStackTrace();
-            resp.setError("出错");
+            resp.setErrorString("出错");
         }
         return resp;
     }
 
     @RequestMapping(value = "/admin/merchant/getSwitch", method = RequestMethod.GET)
     @ResponseBody
-    public JQGridResponse getSwitchMerchant(HttpServletRequest request) throws Exception {
-        JQGridResponse resp = new JQGridResponse();
+    public AjaxResponse getSwitchMerchant(HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
         try {
             //从session中读取merchant信息，如果为空，则提示用户先切换商户
             if(request.getSession().getAttribute(Constants.ADMIN_MERCHANT) == null ){
-                resp.setError("请先切换商户");
+                resp.setErrorString("请先切换商户");
                 return resp;
             }
             Merchant merchant1 = (Merchant)request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
             resp.addDataEntry(objectToEntry(merchant1));
         } catch (Exception e) {
             e.printStackTrace();
-            resp.setError("出错");
+            resp.setErrorString("出错");
         }
         return resp;
     }
 
     @RequestMapping(value = "/admin/merchant/delete", method = RequestMethod.POST)
     @ResponseBody
-    public JQGridResponse deleteMerchant(@RequestParam Long id,HttpServletRequest request) throws Exception {
-        JQGridResponse resp = new JQGridResponse();
+    public AjaxResponse deleteMerchant(@RequestParam Long id,HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
         try {
             Merchant merchant = merchantService.getEntity(Merchant.class, id);
             if (merchant != null) merchantService.delete(merchant);
         } catch (Exception e) {
             e.printStackTrace();
-            resp.setError("删除出错");
+            resp.setErrorString("删除出错");
         }
         return resp;
     }
 
     @RequestMapping(value = "/admin/merchant/list", method = RequestMethod.GET)
     @ResponseBody
-    public JQGridResponse listMerchant(HttpServletRequest request) throws Exception {
-        JQGridResponse resp = new JQGridResponse();
+    public AjaxResponse listMerchant(HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
         try {
             List<Merchant> merchantList = merchantService.list();
             for (Merchant merchant : merchantList) {
@@ -179,7 +178,7 @@ public class MerchantController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            resp.setError("出错");
+            resp.setErrorString("出错");
         }
         return resp;
     }
@@ -248,8 +247,8 @@ public class MerchantController {
 
 //    @RequestMapping(value = "/admin/merchantStore/edit", method = RequestMethod.POST)
 //    @ResponseBody
-//    public JQGridResponse editMerchantStore(@RequestBody MerchantStore merchantStore,HttpServletRequest request) throws Exception {
-//        JQGridResponse resp = new JQGridResponse();
+//    public AjaxResponse editMerchantStore(@RequestBody MerchantStore merchantStore,HttpServletRequest request) throws Exception {
+//        AjaxResponse resp = new AjaxResponse();
 //        try {
 //            if(merchantStore.getId() == null ){
 //                //抛出异常给异常处理机制
@@ -259,7 +258,7 @@ public class MerchantController {
 //            Long numFind = merchantStoreService.getCountById(merchantStore);
 //            if (numFind != 1L) {
 //                //抛出异常给异常处理机制
-//                resp.setError("要修改的门店不存在");
+//                resp.setErrorString("要修改的门店不存在");
 //                return resp;
 //            }
 //            MerchantStore merchantStoreOld = merchantStoreService.getEntity(MerchantStore.class, merchantStore.getId());
@@ -272,47 +271,47 @@ public class MerchantController {
 //            merchantStoreService.save(merchantStoreOld);
 //        } catch (Exception e) {
 //            e.printStackTrace();
-//            resp.setError("更新出错");
+//            resp.setErrorString("更新出错");
 //        }
 //        return resp;
 //    }
 
     @RequestMapping(value = "/admin/merchantStore/get", method = RequestMethod.GET)
     @ResponseBody
-    public JQGridResponse getMerchantStore(@RequestParam Long id,HttpServletRequest request) throws Exception {
-        JQGridResponse resp = new JQGridResponse();
+    public AjaxResponse getMerchantStore(@RequestParam Long id,HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
         try {
             MerchantStore merchantStore1 = merchantStoreService.getEntity(MerchantStore.class, id);//id由前端切换商户传进来
             resp.addDataEntry(objectToEntry(merchantStore1));
         } catch (Exception e) {
             e.printStackTrace();
-            resp.setError("出错");
+            resp.setErrorString("出错");
         }
         return resp;
     }
 
     @RequestMapping(value = "/admin/merchantStore/delete", method = RequestMethod.POST)
     @ResponseBody
-    public JQGridResponse deleteMerchantStore(@RequestParam Long id,HttpServletRequest request) throws Exception {
-        JQGridResponse resp = new JQGridResponse();
+    public AjaxResponse deleteMerchantStore(@RequestParam Long id,HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
         try {
             if(id == null || StringUtil.isNullOrEmpty(id.toString())){
-                resp.setError("参数错误");
+                resp.setErrorString("参数错误");
                 return resp;
             }
             MerchantStore merchantStore = merchantStoreService.getEntity(MerchantStore.class, id);
             if (merchantStore != null) merchantStoreService.delete(merchantStore);
         } catch (Exception e) {
             e.printStackTrace();
-            resp.setError("删除出错");
+            resp.setErrorString("删除出错");
         }
         return resp;
     }
 
     @RequestMapping(value = "/admin/merchantStore/list", method = RequestMethod.GET)
     @ResponseBody
-    public JQGridResponse listMerchantStore(HttpServletRequest request) throws Exception {
-        JQGridResponse resp = new JQGridResponse();
+    public AjaxResponse listMerchantStore(HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
         try {
             List<MerchantStore> merchantStoreList = merchantStoreService.list();
             for (MerchantStore merchantStore : merchantStoreList) {
@@ -320,19 +319,19 @@ public class MerchantController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            resp.setError("出错");
+            resp.setErrorString("出错");
         }
         return resp;
     }
 
     @RequestMapping(value = "/admin/merchantStore/listByMerchant", method = RequestMethod.GET)
     @ResponseBody
-    public JQGridResponse listMerchantStoreByMerchant(HttpServletRequest request) throws Exception {
-        JQGridResponse resp = new JQGridResponse();
+    public AjaxResponse listMerchantStoreByMerchant(HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
         try {
             //从session中取账号关联的商户信息
             if(request.getSession().getAttribute(Constants.ADMIN_MERCHANT) == null ){
-                resp.setError("请先切换商户");
+                resp.setErrorString("请先切换商户");
                 return resp;
             }
 
@@ -344,7 +343,7 @@ public class MerchantController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            resp.setError("出错");
+            resp.setErrorString("出错");
         }
         return resp;
     }
