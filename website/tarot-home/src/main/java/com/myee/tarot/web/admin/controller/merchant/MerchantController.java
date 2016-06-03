@@ -1,6 +1,5 @@
 package com.myee.tarot.web.admin.controller.merchant;
 
-import com.google.common.collect.Lists;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
@@ -8,14 +7,34 @@ import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantService;
 import com.myee.tarot.merchant.service.MerchantStoreService;
+import com.myee.tarot.web.util.DateUtil;
 import com.myee.tarot.web.util.StringUtil;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.hibernate.criterion.Expression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +45,14 @@ import java.util.Map;
 @Controller
 public class MerchantController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MerchantController.class);
+
+    public static Map<String,Object> merchantType = new HashMap<String,Object>(){{
+        put("AL", "商场");
+        put("AK", "餐饮");
+        put("AZ", "零售");
+        put("AR", "其他");
+        put("CA", "商圈");
+    }};
 
     @Autowired
     private MerchantService merchantService;
@@ -56,6 +83,7 @@ public class MerchantController {
             Merchant merchantOld = merchantService.getEntity(Merchant.class, merchant.getId());
             //把商户信息写入session
             request.getSession().setAttribute(Constants.ADMIN_MERCHANT, merchantOld);
+            resp.addDataEntry(objectToEntry(merchantOld));
         } catch (Exception e) {
             e.printStackTrace();
             resp.setErrorString("切换出错");
@@ -136,7 +164,7 @@ public class MerchantController {
         AjaxResponse resp = new AjaxResponse();
         try {
             //从session中读取merchant信息，如果为空，则提示用户先切换商户
-            if(request.getSession().getAttribute(Constants.ADMIN_MERCHANT) == null ){
+            if(request.getSession().getAttribute(Constants.ADMIN_MERCHANT) == null) {
                 resp.setErrorString("请先切换商户");
                 return resp;
             }
@@ -183,13 +211,7 @@ public class MerchantController {
     @ResponseBody
     public AjaxResponse getMerchantType(){
         AjaxResponse resp = new AjaxResponse();
-        Map entry = new HashMap();
-        entry.put("AL","商场");
-        entry.put("AK","餐饮");
-        entry.put("AZ","零售");
-        entry.put("AR","其他");
-        entry.put("CA","商圈");
-        resp.addDataEntry(entry);
+        resp.addDataEntry(merchantType);
 
         return resp;
     }
@@ -200,10 +222,21 @@ public class MerchantController {
         entry.put("id", merchant.getId());
         entry.put("name", merchant.getName());
         entry.put("businessType", merchant.getBusinessType());
+        entry.put("businessTypeKey", getBusinessTypeKey(merchant.getBusinessType()));
         entry.put("cuisineType", merchant.getCuisineType());
         entry.put("logo", merchant.getLogo());
         entry.put("description", merchant.getDescription());
         return entry;
+    }
+
+    private String getBusinessTypeKey(String businessType){
+        try {
+            String key = String.valueOf(merchantType.get(businessType));
+            return key==null|| key.equals("null")?"":key;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     /**
