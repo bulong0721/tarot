@@ -1,6 +1,7 @@
 package com.myee.tarot.merchant.domain;
 
 import com.myee.tarot.core.GenericEntity;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -10,13 +11,15 @@ import java.util.Map;
 /**
  * Created by Martin on 2016/4/11.
  */
+
 @Entity
 @Table(name = "C_MERCHANT")
+@DynamicUpdate //hibernate部分更新
 public class Merchant extends GenericEntity<Long, Merchant> {
 
     @Id
     @Column(name = "MERCHANT_ID", unique = true, nullable = false)
-    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "MERCHANT_SEQ_NEXT_VAL")
+    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "MERCHANT_SEQ_NEXT_VAL",allocationSize=1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     private Long id;
 
@@ -38,9 +41,11 @@ public class Merchant extends GenericEntity<Long, Merchant> {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @OneToMany(mappedBy = "merchant", targetEntity = MerchantStore.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
-    @MapKey(name = "name")
-    protected Map<String, MerchantStore> merchantStore = new HashMap<String, MerchantStore>();
+//    @OneToMany(mappedBy = "merchant", targetEntity = MerchantStore.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
+//    @MapKey(name = "name")
+//    protected Map<String, MerchantStore> merchantStore = new HashMap<String, MerchantStore>();
+
+//    List<MerchantStore>
 
     @Override
     public Long getId() {
@@ -92,8 +97,8 @@ public class Merchant extends GenericEntity<Long, Merchant> {
         this.name = name;
     }
 
-    public Map<String, MerchantStore> getMerchantStore() {
-        return merchantStore;
-    }
+//    public Map<String, MerchantStore> getMerchantStore() {
+//        return merchantStore;
+//    }
 
 }

@@ -30,7 +30,7 @@ public class GeoZone extends GenericEntity<Long, GeoZone> {
     @Column(name = "PARENT")
     private Long parent;
 
-    @NotEmpty
+//    @NotEmpty //对Integer会报错
     @Column(name = "ZONE_LEVEL")
     private int level;
 

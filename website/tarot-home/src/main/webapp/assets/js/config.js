@@ -48,7 +48,7 @@ function managerLoader($ocLazyLoad) {
 }
 
 function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
-    $urlRouterProvider.otherwise("/merchant/shop/datatable");
+    $urlRouterProvider.otherwise("/merchant/shop");
 
     $ocLazyLoadProvider.config({
         // Set to true if you want to see what and when is dynamically loaded
@@ -60,7 +60,6 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             abstract: true,
             url: "/merchant",
             templateUrl: "assets/views/content.html",
-            data: {pageTitle: '门店管理'},
             resolve: {
                 loadPlugin: managerLoader
             }
@@ -68,27 +67,24 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         .state('merchant.shop', {
             url: "/shop",
             templateUrl: "assets/views/manager.html",
-            controller: 'datatablesCtrl'
-        })
-        .state('merchant.shop.datatable', {
-            url: '/datatable',
-            templateUrl: 'assets/views/merchant/shop_datatable.html',
-            data: {subTitle: '门店列表'}
-        })
-        .state('merchant.shop.editor', {
-            url: '/editor',
-            templateUrl: 'assets/views/formly/basic_editor.html',
-            data: {subTitle: '编辑门店'}
+            controller: 'merchantShopCtrl',
+            data: {
+                pageTitle: '门店管理',
+                subTitle: '门店管理',
+                datatable: 'assets/views/merchant/shop_datatable.html',
+                editor: 'assets/views/formly/basic_editor.html'
+            }
         })
         .state('merchant.merchant', {
-            url: "/user",
+            url: "/merchant",
             templateUrl: "assets/views/manager.html",
-            controller: 'datatablesCtrl'
-        })
-        .state('merchant.merchant.editor', {
-            url: '/editor',
-            templateUrl: 'assets/views/formly/basic_editor.html',
-            data: {subTitle: '编辑商户'}
+            controller: 'merchantCtrl',
+            data: {
+                pageTitle: '门店管理',
+                subTitle: '商户管理',
+                datatable:'assets/views/merchant/merchant_datatable.html',
+                editor: 'assets/views/formly/basic_editor.html'
+            }
         })
         .state('device', {
             abstract: true,

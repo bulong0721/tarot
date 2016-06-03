@@ -24,8 +24,8 @@
             <li ng-class="{active: $state.includes('merchant')}">
                 <a href="merchant.shop_list"><i class="fa fa-lg fa-bank"></i> <span class="nav-label">门店管理</span> <span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level" ng-class="{in: $state.includes('merchant')}">
-                    <li ng-class="{active: $state.includes('merchant.shop')}"><a ui-sref="merchant.shop.datatable">门店列表</a></li>
-                    <li ng-class="{active: $state.includes('merchant.merchant')}"><a ui-sref="merchant.merchant.editor">编辑商户</a></li>
+                    <li ng-class="{active: $state.includes('merchant.shop')}"><a ui-sref="merchant.shop">门店列表</a></li>
+                    <li ng-class="{active: $state.includes('merchant.merchant')}"><a ui-sref="merchant.merchant">编辑商户</a></li>
                 </ul>
             </li>
 
