@@ -25,7 +25,7 @@ function roleMgrCtrl($scope, $compile, Constants) {
             {data: 'id', visible: false},
             {data: 'roleName', title: '角色名', width: 60, orderable: false},
             {data: 'description', title: '描述', width: 100, orderable: false},
-            {title: '动作', width: 20, render: actionsHtml, className: 'center'}
+            {title: '动作', width: 20, render: actionsHtml, orderable: false, className: 'center'}
         ],
         fields: [
             {'key': 'roleName', 'type': 'input', 'templateOptions': {'label': '角色名', required: true, 'placeholder': '角色名'}},
@@ -50,6 +50,49 @@ function roleMgrCtrl($scope, $compile, Constants) {
     });
 }
 
+function userMgrCtrl($scope, Constants) {
+    function actionsHtml(data, type, full, meta) {
+        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
+    }
+
+    function statusHtml(data, type, full, meta) {
+        var text = "冻结", style = "label-danger";
+        if (full && full['activeStatusFlag']) {
+            text = "激活";
+            style = "label-primary";
+        }
+        return '<span class="label ' + style + '">' + text + '</span>';
+    }
+
+    var mgrData = {
+        columns: [
+            {data: 'id', visible: false},
+            {data: 'name', title: '昵称', width: 85, orderable: false},
+            {data: 'login', title: '登录名', width: 60, orderable: false},
+            {data: 'lastLogin', title: '最后登录时间', width: 70, orderable: false},
+            {data: 'loginIP', title: '最后登录IP', width: 70, orderable: false},
+            {data: 'phoneNumber', title: '电话号码', width: 65, orderable: false},
+            {data: 'email', title: '电子邮件', width: 100, orderable: false},
+            {data: 'activeStatusFlag', title: '状态', width: 40, orderable: false, render: statusHtml, className: 'center'},
+            {title: '操作', width: 35, render: actionsHtml, orderable: false, className: 'center'}
+        ],
+        fields: [
+            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '昵称', required: true, 'placeholder': '昵称'}},
+            {'key': 'login', 'type': 'input', 'templateOptions': {'label': '登录名', required: true, 'placeholder': '登录名'}},
+            {'key': 'phoneNumber', 'type': 'input', 'templateOptions': {'label': '电话号码', 'placeholder': '电话号码'}},
+            {'key': 'email', 'type': 'input', 'templateOptions': {type: 'email', 'label': '电子邮件', required: true, 'placeholder': '电子邮件'}},
+            {'key': 'activeStatusFlag', 'type': 'checkbox', 'templateOptions': {'label': '状态', 'placeholder': '状态'}}
+        ],
+        api: {
+            read: '/admin/users/paging',
+            update: '/admin/users/save'
+        }
+
+    };
+
+    Constants.initMgrCtrl(mgrData, $scope);
+}
+
 function datatablesCtrl($scope, $resource, $compile, Constants) {
     var mgrData = {
         columns: [
@@ -61,7 +104,7 @@ function datatablesCtrl($scope, $resource, $compile, Constants) {
             {data: 'phone', title: '电话号码', width: 65, orderable: false},
             {data: 'email', title: '电子邮件', width: 100, orderable: false},
             {data: 'active', title: '状态', width: 40, orderable: false},
-            {title: '动作', width: 35, render: actionsHtml, className: 'center'}
+            {title: '动作', width: 35, render: actionsHtml, orderable: false, className: 'center'}
         ],
         fields: [
             {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', 'placeholder': '名称'}},
@@ -75,7 +118,7 @@ function datatablesCtrl($scope, $resource, $compile, Constants) {
 
     };
 
-    Constants.initMgrCtrl(mgrData, $scope, $resource, $compile);
+    Constants.initMgrCtrl(mgrData, $scope);
 
     $scope.dtColumns = mgrData.columns;
 
@@ -93,112 +136,80 @@ function datatablesCtrl($scope, $resource, $compile, Constants) {
     });
 }
 
-function merchantShopCtrl($scope, $resource, $compile, Constants) {
-    function actionsHtml(data, type, full, meta) {
-        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
-    }
+function editMerchantCtrl($scope, $resource) {
+    var vm = $scope;
 
-    var key = ['id','name','address.province','address.city','address.county','address.circle','address.mall','address.address', 'phone','code','active'];
-    var title = ['门店ID','门店名称', '省份','城市','区县','商圈','商场','地址','联系电话','门店码', '操作','动作'];
-    var mgrData = {
-        columns: [
-            {data: 'id', title: '门店ID', width: 85, orderable: true},
-            {data: 'name', title: '门店名称', width: 85, orderable: false},
-            {data: 'address.province', title: '省份', width: 60, orderable: true},
-            {data: 'address.city', title: '城市', width: 55, orderable: true},
-            {data: 'address.county', title: '区县', width: 70, orderable: false, align: 'center'},
-            {data: 'address.circle', title: '商圈', width: 70, orderable: false},
-            {data: 'address.mall', title: '商场', width: 65, orderable: false},
-            {data: 'address.address', title: '地址', width: 100, orderable: false},
-            {data: 'phone', title: '联系电话', width: 40, orderable: false},
-            {data: 'code', title: '门店码', width: 40, orderable: false},
-            {data: 'active', title: '操作', width: 40, orderable: false},
-            {title: '动作', width: 35, render: actionsHtml}
-        ],
-        fields: [
-            {'key': 'merchant.name', 'type': 'input', 'templateOptions': {'disabled':true,'label': '商户名称', 'placeholder': '商户名称'}},
-            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '门店名称', 'placeholder': '门店名称'}},
-            {'key': 'address.province', 'type': 'input', 'templateOptions': {'label': '省份', 'placeholder': '省份'}},
-            {'key': 'address.city', 'type': 'input', 'templateOptions': {'label': '城市', 'placeholder': '城市'}},
-            {'key': 'address.county', 'type': 'input', 'templateOptions': {'label': '区县', 'placeholder': '区县'}},
-            {'key': 'address.circle', 'type': 'input', 'templateOptions': {'label': '商圈', 'placeholder': '商圈'}},
-            {'key': 'address.mall', 'type': 'input', 'templateOptions': {'label': '商场', 'placeholder': '商场'}},
-            {'key': 'address.address', 'type': 'input', 'templateOptions': {'label': '地址', 'placeholder': '地址'}},
-            {'key': 'phone', 'type': 'input', 'templateOptions': {'label': '联系电话', 'placeholder': '联系电话'}},
-            {'key': 'code', 'type': 'input', 'templateOptions': {'label': '门店码', 'placeholder': '门店码'}},
-        ],
-        api: {
-            read: '/admin/merchantStore/listByMerchant',
-            update: '/admin/merchantStore/save'
-        }
+    //获取一个商户信息请求
+    $resource('/admin/merchant/get').get({
+        id: '100'//以后从右上角的切换门店取商户ID
+    }, function (resp) {
+        // 处理响应成功
+        vm.list = resp.data[0];
+        vm.setModel(vm.list);
+        console.log(vm.model);
+    }, function (err) {
+        // 处理错误
 
-    };
-
-    Constants.initMgrCtrl(mgrData, $scope, $resource, $compile);
-
-    $scope.dtColumns = mgrData.columns;
-
-    $scope.dtOptions = Constants.buildOption(mgrData.api.read, function (data) {
-        angular.extend(data, $scope.where);
-    }, function (row, data, dataIndex) {
-        var elem = angular.element(row);
-        var content = elem.contents();
-        var scope = $scope;
-        $compile(content)(scope);
     });
 
-}
+    vm.setModel = function (list) {
+        //设置formly的初始值
+        vm.model = {
+            name: list.name,
+            businessType: list.businessType,
+            cuisineType: list.cuisineType,
+            description: list.description
+        };
+    };
 
-function merchantCtrl($scope, $resource, $compile, Constants) {
+    vm.options = {};
 
-    function actionsHtml(data, type, full, meta) {
-        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
-    }
+    vm.fields = [
+        {'key': 'name', 'type': 'input', 'templateOptions': {'type': 'text', 'label': '商户名称', 'placeholder': '商户名称'}},
+        {
+            'key': 'businessType', 'type': 'select',
+            'templateOptions': {
+                'label': '商户类型',
+                'options': [
+                    {name: '商场', value: 'AL'},
+                    {name: '餐饮', value: 'AK'},
+                    {name: '零售', value: 'AZ'},
+                    {name: '其他', value: 'AR'},
+                    {name: '商圈', value: 'CA'}
+                ]
+            }
+        },
+        {'key': 'cuisineType', 'type': 'input', 'templateOptions': {'type': 'text', 'label': '商户菜系', 'placeholder': '商户菜系'}},
+        {'key': 'imgFile', 'type': 'input', 'templateOptions': {'type': 'file', 'label': '商户图标', 'placeholder': '商户图标'}},
+        {'key': 'description', 'type': 'textarea', 'templateOptions': {'label': '商户描述', 'placeholder': '商户描述', "rows": 10}}
+    ];
 
-    //var type={};
-    //$resource('/admin/merchant/typeList').get({},function(resp){type = resp.data;console.log(type);});
-    //console.log(type);
-
-    console.log("aaaaaa"+$scope.merchantType);
-    var mgrData = {
-        columns: [
-            {data: 'id', title: '商户ID', width: 85, orderable: true},
-            {data: 'name', title: '商户名称', width: 85, orderable: true},
-            {data: 'businessType', title: '商户类型', width: 60, orderable: true},
-            {data: 'cuisineType', title: '商户菜系', width: 55, orderable: true},
-            {data: 'imgFile', title: '商户图标', width: 70, orderable: false, align: 'center'},
-            {data: 'description', title: '商户描述', width: 70, orderable: false},
-            {title: '动作', width: 35, render: actionsHtml}
-        ],
-        fields: [
-            {'key': 'name', 'type': 'input', 'templateOptions': {'type':'text','label': '商户名称', 'placeholder': '商户名称'}},
-            {'key': 'businessType', 'type': 'select',
-                'templateOptions': {
-                    'label': '商户类型',
-                    'options': Constants.merchantType
-                }
+    //提交到后台修改门店信息
+    $scope.onSubmit = function () {
+        alert(123);
+        console.log(vm.model.id);
+        $resource('/admin/merchant/edit').save(
+            {
+                id: '100',//以后从右上角的切换门店取商户ID
+                name: vm.model.name,
+                businessType: vm.model.businessType,
+                cuisineType: vm.model.cuisineType,
+                description: vm.model.description
             },
-            {'key': 'cuisineType', 'type': 'input', 'templateOptions': {'type':'text','label': '商户菜系', 'placeholder': '商户菜系'}},
-            {'key': 'imgFile', 'type': 'input', 'templateOptions': {'type':'file','label': '商户图标', 'placeholder': '商户图标'}},
-            {'key': 'description', 'type': 'textarea', 'templateOptions': {'label': '商户描述', 'placeholder': '商户描述',"rows": 10}}
-        ],
-        api: {
-            read: '/admin/merchant/list',
-            update: '/admin/merchant/save'
-        }
+            {},
+            function (response) {
+                // 处理响应成功
+            }, function (response) {
+                // 处理非成功响应
+            }
+        );
     };
-    Constants.initMgrCtrl(mgrData, $scope);
 
-    $scope.dtColumns = mgrData.columns;
+    //重置参数为初始状态
+    $scope.onReset = function () {
+        vm.setModel(vm.list);
+    };
 
-    $scope.dtOptions = Constants.buildOption(mgrData.api.read, function (data) {
-        angular.extend(data, $scope.where);
-    }, function (row, data, dataIndex) {
-        var elem = angular.element(row);
-        var content = elem.contents();
-        var scope = $scope;
-        $compile(content)(scope);
-    });
 
 }
 
@@ -321,67 +332,42 @@ function explorerCtrl($scope, $resource) {
 
 }
 
-function deviceCtrl($scope, $compile, $resource, Constants) {
-    $scope.where = {};
-    $scope.dtInstance = null;
-
-    $scope.dtColumns = [
-        {data: 'name', title: '名称', width: 40, orderable: false},
-        {data: 'versionNum', title: '版本号', width: 40, orderable: false},
-        {data: 'description', title: '描绘', width: 60, orderable: false},
-        {title: '动作', width: 35, render: actionsHtml}
-    ];
-
-    $scope.formData = {
-        fields: [
-            {'key': 'id', 'type': 'input',  'templateOptions': {/*'type':'hidden',*/'label': 'id', 'placeholder': 'id'}},
-            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', 'placeholder': '名称'}},
-            {'key': 'versionNum', 'type': 'input', 'templateOptions': {'label': '版本号', 'placeholder': '版本号'}},
-            {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}}
-        ]
-    };
-
-    $scope.linkClick = function(full) {
-        console.log("full:" + full);
-    };
-
+function tableTypeMgrCtrl($scope, Constants) {
     function actionsHtml(data, type, full, meta) {
-        return '<a class="btn btn-sm btn-primary" ng-click="linkClick('+meta.row+')" ui-sref="device.type.editor"><i class="fa fa-edit"></a>';
+        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
     }
 
-    $scope.dtOptions = Constants.buildOption("/device/paging", function (data) {
-        angular.extend(data, $scope.where);
-    }, function (row, data, dataIndex) {
-        var elem = angular.element(row);
-        var content = elem.contents();
-        var scope = $scope;
-        $compile(content)(scope);
-    });
-    $scope.search = function () {
-
-        var api = this.dtInstance;
-        if (api) {
-            api.reloadData();
+    var mgrData = {
+        columns: [
+            {data: 'id', visible: false},
+            {data: 'name', title: '名称', width: 85, orderable: false},
+            {data: 'description', title: '描述', width: 60, orderable: false},
+            {data: 'capacity', title: '容纳人数', width: 70, orderable: false},
+            {data: 'minimum', title: '最小就坐', width: 70, orderable: false},
+            {title: '操作', width: 35, render: actionsHtml, orderable: false, className: 'center'}
+        ],
+        fields: [
+            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
+            {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', required: true, 'placeholder': '描述'}},
+            {'key': 'capacity', 'type': 'input', 'templateOptions': {'label': '容纳人数', 'placeholder': '容纳人数'}},
+            {'key': 'minimum', 'type': 'input', 'templateOptions': {'label': '最小就坐', required: true, 'placeholder': '最小就坐'}}
+        ],
+        api: {
+            read: '/admin/catering/type/paging',
+            update: '/admin/catering/type/save'
         }
     };
 
-    $scope.submit = function(){
-        var vm = $scope.formData;
-        $resource('/device/update').save({}, vm.model, function(resp){
-
-        },function(error){
-            alert(error.statusMessage);
-        });
-    }
+    Constants.initMgrCtrl(mgrData, $scope);
 }
 
 angular
     .module('inspinia')
     .controller('datatablesCtrl', datatablesCtrl)
+    .controller('tableTypeMgrCtrl', tableTypeMgrCtrl)
+    .controller('userMgrCtrl', userMgrCtrl)
     .controller('roleMgrCtrl', roleMgrCtrl)
-    .controller('merchantCtrl', merchantCtrl)
-    .controller('merchantShopCtrl', merchantShopCtrl)
+    .controller('editMerchantCtrl', editMerchantCtrl)
     .controller('explorerCtrl', explorerCtrl)
     .controller('uiGridCtrl', uiGridCtrl)
-    .controller('MainCtrl', MainCtrl)
-    .controller('deviceCtrl',deviceCtrl);
+    .controller('MainCtrl', MainCtrl);

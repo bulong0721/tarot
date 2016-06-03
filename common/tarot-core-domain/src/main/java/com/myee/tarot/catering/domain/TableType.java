@@ -18,7 +18,7 @@ public class TableType extends GenericEntity<Long, TableType> {
 
     @Id
     @Column(name = "TABLE_TYPE_ID", unique = true, nullable = false)
-    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "TABLE_TYPE_SEQ_NEXT_VAL",allocationSize=1)
+    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "TABLE_TYPE_SEQ_NEXT_VAL", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     private Long id;
 
@@ -35,8 +35,8 @@ public class TableType extends GenericEntity<Long, TableType> {
     private int minimum;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MERCHANT_ID")
-    private MerchantStore merchantStore;
+    @JoinColumn(name = "STORE_ID")
+    private MerchantStore store;
 
     public int getCapacity() {
         return capacity;
@@ -64,12 +64,12 @@ public class TableType extends GenericEntity<Long, TableType> {
         this.id = id;
     }
 
-    public MerchantStore getMerchantStore() {
-        return merchantStore;
+    public MerchantStore getStore() {
+        return store;
     }
 
-    public void setMerchantStore(MerchantStore merchantStore) {
-        this.merchantStore = merchantStore;
+    public void setStore(MerchantStore store) {
+        this.store = store;
     }
 
     public int getMinimum() {

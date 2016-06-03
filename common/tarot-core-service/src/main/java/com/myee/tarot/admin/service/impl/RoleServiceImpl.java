@@ -23,5 +23,6 @@ public class RoleServiceImpl extends GenericEntityServiceImpl<Long, Role> implem
     @Autowired
     public RoleServiceImpl(RoleDao roleDao) {
         super(roleDao);
+        this.roleDao = roleDao;
     }
 }

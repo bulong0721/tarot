@@ -2,7 +2,7 @@ package com.myee.tarot.web.files.controller;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.myee.tarot.core.web.JsTreeResponse;
+import com.myee.tarot.web.files.JSTreeDTO;
 import com.myee.tarot.web.files.FileDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,9 +44,9 @@ public class FilesController {
 
     @RequestMapping(value = "/admin/files/list")
     @ResponseBody
-    public List<JsTreeResponse> processListFiles(HttpServletRequest http,HttpServletResponse response) {
+    public List<JSTreeDTO> processListFiles(HttpServletRequest http,HttpServletResponse response) {
         Map<String,Object> resp = Maps.newHashMap();
-        List<JsTreeResponse> tree = Lists.newArrayList();
+        List<JSTreeDTO> tree = Lists.newArrayList();
         String id = http.getParameter("id");
         File dir = null;
         if(id.equals("#")){
@@ -64,7 +64,7 @@ public class FilesController {
         List<FileDTO> dtos = Lists.newArrayList(resMap.values());
         Collections.sort(dtos);
         for (FileDTO dto : dtos) {
-            JsTreeResponse jt = new JsTreeResponse();
+            JSTreeDTO jt = new JSTreeDTO();
             jt.setId(dto.getId());
             jt.setChildren(!dto.isLeaf());
             jt.setText(dto.getName());
@@ -78,7 +78,7 @@ public class FilesController {
 
     @RequestMapping(value = "/admin/files/change")
     @ResponseBody
-    public JsTreeResponse changeFile(HttpServletRequest request,HttpServletResponse response) {
+    public JSTreeDTO changeFile(HttpServletRequest request,HttpServletResponse response) {
         String operation = request.getParameter("operation");
         String id = request.getParameter("id");
         String text = request.getParameter("text");
@@ -100,7 +100,7 @@ public class FilesController {
                     }
                 }
                 if(isNew){
-                    return new JsTreeResponse(file.getPath());
+                    return new JSTreeDTO(file.getPath());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -111,7 +111,7 @@ public class FilesController {
                 File file = new File(id);
                 boolean isDelete = delete(file);
                 if(isDelete){
-                    JsTreeResponse tree = new JsTreeResponse();
+                    JSTreeDTO tree = new JSTreeDTO();
                     tree.setStatus("OK");
                     return tree;
                 }
@@ -130,10 +130,10 @@ public class FilesController {
                         isRename = file.renameTo(newFile);
                     }
                     if(isRename){
-                        return new JsTreeResponse(newFile.getPath());
+                        return new JSTreeDTO(newFile.getPath());
                     }
                 }else{
-                    return new JsTreeResponse(newFile.getPath());
+                    return new JSTreeDTO(newFile.getPath());
                 }
             } catch (Exception e) {
                 e.printStackTrace();

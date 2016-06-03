@@ -4,8 +4,8 @@ import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.admin.service.AdminRoleService;
 import com.myee.tarot.admin.service.AdminUserService;
 import com.myee.tarot.admin.service.RoleService;
+import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
-import com.myee.tarot.core.web.JQGridResponse;
 import com.myee.tarot.reference.domain.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,8 @@ import java.util.Map;
  */
 @Controller
 public class UserController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+    private static final Logger LOGGER           = LoggerFactory.getLogger(UserController.class);
+    private static final String DEFAULT_PASSWORD = "123456";
 
     @Autowired
     private AdminUserService userService;
@@ -36,29 +37,39 @@ public class UserController {
     private RoleService roleService;
 
     @RequestMapping(value = "/admin/users/save", method = RequestMethod.POST)
-    public String addUser(@Valid @ModelAttribute AdminUser user, Model model, HttpServletRequest request) throws Exception {
-
-        AdminUser dbUser = userService.getByUserName(user.getName());
-        if (user.getId() != null) {
-
+    @ResponseBody
+    public AjaxResponse addUser(@RequestBody AdminUser user, HttpServletRequest request) throws Exception {
+        if (null != user.getId()) {
+            AdminUser dbUser = userService.findById(user.getId());
+            dbUser.setName(user.getName());
+            dbUser.setLogin(user.getLogin());
+            dbUser.setPhoneNumber(user.getPhoneNumber());
+            dbUser.setEmail(user.getEmail());
+            dbUser.setActiveStatusFlag(user.getActiveStatusFlag());
+            user = dbUser;
+        } else {
+            user.setPassword(DEFAULT_PASSWORD);
         }
-        userService.save(dbUser);
-        return "/admin/login";
+        userService.update(user);
+        return AjaxResponse.success();
     }
 
     @RequestMapping(value = "/admin/users/paging", method = RequestMethod.GET)
     public
     @ResponseBody
-    JQGridResponse pageUsers(Model model, HttpServletRequest request) {
-        JQGridResponse resp = new JQGridResponse();
+    AjaxPageableResponse pageUsers(Model model, HttpServletRequest request) {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
         List<AdminUser> userList = userService.list();
         for (AdminUser user : userList) {
             Map entry = new HashMap();
+            entry.put("id", user.getId());
             entry.put("login", user.getLogin());
             entry.put("name", user.getName());
             entry.put("email", user.getEmail());
-            entry.put("phone", user.getPhoneNumber());
-            entry.put("active", user.getActiveStatusFlag());
+            entry.put("phoneNumber", user.getPhoneNumber());
+            entry.put("activeStatusFlag", user.getActiveStatusFlag());
+            entry.put("lastLoin", user.getLastLoin());
+            entry.put("loginIP", user.getLoginIP());
             resp.addDataEntry(entry);
         }
         return resp;
@@ -67,8 +78,8 @@ public class UserController {
     @RequestMapping(value = "/admin/roles/paging", method = RequestMethod.GET)
     public
     @ResponseBody
-    JQGridResponse pageRoles(Model model, HttpServletRequest request) {
-        JQGridResponse resp = new JQGridResponse();
+    AjaxPageableResponse pageRoles(Model model, HttpServletRequest request) {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
         List<Role> roleList = roleService.list();
         for (Role role : roleList) {
             Map entry = new HashMap();

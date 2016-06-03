@@ -2,6 +2,7 @@ package com.myee.tarot.admin.web.handler;
 
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.admin.service.AdminUserService;
+import com.myee.tarot.core.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,16 +36,12 @@ public class AdminAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
         // last access timestamp
         String userName = authentication.getName();
         try {
-//            AdminUser user = userService.getByUserName(userName);
-//
-//            Date lastAccess = user.getLoginTime();
-//            if (lastAccess == null) {
-//                lastAccess = new Date();
-//            }
-//            user.setLastAccess(lastAccess);
-//            user.setLoginTime(new Date());
-//
-//            userService.saveOrUpdate(user);
+            AdminUser user = userService.getByLogin(userName);
+
+            user.setLoginIP(request.getRemoteAddr());
+            user.setLastLoin(new Date());
+
+            userService.update(user);
             response.sendRedirect(request.getContextPath() + "/admin/home.html");
         } catch (Exception e) {
             LOGGER.error("User authenticationSuccess", e);

@@ -4,6 +4,7 @@ import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.core.audit.AuditableListener;
 import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -16,22 +17,22 @@ import java.util.*;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "C_ADMIN_USER")
+@DynamicUpdate
 public class AdminUser extends GenericEntity<Long, AdminUser> {
 
     @Id
     @Column(name = "ADMIN_USER_ID", unique = true, nullable = false)
-    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "ADMIN_USER_SEQ_NEXT_VAL",allocationSize=1)
+    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "ADMIN_USER_SEQ_NEXT_VAL", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     private Long id;
 
     @Column(name = "NAME", length = 20, nullable = false)
     private String name;
 
-    @Column(name = "LOGIN", length = 40, nullable = false)
+    @Column(name = "LOGIN", length = 40, nullable = false, unique = true)
     private String login;
 
-    @NotEmpty
-    @Column(name = "PASSWORD", length = 40)
+    @Column(name = "PASSWORD", nullable = false, length = 40)
     private String password;
 
     @Column(name = "PHONE_NUMBER", length = 20)
@@ -45,16 +46,15 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
     protected Boolean activeStatusFlag = Boolean.TRUE;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MERCHANTSTORE_ID")
+    @JoinColumn(name = "STORE_ID")
     private MerchantStore merchantStore;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "LAST_ACCESS")
-    protected Date lastAccess;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "LOGIN_ACCESS")
     protected Date lastLoin;
+
+    @Column(name = "LOGIN_IP", length = 20)
+    protected String loginIP;
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminRole.class)
     @JoinTable(name = "C_ADMIN_USER_ROLE_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"))
@@ -63,14 +63,6 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermission.class)
     @JoinTable(name = "C_ADMIN_USER_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
     protected Set<AdminPermission> allPermissions = new HashSet<AdminPermission>();
-
-    @OneToMany(mappedBy = "adminUser", targetEntity = AdminUserAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
-    @MapKey(name = "name")
-    protected Map<String, AdminUserAttribute> additionalFields = new HashMap<String, AdminUserAttribute>();
-
-    public Map<String, AdminUserAttribute> getAdditionalFields() {
-        return additionalFields;
-    }
 
     public Set<AdminPermission> getAllPermissions() {
         return allPermissions;
@@ -144,12 +136,12 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
         this.merchantStore = merchantStore;
     }
 
-    public Date getLastAccess() {
-        return lastAccess;
+    public String getLoginIP() {
+        return loginIP;
     }
 
-    public void setLastAccess(Date lastAccess) {
-        this.lastAccess = lastAccess;
+    public void setLoginIP(String loginIP) {
+        this.loginIP = loginIP;
     }
 
     public Date getLastLoin() {

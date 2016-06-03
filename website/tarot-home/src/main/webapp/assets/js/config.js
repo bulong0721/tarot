@@ -119,6 +119,42 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             templateUrl: "assets/views/explorer/explorer.html",
             data: {pageTitle: '推送日志'}
         })
+        .state('cater', {
+            abstract: true,
+            url: "/cater",
+            templateUrl: "assets/views/content.html",
+            data: {pageTitle: '餐厅设置'},
+            resolve: {
+                loadPlugin: managerLoader
+            }
+        })
+        .state('cater.type', {
+            url: "/type",
+            templateUrl: "assets/views/manager.html",
+            controller: 'tableTypeMgrCtrl',
+            data: {
+                subTitle: '餐桌类型',
+                datatable: 'assets/views/catering/user_datatable.html'
+            }
+        })
+        .state('cater.zone', {
+            url: "/zone",
+            templateUrl: "assets/views/manager.html",
+            controller: 'userMgrCtrl',
+            data: {
+                subTitle: '餐桌区域',
+                datatable: 'assets/views/catering/user_datatable.html'
+            }
+        })
+        .state('cater.table', {
+            url: "/table",
+            templateUrl: "assets/views/manager.html",
+            controller: 'userMgrCtrl',
+            data: {
+                subTitle: '餐桌管理',
+                datatable: 'assets/views/catering/user_datatable.html'
+            }
+        })
         .state('user', {
             abstract: true,
             url: "/user",
@@ -130,7 +166,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         .state('user.user', {
             url: "/user",
             templateUrl: "assets/views/manager.html",
-            controller: 'datatablesCtrl',
+            controller: 'userMgrCtrl',
             data: {
                 pageTitle: '用户管理',
                 subTitle: '用户管理',

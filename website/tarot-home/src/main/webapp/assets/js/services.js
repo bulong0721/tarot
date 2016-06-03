@@ -81,9 +81,8 @@ function constServiceCtor($filter, $compile, $resource) {
         {name: '商圈', value: 'CA'}];
 
     vm.initMgrCtrl = function (mgrData, scope) {
-        var vm = scope;
         scope.where = {};
-        scope.dtInstance = null;
+
         scope.formData = {
             fields: mgrData.fields
         };
@@ -113,6 +112,15 @@ function constServiceCtor($filter, $compile, $resource) {
             scope.showEditor = true;
         };
 
+        scope.dtInstance = null;
+        scope.dtColumns = mgrData.columns;
+        scope.dtOptions = vm.buildOption(mgrData.api.read, function (data) {
+            angular.extend(data, scope.where);
+        }, function (row, data, dataIndex) {
+            var content = angular.element(row).contents();
+            $compile(content)(scope);
+        });
+
         function saveSuccess(response) {
             if (0 != response.status) {
                 return;
@@ -127,7 +135,6 @@ function constServiceCtor($filter, $compile, $resource) {
 
         function saveFailed(response) {
             console.log(response);
-            alert('saveFailed');
         }
 
         scope.processSubmit = function () {

@@ -11,10 +11,10 @@ public class AjaxResponse implements Serializable {
     public final static int RESPONSE_OPERATION_COMPLETED      = 9999;
     public final static int CODE_ALREADY_EXIST                = 9998;
 
-    private int status;
-    private List<Object>        data               = new ArrayList<Object>();
-    private Map<String, Object> dataMap            = new HashMap<String, Object>();
-    private Map<String, Object> validationMessages = new HashMap<String, Object>();
+    protected int status;
+    protected List<Object>        rows               = new ArrayList<Object>();
+    protected Map<String, Object> dataMap            = new HashMap<String, Object>();
+    protected Map<String, Object> validationMessages = new HashMap<String, Object>();
 
     public Map<String, Object> getValidationMessages() {
         return validationMessages;
@@ -32,16 +32,17 @@ public class AjaxResponse implements Serializable {
         this.status = status;
     }
 
-    public void setData(List<Object> data) {
-        this.data = data;
+    public List<Object> getRows() {
+        return rows;
     }
 
     public void addDataEntry(Map<String, Object> dataEntry) {
-        this.data.add(dataEntry);
+        this.rows.add(dataEntry);
     }
 
-    public void addEntry(String key, String value) {
+    public AjaxResponse addEntry(String key, Object value) {
         dataMap.put(key, value);
+        return this;
     }
 
     public void setErrorMessage(Throwable t) {

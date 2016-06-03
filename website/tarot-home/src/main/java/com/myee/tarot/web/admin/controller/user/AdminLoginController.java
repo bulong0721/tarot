@@ -2,7 +2,7 @@ package com.myee.tarot.web.admin.controller.user;
 
 import com.myee.tarot.admin.service.AdminUserService;
 import com.myee.tarot.core.service.GenericResponse;
-import com.myee.tarot.core.web.JsonResponse;
+import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.core.web.controller.AdminAbstractController;
 import com.myee.tarot.core.web.form.ResetPasswordForm;
 import com.myee.tarot.core.web.util.MessageUtil;
@@ -36,8 +36,9 @@ public class AdminLoginController extends AdminAbstractController {
     }
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
-    public String processChangePassword(HttpServletRequest request, HttpServletResponse response, Model model,
-                                        @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm) {
+    @ResponseBody
+    public AjaxResponse processChangePassword(HttpServletRequest request, HttpServletResponse response, Model model,
+                                              @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm) {
         GenericResponse errorResponse = adminUserService.changePassword(resetPasswordForm.getUsername(),
                 resetPasswordForm.getOldPassword(),
                 resetPasswordForm.getPassword(),
@@ -45,15 +46,13 @@ public class AdminLoginController extends AdminAbstractController {
 
         if (errorResponse.getHasErrors()) {
             String errorCode = errorResponse.getErrorCodesList().get(0);
-            return new JsonResponse(response)
-                    .with("status", "error")
-                    .with("errorText", MessageUtil.getMessage("password." + errorCode))
-                    .done();
+            return new AjaxResponse()
+                    .addEntry("status", "error")
+                    .addEntry("errorText", MessageUtil.getMessage("password." + errorCode));
         } else {
-            return new JsonResponse(response)
-                    .with("data.status", "ok")
-                    .with("successMessage", MessageUtil.getMessage("PasswordChange_success"))
-                    .done();
+            return new AjaxResponse()
+                    .addEntry("data.status", "ok")
+                    .addEntry("successMessage", MessageUtil.getMessage("PasswordChange_success"));
         }
     }
 }
