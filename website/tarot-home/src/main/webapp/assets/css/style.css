@@ -10004,6 +10004,14 @@ th.center, td.center {
     border-radius: 4px;
 }
 
+.blue {
+    color: #478fca!important
+}
+
 .red {
-    color: red !important;
+    color: #dd5a43!important;
+}
+
+.green {
+    color: #69aa46!important;
 }

@@ -51,7 +51,7 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "LOGIN_ACCESS")
-    protected Date lastLoin;
+    protected Date lastLogin;
 
     @Column(name = "LOGIN_IP", length = 20)
     protected String loginIP;
@@ -144,11 +144,11 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
         this.loginIP = loginIP;
     }
 
-    public Date getLastLoin() {
-        return lastLoin;
+    public Date getLastLogin() {
+        return lastLogin;
     }
 
-    public void setLastLoin(Date lastLoin) {
-        this.lastLoin = lastLoin;
+    public void setLastLogin(Date lastLogin) {
+        this.lastLogin = lastLogin;
     }
 }

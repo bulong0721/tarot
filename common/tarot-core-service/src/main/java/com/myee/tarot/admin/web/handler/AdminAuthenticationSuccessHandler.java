@@ -39,7 +39,7 @@ public class AdminAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
             AdminUser user = userService.getByLogin(userName);
 
             user.setLoginIP(request.getRemoteAddr());
-            user.setLastLoin(new Date());
+            user.setLastLogin(new Date());
 
             userService.update(user);
             response.sendRedirect(request.getContextPath() + "/admin/home.html");

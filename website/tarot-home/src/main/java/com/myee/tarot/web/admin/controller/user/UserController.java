@@ -68,7 +68,7 @@ public class UserController {
             entry.put("email", user.getEmail());
             entry.put("phoneNumber", user.getPhoneNumber());
             entry.put("activeStatusFlag", user.getActiveStatusFlag());
-            entry.put("lastLoin", user.getLastLoin());
+            entry.put("lastLogin", user.getLastLogin());
             entry.put("loginIP", user.getLoginIP());
             resp.addDataEntry(entry);
         }

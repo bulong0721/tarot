@@ -54,6 +54,13 @@ public class TableController {
         return AjaxResponse.success();
     }
 
+    @RequestMapping(value = "/type/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse delTableType(@RequestBody TableType type, HttpServletRequest request) throws Exception {
+        typeService.delete(type);
+        return AjaxResponse.success();
+    }
+
     @RequestMapping(value = "/type/paging", method = RequestMethod.GET)
     public
     @ResponseBody
@@ -79,6 +86,13 @@ public class TableController {
         return AjaxResponse.success();
     }
 
+    @RequestMapping(value = "/zone/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse delTableZone(@RequestBody TableZone zone, HttpServletRequest request) throws Exception {
+        zoneService.delete(zone);
+        return AjaxResponse.success();
+    }
+
     @RequestMapping(value = "/zone/paging", method = RequestMethod.GET)
     public
     @ResponseBody
@@ -99,6 +113,13 @@ public class TableController {
     @ResponseBody
     public AjaxResponse addTable(@RequestBody Table table, HttpServletRequest request) throws Exception {
         tableService.update(table);
+        return AjaxResponse.success();
+    }
+
+    @RequestMapping(value = "/table/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse delTable(@RequestBody Table table, HttpServletRequest request) throws Exception {
+        tableService.delete(table);
         return AjaxResponse.success();
     }
 

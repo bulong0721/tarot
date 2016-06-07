@@ -55,6 +55,10 @@ function userMgrCtrl($scope, Constants) {
         return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
     }
 
+    function dateHtml(data, type, full, meta) {
+        return Constants.dateFormatter(full.lastLogin);
+    }
+
     function statusHtml(data, type, full, meta) {
         var text = "冻结", style = "label-danger";
         if (full && full['activeStatusFlag']) {
@@ -69,7 +73,7 @@ function userMgrCtrl($scope, Constants) {
             {data: 'id', visible: false},
             {data: 'name', title: '昵称', width: 85, orderable: false},
             {data: 'login', title: '登录名', width: 60, orderable: false},
-            {data: 'lastLogin', title: '最后登录时间', width: 70, orderable: false},
+            {data: 'lastLogin', title: '最后登录时间', render: dateHtml, width: 70, orderable: false},
             {data: 'loginIP', title: '最后登录IP', width: 70, orderable: false},
             {data: 'phoneNumber', title: '电话号码', width: 65, orderable: false},
             {data: 'email', title: '电子邮件', width: 100, orderable: false},
@@ -178,7 +182,12 @@ function merchantShopCtrl($scope, $resource, $compile, Constants) {
             {'key': 'merchant.name', 'type': 'input', 'templateOptions': {'disabled':true,'label': '商户名称', 'placeholder': '商户名称'}},
             {'key': 'name', 'type': 'input', 'templateOptions': {'label': '门店名称', 'placeholder': '门店名称'}},
             {'key': 'address.province.id', 'type': 'select', 'templateOptions': {'label': '省份','options': Constants.provinces}},
-            {'key': 'address.city.id', 'type': 'select', 'templateOptions': {'label': '城市','options': Constants.merchantType}},
+            {'key': 'address.city.id', 'type': 'select', 'templateOptions': {'label': '城市','options': Constants.merchantType}, expressionProperties:{
+                value: function($viewValue, $modelValue, scope) {
+                    console.log($viewValue);
+                    console.log($modelValue);
+                }
+            }},
             {'key': 'address.county.id', 'type': 'select', 'templateOptions': {'label': '区县','options': Constants.merchantType}},
             {'key': 'address.circle.id', 'type': 'select', 'templateOptions': {'label': '商圈','options': Constants.merchantType}},
             {'key': 'address.mall.id', 'type': 'select', 'templateOptions': {'label': '商场','options': Constants.merchantType}},
@@ -426,7 +435,8 @@ function tableTypeMgrCtrl($scope, Constants) {
 
 function tableZoneMgrCtrl($scope, Constants) {
     function actionsHtml(data, type, full, meta) {
-        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
+        return '<a class="green" ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></i></a>'
+            + '<a class="m-l-xs red" ng-click="doDelete(' + meta.row + ')"><i class="btn-icon fa fa-trash-o bigger-130"></i></a>';
     }
 
     var mgrData = {
@@ -442,7 +452,8 @@ function tableZoneMgrCtrl($scope, Constants) {
         ],
         api: {
             read: '/admin/catering/zone/paging',
-            update: '/admin/catering/zone/save'
+            update: '/admin/catering/zone/save',
+            delete: '/admin/catering/zone/delete',
         }
     };
 
@@ -470,8 +481,16 @@ function tableMgrCtrl($scope, $resource, Constants) {
         fields: [
             {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
             {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', required: true, 'placeholder': '描述'}},
-            {'key': 'tableType.id', 'type': 'select', 'templateOptions': {'label': '桌型', valueProp: 'id', options: typeOpts, required: true, 'placeholder': '桌型'}},
-            {'key': 'tableZone.id', 'type': 'select', 'templateOptions': {'label': '区域', valueProp: 'id', options: zoneOpts, 'placeholder': '区域'}},
+            {
+                'key': 'tableType.id',
+                'type': 'select',
+                'templateOptions': {'label': '桌型', valueProp: 'id', options: typeOpts, required: true, 'placeholder': '桌型'}
+            },
+            {
+                'key': 'tableZone.id',
+                'type': 'select',
+                'templateOptions': {'label': '区域', valueProp: 'id', options: zoneOpts, 'placeholder': '区域'}
+            },
         ],
         api: {
             read: '/admin/catering/table/paging',
@@ -488,12 +507,13 @@ function deviceCtrl($scope, $compile, $resource, Constants) {
     function actionsHtml(data, type, full, meta) {
         return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
     }
+
     var mgrData = {
         columns: [
             {data: 'name', title: '名称', width: 40, orderable: false},
             {data: 'versionNum', title: '版本号', width: 40, orderable: false},
             {data: 'description', title: '描绘', width: 60, orderable: false},
-            {title: '动作', width: 35, render: actionsHtml,className: 'center'}
+            {title: '动作', width: 35, render: actionsHtml, className: 'center'}
 
         ],
         fields: [
@@ -547,7 +567,7 @@ function deviceUsedCtrl($scope, $compile, $resource, Constants) {
             {data: 'description', title: '描绘', width: 60, orderable: false},
             {data: 'device.name', title: '设备名', width: 60, orderable: false},
             {data: 'store.name', title: '商户名', width: 60, orderable: false},
-            {title: '动作', width: 35, render: actionsHtml,className: 'center'}
+            {title: '动作', width: 35, render: actionsHtml, className: 'center'}
 
         ],
         fields: [
@@ -556,7 +576,7 @@ function deviceUsedCtrl($scope, $compile, $resource, Constants) {
             {'key': 'boardNo', 'type': 'input', 'templateOptions': {'label': '牌号', 'placeholder': '牌号'}},
             {'key': 'deviceNum', 'type': 'input', 'templateOptions': {'label': '设备号', 'placeholder': '设备号'}},
             {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}},
-            {'key': 'device.id', 'type': 'select', 'templateOptions': {'label': '选择设备','options': getDeviceList()}},
+            {'key': 'device.id', 'type': 'select', 'templateOptions': {'label': '选择设备', 'options': getDeviceList()}},
             {'key': 'store.id', 'type': 'select', 'templateOptions': {'label': '门户名', 'options': getStoreList()}}
         ],
         api: {
