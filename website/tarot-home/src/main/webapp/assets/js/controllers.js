@@ -136,23 +136,39 @@ function datatablesCtrl($scope, $resource, $compile, Constants) {
     });
 }
 
+function switchMerchantCtrl($scope, $resource, $compile, Constants){
+    $scope.merchants = Constants.merchants;
+    $scope.merchantSelect = Constants.thisMerchant;
+
+    $scope.switchMerchant = function (){
+        console.log($scope.merchantSelect)
+        $.post('/admin/merchant/switch', { 'id':$scope.merchantSelect.value})
+            .done(function (resp) {
+                Constants.flushThisMerchant($scope.merchantSelect.value);
+                $scope.merchantSelect = Constants.thisMerchant;
+            })
+            .fail(function () {
+            });
+    };
+}
+
 function merchantShopCtrl($scope, $resource, $compile, Constants) {
     function actionsHtml(data, type, full, meta) {
         return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
     }
 
-    var key = ['id','name','address.province','address.city','address.county','address.circle','address.mall','address.address', 'phone','code','active'];
-    var title = ['门店ID','门店名称', '省份','城市','区县','商圈','商场','地址','联系电话','门店码', '操作','动作'];
+    //var key = ['id','name','address.province','address.city','address.county','address.circle','address.mall','address.address', 'phone','code','active'];
+    //var title = ['门店ID','门店名称', '省份','城市','区县','商圈','商场','地址','联系电话','门店码', '操作','动作'];
     var mgrData = {
         columns: [
             {data: 'id', title: '门店ID', width: 85, orderable: true},
             {data: 'name', title: '门店名称', width: 85, orderable: false},
-            {data: 'address.province', title: '省份', width: 60, orderable: true},
-            {data: 'address.city', title: '城市', width: 55, orderable: true},
-            {data: 'address.county', title: '区县', width: 70, orderable: false, align: 'center'},
-            {data: 'address.circle', title: '商圈', width: 70, orderable: false},
-            {data: 'address.mall', title: '商场', width: 65, orderable: false},
-            {data: 'address.address', title: '地址', width: 100, orderable: false},
+            {data: 'address.province.name', title: '省份', width: 60, orderable: true},
+            {data: 'address.city.name', title: '城市', width: 55, orderable: true},
+            {data: 'address.county.name', title: '区县', width: 70, orderable: false, align: 'center'},
+            {data: 'address.circle.name', title: '商圈', width: 70, orderable: false},
+            {data: 'address.mall.name', title: '商场', width: 65, orderable: false},
+            {data: 'address.address.name', title: '地址', width: 100, orderable: false},
             {data: 'phone', title: '联系电话', width: 40, orderable: false},
             {data: 'code', title: '门店码', width: 40, orderable: false},
             {data: 'active', title: '操作', width: 40, orderable: false},
@@ -161,12 +177,12 @@ function merchantShopCtrl($scope, $resource, $compile, Constants) {
         fields: [
             {'key': 'merchant.name', 'type': 'input', 'templateOptions': {'disabled':true,'label': '商户名称', 'placeholder': '商户名称'}},
             {'key': 'name', 'type': 'input', 'templateOptions': {'label': '门店名称', 'placeholder': '门店名称'}},
-            {'key': 'address.province', 'type': 'input', 'templateOptions': {'label': '省份', 'placeholder': '省份'}},
-            {'key': 'address.city', 'type': 'input', 'templateOptions': {'label': '城市', 'placeholder': '城市'}},
-            {'key': 'address.county', 'type': 'input', 'templateOptions': {'label': '区县', 'placeholder': '区县'}},
-            {'key': 'address.circle', 'type': 'input', 'templateOptions': {'label': '商圈', 'placeholder': '商圈'}},
-            {'key': 'address.mall', 'type': 'input', 'templateOptions': {'label': '商场', 'placeholder': '商场'}},
-            {'key': 'address.address', 'type': 'input', 'templateOptions': {'label': '地址', 'placeholder': '地址'}},
+            {'key': 'address.province.id', 'type': 'select', 'templateOptions': {'label': '省份','options': Constants.provinces}},
+            {'key': 'address.city.id', 'type': 'select', 'templateOptions': {'label': '城市','options': Constants.merchantType}},
+            {'key': 'address.county.id', 'type': 'select', 'templateOptions': {'label': '区县','options': Constants.merchantType}},
+            {'key': 'address.circle.id', 'type': 'select', 'templateOptions': {'label': '商圈','options': Constants.merchantType}},
+            {'key': 'address.mall.id', 'type': 'select', 'templateOptions': {'label': '商场','options': Constants.merchantType}},
+            {'key': 'address.address.id', 'type': 'input', 'templateOptions': {'label': '地址', 'placeholder': '地址'}},
             {'key': 'phone', 'type': 'input', 'templateOptions': {'label': '联系电话', 'placeholder': '联系电话'}},
             {'key': 'code', 'type': 'input', 'templateOptions': {'label': '门店码', 'placeholder': '门店码'}},
         ],
@@ -190,6 +206,24 @@ function merchantShopCtrl($scope, $resource, $compile, Constants) {
         $compile(content)(scope);
     });
 
+
+    $scope.$watch('model.address.province.id', function (newValue, oldValue, thisScope) {
+        alert(123);
+        console.log(newValue);
+        console.log(oldValue);
+        //if(newValue !== oldValue) {
+        //    // logic to reload this select's options asynchronusly based on state's value (newValue)
+        //    console.log('new value is different from old value');
+        //    if($scope.model[$scope.options.key] && oldValue) {
+        //        // reset this select
+        //        $scope.model[$scope.options.key] = '';
+        //    }
+        //    // Reload options
+        //    $scope.to.loading = DataService.players(newValue).then(function (res) {
+        //        $scope.to.options = res;
+        //    });
+        //}
+    });
 }
 
 function merchantCtrl($scope, $resource, $compile, Constants) {
@@ -198,16 +232,13 @@ function merchantCtrl($scope, $resource, $compile, Constants) {
         return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
     }
 
-    //var type={};
-    //$resource('/admin/merchant/typeList').get({},function(resp){type = resp.data;console.log(type);});
-    //console.log(type);
 
-    console.log("aaaaaa"+$scope.merchantType);
+
     var mgrData = {
         columns: [
             {data: 'id', title: '商户ID', width: 85, orderable: true},
             {data: 'name', title: '商户名称', width: 85, orderable: true},
-            {data: 'businessType', title: '商户类型', width: 60, orderable: true},
+            {data: 'businessTypeKey', title: '商户类型', width: 60, orderable: true},
             {data: 'cuisineType', title: '商户菜系', width: 55, orderable: true},
             {data: 'imgFile', title: '商户图标', width: 70, orderable: false, align: 'center'},
             {data: 'description', title: '商户描述', width: 70, orderable: false},
@@ -561,6 +592,7 @@ angular
     .controller('roleMgrCtrl', roleMgrCtrl)
     .controller('merchantCtrl', merchantCtrl)
     .controller('merchantShopCtrl', merchantShopCtrl)
+    .controller('switchMerchantCtrl', switchMerchantCtrl)
     .controller('explorerCtrl', explorerCtrl)
     .controller('uiGridCtrl', uiGridCtrl)
     .controller('MainCtrl', MainCtrl);

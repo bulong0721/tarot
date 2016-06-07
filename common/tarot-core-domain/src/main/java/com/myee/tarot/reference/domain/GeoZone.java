@@ -25,14 +25,14 @@ public class GeoZone extends GenericEntity<Long, GeoZone> {
 
     @NotEmpty
     @Column(name = "ZONE_CODE")
-    private String code;
+    private String code;//区号
 
     @Column(name = "PARENT")
     private Long parent;
 
 //    @NotEmpty //对Integer会报错
     @Column(name = "ZONE_LEVEL")
-    private int level;
+    private int level;//区域级别0国家，1省/直辖市，2市，3区县
 
     @Override
     public Long getId() {

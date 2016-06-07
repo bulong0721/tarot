@@ -8,42 +8,13 @@
                 </div>
             </form>
         </div>
-        <ul class="nav navbar-top-links navbar-right">
+        <ul class="nav navbar-top-links navbar-right" ng-controller="switchMerchantCtrl">
             <li>
                 <span class="m-r-sm text-muted welcome-message">欢迎来到木爷终端管理系统</span>
             </li>
             <li>
-                <select class="m-r-sm text-muted welcome-message" onchange="switchMerchant()" id="merchantSelect">
-                    <option>切换商户</option>
+                <select class="m-r-sm text-muted welcome-message" ng-model="merchantSelect" ng-options="c.name for c in merchants" ng-change="switchMerchant()">
                 </select>
-                <script type="text/javascript">
-                    //先临时用一下
-                    var newarr = {};
-                    $(function(){
-                        $.get('/admin/merchant/list', { })
-                                .done(function (data) {
-                                    var merchantSelect = document.getElementById("merchantSelect");
-                                    console.log(data);
-                                    newarr = data.rows;
-                                    console.log(newarr);
-                                    for(var i=0; i<newarr.length; i++){
-                                        merchantSelect.options.add(new Option(newarr[i].name,newarr[i].id))
-                                    };
-                                })
-                                .fail(function () {
-                                });
-                    });
-
-                    function switchMerchant(){
-                        var indexSelect = document.getElementById("merchantSelect").selectedIndex-1;//-1是为了去掉第一条
-                        alert(indexSelect+";"+newarr[indexSelect].id);
-                        $.post('/admin/merchant/switch', { 'id':newarr[indexSelect].id})
-                                .done(function (data) {
-                                })
-                                .fail(function () {
-                                });
-                    };
-                </script>
             </li>
             <li>
                 <a href="/admin/j_spring_security_logout">
