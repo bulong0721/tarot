@@ -74,22 +74,12 @@ public class ProductUsedController {
         return AjaxResponse.success();
     }
 
-    @RequestMapping(value = "/product/used/type", method = RequestMethod.GET)
+    @RequestMapping(value = "/product/type/productOpts", method = RequestMethod.GET)
     public
     @ResponseBody
     List<ProductType> type(Model model, HttpServletRequest request) {
         return ProductType.getProductTypeList();
     }
 
-//    @RequestMapping(value = "/product/used/type", method = RequestMethod.GET)
-//    public
-//    @ResponseBody
-//    AjaxResponse type(Model model, HttpServletRequest request) {
-//        AjaxResponse resp = new AjaxResponse();
-//        Map entry = new HashMap();
-//        entry.put("productTypeList", ProductType.getProductTypeList());
-//        resp.addDataEntry(entry);
-//        return resp;
-//    }
 
 }

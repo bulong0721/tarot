@@ -27,7 +27,7 @@ function constServiceCtor($filter, $compile, $resource, $state) {
         return '-';
     };
 
-    vm.productOpts = $resource('/product/used/type').query();
+    vm.productOpts = $resource('/product/type/productOpts').query();
     vm.storeOpts = $resource('/admin/merchantStore/storeOpts').query();
 
     vm.defaultOptions = {
