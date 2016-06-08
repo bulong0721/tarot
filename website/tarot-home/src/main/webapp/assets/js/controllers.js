@@ -28,7 +28,11 @@ function roleMgrCtrl($scope, $compile, Constants) {
             {title: '动作', width: 20, render: actionsHtml, orderable: false, className: 'center'}
         ],
         fields: [
-            {'key': 'roleName', 'type': 'input', 'templateOptions': {'label': '角色名', required: true, 'placeholder': '角色名'}},
+            {
+                'key': 'roleName',
+                'type': 'input',
+                'templateOptions': {'label': '角色名', required: true, 'placeholder': '角色名'}
+            },
             {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}}
         ],
         api: {
@@ -77,14 +81,29 @@ function userMgrCtrl($scope, Constants) {
             {data: 'loginIP', title: '最后登录IP', width: 70, orderable: false},
             {data: 'phoneNumber', title: '电话号码', width: 65, orderable: false},
             {data: 'email', title: '电子邮件', width: 100, orderable: false},
-            {data: 'activeStatusFlag', title: '状态', width: 40, orderable: false, render: statusHtml, className: 'center'},
+            {
+                data: 'activeStatusFlag',
+                title: '状态',
+                width: 40,
+                orderable: false,
+                render: statusHtml,
+                className: 'center'
+            },
             {title: '操作', width: 35, render: actionsHtml, orderable: false, className: 'center'}
         ],
         fields: [
             {'key': 'name', 'type': 'input', 'templateOptions': {'label': '昵称', required: true, 'placeholder': '昵称'}},
-            {'key': 'login', 'type': 'input', 'templateOptions': {'label': '登录名', required: true, 'placeholder': '登录名'}},
+            {
+                'key': 'login',
+                'type': 'input',
+                'templateOptions': {'label': '登录名', required: true, 'placeholder': '登录名'}
+            },
             {'key': 'phoneNumber', 'type': 'input', 'templateOptions': {'label': '电话号码', 'placeholder': '电话号码'}},
-            {'key': 'email', 'type': 'input', 'templateOptions': {type: 'email', 'label': '电子邮件', required: true, 'placeholder': '电子邮件'}},
+            {
+                'key': 'email',
+                'type': 'input',
+                'templateOptions': {type: 'email', 'label': '电子邮件', required: true, 'placeholder': '电子邮件'}
+            },
             {'key': 'activeStatusFlag', 'type': 'checkbox', 'templateOptions': {'label': '状态', 'placeholder': '状态'}}
         ],
         api: {
@@ -140,20 +159,13 @@ function datatablesCtrl($scope, $resource, $compile, Constants) {
     });
 }
 
-function switchMerchantCtrl($scope, $resource, $compile, Constants){
+function switchMerchantCtrl($scope, $resource, $compile, Constants) {
     $scope.merchants = Constants.merchants;
     $scope.merchantSelect = Constants.thisMerchant;
 
-    $scope.switchMerchant = function (){
-        console.log($scope.merchantSelect)
-        $.post('/admin/merchant/switch', { 'id':$scope.merchantSelect.value})
-            .done(function (resp) {
-                Constants.flushThisMerchant($scope.merchantSelect.value);
-                $scope.merchantSelect = Constants.thisMerchant;
-            })
-            .fail(function () {
-            });
-
+    $scope.switchMerchant = function () {
+        console.log($scope.merchantSelect.id)
+        $resource('/admin/merchant/switch').save($scope.merchantSelect.id);
     };
 }
 
@@ -180,18 +192,55 @@ function merchantShopCtrl($scope, $resource, $compile, Constants) {
             {title: '动作', width: 35, render: actionsHtml}
         ],
         fields: [
-            {'key': 'merchant.name', 'type': 'input', 'templateOptions': {'disabled':true,'label': '商户名称', 'placeholder': '商户名称'}},
+            {
+                'key': 'merchant.name',
+                'type': 'input',
+                'templateOptions': {'disabled': true, 'label': '商户名称', 'placeholder': '商户名称'}
+            },
             {'key': 'name', 'type': 'input', 'templateOptions': {'label': '门店名称', 'placeholder': '门店名称'}},
-            {'key': 'address.province.id', 'type': 'select', 'templateOptions': {'label': '省份','options': Constants.provinces}},
-            {'key': 'address.city.id', 'type': 'select', 'templateOptions': {'label': '城市','options': Constants.merchantType}, expressionProperties:{
-                value: function($viewValue, $modelValue, scope) {
-                    console.log($viewValue);
-                    console.log($modelValue);
+            {
+                'key': 'address.province.id',
+                'type': 'select',
+                'templateOptions': {'label': '省份', 'options': Constants.provinces},
+                expressionProperties: {
+                    'value'/*这个名字配置没用，市和区变化仍然会触发*/: function ($viewValue, $modelValue, scope) {
+                        console.log("###省");
+                        Constants.getCitysByProvince($viewValue, $scope);
+                        //$scope.$apply($scope.formData);
+                        //console.log($scope.formData);
+                        //console.log($scope.formData.model.address.city.id);
+                        //console.log(Constants.thisMerchant);
+                        //console.log($scope);
+                        //$scope.apply();
+                    }
                 }
-            }},
-            {'key': 'address.county.id', 'type': 'select', 'templateOptions': {'label': '区县','options': Constants.merchantType}},
-            {'key': 'address.circle.id', 'type': 'select', 'templateOptions': {'label': '商圈','options': Constants.merchantType}},
-            {'key': 'address.mall.id', 'type': 'select', 'templateOptions': {'label': '商场','options': Constants.merchantType}},
+            },
+            {
+                'key': 'address.city.id',
+                'type': 'select',
+                'templateOptions': {'label': '城市', 'options': Constants.citys},
+                expressionProperties: {
+                    'value'/*这个名字配置没用，市和区变化仍然会触发*/: function ($viewValue, $modelValue, scope) {
+                        console.log("###城市");
+                        Constants.getDistrictsByCity($viewValue);
+                    }
+                }
+            },
+            {
+                'key': 'address.county.id',
+                'type': 'select',
+                'templateOptions': {'label': '区县', 'options': Constants.districts}
+            },
+            {
+                'key': 'address.circle.id',
+                'type': 'select',
+                'templateOptions': {'label': '商圈', 'options': Constants.circles}
+            },
+            {
+                'key': 'address.mall.id',
+                'type': 'select',
+                'templateOptions': {'label': '商场', 'options': Constants.malls}
+            },
             {'key': 'address.address.id', 'type': 'input', 'templateOptions': {'label': '地址', 'placeholder': '地址'}},
             {'key': 'phone', 'type': 'input', 'templateOptions': {'label': '联系电话', 'placeholder': '联系电话'}},
             {'key': 'code', 'type': 'input', 'templateOptions': {'label': '门店码', 'placeholder': '门店码'}},
@@ -216,24 +265,34 @@ function merchantShopCtrl($scope, $resource, $compile, Constants) {
         $compile(content)(scope);
     });
 
+    //if($scope.thisMerchant != undefined){
+    //    $scope.formData.merchant.name = $scope.thisMerchant.name;
+    //    console.log($scope.thisMerchant.name);
+    //}
 
-    $scope.$watch('model.address.province.id', function (newValue, oldValue, thisScope) {
-        alert(123);
-        console.log(newValue);
-        console.log(oldValue);
-        //if(newValue !== oldValue) {
-        //    // logic to reload this select's options asynchronusly based on state's value (newValue)
-        //    console.log('new value is different from old value');
-        //    if($scope.model[$scope.options.key] && oldValue) {
-        //        // reset this select
-        //        $scope.model[$scope.options.key] = '';
-        //    }
-        //    // Reload options
-        //    $scope.to.loading = DataService.players(newValue).then(function (res) {
-        //        $scope.to.options = res;
-        //    });
-        //}
-    });
+    //console.log(Constants.thisMerchant.name);
+    console.log($scope);
+    console.log($scope.formData);
+    if($scope.model){$scope.model.merchant.name = '12345';}
+
+    //watch没起作用，不知道为什么
+    //$scope.$watch('$scope.model.address.province.id', function (newValue, oldValue, thisScope) {
+    //    alert(123);
+    //    console.log(newValue);
+    //    console.log(oldValue);
+    //    if(newValue !== oldValue) {
+    //        // logic to reload this select's options asynchronusly based on state's value (newValue)
+    //        console.log('new value is different from old value');
+    //        //if($scope.model[$scope.options.key] && oldValue) {
+    //        //    // reset this select
+    //        //    $scope.model[$scope.options.key] = '';
+    //        //}
+    //        //// Reload options
+    //        //$scope.to.loading = DataService.players(newValue).then(function (res) {
+    //        //    $scope.to.options = res;
+    //        //});
+    //    }
+    //});
 }
 
 function merchantCtrl($scope, $resource, $compile, Constants) {
@@ -241,7 +300,6 @@ function merchantCtrl($scope, $resource, $compile, Constants) {
     function actionsHtml(data, type, full, meta) {
         return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
     }
-
 
 
     var mgrData = {
@@ -255,16 +313,33 @@ function merchantCtrl($scope, $resource, $compile, Constants) {
             {title: '动作', width: 35, render: actionsHtml}
         ],
         fields: [
-            {'key': 'name', 'type': 'input', 'templateOptions': {'type':'text','label': '商户名称', 'placeholder': '商户名称'}},
-            {'key': 'businessType', 'type': 'select',
+            {
+                'key': 'name',
+                'type': 'input',
+                'templateOptions': {'type': 'text', 'label': '商户名称', 'placeholder': '商户名称'}
+            },
+            {
+                'key': 'businessType', 'type': 'select',
                 'templateOptions': {
                     'label': '商户类型',
                     'options': Constants.merchantType
                 }
             },
-            {'key': 'cuisineType', 'type': 'input', 'templateOptions': {'type':'text','label': '商户菜系', 'placeholder': '商户菜系'}},
-            {'key': 'imgFile', 'type': 'input', 'templateOptions': {'type':'file','label': '商户图标', 'placeholder': '商户图标'}},
-            {'key': 'description', 'type': 'textarea', 'templateOptions': {'label': '商户描述', 'placeholder': '商户描述',"rows": 10}}
+            {
+                'key': 'cuisineType',
+                'type': 'input',
+                'templateOptions': {'type': 'text', 'label': '商户菜系', 'placeholder': '商户菜系'}
+            },
+            {
+                'key': 'imgFile',
+                'type': 'input',
+                'templateOptions': {'type': 'file', 'label': '商户图标', 'placeholder': '商户图标'}
+            },
+            {
+                'key': 'description',
+                'type': 'textarea',
+                'templateOptions': {'label': '商户描述', 'placeholder': '商户描述', "rows": 10}
+            }
         ],
         api: {
             read: '/admin/merchant/list',
@@ -339,7 +414,11 @@ function explorerCtrl($scope, $resource) {
                 data.instance.refresh();
             });
     }).on('create_node.jstree', function (e, data) {
-        $.get('/admin/files/change?operation=create_node', {'type': data.node.type, 'id': data.node.parent, 'text': data.node.text})
+        $.get('/admin/files/change?operation=create_node', {
+            'type': data.node.type,
+            'id': data.node.parent,
+            'text': data.node.text
+        })
             .done(function (d) {
                 data.instance.set_id(data.node, d.id);
             })
@@ -421,9 +500,17 @@ function tableTypeMgrCtrl($scope, Constants) {
         ],
         fields: [
             {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
-            {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', required: true, 'placeholder': '描述'}},
+            {
+                'key': 'description',
+                'type': 'input',
+                'templateOptions': {'label': '描述', required: true, 'placeholder': '描述'}
+            },
             {'key': 'capacity', 'type': 'input', 'templateOptions': {'label': '容纳人数', 'placeholder': '容纳人数'}},
-            {'key': 'minimum', 'type': 'input', 'templateOptions': {'label': '最小就坐', required: true, 'placeholder': '最小就坐'}}
+            {
+                'key': 'minimum',
+                'type': 'input',
+                'templateOptions': {'label': '最小就坐', required: true, 'placeholder': '最小就坐'}
+            }
         ],
         api: {
             read: '/admin/catering/type/paging',
@@ -449,7 +536,11 @@ function tableZoneMgrCtrl($scope, Constants) {
         ],
         fields: [
             {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
-            {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', required: true, 'placeholder': '描述'}},
+            {
+                'key': 'description',
+                'type': 'input',
+                'templateOptions': {'label': '描述', required: true, 'placeholder': '描述'}
+            },
         ],
         api: {
             read: '/admin/catering/zone/paging',
@@ -481,11 +572,21 @@ function tableMgrCtrl($scope, $resource, Constants) {
         ],
         fields: [
             {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
-            {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', required: true, 'placeholder': '描述'}},
+            {
+                'key': 'description',
+                'type': 'input',
+                'templateOptions': {'label': '描述', required: true, 'placeholder': '描述'}
+            },
             {
                 'key': 'tableType.id',
                 'type': 'select',
-                'templateOptions': {'label': '桌型', valueProp: 'id', options: typeOpts, required: true, 'placeholder': '桌型'}
+                'templateOptions': {
+                    'label': '桌型',
+                    valueProp: 'id',
+                    options: typeOpts,
+                    required: true,
+                    'placeholder': '桌型'
+                }
             },
             {
                 'key': 'tableZone.id',
@@ -629,10 +730,40 @@ function productUsedCtrl($scope, $compile, Constants) {
             {title: '动作', width: 20, render: actionsHtml, className: 'center', orderable: false}
         ],
         fields: [
-            {'key': 'code', 'type': 'input', 'templateOptions': {'label': '产品编号', required: true, 'placeholder': '产品编号'}},
-            {'key': 'type', 'type': 'select', 'templateOptions': {'label': '产品名称', required: true, 'placeholder': '产品名称', valueProp: 'type', labelProp: 'friendlyType', options: productOpts}},
-            {'key': 'storeId', 'type': 'select', 'templateOptions': {'label': '店铺名称', required: true, 'placeholder': '店铺名称', valueProp: 'id', labelProp: 'name', options: storeOpts}},
-            {'key': 'productNum', 'type': 'input', 'templateOptions': {'label': '产品版本', required: true, 'placeholder': '产品版本'}},
+            {
+                'key': 'code',
+                'type': 'input',
+                'templateOptions': {'label': '产品编号', required: true, 'placeholder': '产品编号'}
+            },
+            {
+                'key': 'type',
+                'type': 'select',
+                'templateOptions': {
+                    'label': '产品名称',
+                    required: true,
+                    'placeholder': '产品名称',
+                    valueProp: 'type',
+                    labelProp: 'friendlyType',
+                    options: productOpts
+                }
+            },
+            {
+                'key': 'storeId',
+                'type': 'select',
+                'templateOptions': {
+                    'label': '店铺名称',
+                    required: true,
+                    'placeholder': '店铺名称',
+                    valueProp: 'id',
+                    labelProp: 'name',
+                    options: storeOpts
+                }
+            },
+            {
+                'key': 'productNum',
+                'type': 'input',
+                'templateOptions': {'label': '产品版本', required: true, 'placeholder': '产品版本'}
+            },
             {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}}
         ],
         api: {
