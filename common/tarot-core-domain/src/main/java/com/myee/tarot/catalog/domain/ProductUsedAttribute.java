@@ -26,10 +26,15 @@ public class ProductUsedAttribute extends GenericEntity<Long, ProductUsedAttribu
     @Column(name = "SEARCHABLE")
     protected boolean searchable = false;
 
-    @ManyToOne(targetEntity = ProductUsed.class, optional = false, cascade = CascadeType.REFRESH)
+//    @ManyToOne(targetEntity = ProductUsed.class, optional = false, cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ProductUsed.class)
+//    @JoinColumn(name = "PRODUCT_USED_ID")
+//    @org.hibernate.annotations.Index(name = "PRODUCTUSEDATTRIBUTE_INDEX", columnNames = {"PRODUCT_USED_ID"})
+//    protected ProductUsed productUsed;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PRODUCT_USED_ID")
-    @org.hibernate.annotations.Index(name = "PRODUCTUSEDATTRIBUTE_INDEX", columnNames = {"PRODUCT_USED_ID"})
-    protected ProductUsed productUsed;
+    private ProductUsed productUsed;
 
     @Override
     public Long getId() {
@@ -73,26 +78,26 @@ public class ProductUsedAttribute extends GenericEntity<Long, ProductUsedAttribu
         this.value = value;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-
-        ProductUsedAttribute that = (ProductUsedAttribute) o;
-
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (value != null ? !value.equals(that.value) : that.value != null) return false;
-        return !(productUsed != null ? !productUsed.equals(that.productUsed) : that.productUsed != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (value != null ? value.hashCode() : 0);
-        result = 31 * result + (productUsed != null ? productUsed.hashCode() : 0);
-        return result;
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        if (!super.equals(o)) return false;
+//
+//        ProductUsedAttribute that = (ProductUsedAttribute) o;
+//
+//        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+//        if (value != null ? !value.equals(that.value) : that.value != null) return false;
+//        return !(productUsed != null ? !productUsed.equals(that.productUsed) : that.productUsed != null);
+//
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        int result = super.hashCode();
+//        result = 31 * result + (name != null ? name.hashCode() : 0);
+//        result = 31 * result + (value != null ? value.hashCode() : 0);
+//        result = 31 * result + (productUsed != null ? productUsed.hashCode() : 0);
+//        return result;
+//    }
 }

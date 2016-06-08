@@ -600,6 +600,59 @@ function deviceUsedCtrl($scope, $compile, $resource, Constants) {
     });
 }
 
+function productUsedCtrl($scope, $compile, Constants) {
+
+    function actionsHtml(data, type, full, meta) {
+        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
+    }
+
+    function detailsHtml(data, type, full, meta) {
+        return '<a ng-click="goDetails(' + meta.row + ')"><i class="btn-icon fa fa-list-alt bigger-130"></a>';
+    }
+
+    var productOpts = Constants.productOpts;
+    var storeOpts = Constants.storeOpts;
+
+    var mgrData = {
+        columns: [
+            {data: 'id', visible: false},
+            {data: 'type', visible: false},
+            {data: 'storeId', visible: false},
+            {data: 'productTypeList', visible: false},
+            {title: '', width: 2, render: detailsHtml, className: 'details-control', orderable: false},
+            {data: 'code', title: '产品编号', width: 60, orderable: false},
+            {data: 'name', title: '产品名称', width: 60, orderable: false},
+            {data: 'productNum', title: '产品版本', width: 60, orderable: false},
+            {data: 'storeName', title: '店铺名称', width: 60, orderable: false},
+            {data: 'description', title: '描述', width: 100, orderable: false},
+            {title: '动作', width: 20, render: actionsHtml, className: 'center', orderable: false}
+        ],
+        fields: [
+            {'key': 'code', 'type': 'input', 'templateOptions': {'label': '产品编号', required: true, 'placeholder': '产品编号'}},
+            {'key': 'type', 'type': 'select', 'templateOptions': {'label': '产品名称', required: true, 'placeholder': '产品名称', valueProp: 'type', labelProp: 'friendlyType', options: productOpts}},
+            {'key': 'storeId', 'type': 'select', 'templateOptions': {'label': '店铺名称', required: true, 'placeholder': '店铺名称', valueProp: 'id', labelProp: 'name', options: storeOpts}},
+            {'key': 'productNum', 'type': 'input', 'templateOptions': {'label': '产品版本', required: true, 'placeholder': '产品版本'}},
+            {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}}
+        ],
+        api: {
+            read: '/product/used/paging',
+            update: '/product/used/type'
+        }
+    };
+    Constants.initMgrCtrl(mgrData, $scope);
+
+    $scope.dtColumns = mgrData.columns;
+
+    $scope.dtOptions = Constants.buildOption(mgrData.api.read, function (data) {
+        angular.extend(data, $scope.where);
+    }, function (row, data, dataIndex) {
+        var elem = angular.element(row);
+        var content = elem.contents();
+        var scope = $scope;
+        $compile(content)(scope);
+    });
+}
+
 angular
     .module('inspinia')
     .controller('deviceCtrl', deviceCtrl)
@@ -615,4 +668,5 @@ angular
     .controller('switchMerchantCtrl', switchMerchantCtrl)
     .controller('explorerCtrl', explorerCtrl)
     .controller('uiGridCtrl', uiGridCtrl)
+    .controller('productUsedCtrl', productUsedCtrl)
     .controller('MainCtrl', MainCtrl);

@@ -6,7 +6,9 @@ import com.myee.tarot.merchant.domain.MerchantStore;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,20 +39,24 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
     @Column(name = "DESCRIPTION")
     protected String description;
 
-    @Column(name = "DEVICE_NUM")
-    protected String deviceNum;
+    @Column(name = "PRODUCT_NUM")
+    protected String productNum;
 
-//    @OneToMany(mappedBy = "productUsed", targetEntity = ProductUsedAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
+//    @OneToMany(mappedBy = "productUsed", targetEntity = ProductUsedAttribute.class)
 //    @MapKey(name = "name")
 //    protected Map<String, ProductUsedAttribute> productUsedAttribute = new HashMap<String, ProductUsedAttribute>();
+//    protected List<ProductUsedAttribute> productUsedAttributeList = new ArrayList<ProductUsedAttribute>();
 
-    @OneToMany(targetEntity = DeviceUsed.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinTable(name = "C_PRODUCT_USED_DEV_XREF",
-            joinColumns = {@JoinColumn(name = "PRODUCT_USED_ID", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "DEVICE_USED_ID", nullable = false, updatable = false)}
-    )
-    @MapKey(name = "name")
-    protected Map<String, DeviceUsed> deviceUsed = new HashMap<String, DeviceUsed>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "productUsed")
+    private List<ProductUsedAttribute> productUsedAttributeList;
+
+//    @OneToMany(targetEntity = DeviceUsed.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
+//    @JoinTable(name = "C_PRODUCT_USED_DEV_XREF",
+//            joinColumns = {@JoinColumn(name = "PRODUCT_USED_ID", nullable = false, updatable = false)},
+//            inverseJoinColumns = {@JoinColumn(name = "DEVICE_USED_ID", nullable = false, updatable = false)}
+//    )
+//    @MapKey(name = "name")
+//    protected Map<String, DeviceUsed> deviceUsed = new HashMap<String, DeviceUsed>();
 
     @Override
     public Long getId() {
@@ -95,16 +101,31 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
 //        return productUsedAttribute;
 //    }
 
-    public String getDeviceNum() {
-        return deviceNum;
+    public List<ProductUsedAttribute> getProductUsedAttributeList() {
+        return productUsedAttributeList;
     }
 
-    public void setDeviceNum(String deviceNum) {
-        this.deviceNum = deviceNum;
+    public void setProductUsedAttributeList(List<ProductUsedAttribute> productUsedAttributeList) {
+        this.productUsedAttributeList = productUsedAttributeList;
     }
 
-    public Map<String, DeviceUsed> getDeviceUsed() {
-        return deviceUsed;
+    public String getProductNum() {
+        return productNum;
     }
+
+    public void setProductNum(String productNum) {
+        this.productNum = productNum;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+//    public Map<String, DeviceUsed> getDeviceUsed() {
+//        return deviceUsed;
+//    }
 
 }

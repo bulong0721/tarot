@@ -3,8 +3,7 @@ package com.myee.tarot.catalog.type;
 import com.myee.tarot.core.GenericEnumType;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Martin on 2016/5/23.
@@ -14,6 +13,8 @@ public class ProductType implements GenericEnumType, Comparable<ProductType>, Se
     private static final Map<String, ProductType> TYPES = new LinkedHashMap<String, ProductType>();
 
     private static final ProductType COOKIE = new ProductType("COOKIE", "大学士");
+    private static final ProductType LITTLE_GIRL = new ProductType("LITTLE_GIRL", "小女生");
+    private static final ProductType POINT_PEN = new ProductType("POINT_PEN", "美味点点笔");
 
     private String type;
     private String friendlyType;
@@ -36,6 +37,16 @@ public class ProductType implements GenericEnumType, Comparable<ProductType>, Se
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    public static List<ProductType> getProductTypeList(){
+        List<ProductType> productTypeList = new ArrayList<ProductType>();
+            Iterator it = TYPES.values().iterator();
+            while (it.hasNext()) {
+                ProductType type = (ProductType)it.next();
+                productTypeList.add(type);
+            }
+        return productTypeList;
     }
 
     @Override

@@ -27,6 +27,9 @@ function constServiceCtor($filter, $compile, $resource, $state) {
         return '-';
     };
 
+    vm.productOpts = $resource('/product/used/type').query();
+    vm.storeOpts = $resource('/admin/merchantStore/storeOpts').query();
+
     vm.defaultOptions = {
         info: true,
         searching: false,
@@ -209,6 +212,51 @@ function constServiceCtor($filter, $compile, $resource, $state) {
             }
         };
 
+        scope.format = function (d) {
+            // `d` is the original data object for the row
+            var tables = "";
+            tables += '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
+            angular.forEach(d.productTypeList, function (value) {
+                tables += "<tr><td>" + value.type + "</td> <td>" + value.friendlyType + "</td>";
+                tables += "<td><a ng-click='goDetailsEditor(\"" + value.type + "\", \"" + value.friendlyType + "\")'><i class='fa fa-pencil'></i></a></td>";
+                tables += "<td><a ng-click='goDetailsDelete(\"" + value.type + "\", \"" + d.id + "\")'><i class='fa fa-remove'></i></a></td>";
+                tables += "</tr>";
+            });
+            tables += '</table>';
+
+            var elem = angular.element(tables);
+            var content = elem.contents();
+            $compile(content)(scope);
+
+            return content;
+        }
+
+        scope.goDetailsEditor = function (subId, parentId) {
+            alert("subId=" + subId + ", parentId=" + parentId);
+        };
+
+        scope.goDetailsDelete = function (subId, parentId) {
+            alert("subId=" + subId + ", parentId=" + parentId);
+        };
+
+        scope.goDetails = function (rowIndex) {
+            if (scope.dtApi && rowIndex > -1) {
+                var data = scope.dtApi.DataTable.row(rowIndex).data();
+                //var tr = $(this).closest('tr');
+                //alert("tr="+tr);
+                var row = scope.dtApi.DataTable.row(rowIndex);
+                if ( row.child.isShown() ) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    //tr.removeClass('btn-icon fa fa-minus-circle bigger-130');
+                }else {
+                    // Open this row
+                    row.child( scope.format(row.data()) ).show();
+                    //tr.addClass('btn-icon fa fa-minus-circle bigger-130');
+                }
+            }
+        };
+
         scope.dtInstance = null;
         scope.dtColumns = mgrData.columns;
         scope.dtOptions = vm.buildOption(mgrData.api.read, function (data) {
@@ -250,7 +298,8 @@ function constServiceCtor($filter, $compile, $resource, $state) {
             }
         };
 
-    };
+    }
+    ;
 }
 
 angular

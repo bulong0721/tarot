@@ -7,6 +7,7 @@ import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantService;
 import com.myee.tarot.merchant.service.MerchantStoreService;
+import com.myee.tarot.merchant.view.MerchantStoreView;
 import com.myee.tarot.web.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -383,6 +385,26 @@ public class MerchantController {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @RequestMapping(value = "/admin/merchantStore/storeOpts", method = RequestMethod.GET)
+    @ResponseBody
+    public List<MerchantStoreView> listByCommon(HttpServletRequest request) throws Exception {
+        List<MerchantStoreView> merchantStoreViewList = new ArrayList<MerchantStoreView>();
+        try {
+            //从session中取账号关联的商户信息
+//            if(request.getSession().getAttribute(Constants.ADMIN_MERCHANT) == null ){
+//                return null;
+//            }
+//            Merchant merchant = (Merchant)request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
+            List<MerchantStore> merchantStoreList = merchantStoreService.listByMerchant(100L);
+            for(MerchantStore store : merchantStoreList){
+                merchantStoreViewList.add(new MerchantStoreView(store));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return merchantStoreViewList;
     }
 
     //把类转换成entry返回给前端，解耦和
