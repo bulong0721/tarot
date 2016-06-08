@@ -1,10 +1,6 @@
 package com.myee.tarot.merchant.service.impl;
 
-import com.myee.tarot.admin.dao.AdminUserDao;
-import com.myee.tarot.admin.domain.AdminUser;
-import com.myee.tarot.admin.service.AdminUserService;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
-import com.myee.tarot.core.service.GenericResponse;
 import com.myee.tarot.merchant.dao.MerchantStoreDao;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantStoreService;

@@ -1,10 +1,7 @@
 package com.myee.tarot.catering.service.impl;
 
-import com.myee.tarot.catering.dao.TableTypeDao;
 import com.myee.tarot.catering.dao.TableZoneDao;
-import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.catering.domain.TableZone;
-import com.myee.tarot.catering.service.TableTypeService;
 import com.myee.tarot.catering.service.TableZoneService;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;

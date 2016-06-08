@@ -1,7 +1,6 @@
 package com.myee.tarot.web.admin.controller.catering;
 
 import com.myee.tarot.catering.domain.TableType;
-import com.myee.tarot.catering.domain.TableZone;
 
 /**
  * Created by Martin on 2016/6/3.

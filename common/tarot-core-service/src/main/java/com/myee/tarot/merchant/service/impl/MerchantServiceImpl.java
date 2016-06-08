@@ -7,8 +7,6 @@ import com.myee.tarot.merchant.service.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.metamodel.SingularAttribute;
-
 /**
  * Created by Chay on 2016/5/25.
  */

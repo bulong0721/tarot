@@ -2,9 +2,7 @@ package com.myee.tarot.merchant.dao.impl;
 
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.merchant.dao.MerchantStoreDao;
-import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
-import com.myee.tarot.merchant.domain.QMerchant;
 import com.myee.tarot.merchant.domain.QMerchantStore;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;

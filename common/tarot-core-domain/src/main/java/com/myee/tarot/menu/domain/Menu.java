@@ -1,7 +1,6 @@
 package com.myee.tarot.menu.domain;
 
 import com.myee.tarot.core.GenericEntity;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import java.util.ArrayList;

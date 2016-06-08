@@ -1,12 +1,9 @@
 package com.myee.tarot.catering.dao.impl;
 
-import com.myee.tarot.admin.dao.RoleDao;
-import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.catering.dao.TableTypeDao;
 import com.myee.tarot.catering.domain.QTableType;
 import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
-import com.myee.tarot.reference.domain.Role;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;

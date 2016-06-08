@@ -5,7 +5,6 @@ import com.myee.tarot.merchant.dao.MerchantDao;
 import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.QMerchant;
 import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.hibernate.HibernateQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

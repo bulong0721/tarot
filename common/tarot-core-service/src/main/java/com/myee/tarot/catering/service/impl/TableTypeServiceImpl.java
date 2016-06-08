@@ -1,6 +1,5 @@
 package com.myee.tarot.catering.service.impl;
 
-import com.myee.tarot.admin.dao.RoleDao;
 import com.myee.tarot.catering.dao.TableTypeDao;
 import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.catering.service.TableTypeService;

@@ -1,15 +1,14 @@
 package com.myee.tarot.admin.domain;
 
 import com.myee.tarot.core.GenericEntity;
-import com.myee.tarot.core.audit.AuditableListener;
-import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Martin on 2016/4/11.
