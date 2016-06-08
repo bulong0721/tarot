@@ -1,8 +1,8 @@
 package com.myee.tarot.web.admin.controller.product;
 
-import com.alibaba.fastjson.serializer.JSONSerializable;
-import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
+import com.alibaba.fastjson.serializer.*;
 import com.myee.tarot.catalog.domain.ProductUsed;
+import com.myee.tarot.catalog.domain.ProductUsedAttribute;
 import com.myee.tarot.catalog.type.ProductType;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ public class ProductUsedController {
             List<ProductUsed> productUsedList = productUsedService.list();
             for (ProductUsed productUsed : productUsedList) {
                 Map entry = new HashMap();
+                List<ProductUsedAttribute> attributes = new ArrayList<ProductUsedAttribute>();
                 entry.put("id", productUsed.getCode());
                 entry.put("code", productUsed.getCode());
                 entry.put("name", productUsed.getName());
@@ -52,15 +54,16 @@ public class ProductUsedController {
                 entry.put("storeName", productUsed.getStore().getName());
                 entry.put("storeId", productUsed.getStore().getId());
                 entry.put("productTypeList", ProductType.getProductTypeList());
-//                entry.put("attributeList", productUsed.getProductUsedAttributeList());
-//                entry.put("attributeList", productUsed.getProductUsedAttribute());
+                for(ProductUsedAttribute attribute : productUsed.getProductUsedAttributeList()){
+                    attribute.setProductUsed(null);
+                    attributes.add(attribute);
+                }
+                entry.put("attributeList", attributes);
                 resp.addDataEntry(entry);
             }
         } catch (Exception e) {
             LOGGER.error("Error while paging products", e);
         }
-//        SimplePropertyPreFilter filter = new SimplePropertyPreFilter(TTown.class, "id","townname");
-//        response.getWriter().write(JSONObject.toJSONString(townList,filter));
         return resp;
     }
 
@@ -71,22 +74,12 @@ public class ProductUsedController {
         return AjaxResponse.success();
     }
 
-    @RequestMapping(value = "/product/used/type", method = RequestMethod.GET)
+    @RequestMapping(value = "/product/type/productOpts", method = RequestMethod.GET)
     public
     @ResponseBody
     List<ProductType> type(Model model, HttpServletRequest request) {
         return ProductType.getProductTypeList();
     }
 
-//    @RequestMapping(value = "/product/used/type", method = RequestMethod.GET)
-//    public
-//    @ResponseBody
-//    AjaxResponse type(Model model, HttpServletRequest request) {
-//        AjaxResponse resp = new AjaxResponse();
-//        Map entry = new HashMap();
-//        entry.put("productTypeList", ProductType.getProductTypeList());
-//        resp.addDataEntry(entry);
-//        return resp;
-//    }
 
 }

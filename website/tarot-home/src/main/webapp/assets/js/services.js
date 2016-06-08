@@ -27,7 +27,7 @@ function constServiceCtor($filter, $compile, $resource, $state) {
         return '-';
     };
 
-    vm.productOpts = $resource('/product/used/type').query();
+    vm.productOpts = $resource('/product/type/productOpts').query();
     vm.storeOpts = $resource('/admin/merchantStore/storeOpts').query();
 
     vm.defaultOptions = {
@@ -210,10 +210,11 @@ function constServiceCtor($filter, $compile, $resource, $state) {
             // `d` is the original data object for the row
             var tables = "";
             tables += '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
-            angular.forEach(d.productTypeList, function (value) {
-                tables += "<tr><td>" + value.type + "</td> <td>" + value.friendlyType + "</td>";
-                tables += "<td><a ng-click='goDetailsEditor(\"" + value.type + "\", \"" + value.friendlyType + "\")'><i class='fa fa-pencil'></i></a></td>";
-                tables += "<td><a ng-click='goDetailsDelete(\"" + value.type + "\", \"" + d.id + "\")'><i class='fa fa-remove'></i></a></td>";
+            //tables += "<tr><td>参数名</td> <td>参数值</td><td>编辑</td> <td>删除</td></tr>";
+            angular.forEach(d.attributeList, function (value) {
+                tables += "<tr><td>" + value.name + "</td> <td>" + value.value + "</td>";
+                //tables += "<td><a ng-click='goDetailsEditor(\"" + value.name + "\", \"" + value.value + "\")'><i class='fa fa-pencil'></i></a></td>";
+                tables += "<td><a ng-click='goDetailsDelete(\"" + value.name + "\", \"" + d.id + "\")'><i class='fa fa-remove'></i></a></td>";
                 tables += "</tr>";
             });
             tables += '</table>';
@@ -225,9 +226,9 @@ function constServiceCtor($filter, $compile, $resource, $state) {
             return content;
         }
 
-        scope.goDetailsEditor = function (subId, parentId) {
-            alert("subId=" + subId + ", parentId=" + parentId);
-        };
+        //scope.goDetailsEditor = function (subId, parentId) {
+        //    alert("subId=" + subId + ", parentId=" + parentId);
+        //};
 
         scope.goDetailsDelete = function (subId, parentId) {
             alert("subId=" + subId + ", parentId=" + parentId);

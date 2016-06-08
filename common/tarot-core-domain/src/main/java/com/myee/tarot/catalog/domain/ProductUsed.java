@@ -42,13 +42,10 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
     @Column(name = "PRODUCT_NUM")
     protected String productNum;
 
-//    @OneToMany(mappedBy = "productUsed", targetEntity = ProductUsedAttribute.class)
+    @OneToMany(mappedBy = "productUsed", targetEntity = ProductUsedAttribute.class, fetch = FetchType.LAZY)
 //    @MapKey(name = "name")
 //    protected Map<String, ProductUsedAttribute> productUsedAttribute = new HashMap<String, ProductUsedAttribute>();
-//    protected List<ProductUsedAttribute> productUsedAttributeList = new ArrayList<ProductUsedAttribute>();
-
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "productUsed")
-//    private List<ProductUsedAttribute> productUsedAttributeList;
+    protected List<ProductUsedAttribute> productUsedAttributeList = new ArrayList<ProductUsedAttribute>();
 
 //    @OneToMany(targetEntity = DeviceUsed.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
 //    @JoinTable(name = "C_PRODUCT_USED_DEV_XREF",
@@ -97,17 +94,13 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
         this.description = description;
     }
 
-//    public Map<String, ProductUsedAttribute> getProductUsedAttribute() {
-//        return productUsedAttribute;
-//    }
+    public List<ProductUsedAttribute> getProductUsedAttributeList() {
+        return productUsedAttributeList;
+    }
 
-//    public List<ProductUsedAttribute> getProductUsedAttributeList() {
-//        return productUsedAttributeList;
-//    }
-//
-//    public void setProductUsedAttributeList(List<ProductUsedAttribute> productUsedAttributeList) {
-//        this.productUsedAttributeList = productUsedAttributeList;
-//    }
+    public void setProductUsedAttributeList(List<ProductUsedAttribute> productUsedAttributeList) {
+        this.productUsedAttributeList = productUsedAttributeList;
+    }
 
     public String getProductNum() {
         return productNum;
