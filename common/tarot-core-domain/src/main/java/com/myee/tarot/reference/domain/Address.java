@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class Address extends GenericEntity<Long, Address> {
     @Id
     @Column(name = "ADDRESS_ID", unique = true, nullable = false)
-    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "ADDRESS_SEQ_NEXT_VAL")
+    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "ADDRESS_SEQ_NEXT_VAL",allocationSize=1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     protected Long id;
 
@@ -26,8 +26,8 @@ public class Address extends GenericEntity<Long, Address> {
     private GeoZone city;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},targetEntity = GeoZone.class)
-    @JoinColumn(name = "COUNTY_ZONE")
-    private GeoZone county;
+    @JoinColumn(name = "COUNTRY_ZONE")
+    private GeoZone country;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},targetEntity = GeoZone.class)
     @JoinColumn(name = "CIRCLE_ZONE")
@@ -78,12 +78,12 @@ public class Address extends GenericEntity<Long, Address> {
         this.city = city;
     }
 
-    public GeoZone getCounty() {
-        return county;
+    public GeoZone getCountry() {
+        return country;
     }
 
-    public void setCounty(GeoZone county) {
-        this.county = county;
+    public void setCountry(GeoZone country) {
+        this.country = country;
     }
 
     public Double getLatitude() {

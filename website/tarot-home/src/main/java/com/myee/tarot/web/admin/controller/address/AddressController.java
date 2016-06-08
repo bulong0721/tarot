@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,24 @@ public class AddressController {
         return resp;
     }
 
+    @RequestMapping(value = "/admin/province/list4Select", method = RequestMethod.GET)
+    @ResponseBody
+    public List listProvince4Select(HttpServletRequest request) throws Exception {
+        List resp = new ArrayList();
+        try {
+            List<GeoZone> list = geoZoneService.listProvince();
+            for (GeoZone geoZone : list) {
+                Map entry = new HashMap();
+                entry.put("name",geoZone.getName());
+                entry.put("value",geoZone.getId());
+                resp.add(entry);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resp;
+    }
+
     @RequestMapping(value = "/admin/city/listByProvince", method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse listCityByProvince(@RequestParam Long id,HttpServletRequest request) throws Exception {
@@ -60,6 +79,24 @@ public class AddressController {
         return resp;
     }
 
+    @RequestMapping(value = "/admin/city/listByProvince4Select", method = RequestMethod.GET)
+    @ResponseBody
+    public List listCityByProvince4Select(@RequestParam Long id,HttpServletRequest request) throws Exception {
+        List resp = new ArrayList();
+        try {
+            List<GeoZone> list = geoZoneService.listCityByProvince(id);
+            for (GeoZone geoZone : list) {
+                Map entry = new HashMap();
+                entry.put("name",geoZone.getName());
+                entry.put("value",geoZone.getId());
+                resp.add(entry);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resp;
+    }
+
     @RequestMapping(value = "/admin/district/listByCity", method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse listDistrictByCity(@RequestParam Long id,HttpServletRequest request) throws Exception {
@@ -72,6 +109,24 @@ public class AddressController {
         } catch (Exception e) {
             e.printStackTrace();
             resp.setErrorString("出错");
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "/admin/district/listByCity4Select", method = RequestMethod.GET)
+    @ResponseBody
+    public List listDistrictByCity4Select(@RequestParam Long id,HttpServletRequest request) throws Exception {
+        List resp = new ArrayList();
+        try {
+            List<GeoZone> list = geoZoneService.listDistrictByCity(id);
+            for (GeoZone geoZone : list) {
+                Map entry = new HashMap();
+                entry.put("name",geoZone.getName());
+                entry.put("value",geoZone.getId());
+                resp.add(entry);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return resp;
     }
