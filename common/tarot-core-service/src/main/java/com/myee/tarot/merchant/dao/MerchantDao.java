@@ -8,5 +8,5 @@ import com.myee.tarot.merchant.domain.Merchant;
  */
 public interface MerchantDao extends GenericEntityDao<Long, Merchant> {
 
-    Long getCountById(Merchant merchant);
+    Long getCountById(Long id);
 }

@@ -20,11 +20,11 @@ public class MerchantDaoImpl extends GenericEntityDaoImpl<Long, Merchant> implem
     public static Log log = LogFactory.getLog(MerchantDaoImpl.class);
 
     @Override
-    public Long getCountById(Merchant merchant){
+    public Long getCountById(Long id){
         QMerchant qMerchant = QMerchant.merchant;
         JPQLQuery<Merchant> query = new JPAQuery(getEntityManager());
         query.from(qMerchant)
-                .where(qMerchant.id.eq(merchant.getId()));
+                .where(qMerchant.id.eq(id));
         log.info(query.fetchCount());
 
         return query.fetchCount();
