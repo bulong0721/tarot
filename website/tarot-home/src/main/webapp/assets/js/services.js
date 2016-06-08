@@ -220,7 +220,7 @@ function constServiceCtor($filter, $compile, $resource, $state) {
             angular.forEach(d.attributeList, function (value) {
                 tables += "<tr><td>" + value.name + "</td> <td>" + value.value + "</td>";
                 //tables += "<td><a ng-click='goDetailsEditor(\"" + value.name + "\", \"" + value.value + "\")'><i class='fa fa-pencil'></i></a></td>";
-                tables += "<td><a ng-click='goDetailsDelete(\"" + value.name + "\", \"" + d.id + "\")'><i class='fa fa-remove'></i></a></td>";
+                tables += "<td><a ng-click='goDetailsDelete(\"" + value.id + "\", \"" + d + "\", \"" + value + "\")'><i class='fa fa-remove'></i></a></td>";
                 tables += "</tr>";
             });
             tables += '</table>';
@@ -236,8 +236,18 @@ function constServiceCtor($filter, $compile, $resource, $state) {
         //    alert("subId=" + subId + ", parentId=" + parentId);
         //};
 
-        scope.goDetailsDelete = function (subId, parentId) {
-            alert("subId=" + subId + ", parentId=" + parentId);
+        scope.goDetailsDelete = function (subId, details, detail) {
+            alert("subId=" + subId);
+            $resource('/product/attribute/delete').delete({id: subId}, function (resp) {
+                scope.details.splice(scope.details.indexOf(detail), 1);
+                alert("ssssssssssssssssss"+resp);
+                alert("ssssssssssssssssss"+resp.status);
+
+            });
+            scope.details.splice(scope.details.indexOf(detail), 1);
+            alert("ssssssssssss");
+
+
         };
 
         scope.goDetails = function (rowIndex) {
