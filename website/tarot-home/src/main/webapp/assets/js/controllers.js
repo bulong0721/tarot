@@ -153,6 +153,7 @@ function switchMerchantCtrl($scope, $resource, $compile, Constants){
             })
             .fail(function () {
             });
+
     };
 }
 

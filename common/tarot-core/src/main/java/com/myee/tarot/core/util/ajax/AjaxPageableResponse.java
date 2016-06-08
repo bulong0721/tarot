@@ -10,8 +10,8 @@ public class AjaxPageableResponse extends AjaxResponse {
     @Override
     public void addDataEntry(Map<String, Object> dataEntry) {
         super.addDataEntry(dataEntry);
-        recordsFiltered = rows.size();
-        recordsTotal = rows.size();
+        //recordsFiltered = rows.size();
+        //recordsTotal = rows.size();
     }
 
     public long getDraw() {

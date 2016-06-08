@@ -2,6 +2,8 @@ package com.myee.tarot.device.service.impl;
 
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.device.dao.DeviceUsedDao;
 import com.myee.tarot.device.service.DeviceUsedService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,4 +23,8 @@ public class DeviceUsedServiceImpl extends GenericEntityServiceImpl<Long, Device
         this.deviceUsedDao = deviceUsedDao;
     }
 
+    @Override
+    public PageResult<DeviceUsed> pageList(PageRequest pageRequest) {
+        return deviceUsedDao.pageList(pageRequest);
+    }
 }

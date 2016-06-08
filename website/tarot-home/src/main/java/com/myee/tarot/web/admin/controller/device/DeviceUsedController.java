@@ -2,6 +2,8 @@ package com.myee.tarot.web.admin.controller.device;
 
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.core.exception.ServiceException;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.device.service.DeviceUsedService;
@@ -34,10 +36,13 @@ public class DeviceUsedController {
 
     @RequestMapping(value = "/deviceUsed/paging", method = RequestMethod.GET)
     @ResponseBody
-    public AjaxPageableResponse pagedeviceUsed(Model model, HttpServletRequest request) {
+    public AjaxPageableResponse pagedeviceUsed(Model model, HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
-            List<DeviceUsed> deviceUsedList = deviceUsedService.list();
+            PageResult<DeviceUsed> pageResult = deviceUsedService.pageList(pageRequest);
+            List<DeviceUsed> deviceUsedList = pageResult.getList();
+            resp.setRecordsTotal(pageResult.getRecordsTotal());
+            resp.setRecordsFiltered(pageResult.getRecordsFiltered());
             for (DeviceUsed deviceUsed : deviceUsedList) {
                 Map entry = new HashMap();
                 entry.put("id",deviceUsed.getId());
