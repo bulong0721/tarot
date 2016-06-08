@@ -47,8 +47,8 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
 //    protected Map<String, ProductUsedAttribute> productUsedAttribute = new HashMap<String, ProductUsedAttribute>();
 //    protected List<ProductUsedAttribute> productUsedAttributeList = new ArrayList<ProductUsedAttribute>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "productUsed")
-    private List<ProductUsedAttribute> productUsedAttributeList;
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "productUsed")
+//    private List<ProductUsedAttribute> productUsedAttributeList;
 
 //    @OneToMany(targetEntity = DeviceUsed.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
 //    @JoinTable(name = "C_PRODUCT_USED_DEV_XREF",
@@ -101,13 +101,13 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
 //        return productUsedAttribute;
 //    }
 
-    public List<ProductUsedAttribute> getProductUsedAttributeList() {
-        return productUsedAttributeList;
-    }
-
-    public void setProductUsedAttributeList(List<ProductUsedAttribute> productUsedAttributeList) {
-        this.productUsedAttributeList = productUsedAttributeList;
-    }
+//    public List<ProductUsedAttribute> getProductUsedAttributeList() {
+//        return productUsedAttributeList;
+//    }
+//
+//    public void setProductUsedAttributeList(List<ProductUsedAttribute> productUsedAttributeList) {
+//        this.productUsedAttributeList = productUsedAttributeList;
+//    }
 
     public String getProductNum() {
         return productNum;

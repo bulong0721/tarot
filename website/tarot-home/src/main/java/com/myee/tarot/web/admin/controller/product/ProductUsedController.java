@@ -1,5 +1,7 @@
 package com.myee.tarot.web.admin.controller.product;
 
+import com.alibaba.fastjson.serializer.JSONSerializable;
+import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 import com.myee.tarot.catalog.domain.ProductUsed;
 import com.myee.tarot.catalog.type.ProductType;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
@@ -50,13 +52,15 @@ public class ProductUsedController {
                 entry.put("storeName", productUsed.getStore().getName());
                 entry.put("storeId", productUsed.getStore().getId());
                 entry.put("productTypeList", ProductType.getProductTypeList());
-                entry.put("attributeList", productUsed.getProductUsedAttributeList());
+//                entry.put("attributeList", productUsed.getProductUsedAttributeList());
 //                entry.put("attributeList", productUsed.getProductUsedAttribute());
                 resp.addDataEntry(entry);
             }
         } catch (Exception e) {
             LOGGER.error("Error while paging products", e);
         }
+//        SimplePropertyPreFilter filter = new SimplePropertyPreFilter(TTown.class, "id","townname");
+//        response.getWriter().write(JSONObject.toJSONString(townList,filter));
         return resp;
     }
 
