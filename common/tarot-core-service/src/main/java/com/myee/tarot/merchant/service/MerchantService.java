@@ -10,6 +10,6 @@ import javax.persistence.metamodel.SingularAttribute;
  */
 public interface MerchantService extends GenericEntityService<Long, Merchant> {
 
-    Long getCountById(Merchant merchant);
+    Long getCountById(Long id);
 
 }
