@@ -3,7 +3,6 @@ package com.myee.tarot.catalog.domain;
 import com.myee.tarot.core.GenericEntity;
 
 import javax.persistence.*;
-import java.util.*;
 
 /**
  * Created by Martin on 2016/4/11.

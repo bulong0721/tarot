@@ -2,9 +2,6 @@ package com.myee.tarot.address.dao.impl;
 
 import com.myee.tarot.address.dao.GeoZoneDao;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
-import com.myee.tarot.merchant.dao.MerchantDao;
-import com.myee.tarot.merchant.domain.Merchant;
-import com.myee.tarot.merchant.domain.QMerchant;
 import com.myee.tarot.reference.domain.GeoZone;
 import com.myee.tarot.reference.domain.QGeoZone;
 import com.querydsl.jpa.JPQLQuery;
@@ -23,7 +20,7 @@ public class GeoZoneDaoImpl extends GenericEntityDaoImpl<Long, GeoZone> implemen
 
     public static Log log = LogFactory.getLog(GeoZoneDaoImpl.class);
 
-    public List<GeoZone> listProvince(){
+    public List<GeoZone> listProvince() {
         QGeoZone qGeoZone = QGeoZone.geoZone;
         JPQLQuery<GeoZone> query = new JPAQuery(getEntityManager());
         query.from(qGeoZone)
@@ -32,7 +29,7 @@ public class GeoZoneDaoImpl extends GenericEntityDaoImpl<Long, GeoZone> implemen
         return query.fetch();
     }
 
-    public List<GeoZone> listCityByProvince(Long provinceId){
+    public List<GeoZone> listCityByProvince(Long provinceId) {
         QGeoZone qGeoZone = QGeoZone.geoZone;
         JPQLQuery<GeoZone> query = new JPAQuery(getEntityManager());
         query.from(qGeoZone)
@@ -42,7 +39,7 @@ public class GeoZoneDaoImpl extends GenericEntityDaoImpl<Long, GeoZone> implemen
         return query.fetch();
     }
 
-    public List<GeoZone> listDistrictByCity(Long cityId){
+    public List<GeoZone> listDistrictByCity(Long cityId) {
         QGeoZone qGeoZone = QGeoZone.geoZone;
         JPQLQuery<GeoZone> query = new JPAQuery(getEntityManager());
         query.from(qGeoZone)

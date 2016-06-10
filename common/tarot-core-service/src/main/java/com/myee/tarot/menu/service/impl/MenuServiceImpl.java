@@ -1,11 +1,6 @@
 package com.myee.tarot.menu.service.impl;
 
-import com.myee.tarot.admin.dao.AdminUserDao;
-import com.myee.tarot.admin.domain.AdminUser;
-import com.myee.tarot.admin.service.AdminUserService;
-import com.myee.tarot.core.dao.GenericEntityDao;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
-import com.myee.tarot.core.service.GenericResponse;
 import com.myee.tarot.menu.dao.MenuDao;
 import com.myee.tarot.menu.dao.MenuItemDao;
 import com.myee.tarot.menu.domain.Menu;

@@ -1,13 +1,9 @@
 package com.myee.tarot.catering.domain;
 
-import com.myee.tarot.admin.domain.AdminPermission;
-import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by Martin on 2016/4/11.

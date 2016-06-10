@@ -1,6 +1,5 @@
 package com.myee.tarot.catering.dao;
 
-import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.catering.domain.TableZone;
 import com.myee.tarot.core.dao.GenericEntityDao;
 

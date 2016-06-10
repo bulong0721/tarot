@@ -4,25 +4,13 @@ package com.myee.tarot.core.domain;
  * Created by Martin on 2016/4/28.
  */
 
-import java.io.Serializable;
-
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.TableGenerator;
-
 import com.myee.tarot.core.audit.Auditable;
 import com.myee.tarot.core.audit.AuditableListener;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.persistence.*;
+import java.io.Serializable;
 
 @MappedSuperclass
 @EntityListeners(value = AuditableListener.class)

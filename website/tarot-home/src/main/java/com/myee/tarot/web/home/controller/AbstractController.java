@@ -3,7 +3,6 @@ package com.myee.tarot.web.home.controller;
 import com.myee.tarot.web.home.model.paging.PaginationData;
 import com.myee.tarot.web.util.SessionUtil;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;

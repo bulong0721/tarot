@@ -1,7 +1,5 @@
 package com.myee.tarot.profile.dao.impl;
 
-import com.myee.tarot.admin.dao.AdminUserDao;
-import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.profile.dao.CustomerDao;
 import com.myee.tarot.profile.domain.Customer;

@@ -4,8 +4,6 @@ import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Martin on 2016/4/18.

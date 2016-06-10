@@ -83,33 +83,16 @@ function constServiceCtor($filter, $compile, $resource, $state) {
             }, vm.defaultOptions);
     };
 
-    //从后台拿店铺类型
-    vm.merchantType = [];
-    $resource('/admin/merchant/typeList').get({}, function (resp) {
-        angular.forEach(resp.rows[0], function (key, value) {
-            var type = {name: key, value: value};
-            vm.merchantType.push(type);
-        });
-    });
+    //从后台拿商户类型
+    vm.merchantType = $resource('/admin/merchant/typeList4Select').query();
 
     //从后台拿商户列表
-    vm.merchants = [];
-    $resource('/admin/merchant/list').get({}, function (resp) {
-        //console.log(resp.rows)
-        angular.forEach(resp.rows, function (merchant) {
-            var option = {name: merchant.name, value: merchant.id};
-            //console.log(option);
-            vm.merchants.push(option);
-        });
-    });
+    vm.merchants = $resource('/admin/merchant/list4Select').query();
 
     vm.thisMerchant = {};
     $resource('/admin/merchant/getSwitch').get({}, function (resp) {
         //console.log(resp.rows);
-        if (resp.rows.length == 0) {
-            vm.thisMerchant = {};
-        }
-        else {
+        if (resp.rows.length > 0) {
             //console.log("#####merchantsLength:"+vm.merchants.length);
             vm.flushThisMerchant(resp.rows[0].id);//按F5刷新后，vm.merchants为[],导致匹配不成功？？？？？？？？？？？？？？？
         }
@@ -127,44 +110,55 @@ function constServiceCtor($filter, $compile, $resource, $state) {
     }
 
     //从后台拿到省列表
-    vm.provinces = [];
-    $resource('/admin/province/list').get({}, function (resp) {
-        var length = resp.rows.length;
-        if (length > 0) {
-            for (var j = 0; j < length; j++) {
-                vm.provinces.push({name: resp.rows[j].name, value: resp.rows[j].id});
-            }
-        }
-        console.log("provincesLength:" + vm.provinces.length);
-    });
+    vm.provinces = $resource('/admin/province/list4Select').query();
 
     //根据省从后台拿市列表
     vm.citys = [];
-    vm.getCitysByProvince = function (provinceId) {
-        $resource('/admin/city/listByProvince').get({id: provinceId}, function (resp) {
-            var length = resp.rows.length;
-            if (length > 0) {
-                for (var j = 0; j < length; j++) {
-                    vm.citys.push({name: resp.rows[j].name, value: resp.rows[j].id});
+    vm.getCitysByProvince = function (provinceId, scope) {
+        if (provinceId) {
+            //vm.citys = $resource('/admin/city/listByProvince4Select').query({id:provinceId});//直接query出来的list不能刷新select内容？？？？？？？
+            //console.log(vm.citys);
+            $resource('/admin/city/listByProvince').get({id: provinceId}, function (resp) {
+                var length = resp.rows.length;
+                if (length > 0) {
+                    vm.citys.splice(0, vm.citys.length);
+                    //console.log("clear-citiysLength:" + vm.citys.length);
+                    //vm.districts.splice(0,vm.districts.length);//联动会使区出错
+                    for (var j = 0; j < length; j++) {
+                        vm.citys.push({name: resp.rows[j].name, value: resp.rows[j].id});
+                    }
                 }
-            }
-            console.log("citysLength:" + vm.citys.length);
-        });
+                //console.log("citysLength:" + vm.citys.length);
+            });
+        }
     }
 
-    //根据省从后台拿市列表
+    //根据市从后台拿区县列表
     vm.districts = [];
     vm.getDistrictsByCity = function (cityId) {
-        $resource('/admin/district/listByCity').get({id: cityId}, function (resp) {
-            var length = resp.rows.length;
-            if (length > 0) {
-                for (var j = 0; j < length; j++) {
-                    vm.districts.push({name: resp.rows[j].name, value: resp.rows[j].id});
+        if (cityId) {
+            //vm.districts = $resource('/admin/district/listByCity4Select').query({id:cityId});
+            $resource('/admin/district/listByCity').get({id: cityId}, function (resp) {
+                var length = resp.rows.length;
+                if (length > 0) {
+                    vm.districts.splice(0, vm.districts.length);
+                    //console.log("clear-districtsLength:"+vm.districts.length);
+                    for (var j = 0; j < length; j++) {
+                        vm.districts.push({name: resp.rows[j].name, value: resp.rows[j].id});
+                    }
                 }
-            }
-            console.log("districtsLength:" + vm.districts.length);
-        });
+                //console.log("districtsLength:"+vm.districts.length);
+            });
+        }
     }
+
+    //根据区县拿商圈
+    vm.circles = [];
+    //....
+
+    //根据商圈拿商场
+    vm.malls = [];
+    //....
 
     vm.initMgrCtrl = function (mgrData, scope) {
         $.fn.dataTable.ext.errMode = 'none';

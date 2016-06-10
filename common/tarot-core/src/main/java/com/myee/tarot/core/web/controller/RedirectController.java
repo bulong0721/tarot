@@ -1,7 +1,6 @@
 package com.myee.tarot.core.web.controller;
 
 import org.springframework.ui.Model;
-import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

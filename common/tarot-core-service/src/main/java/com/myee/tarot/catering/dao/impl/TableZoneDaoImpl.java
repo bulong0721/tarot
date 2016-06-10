@@ -1,10 +1,7 @@
 package com.myee.tarot.catering.dao.impl;
 
-import com.myee.tarot.catering.dao.TableTypeDao;
 import com.myee.tarot.catering.dao.TableZoneDao;
-import com.myee.tarot.catering.domain.QTableType;
 import com.myee.tarot.catering.domain.QTableZone;
-import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.catering.domain.TableZone;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.querydsl.jpa.JPQLQuery;

@@ -1,6 +1,5 @@
 package com.myee.tarot.admin.dao;
 
-import com.myee.tarot.admin.domain.AdminModule;
 import com.myee.tarot.admin.domain.AdminSection;
 import com.myee.tarot.core.dao.GenericEntityDao;
 

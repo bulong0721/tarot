@@ -5,8 +5,6 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Martin on 2016/4/11.
