@@ -64,6 +64,7 @@ public class ProductUsedController {
                 resp.addDataEntry(entry);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             LOGGER.error("Error while paging products", e);
         }
         return resp;
@@ -91,6 +92,7 @@ public class ProductUsedController {
         } catch (Exception e) {
             e.printStackTrace();
             resp.setErrorString("删除产品属性异常");
+            LOGGER.error("Error delete productAttributes", e);
         }
         return resp;
 
@@ -98,8 +100,8 @@ public class ProductUsedController {
 
     @RequestMapping(value = "/product/attribute/listByProductId", method = RequestMethod.GET)
     @ResponseBody
-    public AjaxPageableResponse listByProductId(@RequestParam Long productId, HttpServletRequest request) throws Exception {
-        AjaxPageableResponse resp = new AjaxPageableResponse();
+    public AjaxResponse listByProductId(@RequestParam Long productId, HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
         try {
             if (StringUtil.isNullOrEmpty(productId.toString())) {
                 resp.setErrorString("参数不能为空");

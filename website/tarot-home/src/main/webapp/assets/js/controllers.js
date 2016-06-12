@@ -768,10 +768,12 @@ function productUsedCtrl($scope, $compile, Constants) {
         ],
         api: {
             read: '/product/used/paging',
-            update: '/product/used/type'
+            update: '/product/used/type',
+            attributeList: '/product/attribute/listByProductId',
+            attributeDelete: '/product/attribute/delete'
         }
     };
-    Constants.initMgrCtrl(mgrData, $scope);
+    Constants.initMgrCtrl(mgrData, $scope, mgrData.api.attributeList, mgrData.api.attributeDelete);
 
     $scope.dtColumns = mgrData.columns;
 

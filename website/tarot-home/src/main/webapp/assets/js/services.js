@@ -1,7 +1,7 @@
 /**
  * Created by Martin on 2016/4/12.
  */
-function constServiceCtor($filter, $compile, $resource, $state) {
+function constServiceCtor($filter, $compile, $resource, $state,$q) {
     var vm = this;
 
     vm.sizeFormatter = function (value, opts, row) {
@@ -160,7 +160,7 @@ function constServiceCtor($filter, $compile, $resource, $state) {
     vm.malls = [];
     //....
 
-    vm.initMgrCtrl = function (mgrData, scope) {
+    vm.initMgrCtrl = function (mgrData, scope, attributeListUrl, attributeDeleteUrl) {
         $.fn.dataTable.ext.errMode = 'none';
 
         scope.where = {};
@@ -206,19 +206,41 @@ function constServiceCtor($filter, $compile, $resource, $state) {
             }
         };
 
-        scope.format = function (d) {
+        //异步查询详细
+        scope.infoDetail = [];
+        scope.getInfoDetail = function (parentId, rowIndex) {
+            var content = "";
+            var deferred = $q.defer();
+            if (parentId) {
+                //$resource('/product/attribute/listByProductId').get({productId: parentId}, function (resp) {
+                $resource(attributeListUrl).get({productId: parentId}, function (resp) {
+                    var length = resp.rows.length;
+                    if (length > 0) {
+                        scope.infoDetail.splice(0, scope.infoDetail.length);
+                        for (var j = 0; j < length; j++) {
+                            scope.infoDetail.push({id: resp.rows[j].id, name: resp.rows[j].name, value: resp.rows[j].value});
+                        }
+                        content = scope.format(rowIndex);
+                    }
+                    deferred.resolve(content)
+                });
+            }
+            return deferred.promise;
+        }
+
+        //拼接详细html
+        scope.format = function (rowIndex) {
             // `d` is the original data object for the row
             var tables = "";
             tables += '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
             //tables += "<tr><td>参数名</td> <td>参数值</td><td>编辑</td> <td>删除</td></tr>";
-            angular.forEach(d.attributeList, function (value) {
+            angular.forEach(scope.infoDetail, function (value) {
                 tables += "<tr><td>" + value.name + "</td> <td>" + value.value + "</td>";
-                //tables += "<td><a ng-click='goDetailsEditor(\"" + value.name + "\", \"" + value.value + "\")'><i class='fa fa-pencil'></i></a></td>";
-                tables += "<td><a ng-click='goDetailsDelete(\"" + value.id + "\", \"" + d + "\", \"" + value + "\")'><i class='fa fa-remove'></i></a></td>";
+                tables += "<td><a ng-click='goDetailsDelete(\"" + value.id + "\", \"" + rowIndex + "\")'><i class='fa fa-remove'></i></a></td>";
                 tables += "</tr>";
             });
             tables += '</table>';
-
+            //编译angular
             var elem = angular.element(tables);
             var content = elem.contents();
             $compile(content)(scope);
@@ -226,29 +248,27 @@ function constServiceCtor($filter, $compile, $resource, $state) {
             return content;
         }
 
-        //scope.goDetailsEditor = function (subId, parentId) {
-        //    alert("subId=" + subId + ", parentId=" + parentId);
-        //};
-
-        scope.goDetailsDelete = function (subId, details, detail) {
-            alert("subId=" + subId);
-            $resource('/product/attribute/delete').delete({id: subId}, function (resp) {
-                scope.details.splice(scope.details.indexOf(detail), 1);
-                alert("ssssssssssssssssss"+resp);
-                alert("ssssssssssssssssss"+resp.status);
-
+        //删除详细
+        scope.goDetailsDelete = function (subId, rowIndex) {
+            //$resource('/product/attribute/delete').delete({id: subId}, function (resp) {
+            $resource(attributeDeleteUrl).delete({id: subId}, function (resp) {
+                scope.goDetailsRefresh(rowIndex);
             });
-            scope.details.splice(scope.details.indexOf(detail), 1);
-            alert("ssssssssssss");
-
-
         };
 
+        //刷新详细
+        scope.goDetailsRefresh = function (rowIndex) {
+            if (scope.dtApi && rowIndex > -1) {
+                var row = scope.dtApi.DataTable.row(rowIndex);
+                    scope.getInfoDetail(row.data().id, rowIndex).then(function(res){
+                        row.child(res).show();
+                    });
+            }
+        };
+
+        //显示详细
         scope.goDetails = function (rowIndex) {
             if (scope.dtApi && rowIndex > -1) {
-                var data = scope.dtApi.DataTable.row(rowIndex).data();
-                //var tr = $(this).closest('tr');
-                //alert("tr="+tr);
                 var row = scope.dtApi.DataTable.row(rowIndex);
                 if ( row.child.isShown() ) {
                     // This row is already open - close it
@@ -256,8 +276,9 @@ function constServiceCtor($filter, $compile, $resource, $state) {
                     //tr.removeClass('btn-icon fa fa-minus-circle bigger-130');
                 }else {
                     // Open this row
-                    row.child( scope.format(row.data()) ).show();
-                    //tr.addClass('btn-icon fa fa-minus-circle bigger-130');
+                    scope.getInfoDetail(row.data().id, rowIndex).then(function(res){
+                        row.child(res).show();
+                    });
                 }
             }
         };
