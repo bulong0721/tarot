@@ -10,6 +10,8 @@ import com.myee.tarot.product.service.ProductUsedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by Enva on 2016/6/1.
  */
@@ -19,9 +21,15 @@ public class ProductUsedAttributeServiceImpl extends GenericEntityServiceImpl<Lo
     protected ProductUsedAttributeDao productUsedAttributeDao;
 
     @Autowired
-    public ProductUsedAttributeServiceImpl(ProductUsedAttributeDao productUsedAttributeDao) {
+     public ProductUsedAttributeServiceImpl(ProductUsedAttributeDao productUsedAttributeDao) {
         super(productUsedAttributeDao);
         this.productUsedAttributeDao = productUsedAttributeDao;
+    }
+
+    @Override
+    public List<ProductUsedAttribute> listByProductId(Long id){
+        return productUsedAttributeDao.listByProductId(id);
+
     }
 
 }

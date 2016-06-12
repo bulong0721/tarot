@@ -96,6 +96,31 @@ public class ProductUsedController {
 
     }
 
+    @RequestMapping(value = "/product/attribute/listByProductId", method = RequestMethod.GET)
+    @ResponseBody
+    public AjaxPageableResponse listByProductId(@RequestParam Long productId, HttpServletRequest request) throws Exception {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
+        try {
+            if (StringUtil.isNullOrEmpty(productId.toString())) {
+                resp.setErrorString("参数不能为空");
+                return resp;
+            }
+            List<ProductUsedAttribute> attributeList = productUsedAttributeService.listByProductId(productId);
+            for (ProductUsedAttribute attribute : attributeList) {
+                Map entry = new HashMap();
+                List<ProductUsedAttribute> attributes = new ArrayList<ProductUsedAttribute>();
+                entry.put("id", attribute.getId());
+                entry.put("name", attribute.getName());
+                entry.put("value", attribute.getValue());
+                resp.addDataEntry(entry);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error while paging productAttributes", e);
+        }
+        return resp;
+
+    }
+
     @RequestMapping(value = "/product/type/productOpts", method = RequestMethod.GET)
     public
     @ResponseBody
