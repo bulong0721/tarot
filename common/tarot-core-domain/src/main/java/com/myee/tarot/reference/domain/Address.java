@@ -26,8 +26,8 @@ public class Address extends GenericEntity<Long, Address> {
     private GeoZone city;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},targetEntity = GeoZone.class)
-    @JoinColumn(name = "COUNTRY_ZONE")
-    private GeoZone country;
+    @JoinColumn(name = "COUNTY_ZONE")
+    private GeoZone county;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},targetEntity = GeoZone.class)
     @JoinColumn(name = "CIRCLE_ZONE")
@@ -78,12 +78,12 @@ public class Address extends GenericEntity<Long, Address> {
         this.city = city;
     }
 
-    public GeoZone getCountry() {
-        return country;
+    public GeoZone getCounty() {
+        return county;
     }
 
-    public void setCountry(GeoZone country) {
-        this.country = country;
+    public void setCounty(GeoZone county) {
+        this.county = county;
     }
 
     public Double getLatitude() {

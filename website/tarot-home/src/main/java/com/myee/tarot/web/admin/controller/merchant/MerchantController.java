@@ -256,23 +256,23 @@ public class MerchantController {
             merchantStore.setMerchant(merchant);
             Address address = merchantStore.getAddress();
             GeoZone geoZone = new GeoZone();
-            if (address.getProvince().getId() != null && !address.getProvince().getId().toString().equals("")) {
+            if (address.getProvince()!= null && address.getProvince().getId() != null && !address.getProvince().getId().toString().equals("")) {
                 geoZone = geoZoneService.getEntity(GeoZone.class, address.getProvince().getId());
                 address.setProvince(geoZone);
             }
-            if (address.getProvince().getId() != null && !address.getProvince().getId().toString().equals("")) {
+            if (address.getCity()!= null && address.getCity().getId() != null && !address.getCity().getId().toString().equals("")) {
                 geoZone = geoZoneService.getEntity(GeoZone.class, address.getCity().getId());
                 address.setCity(geoZone);
             }
-            if (address.getProvince().getId() != null && !address.getProvince().getId().toString().equals("")) {
-                geoZone = geoZoneService.getEntity(GeoZone.class, address.getCountry().getId());
-                address.setCountry(geoZone);
+            if (address.getCounty()!= null && address.getCounty().getId() != null && !address.getCounty().getId().toString().equals("")) {
+                geoZone = geoZoneService.getEntity(GeoZone.class, address.getCounty().getId());
+                address.setCounty(geoZone);
             }
-            if (address.getProvince().getId() != null && !address.getProvince().getId().toString().equals("")) {
+            if (address.getCircle()!= null && address.getCircle().getId() != null && !address.getCircle().getId().toString().equals("")) {
                 geoZone = geoZoneService.getEntity(GeoZone.class, address.getCircle().getId());
                 address.setCircle(geoZone);
             }
-            if (address.getProvince().getId() != null && !address.getProvince().getId().toString().equals("")) {
+            if (address.getMall()!= null && address.getMall().getId() != null && !address.getMall().getId().toString().equals("")) {
                 geoZone = geoZoneService.getEntity(GeoZone.class, address.getMall().getId());
                 address.setMall(geoZone);
             }
