@@ -251,9 +251,12 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
         //删除详细
         scope.goDetailsDelete = function (subId, rowIndex) {
             //$resource('/product/attribute/delete').delete({id: subId}, function (resp) {
-            $resource(attributeDeleteUrl).delete({id: subId}, function (resp) {
-                scope.goDetailsRefresh(rowIndex);
-            });
+            if(confirm("确定要清空数据吗？")){
+                $resource(attributeDeleteUrl).delete({id: subId}, function (resp) {
+                    scope.goDetailsRefresh(rowIndex);
+                });
+                alert("成功");
+            }
         };
 
         //刷新详细
