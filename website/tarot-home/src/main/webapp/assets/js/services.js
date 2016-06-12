@@ -251,7 +251,7 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
         //删除详细
         scope.goDetailsDelete = function (subId, rowIndex) {
             //$resource('/product/attribute/delete').delete({id: subId}, function (resp) {
-            if(confirm("确定要清空数据吗？")){
+            if(confirm("确定要删除此条数据吗？")){
                 $resource(attributeDeleteUrl).delete({id: subId}, function (resp) {
                     scope.goDetailsRefresh(rowIndex);
                 });
@@ -264,7 +264,11 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
             if (scope.dtApi && rowIndex > -1) {
                 var row = scope.dtApi.DataTable.row(rowIndex);
                     scope.getInfoDetail(row.data().id, rowIndex).then(function(res){
-                        row.child(res).show();
+                        if(row.data().attributeList.length > 0){
+                            row.child(res).show();
+                        }else{
+                            row.child(res).hide();
+                        }
                     });
             }
         };
@@ -279,8 +283,13 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
                     //tr.removeClass('btn-icon fa fa-minus-circle bigger-130');
                 }else {
                     // Open this row
+                    console.log(row.data().attributeList.length)
                     scope.getInfoDetail(row.data().id, rowIndex).then(function(res){
-                        row.child(res).show();
+                        if(row.data().attributeList.length > 0){
+                            row.child(res).show();
+                        }else{
+                            row.child(res).hide();
+                        }
                     });
                 }
             }
