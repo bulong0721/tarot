@@ -766,6 +766,43 @@ function productUsedCtrl($scope, $compile, Constants) {
             },
             {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}}
         ],
+        fields: [
+            {
+                'key': 'code',
+                'type': 'input',
+                'templateOptions': {'label': '产品编号', required: true, 'placeholder': '产品编号'}
+            },
+            {
+                'key': 'type',
+                'type': 'select',
+                'templateOptions': {
+                    'label': '产品名称',
+                    required: true,
+                    'placeholder': '产品名称',
+                    valueProp: 'type',
+                    labelProp: 'friendlyType',
+                    options: productOpts
+                }
+            },
+            {
+                'key': 'storeId',
+                'type': 'select',
+                'templateOptions': {
+                    'label': '店铺名称',
+                    required: true,
+                    'placeholder': '店铺名称',
+                    valueProp: 'id',
+                    labelProp: 'name',
+                    options: storeOpts
+                }
+            },
+            {
+                'key': 'productNum',
+                'type': 'input',
+                'templateOptions': {'label': '产品版本', required: true, 'placeholder': '产品版本'}
+            },
+            {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}}
+        ],
         api: {
             read: '/product/used/paging',
             update: '/product/used/save',
@@ -773,7 +810,7 @@ function productUsedCtrl($scope, $compile, Constants) {
             attributeDelete: '/product/attribute/delete'
         }
     };
-    Constants.initMgrCtrl(mgrData, $scope, mgrData.api.attributeList, mgrData.api.attributeDelete);
+    Constants.initMgrCtrl(mgrData, $scope);
 
     //$scope.dtColumns = mgrData.columns;
     //

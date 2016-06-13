@@ -160,7 +160,7 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
     vm.malls = [];
     //....
 
-    vm.initMgrCtrl = function (mgrData, scope, attributeListUrl, attributeDeleteUrl) {
+    vm.initMgrCtrl = function (mgrData, scope) {
         $.fn.dataTable.ext.errMode = 'none';
 
         scope.where = {};
@@ -168,6 +168,11 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
         scope.formData = {
             fields: mgrData.fields
         };
+
+        scope.formDetailData = {
+            detailfields: mgrData.fields
+        };
+
         scope.showDataTable = true;
         scope.showEditor = false;
 
@@ -195,6 +200,25 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
             scope.showEditor = true;
         };
 
+        scope.goDetailEditor = function (index) {
+            var api = this.dtInstance;
+            if (api) {
+                scope.dtApi = api;
+            }
+            scope.addNew = true;
+            console.log(scope.infoDetail[index])
+            if (scope.dtApi && scope.infoDetail[index].length > 0) {
+                //var data = scope.dtApi.DataTable.row(rowIndex).data();
+                scope.formDetailData.model = scope.infoDetail[index];
+                scope.addNew = false;
+                scope.rowIndex = rowIndex;
+            } else {
+                scope.formDetailData.model = {}
+            }
+            scope.showDataTable = false;
+            scope.showEditor = true;
+        };
+
         scope.doDelete = function (rowIndex) {
             var api = this.dtInstance;
             if (api) {
@@ -214,12 +238,12 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
             var deferred = $q.defer();
             if (parentId) {
                 //$resource('/product/attribute/listByProductId').get({productId: parentId}, function (resp) {
-                $resource(attributeListUrl).get({productId: parentId}, function (resp) {
+                $resource(mgrData.api.attributeList).get({productId: parentId}, function (resp) {
                     var length = resp.rows.length;
                     if (length > 0) {
                         scope.infoDetail.splice(0, scope.infoDetail.length);
                         for (var j = 0; j < length; j++) {
-                            scope.infoDetail.push({id: resp.rows[j].id, name: resp.rows[j].name, value: resp.rows[j].value});
+                            scope.infoDetail.push({index: j, id: resp.rows[j].id, name: resp.rows[j].name, value: resp.rows[j].value});
                         }
                         content = scope.format(rowIndex);
                     }
@@ -237,6 +261,7 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
             //tables += "<tr><td>参数名</td> <td>参数值</td><td>编辑</td> <td>删除</td></tr>";
             angular.forEach(scope.infoDetail, function (value) {
                 tables += "<tr><td>" + value.name + "</td> <td>" + value.value + "</td>";
+                tables += "<td><a ng-click='goDetailEditor(\"" + value.index + "\")'><i class='fa fa-pencil'></i></a></td>";
                 tables += "<td><a ng-click='goDetailsDelete(\"" + value.id + "\", \"" + rowIndex + "\")'><i class='fa fa-remove'></i></a></td>";
                 tables += "</tr>";
             });
@@ -253,7 +278,7 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
         scope.goDetailsDelete = function (subId, rowIndex) {
             //$resource('/product/attribute/delete').delete({id: subId}, function (resp) {
             if(confirm("确定要删除此条数据吗？")){
-                $resource(attributeDeleteUrl).delete({id: subId}, function (resp) {
+                $resource(mgrData.api.attributeDelete).delete({id: subId}, function (resp) {
                     scope.goDetailsRefresh(rowIndex);
                 });
                 alert("成功");
@@ -266,7 +291,6 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
                 var row = scope.dtApi.DataTable.row(rowIndex);
                     scope.infoDetail = [];
                     scope.getInfoDetail(row.data().id, rowIndex).then(function(res){
-                        console.log(scope.infoDetail)
                         if(scope.infoDetail.length > 0){
                             row.child(res).show();
                         }else{
