@@ -16,9 +16,17 @@
     </uib-tab>
     <uib-tab>
         <uib-tab-heading>
-            <i class="fa fa-key"></i>产品属性
+            <i class="fa fa-leaf"></i>产品属性
         </uib-tab-heading>
         <div class="panel-body">
+            <div class="col-xs-2">
+            </div>
+            <div class="col-xs-6">
+                <formly-form model="formDetailData.model" fields="formDetailData.fields" form="formDetailData.form" options="formDetailData.options">
+                    <button class="btn btn-primary" ng-click="processSubmit()"><i class="fa fa-sm fa-check"></i>&nbsp;提交</button>
+                    <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
+                </formly-form>
+            </div>
         </div>
     </uib-tab>
 </uib-tabset>

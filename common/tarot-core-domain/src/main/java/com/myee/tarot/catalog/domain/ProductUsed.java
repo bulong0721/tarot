@@ -1,6 +1,7 @@
 package com.myee.tarot.catalog.domain;
 
 import com.myee.tarot.catalog.type.ProductType;
+import com.myee.tarot.catalog.view.ProductUsedView;
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -42,10 +43,10 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
     @Column(name = "PRODUCT_NUM")
     protected String productNum;
 
-    @OneToMany(mappedBy = "productUsed", targetEntity = ProductUsedAttribute.class, fetch = FetchType.LAZY)
-//    @MapKey(name = "name")
-//    protected Map<String, ProductUsedAttribute> productUsedAttribute = new HashMap<String, ProductUsedAttribute>();
-    protected List<ProductUsedAttribute> productUsedAttributeList = new ArrayList<ProductUsedAttribute>();
+//    @OneToMany(mappedBy = "productUsed", targetEntity = ProductUsedAttribute.class, fetch = FetchType.LAZY)
+////    @MapKey(name = "name")
+////    protected Map<String, ProductUsedAttribute> productUsedAttribute = new HashMap<String, ProductUsedAttribute>();
+//    protected List<ProductUsedAttribute> productUsedAttributeList = new ArrayList<ProductUsedAttribute>();
 
 //    @OneToMany(targetEntity = DeviceUsed.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
 //    @JoinTable(name = "C_PRODUCT_USED_DEV_XREF",
@@ -54,6 +55,16 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
 //    )
 //    @MapKey(name = "name")
 //    protected Map<String, DeviceUsed> deviceUsed = new HashMap<String, DeviceUsed>();
+
+    public ProductUsed(){}
+
+    public ProductUsed(ProductUsedView productUsedView){
+        this.id = productUsedView.getId();
+        this.code = productUsedView.getCode();
+        this.type = productUsedView.getType();
+        this.productNum = productUsedView.getProductNum();
+        this.description = productUsedView.getDescription();
+    }
 
     @Override
     public Long getId() {
@@ -94,13 +105,13 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
         this.description = description;
     }
 
-    public List<ProductUsedAttribute> getProductUsedAttributeList() {
-        return productUsedAttributeList;
-    }
-
-    public void setProductUsedAttributeList(List<ProductUsedAttribute> productUsedAttributeList) {
-        this.productUsedAttributeList = productUsedAttributeList;
-    }
+//    public List<ProductUsedAttribute> getProductUsedAttributeList() {
+//        return productUsedAttributeList;
+//    }
+//
+//    public void setProductUsedAttributeList(List<ProductUsedAttribute> productUsedAttributeList) {
+//        this.productUsedAttributeList = productUsedAttributeList;
+//    }
 
     public String getProductNum() {
         return productNum;

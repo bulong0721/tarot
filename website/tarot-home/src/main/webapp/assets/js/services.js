@@ -184,6 +184,7 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
             scope.addNew = true;
             if (scope.dtApi && rowIndex > -1) {
                 var data = scope.dtApi.DataTable.row(rowIndex).data();
+                console.log(data)
                 scope.formData.model = data;
                 scope.addNew = false;
                 scope.rowIndex = rowIndex;
@@ -263,8 +264,10 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
         scope.goDetailsRefresh = function (rowIndex) {
             if (scope.dtApi && rowIndex > -1) {
                 var row = scope.dtApi.DataTable.row(rowIndex);
+                    scope.infoDetail = [];
                     scope.getInfoDetail(row.data().id, rowIndex).then(function(res){
-                        if(row.data().attributeList.length > 0){
+                        console.log(scope.infoDetail)
+                        if(scope.infoDetail.length > 0){
                             row.child(res).show();
                         }else{
                             row.child(res).hide();
@@ -283,9 +286,11 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
                     //tr.removeClass('btn-icon fa fa-minus-circle bigger-130');
                 }else {
                     // Open this row
-                    console.log(row.data().attributeList.length)
+                    //console.log(row.data().attributeList.length)
+                    scope.infoDetail = [];
                     scope.getInfoDetail(row.data().id, rowIndex).then(function(res){
-                        if(row.data().attributeList.length > 0){
+                        console.log(scope.infoDetail)
+                        if(scope.infoDetail.length > 0){
                             row.child(res).show();
                         }else{
                             row.child(res).hide();

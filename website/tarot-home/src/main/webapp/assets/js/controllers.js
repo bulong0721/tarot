@@ -768,23 +768,23 @@ function productUsedCtrl($scope, $compile, Constants) {
         ],
         api: {
             read: '/product/used/paging',
-            update: '/product/used/type',
+            update: '/product/used/save',
             attributeList: '/product/attribute/listByProductId',
             attributeDelete: '/product/attribute/delete'
         }
     };
     Constants.initMgrCtrl(mgrData, $scope, mgrData.api.attributeList, mgrData.api.attributeDelete);
 
-    $scope.dtColumns = mgrData.columns;
-
-    $scope.dtOptions = Constants.buildOption(mgrData.api.read, function (data) {
-        angular.extend(data, $scope.where);
-    }, function (row, data, dataIndex) {
-        var elem = angular.element(row);
-        var content = elem.contents();
-        var scope = $scope;
-        $compile(content)(scope);
-    });
+    //$scope.dtColumns = mgrData.columns;
+    //
+    //$scope.dtOptions = Constants.buildOption(mgrData.api.read, function (data) {
+    //    angular.extend(data, $scope.where);
+    //}, function (row, data, dataIndex) {
+    //    var elem = angular.element(row);
+    //    var content = elem.contents();
+    //    var scope = $scope;
+    //    $compile(content)(scope);
+    //});
 }
 
 angular

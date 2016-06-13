@@ -1,11 +1,14 @@
 package com.myee.tarot.web.admin.controller.product;
 
-import com.alibaba.fastjson.serializer.*;
 import com.myee.tarot.catalog.domain.ProductUsed;
 import com.myee.tarot.catalog.domain.ProductUsedAttribute;
 import com.myee.tarot.catalog.type.ProductType;
+import com.myee.tarot.catalog.view.ProductUsedView;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
+import com.myee.tarot.merchant.domain.Merchant;
+import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.product.service.ProductUsedAttributeService;
 import com.myee.tarot.product.service.ProductUsedService;
 import com.myee.tarot.web.util.StringUtil;
@@ -34,6 +37,9 @@ public class ProductUsedController {
     private ProductUsedService productUsedService;
 
     @Autowired
+    private MerchantStoreService merchantStoreService;
+
+    @Autowired
     private ProductUsedAttributeService productUsedAttributeService;
 
     @RequestMapping(value = "/product/used/paging", method = RequestMethod.GET)
@@ -46,7 +52,6 @@ public class ProductUsedController {
             List<ProductUsed> productUsedList = productUsedService.list();
             for (ProductUsed productUsed : productUsedList) {
                 Map entry = new HashMap();
-                List<ProductUsedAttribute> attributes = new ArrayList<ProductUsedAttribute>();
                 entry.put("id", productUsed.getCode());
                 entry.put("code", productUsed.getCode());
                 entry.put("name", productUsed.getName());
@@ -55,12 +60,12 @@ public class ProductUsedController {
                 entry.put("description", productUsed.getDescription());
                 entry.put("storeName", productUsed.getStore().getName());
                 entry.put("storeId", productUsed.getStore().getId());
-                entry.put("productTypeList", ProductType.getProductTypeList());
-                for(ProductUsedAttribute attribute : productUsed.getProductUsedAttributeList()){
-                    attribute.setProductUsed(null);
-                    attributes.add(attribute);
-                }
-                entry.put("attributeList", attributes);
+//                entry.put("productTypeList", ProductType.getProductTypeList());
+//                for(ProductUsedAttribute attribute : productUsed.getProductUsedAttributeList()){
+//                    attribute.setProductUsed(null);
+//                    attributes.add(attribute);
+//                }
+//                entry.put("attributeList", attributes);
                 resp.addDataEntry(entry);
             }
         } catch (Exception e) {
@@ -72,7 +77,10 @@ public class ProductUsedController {
 
     @RequestMapping(value = "/product/used/save", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse saveUsedProduct(@Valid @RequestBody ProductUsed productUsed, HttpServletRequest request) throws Exception {
+    public AjaxResponse saveUsedProduct(@Valid @RequestBody ProductUsedView productUsedView, HttpServletRequest request) throws Exception {
+        MerchantStore merchantStore = merchantStoreService.getEntity(MerchantStore.class, productUsedView.getStoreId());
+        ProductUsed productUsed = new ProductUsed(productUsedView);
+        productUsed.setStore(merchantStore);
         productUsedService.update(productUsed);
         return AjaxResponse.success();
     }
