@@ -159,14 +159,26 @@ function datatablesCtrl($scope, $resource, $compile, Constants) {
     });
 }
 
-function switchMerchantCtrl($scope, $resource, $compile, Constants) {
-    $scope.merchants = Constants.merchants;
-    $scope.merchantSelect = Constants.thisMerchant;
+function switchMerchantCtrl($scope, $resource, $compile, Constants, $state) {
+    Constants.getMerchants().then(function () {
+        $scope.merchants = Constants.merchants;
+        Constants.flushThisMerchant(Constants.thisMerchant.id, Constants.merchants);
+        $scope.merchantSelect = Constants.thisMerchant;
+        //console.log(Constants.thisMerchant);
 
-    $scope.switchMerchant = function () {
-        console.log($scope.merchantSelect.id)
-        $resource('/admin/merchant/switch').save($scope.merchantSelect.id);
-    };
+        $scope.switchMerchant = function () {
+            //console.log($scope.merchantSelect.id)
+            $resource('/admin/merchant/switch').save($scope.merchantSelect.id, function (resp) {
+                //console.log(resp);
+                //console.log(resp.rows[0]);
+                //console.log(resp.rows[0].id);
+                Constants.flushThisMerchant(resp.rows[0].id, Constants.merchants);
+                $state.go($state.current, {}, {reload: true});
+                //console.log(Constants.thisMerchant);
+            });
+        };
+    });
+
 }
 
 function merchantShopCtrl($scope, $resource, $compile, Constants) {
@@ -185,7 +197,7 @@ function merchantShopCtrl($scope, $resource, $compile, Constants) {
             {data: 'address.county.name', title: '区县', width: 70, orderable: false, align: 'center'},
             {data: 'address.circle.name', title: '商圈', width: 70, orderable: false},
             {data: 'address.mall.name', title: '商场', width: 65, orderable: false},
-            {data: 'address.address.name', title: '地址', width: 100, orderable: false},
+            {data: 'address.address', title: '地址', width: 100, orderable: false},
             {data: 'phone', title: '联系电话', width: 40, orderable: false},
             {data: 'code', title: '门店码', width: 40, orderable: false},
             {data: 'active', title: '操作', width: 40, orderable: false},
@@ -193,6 +205,7 @@ function merchantShopCtrl($scope, $resource, $compile, Constants) {
         ],
         fields: [
             {
+                'id': 'merchant.name',
                 'key': 'merchant.name',
                 'type': 'input',
                 'templateOptions': {'disabled': true, 'label': '商户名称', 'placeholder': '商户名称'}
@@ -206,12 +219,6 @@ function merchantShopCtrl($scope, $resource, $compile, Constants) {
                     'value'/*这个名字配置没用，市和区变化仍然会触发*/: function ($viewValue, $modelValue, scope) {
                         console.log("###省");
                         Constants.getCitysByProvince($viewValue, $scope);
-                        //$scope.$apply($scope.formData);
-                        //console.log($scope.formData);
-                        //console.log($scope.formData.model.address.city.id);
-                        //console.log(Constants.thisMerchant);
-                        //console.log($scope);
-                        //$scope.apply();
                     }
                 }
             },
@@ -241,18 +248,18 @@ function merchantShopCtrl($scope, $resource, $compile, Constants) {
                 'type': 'select',
                 'templateOptions': {'label': '商场', 'options': Constants.malls}
             },
-            {'key': 'address.address.id', 'type': 'input', 'templateOptions': {'label': '地址', 'placeholder': '地址'}},
+            {'key': 'address.address', 'type': 'input', 'templateOptions': {'label': '地址', 'placeholder': '地址'}},
             {'key': 'phone', 'type': 'input', 'templateOptions': {'label': '联系电话', 'placeholder': '联系电话'}},
             {'key': 'code', 'type': 'input', 'templateOptions': {'label': '门店码', 'placeholder': '门店码'}},
         ],
         api: {
-            read: '/admin/merchantStore/listByMerchant',
+            read: '/admin/merchantStore/pagingByMerchant',
             update: '/admin/merchantStore/save'
         }
 
     };
 
-    Constants.initMgrCtrl(mgrData, $scope, $resource, $compile);
+    Constants.initMgrCtrl(mgrData, $scope);
 
     $scope.dtColumns = mgrData.columns;
 
@@ -264,35 +271,6 @@ function merchantShopCtrl($scope, $resource, $compile, Constants) {
         var scope = $scope;
         $compile(content)(scope);
     });
-
-    //if($scope.thisMerchant != undefined){
-    //    $scope.formData.merchant.name = $scope.thisMerchant.name;
-    //    console.log($scope.thisMerchant.name);
-    //}
-
-    //console.log(Constants.thisMerchant.name);
-    console.log($scope);
-    console.log($scope.formData);
-    if($scope.model){$scope.model.merchant.name = '12345';}
-
-    //watch没起作用，不知道为什么
-    //$scope.$watch('$scope.model.address.province.id', function (newValue, oldValue, thisScope) {
-    //    alert(123);
-    //    console.log(newValue);
-    //    console.log(oldValue);
-    //    if(newValue !== oldValue) {
-    //        // logic to reload this select's options asynchronusly based on state's value (newValue)
-    //        console.log('new value is different from old value');
-    //        //if($scope.model[$scope.options.key] && oldValue) {
-    //        //    // reset this select
-    //        //    $scope.model[$scope.options.key] = '';
-    //        //}
-    //        //// Reload options
-    //        //$scope.to.loading = DataService.players(newValue).then(function (res) {
-    //        //    $scope.to.options = res;
-    //        //});
-    //    }
-    //});
 }
 
 function merchantCtrl($scope, $resource, $compile, Constants) {
@@ -342,7 +320,7 @@ function merchantCtrl($scope, $resource, $compile, Constants) {
             }
         ],
         api: {
-            read: '/admin/merchant/list',
+            read: '/admin/merchant/paging',
             update: '/admin/merchant/save'
         }
     };

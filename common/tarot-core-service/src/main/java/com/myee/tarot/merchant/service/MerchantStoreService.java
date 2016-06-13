@@ -1,6 +1,8 @@
 package com.myee.tarot.merchant.service;
 
 import com.myee.tarot.core.service.GenericEntityService;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.merchant.domain.MerchantStore;
 
 import java.util.List;
@@ -15,4 +17,6 @@ public interface MerchantStoreService extends GenericEntityService<Long, Merchan
     Long getCountById(MerchantStore merchantStore);
 
     List<MerchantStore> listByMerchant(Long id);
+
+    PageResult<MerchantStore> pageListByMerchant(PageRequest pageRequest, Long id);
 }

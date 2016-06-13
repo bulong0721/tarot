@@ -1,7 +1,7 @@
 /**
  * Created by Martin on 2016/4/12.
  */
-function constServiceCtor($filter, $compile, $resource, $state,$q) {
+function constServiceCtor($filter, $compile, $resource, $state, $q) {
     var vm = this;
 
     vm.sizeFormatter = function (value, opts, row) {
@@ -87,25 +87,48 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
     vm.merchantType = $resource('/admin/merchant/typeList4Select').query();
 
     //从后台拿商户列表
-    vm.merchants = $resource('/admin/merchant/list4Select').query();
+    vm.merchants = [];
+    $resource('/admin/merchant/list4Select').query({}, function (resp) {
+        //console.log(resp);
+        vm.merchants = resp;
+        //console.log(vm.merchants);
+    });
+    vm.getMerchants = function () {
+        //console.log("getMerchants")
+        var deferred = $q.defer();
+        $resource('/admin/merchant/list4Select').query({}, function (resp) {
+            vm.merchants = resp;
+            deferred.resolve(vm.merchants);
+            //console.log(vm.merchants);
+        });
+        return deferred.promise;
+    };
+
 
     vm.thisMerchant = {};
     $resource('/admin/merchant/getSwitch').get({}, function (resp) {
-        //console.log(resp.rows);
+        //console.log('/admin/merchant/getSwitch,rowsLength:'+resp.rows.length);
+        //console.log(resp.rows[0])
         if (resp.rows.length > 0) {
-            //console.log("#####merchantsLength:"+vm.merchants.length);
-            vm.flushThisMerchant(resp.rows[0].id);//按F5刷新后，vm.merchants为[],导致匹配不成功？？？？？？？？？？？？？？？
+            vm.getMerchants().then(function () {
+                //console.log(vm.merchants);
+                return vm.flushThisMerchant(resp.rows[0].id, vm.merchants, vm);
+            });
+            //vm.flushThisMerchant(resp.rows[0].id);//按F5刷新后，vm.merchants为[],导致匹配不成功？？？？？？？？？？？？？？？
         }
-        //console.log(vm.thisMerchant)
     });
-    vm.flushThisMerchant = function (value) {
-        var length = vm.merchants.length;
+    vm.flushThisMerchant = function (value, merchants) {
+        //console.log('flushThisMerchant');
+        //console.log(merchants);
+        var length = merchants.length;
+        //console.log("merchantsLength:"+length);
         for (var i = 0; i < length; i++) {
-            if (vm.merchants[i].value == value) {
+            //console.log(vm.merchants[i].id)
+            if (merchants[i].id == value) {
                 break;
             }
         }
-        vm.thisMerchant = vm.merchants[i];
+        vm.thisMerchant = merchants[i];
         //console.log(vm.thisMerchant);
     }
 
@@ -160,7 +183,15 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
     vm.malls = [];
     //....
 
-    vm.initMgrCtrl = function (mgrData, scope) {
+    //自定义店铺模块初始化处理
+    var merchantStoreInit = function (scope) {
+        //console.log(vm.thisMerchant)
+        if (vm.thisMerchant) {
+            scope.formData.model = {merchant: {name: vm.thisMerchant.name}};
+        }
+    };
+
+    vm.initMgrCtrl = function (mgrData, scope, custom) {
         $.fn.dataTable.ext.errMode = 'none';
 
         scope.where = {};
@@ -194,10 +225,24 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
                 scope.addNew = false;
                 scope.rowIndex = rowIndex;
             } else {
-                scope.formData.model = {}
+                scope.formData.model = {};
             }
             scope.showDataTable = false;
             scope.showEditor = true;
+        };
+
+        scope.goEditorCustom = function (custom, rowIndex) {
+            scope.goEditor(rowIndex);
+
+            if (custom) {
+                switch (custom) {
+                    case "merchantStore":
+                        merchantStoreInit(scope);
+                        break;
+                    case "default":
+                        break;
+                }
+            }
         };
 
         scope.goDetailEditor = function (index) {
@@ -243,7 +288,12 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
                     if (length > 0) {
                         scope.infoDetail.splice(0, scope.infoDetail.length);
                         for (var j = 0; j < length; j++) {
-                            scope.infoDetail.push({index: j, id: resp.rows[j].id, name: resp.rows[j].name, value: resp.rows[j].value});
+                            scope.infoDetail.push({
+                                index: j,
+                                id: resp.rows[j].id,
+                                name: resp.rows[j].name,
+                                value: resp.rows[j].value
+                            });
                         }
                         content = scope.format(rowIndex);
                     }
@@ -277,7 +327,7 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
         //删除详细
         scope.goDetailsDelete = function (subId, rowIndex) {
             //$resource('/product/attribute/delete').delete({id: subId}, function (resp) {
-            if(confirm("确定要删除此条数据吗？")){
+            if (confirm("确定要删除此条数据吗？")) {
                 $resource(mgrData.api.attributeDelete).delete({id: subId}, function (resp) {
                     scope.goDetailsRefresh(rowIndex);
                 });
@@ -289,14 +339,14 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
         scope.goDetailsRefresh = function (rowIndex) {
             if (scope.dtApi && rowIndex > -1) {
                 var row = scope.dtApi.DataTable.row(rowIndex);
-                    scope.infoDetail = [];
-                    scope.getInfoDetail(row.data().id, rowIndex).then(function(res){
-                        if(scope.infoDetail.length > 0){
-                            row.child(res).show();
-                        }else{
-                            row.child(res).hide();
-                        }
-                    });
+                scope.infoDetail = [];
+                scope.getInfoDetail(row.data().id, rowIndex).then(function (res) {
+                    if (scope.infoDetail.length > 0) {
+                        row.child(res).show();
+                    } else {
+                        row.child(res).hide();
+                    }
+                });
             }
         };
 
@@ -304,19 +354,19 @@ function constServiceCtor($filter, $compile, $resource, $state,$q) {
         scope.goDetails = function (rowIndex) {
             if (scope.dtApi && rowIndex > -1) {
                 var row = scope.dtApi.DataTable.row(rowIndex);
-                if ( row.child.isShown() ) {
+                if (row.child.isShown()) {
                     // This row is already open - close it
                     row.child.hide();
                     //tr.removeClass('btn-icon fa fa-minus-circle bigger-130');
-                }else {
+                } else {
                     // Open this row
                     //console.log(row.data().attributeList.length)
                     scope.infoDetail = [];
-                    scope.getInfoDetail(row.data().id, rowIndex).then(function(res){
+                    scope.getInfoDetail(row.data().id, rowIndex).then(function (res) {
                         console.log(scope.infoDetail)
-                        if(scope.infoDetail.length > 0){
+                        if (scope.infoDetail.length > 0) {
                             row.child(res).show();
-                        }else{
+                        } else {
                             row.child(res).hide();
                         }
                     });

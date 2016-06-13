@@ -3,6 +3,9 @@ package com.myee.tarot.web.admin.controller.merchant;
 import com.myee.tarot.address.service.GeoZoneService;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
@@ -57,12 +60,14 @@ public class MerchantController {
         try {
             if (id == null) {
                 //抛出异常给异常处理机制
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请切换商户！");
                 return resp;
             }
             Long numFind = merchantService.getCountById(id);
             if (numFind != 1L) {
                 //抛出异常给异常处理机制
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("要切换的商户信息错误");
                 return resp;
             }
@@ -72,6 +77,7 @@ public class MerchantController {
             resp.addDataEntry(objectToEntry(merchantOld));
         } catch (Exception e) {
             e.printStackTrace();
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("切换出错");
         }
         return resp;
@@ -139,6 +145,7 @@ public class MerchantController {
             resp.addDataEntry(objectToEntry(merchant1));
         } catch (Exception e) {
             e.printStackTrace();
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
         }
         return resp;
@@ -151,6 +158,7 @@ public class MerchantController {
         try {
             //从session中读取merchant信息，如果为空，则提示用户先切换商户
             if (request.getSession().getAttribute(Constants.ADMIN_MERCHANT) == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换商户");
                 return resp;
             }
@@ -158,6 +166,7 @@ public class MerchantController {
             resp.addDataEntry(objectToEntry(merchant1));
         } catch (Exception e) {
             e.printStackTrace();
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
         }
         return resp;
@@ -172,6 +181,7 @@ public class MerchantController {
             if (merchant != null) merchantService.delete(merchant);
         } catch (Exception e) {
             e.printStackTrace();
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("删除出错");
         }
         return resp;
@@ -183,6 +193,27 @@ public class MerchantController {
         AjaxResponse resp = new AjaxResponse();
         try {
             List<Merchant> merchantList = merchantService.list();
+            for (Merchant merchant : merchantList) {
+                resp.addDataEntry(objectToEntry(merchant));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("出错");
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "/admin/merchant/paging", method = RequestMethod.GET)
+    @ResponseBody
+    public AjaxPageableResponse pageMerchant(HttpServletRequest request,PageRequest pageRequest) throws Exception {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
+        try {
+            PageResult<Merchant> pageList = merchantService.pageList(pageRequest);
+            resp.setRecordsTotal(pageList.getRecordsTotal());
+            resp.setRecordsFiltered(pageList.getRecordsFiltered());
+
+            List<Merchant> merchantList = pageList.getList();
             for (Merchant merchant : merchantList) {
                 resp.addDataEntry(objectToEntry(merchant));
             }
@@ -228,7 +259,6 @@ public class MerchantController {
     }
 
 
-
     /**
      * 门店接口
      */
@@ -256,23 +286,23 @@ public class MerchantController {
             merchantStore.setMerchant(merchant);
             Address address = merchantStore.getAddress();
             GeoZone geoZone = new GeoZone();
-            if (address.getProvince()!= null && address.getProvince().getId() != null && !address.getProvince().getId().toString().equals("")) {
+            if (address.getProvince() != null && address.getProvince().getId() != null && !address.getProvince().getId().toString().equals("")) {
                 geoZone = geoZoneService.getEntity(GeoZone.class, address.getProvince().getId());
                 address.setProvince(geoZone);
             }
-            if (address.getCity()!= null && address.getCity().getId() != null && !address.getCity().getId().toString().equals("")) {
+            if (address.getCity() != null && address.getCity().getId() != null && !address.getCity().getId().toString().equals("")) {
                 geoZone = geoZoneService.getEntity(GeoZone.class, address.getCity().getId());
                 address.setCity(geoZone);
             }
-            if (address.getCounty()!= null && address.getCounty().getId() != null && !address.getCounty().getId().toString().equals("")) {
+            if (address.getCounty() != null && address.getCounty().getId() != null && !address.getCounty().getId().toString().equals("")) {
                 geoZone = geoZoneService.getEntity(GeoZone.class, address.getCounty().getId());
                 address.setCounty(geoZone);
             }
-            if (address.getCircle()!= null && address.getCircle().getId() != null && !address.getCircle().getId().toString().equals("")) {
+            if (address.getCircle() != null && address.getCircle().getId() != null && !address.getCircle().getId().toString().equals("")) {
                 geoZone = geoZoneService.getEntity(GeoZone.class, address.getCircle().getId());
                 address.setCircle(geoZone);
             }
-            if (address.getMall()!= null && address.getMall().getId() != null && !address.getMall().getId().toString().equals("")) {
+            if (address.getMall() != null && address.getMall().getId() != null && !address.getMall().getId().toString().equals("")) {
                 geoZone = geoZoneService.getEntity(GeoZone.class, address.getMall().getId());
                 address.setMall(geoZone);
             }
@@ -327,6 +357,7 @@ public class MerchantController {
             resp.addDataEntry(objectToEntry(merchantStore1));
         } catch (Exception e) {
             e.printStackTrace();
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
         }
         return resp;
@@ -338,6 +369,7 @@ public class MerchantController {
         AjaxResponse resp = new AjaxResponse();
         try {
             if (id == null || StringUtil.isNullOrEmpty(id.toString())) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("参数错误");
                 return resp;
             }
@@ -345,6 +377,7 @@ public class MerchantController {
             if (merchantStore != null) merchantStoreService.delete(merchantStore);
         } catch (Exception e) {
             e.printStackTrace();
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("删除出错");
         }
         return resp;
@@ -361,6 +394,7 @@ public class MerchantController {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
         }
         return resp;
@@ -373,6 +407,7 @@ public class MerchantController {
         try {
             //从session中取账号关联的商户信息
             if (request.getSession().getAttribute(Constants.ADMIN_MERCHANT) == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换商户");
                 return resp;
             }
@@ -380,6 +415,35 @@ public class MerchantController {
             Merchant merchant = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
 
             List<MerchantStore> merchantStoreList = merchantStoreService.listByMerchant(merchant.getId());
+            for (MerchantStore merchantStore : merchantStoreList) {
+                resp.addDataEntry(objectToEntry(merchantStore));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("出错");
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "/admin/merchantStore/pagingByMerchant", method = RequestMethod.GET)
+    @ResponseBody
+    public AjaxPageableResponse pagingMerchantStoreByMerchant(HttpServletRequest request,PageRequest pageRequest) throws Exception {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
+        try {
+            //从session中取账号关联的商户信息
+            if (request.getSession().getAttribute(Constants.ADMIN_MERCHANT) == null) {
+                resp.setErrorString("请先切换商户");
+                return resp;
+            }
+
+            Merchant merchant = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
+
+            PageResult<MerchantStore> pageList = merchantStoreService.pageListByMerchant(pageRequest, merchant.getId());
+            resp.setRecordsTotal(pageList.getRecordsTotal());
+            resp.setRecordsFiltered(pageList.getRecordsFiltered());
+
+            List<MerchantStore> merchantStoreList = pageList.getList();
             for (MerchantStore merchantStore : merchantStoreList) {
                 resp.addDataEntry(objectToEntry(merchantStore));
             }
@@ -397,6 +461,7 @@ public class MerchantController {
         try {
             //从session中取账号关联的商户信息
             if (request.getSession().getAttribute(Constants.ADMIN_MERCHANT) == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换商户");
                 Map entry = new HashMap();
                 entry.put("error", "请先切换商户");
@@ -429,7 +494,7 @@ public class MerchantController {
 //            }
 //            Merchant merchant = (Merchant)request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
             List<MerchantStore> merchantStoreList = merchantStoreService.listByMerchant(100L);
-            for(MerchantStore store : merchantStoreList){
+            for (MerchantStore store : merchantStoreList) {
                 merchantStoreViewList.add(new MerchantStoreView(store));
             }
         } catch (Exception e) {

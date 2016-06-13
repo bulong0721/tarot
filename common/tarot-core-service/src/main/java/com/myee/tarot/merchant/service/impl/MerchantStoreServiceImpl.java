@@ -1,6 +1,8 @@
 package com.myee.tarot.merchant.service.impl;
 
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.merchant.dao.MerchantStoreDao;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantStoreService;
@@ -36,5 +38,10 @@ public class MerchantStoreServiceImpl extends GenericEntityServiceImpl<Long, Mer
     @Override
     public MerchantStore getByCode(String storeCode) {
         return null;
+    }
+
+    @Override
+    public PageResult<MerchantStore> pageListByMerchant(PageRequest pageRequest, Long id){
+        return storeDaoDao.pageListByMerchant(pageRequest, id);
     }
 }
