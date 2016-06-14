@@ -207,6 +207,9 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
         scope.showDataTable = true;
         scope.showEditor = false;
 
+        scope.showInfoEditor = false;
+        scope.showDetailEditor = false;
+
         scope.goDataTable = function () {
             scope.showDataTable = true;
             scope.showEditor = false;
@@ -229,6 +232,8 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
             }
             scope.showDataTable = false;
             scope.showEditor = true;
+            scope.showInfoEditor = true;
+            scope.showDetailEditor = false;
         };
 
         scope.goEditorCustom = function (custom, rowIndex) {
@@ -245,23 +250,21 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
             }
         };
 
-        scope.goDetailEditor = function (index, rowIndex) {
-            //var api = this.dtInstance;
-            //if (api) {
-            //    scope.dtApi = api;
-            //}
+        scope.goDetailEditor = function (index, rowIndex, parentId) {
             scope.addNew = true;
-            console.log(scope.infoDetail[index])
-            if (scope.infoDetail.length > 0) {
+            if (index >= 0 && scope.infoDetail.length > 0) {
                 //var data = scope.dtApi.DataTable.row(rowIndex).data();
                 scope.formDetailData.model = scope.infoDetail[index];
                 scope.addNew = false;
                 scope.rowIndex = rowIndex;
             } else {
-                scope.formDetailData.model = {}
+                scope.rowIndex = rowIndex;
+                scope.formDetailData.model = {index: -1, parentId: parentId, id: null, name: null, value: null}
             }
             scope.showDataTable = false;
             scope.showEditor = true;
+            scope.showInfoEditor = false;
+            scope.showDetailEditor = true;
         };
 
         scope.doDelete = function (rowIndex) {
@@ -290,8 +293,9 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
                         for (var j = 0; j < length; j++) {
                             scope.infoDetail.push({index: j, parentId: parentId, id: resp.rows[j].id, name: resp.rows[j].name, value: resp.rows[j].value});
                         }
-                        content = scope.format(rowIndex);
                     }
+                    content = scope.format(rowIndex, parentId);
+                    console.log(content)
                     deferred.resolve(content)
                 });
             }
@@ -299,18 +303,20 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
         }
 
         //拼接详细html
-        scope.format = function (rowIndex) {
+        scope.format = function (rowIndex, parentId) {
             // `d` is the original data object for the row
             var tables = "";
             tables += '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
             //tables += "<tr><td>参数名</td> <td>参数值</td><td>编辑</td> <td>删除</td></tr>";
+            tables += "<tr><td><a ng-click='goDetailEditor(-1, \"" + rowIndex + "\", \"" + parentId + "\")'><i class='fa fa-plus'></i></a></td></tr>";
             angular.forEach(scope.infoDetail, function (value) {
                 tables += "<tr><td>" + value.name + "</td> <td>" + value.value + "</td>";
-                tables += "<td><a ng-click='goDetailEditor(\"" + value.index + "\", \"" + rowIndex + "\")'><i class='fa fa-pencil'></i></a></td>";
+                tables += "<td><a ng-click='goDetailEditor(\"" + value.index + "\", \"" + rowIndex + "\", \"" + parentId + "\")'><i class='fa fa-pencil'></i></a></td>";
                 tables += "<td><a ng-click='goDetailsDelete(\"" + value.id + "\", \"" + rowIndex + "\")'><i class='fa fa-remove'></i></a></td>";
                 tables += "</tr>";
             });
             tables += '</table>';
+            console.log(tables)
             //编译angular
             var elem = angular.element(tables);
             var content = elem.contents();
@@ -332,6 +338,7 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
 
         //刷新详细
         scope.goDetailsRefresh = function (rowIndex) {
+            console.log(rowIndex)
             if (scope.dtApi && rowIndex > -1) {
                 var row = scope.dtApi.DataTable.row(rowIndex);
                 scope.infoDetail = [];
@@ -358,11 +365,11 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
                     //console.log(row.data().attributeList.length)
                     scope.infoDetail = [];
                     scope.getInfoDetail(row.data().id, rowIndex).then(function (res) {
-                        if (scope.infoDetail.length > 0) {
+                        //if (scope.infoDetail.length > 0) {
                             row.child(res).show();
-                        } else {
-                            row.child(res).hide();
-                        }
+                        //} else {
+                        //    row.child(res).hide();
+                        //}
                     });
                 }
             }
@@ -393,10 +400,10 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
             if (0 != response.status) {
                 return;
             }
-            if (!scope.addNew) {
+            //if (!scope.addNew) {
                 //scope.dtApi.DataTable.row(scope.rowIndex).remove();
                 scope.goDetailsRefresh(scope.rowIndex);
-            }
+            //}
             scope.goDataTable();
         }
 

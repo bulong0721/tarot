@@ -53,7 +53,7 @@ public class ProductUsedController {
             List<ProductUsed> productUsedList = productUsedService.list();
             for (ProductUsed productUsed : productUsedList) {
                 Map entry = new HashMap();
-                entry.put("id", productUsed.getCode());
+                entry.put("id", productUsed.getId());
                 entry.put("code", productUsed.getCode());
                 entry.put("name", productUsed.getName());
                 entry.put("type", productUsed.getType());
