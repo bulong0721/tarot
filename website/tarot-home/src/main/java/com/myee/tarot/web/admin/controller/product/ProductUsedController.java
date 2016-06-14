@@ -3,6 +3,7 @@ package com.myee.tarot.web.admin.controller.product;
 import com.myee.tarot.catalog.domain.ProductUsed;
 import com.myee.tarot.catalog.domain.ProductUsedAttribute;
 import com.myee.tarot.catalog.type.ProductType;
+import com.myee.tarot.catalog.view.ProductUsedAttributeView;
 import com.myee.tarot.catalog.view.ProductUsedView;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
@@ -85,6 +86,16 @@ public class ProductUsedController {
         return AjaxResponse.success();
     }
 
+    @RequestMapping(value = "/product/attribute/save", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse saveAttribute(@Valid @RequestBody ProductUsedAttributeView productUsedAttributeView, HttpServletRequest request) throws Exception {
+        ProductUsed productUsed = productUsedService.getEntity(ProductUsed.class, productUsedAttributeView.getParentId());
+        ProductUsedAttribute productUsedAttribute = new ProductUsedAttribute(productUsedAttributeView);
+        productUsedAttribute.setProductUsed(productUsed);
+        productUsedAttributeService.update(productUsedAttribute);
+        return AjaxResponse.success();
+    }
+
     @RequestMapping(value = "/product/attribute/delete", method = RequestMethod.DELETE)
     @ResponseBody
     public AjaxResponse deleteAttributeProduct(@RequestParam Long id, HttpServletRequest request) throws Exception {
@@ -108,14 +119,14 @@ public class ProductUsedController {
 
     @RequestMapping(value = "/product/attribute/listByProductId", method = RequestMethod.GET)
     @ResponseBody
-    public AjaxResponse listByProductId(@RequestParam Long productId, HttpServletRequest request) throws Exception {
+    public AjaxResponse listByProductId(@RequestParam Long parentId, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
-            if (StringUtil.isNullOrEmpty(productId.toString())) {
+            if (StringUtil.isNullOrEmpty(parentId.toString())) {
                 resp.setErrorString("参数不能为空");
                 return resp;
             }
-            List<ProductUsedAttribute> attributeList = productUsedAttributeService.listByProductId(productId);
+            List<ProductUsedAttribute> attributeList = productUsedAttributeService.listByProductId(parentId);
             for (ProductUsedAttribute attribute : attributeList) {
                 Map entry = new HashMap();
                 List<ProductUsedAttribute> attributes = new ArrayList<ProductUsedAttribute>();

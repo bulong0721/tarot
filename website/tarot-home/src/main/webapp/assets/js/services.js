@@ -201,7 +201,7 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
         };
 
         scope.formDetailData = {
-            detailfields: mgrData.fields
+            detailFields: mgrData.detailFields
         };
 
         scope.showDataTable = true;
@@ -245,14 +245,14 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
             }
         };
 
-        scope.goDetailEditor = function (index) {
-            var api = this.dtInstance;
-            if (api) {
-                scope.dtApi = api;
-            }
+        scope.goDetailEditor = function (index, rowIndex) {
+            //var api = this.dtInstance;
+            //if (api) {
+            //    scope.dtApi = api;
+            //}
             scope.addNew = true;
             console.log(scope.infoDetail[index])
-            if (scope.dtApi && scope.infoDetail[index].length > 0) {
+            if (scope.infoDetail.length > 0) {
                 //var data = scope.dtApi.DataTable.row(rowIndex).data();
                 scope.formDetailData.model = scope.infoDetail[index];
                 scope.addNew = false;
@@ -283,17 +283,12 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
             var deferred = $q.defer();
             if (parentId) {
                 //$resource('/product/attribute/listByProductId').get({productId: parentId}, function (resp) {
-                $resource(mgrData.api.attributeList).get({productId: parentId}, function (resp) {
+                $resource(mgrData.api.attributeList).get({parentId: parentId}, function (resp) {
                     var length = resp.rows.length;
                     if (length > 0) {
                         scope.infoDetail.splice(0, scope.infoDetail.length);
                         for (var j = 0; j < length; j++) {
-                            scope.infoDetail.push({
-                                index: j,
-                                id: resp.rows[j].id,
-                                name: resp.rows[j].name,
-                                value: resp.rows[j].value
-                            });
+                            scope.infoDetail.push({index: j, parentId: parentId, id: resp.rows[j].id, name: resp.rows[j].name, value: resp.rows[j].value});
                         }
                         content = scope.format(rowIndex);
                     }
@@ -311,7 +306,7 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
             //tables += "<tr><td>参数名</td> <td>参数值</td><td>编辑</td> <td>删除</td></tr>";
             angular.forEach(scope.infoDetail, function (value) {
                 tables += "<tr><td>" + value.name + "</td> <td>" + value.value + "</td>";
-                tables += "<td><a ng-click='goDetailEditor(\"" + value.index + "\")'><i class='fa fa-pencil'></i></a></td>";
+                tables += "<td><a ng-click='goDetailEditor(\"" + value.index + "\", \"" + rowIndex + "\")'><i class='fa fa-pencil'></i></a></td>";
                 tables += "<td><a ng-click='goDetailsDelete(\"" + value.id + "\", \"" + rowIndex + "\")'><i class='fa fa-remove'></i></a></td>";
                 tables += "</tr>";
             });
@@ -363,7 +358,6 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
                     //console.log(row.data().attributeList.length)
                     scope.infoDetail = [];
                     scope.getInfoDetail(row.data().id, rowIndex).then(function (res) {
-                        console.log(scope.infoDetail)
                         if (scope.infoDetail.length > 0) {
                             row.child(res).show();
                         } else {
@@ -395,6 +389,17 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
             scope.goDataTable();
         }
 
+        function saveDetailSuccess(response) {
+            if (0 != response.status) {
+                return;
+            }
+            if (!scope.addNew) {
+                //scope.dtApi.DataTable.row(scope.rowIndex).remove();
+                scope.goDetailsRefresh(scope.rowIndex);
+            }
+            scope.goDataTable();
+        }
+
         function saveFailed(response) {
             console.log(response);
         }
@@ -404,6 +409,16 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
             if (formly.form.$valid) {
                 formly.options.updateInitialValue();
                 $resource(mgrData.api.update).save({}, formly.model, saveSuccess, saveFailed);
+            }
+        };
+
+        scope.processDetailSubmit = function () {
+            var formly = scope.formDetailData;
+            console.log(formly.form.$valid)
+            if (formly.form.$valid) {
+                console.log(formly.options)
+                formly.options.updateInitialValue();
+                $resource(mgrData.api.updateDetail).save({}, formly.model, saveDetailSuccess, saveFailed);
             }
         };
 

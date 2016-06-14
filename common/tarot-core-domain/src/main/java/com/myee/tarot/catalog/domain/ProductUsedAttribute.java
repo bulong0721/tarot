@@ -1,5 +1,6 @@
 package com.myee.tarot.catalog.domain;
 
+import com.myee.tarot.catalog.view.ProductUsedAttributeView;
 import com.myee.tarot.core.GenericEntity;
 
 import javax.persistence.*;
@@ -30,6 +31,14 @@ public class ProductUsedAttribute extends GenericEntity<Long, ProductUsedAttribu
     @JoinColumn(name = "PRODUCT_USED_ID")
     @org.hibernate.annotations.Index(name = "PRODUCTUSEDATTRIBUTE_INDEX", columnNames = {"PRODUCT_USED_ID"})
     protected ProductUsed productUsed;
+
+    public ProductUsedAttribute(){}
+
+    public ProductUsedAttribute(ProductUsedAttributeView view){
+        this.id = view.getId();
+        this.name = view.getName();
+        this.value = view.getValue();
+    }
 
     @Override
     public Long getId() {

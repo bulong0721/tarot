@@ -744,46 +744,15 @@ function productUsedCtrl($scope, $compile, Constants) {
             },
             {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}}
         ],
-        fields: [
-            {
-                'key': 'code',
-                'type': 'input',
-                'templateOptions': {'label': '产品编号', required: true, 'placeholder': '产品编号'}
-            },
-            {
-                'key': 'type',
-                'type': 'select',
-                'templateOptions': {
-                    'label': '产品名称',
-                    required: true,
-                    'placeholder': '产品名称',
-                    valueProp: 'type',
-                    labelProp: 'friendlyType',
-                    options: productOpts
-                }
-            },
-            {
-                'key': 'storeId',
-                'type': 'select',
-                'templateOptions': {
-                    'label': '店铺名称',
-                    required: true,
-                    'placeholder': '店铺名称',
-                    valueProp: 'id',
-                    labelProp: 'name',
-                    options: storeOpts
-                }
-            },
-            {
-                'key': 'productNum',
-                'type': 'input',
-                'templateOptions': {'label': '产品版本', required: true, 'placeholder': '产品版本'}
-            },
-            {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}}
+        detailFields: [
+            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '参数名', required: true, 'placeholder': '参数名'}},
+            {'key': 'parentId', 'type': 'input', 'templateOptions': {'label': '父节点ID', required: true, 'placeholder': '父节点ID'}},
+            {'key': 'value', 'type': 'input', 'templateOptions': {'label': '参数值', required: true, 'placeholder': '参数值'}}
         ],
         api: {
             read: '/product/used/paging',
             update: '/product/used/save',
+            updateDetail: '/product/attribute/save',
             attributeList: '/product/attribute/listByProductId',
             attributeDelete: '/product/attribute/delete'
         }
