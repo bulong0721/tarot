@@ -129,7 +129,7 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
             }
         }
         vm.thisMerchant = merchants[i];
-        //console.log(vm.thisMerchant);
+        console.log(vm.thisMerchant);
     }
 
     //从后台拿到省列表
@@ -332,7 +332,6 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
                 $resource(mgrData.api.attributeDelete).delete({id: subId}, function (resp) {
                     scope.goDetailsRefresh(rowIndex);
                 });
-                alert("成功");
             }
         };
 
@@ -421,7 +420,6 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
 
         scope.processDetailSubmit = function () {
             var formly = scope.formDetailData;
-            console.log(formly.form.$valid)
             if (formly.form.$valid) {
                 console.log(formly.options)
                 formly.options.updateInitialValue();

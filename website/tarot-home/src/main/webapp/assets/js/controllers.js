@@ -746,7 +746,7 @@ function productUsedCtrl($scope, $compile, Constants) {
         ],
         detailFields: [
             {'key': 'name', 'type': 'input', 'templateOptions': {'label': '参数名', required: true, 'placeholder': '参数名'}},
-            {'key': 'parentId', visible: false, 'type': 'input', 'templateOptions': {'label': '父节点ID', required: true, 'placeholder': '父节点ID'}},
+            {'key': 'parentId', 'type': 'input', 'templateOptions': {'disabled': true, 'label': '父节点ID', required: true, 'placeholder': '父节点ID'}},
             {'key': 'value', 'type': 'input', 'templateOptions': {'label': '参数值', required: true, 'placeholder': '参数值'}}
         ],
         api: {

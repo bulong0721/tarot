@@ -5,6 +5,8 @@ import com.myee.tarot.catalog.domain.ProductUsedAttribute;
 import com.myee.tarot.catalog.type.ProductType;
 import com.myee.tarot.catalog.view.ProductUsedAttributeView;
 import com.myee.tarot.catalog.view.ProductUsedView;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.Merchant;
@@ -46,11 +48,14 @@ public class ProductUsedController {
     @RequestMapping(value = "/product/used/paging", method = RequestMethod.GET)
     public
     @ResponseBody
-    AjaxPageableResponse pageUsers(Model model, HttpServletRequest request) {
+    AjaxPageableResponse pageUsers(Model model, HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         String currentUser = request.getRemoteUser();
         try {
-            List<ProductUsed> productUsedList = productUsedService.list();
+            PageResult<ProductUsed> pageList = productUsedService.pageList(pageRequest);
+            resp.setRecordsTotal(pageList.getRecordsTotal());
+            resp.setRecordsFiltered(pageList.getRecordsFiltered());
+            List<ProductUsed> productUsedList = pageList.getList();
             for (ProductUsed productUsed : productUsedList) {
                 Map entry = new HashMap();
                 entry.put("id", productUsed.getId());
