@@ -162,7 +162,7 @@ function datatablesCtrl($scope, $resource, $compile, Constants) {
 function switchMerchantCtrl($scope, $resource, $compile, Constants, $state) {
     Constants.getMerchants().then(function () {
         $scope.merchants = Constants.merchants;
-        Constants.flushThisMerchant(Constants.thisMerchant.id, Constants.merchants);
+        if(Constants.thisMerchant.id)Constants.flushThisMerchant(Constants.thisMerchant.id, Constants.merchants);
         $scope.merchantSelect = Constants.thisMerchant;
         //console.log(Constants.thisMerchant);
 

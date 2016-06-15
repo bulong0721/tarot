@@ -466,6 +466,7 @@ public class MerchantController {
                 Map entry = new HashMap();
                 entry.put("error", "请先切换商户");
                 resp.addDataEntry(entry);
+                return null;
             }
 
             Merchant merchant = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
