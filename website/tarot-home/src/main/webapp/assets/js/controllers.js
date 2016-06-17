@@ -161,20 +161,40 @@ function datatablesCtrl($scope, $resource, $compile, Constants) {
 
 function switchMerchantCtrl($scope, $resource, $compile, Constants, $state) {
     Constants.getMerchants().then(function () {
-        $scope.merchants = Constants.merchants;
-        if(Constants.thisMerchant.id)Constants.flushThisMerchant(Constants.thisMerchant.id, Constants.merchants);
-        $scope.merchantSelect = Constants.thisMerchant;
-        //console.log(Constants.thisMerchant);
+        //获取商户列表，并切换到之前切换的商户
+        Constants.getSwitchMerchant().then(
+            function(){
+                $scope.merchants = Constants.merchants;
+                if(Constants.thisMerchant)$scope.merchantSelect = Constants.thisMerchant;
+            }
+        );
+
+        //获取门店列表，并切换到之前切换的门店
+        Constants.getSwitchMerchantStore().then(
+            function(){
+                $scope.merchantStores = Constants.merchantStores;
+                if(Constants.thisMerchantStore)$scope.merchantStoreSelect = Constants.thisMerchantStore;
+            }
+        );
 
         $scope.switchMerchant = function () {
-            //console.log($scope.merchantSelect.id)
             $resource('/admin/merchant/switch').save($scope.merchantSelect.id, function (resp) {
-                //console.log(resp);
-                //console.log(resp.rows[0]);
-                //console.log(resp.rows[0].id);
-                Constants.flushThisMerchant(resp.rows[0].id, Constants.merchants);
+                Constants.flushThisMerchant(resp.rows[0].id, Constants.merchants).then(
+                    //获取门店列表
+                    Constants.getMerchantStores().then(
+                        function () {
+                            $scope.merchantStores = Constants.merchantStores;
+                            $state.go($state.current, {}, {reload: true});
+                        }
+                    )
+                );
+            });
+        };
+
+        $scope.switchMerchantStore = function () {
+            $resource('/admin/merchantStore/switch').save($scope.merchantStoreSelect.value, function (resp) {
+                Constants.flushThisMerchantStore(resp.rows[0].id, Constants.merchantStores);
                 $state.go($state.current, {}, {reload: true});
-                //console.log(Constants.thisMerchant);
             });
         };
     });

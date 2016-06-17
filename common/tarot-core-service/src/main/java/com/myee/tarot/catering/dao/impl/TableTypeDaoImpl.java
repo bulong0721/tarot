@@ -4,8 +4,11 @@ import com.myee.tarot.catering.dao.TableTypeDao;
 import com.myee.tarot.catering.domain.QTableType;
 import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -26,5 +29,20 @@ public class TableTypeDaoImpl extends GenericEntityDaoImpl<Long, TableType> impl
                 .where(qTableType.store.id.eq(storeId));
 
         return query.fetch();
+    }
+
+    @Override
+    public PageResult<TableType> pageListByStore(PageRequest pageRequest, Long id){
+        PageResult<TableType> pageList = new PageResult<TableType>();
+        QTableType qTableType = QTableType.tableType;
+        JPQLQuery<TableType> query = new JPAQuery(getEntityManager());
+        pageList.setRecordsTotal(query.from(qTableType).fetchCount());
+        if(StringUtils.isNotBlank(pageRequest.getQueryName())){
+            query.where(qTableType.name.like("%" + pageRequest.getQueryName() + "%"));
+        }
+        query.where(qTableType.store.id.eq(id));
+        pageList.setRecordsFiltered(query.fetchCount());
+        pageList.setList(query.offset(pageRequest.getStart()).limit(pageRequest.getLength()).fetch());
+        return pageList;
     }
 }

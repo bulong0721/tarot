@@ -88,48 +88,74 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
 
     //从后台拿商户列表
     vm.merchants = [];
-    $resource('/admin/merchant/list4Select').query({}, function (resp) {
-        //console.log(resp);
-        vm.merchants = resp;
-        //console.log(vm.merchants);
-    });
     vm.getMerchants = function () {
-        //console.log("getMerchants")
         var deferred = $q.defer();
         $resource('/admin/merchant/list4Select').query({}, function (resp) {
             vm.merchants = resp;
             deferred.resolve(vm.merchants);
-            //console.log(vm.merchants);
         });
         return deferred.promise;
     };
 
 
     vm.thisMerchant = {};
-    $resource('/admin/merchant/getSwitch').get({}, function (resp) {
-        //console.log('/admin/merchant/getSwitch,rowsLength:'+resp.rows.length);
-        //console.log(resp.rows[0])
-        if (resp.rows.length > 0) {
-            vm.getMerchants().then(function () {
-                //console.log(vm.merchants);
-                return vm.flushThisMerchant(resp.rows[0].id, vm.merchants, vm);
+    vm.getSwitchMerchant = function(){
+        var deferred = $q.defer();
+        vm.getMerchants().then(function () {
+            $resource('/admin/merchant/getSwitch').get({}, function (resp) {
+                if (resp.rows.length > 0) {
+                    vm.flushThisMerchant(resp.rows[0].id, vm.merchants);
+                    deferred.resolve(vm.thisMerchant);
+                }
             });
-            //vm.flushThisMerchant(resp.rows[0].id);//按F5刷新后，vm.merchants为[],导致匹配不成功？？？？？？？？？？？？？？？
-        }
-    });
+        });
+        return deferred.promise;
+    }
+
     vm.flushThisMerchant = function (value, merchants) {
-        //console.log('flushThisMerchant');
-        //console.log(merchants);
         var length = merchants.length;
-        //console.log("merchantsLength:"+length);
         for (var i = 0; i < length; i++) {
-            //console.log(vm.merchants[i].id)
             if (merchants[i].id == value) {
                 break;
             }
         }
         vm.thisMerchant = merchants[i];
-        console.log(vm.thisMerchant);
+    }
+
+    //从后台拿店铺列表
+    vm.merchantStores = [];
+    vm.getMerchantStores = function () {
+        var deferred = $q.defer();
+        $resource('/admin/merchantStore/listByMerchantForSelect').query({}, function (resp) {
+            vm.merchantStores = resp;
+            deferred.resolve(vm.merchantStores);
+        });
+        return deferred.promise;
+    };
+
+
+    vm.thisMerchantStore = {};
+    vm.getSwitchMerchantStore = function(){
+        var deferred = $q.defer();
+        vm.getMerchantStores().then(function () {
+            $resource('/admin/merchantStore/getSwitch').get({}, function (resp) {
+                if (resp.rows.length > 0) {
+                    vm.flushThisMerchantStore(resp.rows[0].id, vm.merchantStores);
+                    deferred.resolve(vm.thisMerchantStore);
+                }
+            });
+        });
+        return deferred.promise;
+    }
+
+    vm.flushThisMerchantStore = function (value, merchantStores) {
+        var length = merchantStores.length;
+        for (var i = 0; i < length; i++) {
+            if (merchantStores[i].value == value) {
+                break;
+            }
+        }
+        vm.thisMerchantStore = merchantStores[i];
     }
 
     //从后台拿到省列表
@@ -139,19 +165,14 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
     vm.citys = [];
     vm.getCitysByProvince = function (provinceId, scope) {
         if (provinceId) {
-            //vm.citys = $resource('/admin/city/listByProvince4Select').query({id:provinceId});//直接query出来的list不能刷新select内容？？？？？？？
-            //console.log(vm.citys);
             $resource('/admin/city/listByProvince').get({id: provinceId}, function (resp) {
                 var length = resp.rows.length;
                 if (length > 0) {
                     vm.citys.splice(0, vm.citys.length);
-                    //console.log("clear-citiysLength:" + vm.citys.length);
-                    //vm.districts.splice(0,vm.districts.length);//联动会使区出错
                     for (var j = 0; j < length; j++) {
                         vm.citys.push({name: resp.rows[j].name, value: resp.rows[j].id});
                     }
                 }
-                //console.log("citysLength:" + vm.citys.length);
             });
         }
     }
@@ -160,17 +181,14 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
     vm.districts = [];
     vm.getDistrictsByCity = function (cityId) {
         if (cityId) {
-            //vm.districts = $resource('/admin/district/listByCity4Select').query({id:cityId});
             $resource('/admin/district/listByCity').get({id: cityId}, function (resp) {
                 var length = resp.rows.length;
                 if (length > 0) {
                     vm.districts.splice(0, vm.districts.length);
-                    //console.log("clear-districtsLength:"+vm.districts.length);
                     for (var j = 0; j < length; j++) {
                         vm.districts.push({name: resp.rows[j].name, value: resp.rows[j].id});
                     }
                 }
-                //console.log("districtsLength:"+vm.districts.length);
             });
         }
     }
@@ -183,11 +201,11 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
     vm.malls = [];
     //....
 
-    //自定义店铺模块初始化处理
+    //自定义店铺模块初始化处理,新增门店显示商户名
     var merchantStoreInit = function (scope) {
         //console.log(vm.thisMerchant)
         if (vm.thisMerchant) {
-            scope.formData.model = {merchant: {name: vm.thisMerchant.name}};
+            scope.formData.model={merchant: {name: vm.thisMerchant.name}};
         }
     };
 

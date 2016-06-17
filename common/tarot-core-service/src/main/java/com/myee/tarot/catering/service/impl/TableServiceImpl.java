@@ -4,6 +4,8 @@ import com.myee.tarot.catering.dao.TableDao;
 import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.catering.service.TableService;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +28,10 @@ public class TableServiceImpl extends GenericEntityServiceImpl<Long, Table> impl
     @Override
     public List<Table> listByStore(long storeId) {
         return tableDao.listByStore(storeId);
+    }
+
+    @Override
+    public PageResult<Table> pageListByStore(PageRequest pageRequest, Long id){
+        return tableDao.pageListByStore(pageRequest, id);
     }
 }

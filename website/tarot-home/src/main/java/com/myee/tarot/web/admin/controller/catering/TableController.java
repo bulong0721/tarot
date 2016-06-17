@@ -8,8 +8,15 @@ import com.myee.tarot.catering.domain.TableZone;
 import com.myee.tarot.catering.service.TableService;
 import com.myee.tarot.catering.service.TableTypeService;
 import com.myee.tarot.catering.service.TableZoneService;
+import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.exception.ServiceException;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
+import com.myee.tarot.merchant.domain.Merchant;
+import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.web.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,23 +52,75 @@ public class TableController {
     @RequestMapping(value = "/type/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse addTableType(@RequestBody TableType type, HttpServletRequest request) throws Exception {
-        typeService.update(type);
+        AjaxResponse resp = new AjaxResponse();
+        try {
+            Merchant merchant1 = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            type.setStore(merchantStore1);
+            typeService.update(type);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("出错");
+            return resp;
+        }
         return AjaxResponse.success();
     }
 
     @RequestMapping(value = "/type/delete", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse delTableType(@RequestBody TableType type, HttpServletRequest request) throws Exception {
-        typeService.delete(type);
-        return AjaxResponse.success();
+        AjaxResponse resp = new AjaxResponse();
+        try {
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (type.getId() == null || StringUtil.isNullOrEmpty(type.getId().toString())) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("参数错误");
+                return resp;
+            }
+            TableType tableType = typeService.getEntity(TableType.class,type.getId());
+//            if(tableType == null || (tableType.getStore().getId() != merchantStore1.getId())){
+//                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+//                resp.setErrorString("要删除的数据与门店不匹配");
+//                return resp;
+//            }
+
+            typeService.delete(tableType);
+            return AjaxResponse.success();
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("出错");
+            return resp;
+        }
     }
 
     @RequestMapping(value = "/type/paging", method = RequestMethod.GET)
     public
     @ResponseBody
-    AjaxPageableResponse pageTypes(Model model, HttpServletRequest request) {
+    AjaxPageableResponse pageTypes(Model model, HttpServletRequest request,PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
-        List<TableType> typeList = typeService.list();
+        if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            resp.setErrorString("请先切换门店");
+            return resp;
+        }
+        MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+
+        PageResult<TableType> pageList = typeService.pageListByStore(pageRequest, merchantStore1.getId());
+        resp.setRecordsTotal(pageList.getRecordsTotal());
+        resp.setRecordsFiltered(pageList.getRecordsFiltered());
+
+        List<TableType> typeList = pageList.getList();
         for (TableType type : typeList) {
             Map entry = new HashMap();
             entry.put("id", type.getId());
@@ -77,23 +136,75 @@ public class TableController {
     @RequestMapping(value = "/zone/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse addTableZone(@RequestBody TableZone zone, HttpServletRequest request) throws Exception {
-        zoneService.update(zone);
+        AjaxResponse resp = new AjaxResponse();
+        try {
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            zone.setStore(merchantStore1);
+            zoneService.update(zone);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("出错");
+            return resp;
+        }
         return AjaxResponse.success();
     }
 
     @RequestMapping(value = "/zone/delete", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse delTableZone(@RequestBody TableZone zone, HttpServletRequest request) throws Exception {
-        zoneService.delete(zone);
-        return AjaxResponse.success();
+        AjaxResponse resp = new AjaxResponse();
+        try {
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (zone.getId() == null || StringUtil.isNullOrEmpty(zone.getId().toString())) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("参数错误");
+                return resp;
+            }
+            TableZone tableZone = zoneService.getEntity(TableZone.class,zone.getId());
+//            System.out.println("tableZone Store Id:"+tableZone.getStore().getId());
+//            if(tableZone == null || (tableZone.getStore().getId() != merchantStore1.getId())){
+//                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+//                resp.setErrorString("要删除的数据与门店不匹配");
+//                return resp;
+//            }
+
+            zoneService.delete(tableZone);
+            return AjaxResponse.success();
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("出错");
+            return resp;
+        }
     }
 
     @RequestMapping(value = "/zone/paging", method = RequestMethod.GET)
     public
     @ResponseBody
-    AjaxPageableResponse pageZones(Model model, HttpServletRequest request) {
+    AjaxPageableResponse pageZones(Model model, HttpServletRequest request,PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
-        List<TableZone> typeList = zoneService.list();
+        if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            resp.setErrorString("请先切换门店");
+            return resp;
+        }
+        MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+
+        PageResult<TableZone> pageList = zoneService.pageListByStore(pageRequest, merchantStore1.getId());
+        resp.setRecordsTotal(pageList.getRecordsTotal());
+        resp.setRecordsFiltered(pageList.getRecordsFiltered());
+
+        List<TableZone> typeList = pageList.getList();
         for (TableZone zone : typeList) {
             Map entry = new HashMap();
             entry.put("id", zone.getId());
@@ -107,23 +218,78 @@ public class TableController {
     @RequestMapping(value = "/table/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse addTable(@RequestBody Table table, HttpServletRequest request) throws Exception {
-        tableService.update(table);
+        AjaxResponse resp = new AjaxResponse();
+        try {
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            table.setStore(merchantStore1);
+            tableService.update(table);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("出错");
+            return resp;
+        }
         return AjaxResponse.success();
     }
 
     @RequestMapping(value = "/table/delete", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse delTable(@RequestBody Table table, HttpServletRequest request) throws Exception {
-        tableService.delete(table);
-        return AjaxResponse.success();
+        AjaxResponse resp = new AjaxResponse();
+        try {
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (table.getId() == null || StringUtil.isNullOrEmpty(table.getId().toString())) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("参数错误");
+                return resp;
+            }
+            Table table1 = tableService.getEntity(Table.class,table.getId());
+            //20160616奇怪:type和zone查询出来的对象，store的id也为空，但是能执行下去不报错，而table不行，查询出来store的id为空，报错？？？
+//            System.out.println("table Store Id:"+table.getStore().getId());
+//            if(table == null || (table.getStore().getId() != merchantStore1.getId())){
+//                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+//                resp.setErrorString("要删除的数据与门店不匹配");
+//                return resp;
+//            }
+
+            tableService.delete(table1);
+            return AjaxResponse.success();
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("出错");
+            return resp;
+        }
+
     }
 
     @RequestMapping(value = "/table/paging", method = RequestMethod.GET)
     public
     @ResponseBody
-    AjaxPageableResponse pageTables(Model model, HttpServletRequest request) {
+    AjaxPageableResponse pageTables(Model model, HttpServletRequest request,PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
-        List<Table> typeList = tableService.list();
+        if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            resp.setErrorString("请先切换门店");
+            return resp;
+        }
+        MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+
+        PageResult<Table> pageList = tableService.pageListByStore(pageRequest, merchantStore1.getId());
+        resp.setRecordsTotal(pageList.getRecordsTotal());
+        resp.setRecordsFiltered(pageList.getRecordsFiltered());
+
+
+        List<Table> typeList = pageList.getList();
         for (Table table : typeList) {
             Map entry = new HashMap();
             entry.put("id", table.getId());
@@ -141,7 +307,11 @@ public class TableController {
     public
     @ResponseBody
     List<TypeDTO> typeOptions(Model model, HttpServletRequest request) {
-        List<TableType> typeList = typeService.list();
+        if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            return null;
+        }
+        MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        List<TableType> typeList = typeService.listByStore(merchantStore1.getId());
         return Lists.transform(typeList, new Function<TableType, TypeDTO>() {
             @Nullable
             @Override
@@ -155,7 +325,11 @@ public class TableController {
     public
     @ResponseBody
     List<ZoneDTO> zoneOptions(Model model, HttpServletRequest request) {
-        List<TableZone> typeList = zoneService.list();
+        if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            return null;
+        }
+        MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        List<TableZone> typeList = zoneService.listByStore(merchantStore1.getId());
         return Lists.transform(typeList, new Function<TableZone, ZoneDTO>() {
             @Nullable
             @Override

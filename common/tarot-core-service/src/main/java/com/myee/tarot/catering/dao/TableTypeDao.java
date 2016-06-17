@@ -2,6 +2,8 @@ package com.myee.tarot.catering.dao;
 
 import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.core.dao.GenericEntityDao;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
 
 import java.util.List;
 
@@ -11,4 +13,6 @@ import java.util.List;
 public interface TableTypeDao extends GenericEntityDao<Long, TableType> {
 
     List<TableType> listByStore(long storeId);
+
+    PageResult<TableType> pageListByStore(PageRequest pageRequest, Long id);
 }

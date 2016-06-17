@@ -17,6 +17,10 @@
                 </select>
             </li>
             <li>
+                <select class="m-r-sm text-muted welcome-message" ng-model="merchantStoreSelect" ng-options="s.name for s in merchantStores" ng-change="switchMerchantStore()">
+                </select>
+            </li>
+            <li>
                 <a href="/admin/j_spring_security_logout">
                     <i class="fa fa-sign-out"></i>退出
                 </a>

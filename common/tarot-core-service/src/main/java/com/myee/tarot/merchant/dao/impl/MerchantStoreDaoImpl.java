@@ -23,11 +23,22 @@ public class MerchantStoreDaoImpl extends GenericEntityDaoImpl<Long, MerchantSto
     public static Log log = LogFactory.getLog(MerchantDaoImpl.class);
 
     @Override
-    public Long getCountById(MerchantStore merchantStore) {
+    public Long getCountById(Long id) {
         QMerchantStore qMerchantStore = QMerchantStore.merchantStore;
         JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
         query.from(qMerchantStore)
-                .where(qMerchantStore.id.eq(merchantStore.getId()));
+                .where(qMerchantStore.id.eq(id));
+        log.info(query.fetchCount());
+
+        return query.fetchCount();
+    }
+
+    @Override
+    public Long getCountById(Long merchantStoreId, Long merchantId){
+        QMerchantStore qMerchantStore = QMerchantStore.merchantStore;
+        JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
+        query.from(qMerchantStore)
+                .where((qMerchantStore.id.eq(merchantStoreId)).and(qMerchantStore.merchant.id.eq(merchantId)));
         log.info(query.fetchCount());
 
         return query.fetchCount();

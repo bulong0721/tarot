@@ -484,6 +484,69 @@ public class MerchantController {
         return null;
     }
 
+    //切换门店接口
+    @RequestMapping(value = "/admin/merchantStore/switch", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse switchMerchantStore(@RequestBody Long id, HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
+        try {
+            Merchant merchant1 = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
+            if(merchant1 == null){
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请切换商户！");
+                return resp;
+            }
+            if (id == null) {
+                //抛出异常给异常处理机制
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请切换门店！");
+                return resp;
+            }
+            Long numFind = merchantStoreService.getCountById(id,merchant1.getId());//根据门店和商户id一起搜索,要切换的门店必须属于session里的商户
+            if (numFind != 1L) {
+                //抛出异常给异常处理机制
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("要切换的商户信息错误");
+                return resp;
+            }
+            MerchantStore merchantStoreOld = merchantStoreService.getEntity(MerchantStore.class, id);
+            //把商户信息写入session
+            request.getSession().setAttribute(Constants.ADMIN_STORE, merchantStoreOld);
+            resp.addDataEntry(objectToEntry(merchantStoreOld));
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("切换出错");
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "/admin/merchantStore/getSwitch", method = RequestMethod.GET)
+    @ResponseBody
+    public AjaxResponse getSwitchMerchantStore(HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
+        try {
+            if (request.getSession().getAttribute(Constants.ADMIN_MERCHANT) == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请先切换商户");
+                return resp;
+            }
+            //从session中读取merchantStore信息，如果为空，则提示用户先切换门店
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            resp.addDataEntry(objectToEntry(merchantStore1));
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("出错");
+        }
+        return resp;
+    }
+
     @RequestMapping(value = "/admin/merchantStore/storeOpts", method = RequestMethod.GET)
     @ResponseBody
     public List<MerchantStoreView> listByCommon(HttpServletRequest request) throws Exception {
