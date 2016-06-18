@@ -28,4 +28,9 @@ public class ProductUsedServiceImpl extends GenericEntityServiceImpl<Long, Produ
         return productUsedDao.pageList(pageRequest);
     }
 
+    @Override
+    public PageResult<ProductUsed> pageListByStore(PageRequest pageRequest, Long id){
+        return productUsedDao.pageListByStore(pageRequest,id);
+    }
+
 }

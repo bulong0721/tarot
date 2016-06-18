@@ -105,8 +105,8 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
             $resource('/admin/merchant/getSwitch').get({}, function (resp) {
                 if (resp.rows.length > 0) {
                     vm.flushThisMerchant(resp.rows[0].id, vm.merchants);
-                    deferred.resolve(vm.thisMerchant);
                 }
+                deferred.resolve(vm.thisMerchant);
             });
         });
         return deferred.promise;
@@ -141,8 +141,8 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
             $resource('/admin/merchantStore/getSwitch').get({}, function (resp) {
                 if (resp.rows.length > 0) {
                     vm.flushThisMerchantStore(resp.rows[0].id, vm.merchantStores);
-                    deferred.resolve(vm.thisMerchantStore);
                 }
+                deferred.resolve(vm.thisMerchantStore);
             });
         });
         return deferred.promise;
@@ -208,8 +208,14 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
             scope.formData.model={merchant: {name: vm.thisMerchant.name}};
         }
     };
+    var deviceUsedInit = function (scope) {
+        //console.log(vm.thisMerchantStore)
+        if (vm.thisMerchantStore) {
+            scope.formData.model={store: {name: vm.thisMerchantStore.name}};
+        }
+    };
 
-    vm.initMgrCtrl = function (mgrData, scope, custom) {
+    vm.initMgrCtrl = function (mgrData, scope) {
         $.fn.dataTable.ext.errMode = 'none';
 
         scope.where = {};
@@ -261,6 +267,9 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
                 switch (custom) {
                     case "merchantStore":
                         merchantStoreInit(scope);
+                        break;
+                    case "deviceUsed":
+                        deviceUsedInit(scope);
                         break;
                     case "default":
                         break;

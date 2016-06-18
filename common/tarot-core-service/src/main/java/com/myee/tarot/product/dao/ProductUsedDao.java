@@ -14,6 +14,7 @@ import java.util.Set;
  */
 public interface ProductUsedDao extends GenericEntityDao<Long, ProductUsed> {
 
-    public PageResult<ProductUsed> pageList(PageRequest pageRequest);
+    PageResult<ProductUsed> pageList(PageRequest pageRequest);
 
+    PageResult<ProductUsed> pageListByStore(PageRequest pageRequest, Long id);
 }

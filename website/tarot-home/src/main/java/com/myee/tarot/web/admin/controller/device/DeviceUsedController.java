@@ -1,12 +1,14 @@
 package com.myee.tarot.web.admin.controller.device;
 
 import com.myee.tarot.catalog.domain.DeviceUsed;
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.device.service.DeviceUsedService;
+import com.myee.tarot.merchant.domain.MerchantStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +41,13 @@ public class DeviceUsedController {
     public AjaxPageableResponse pagedeviceUsed(Model model, HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
-            PageResult<DeviceUsed> pageResult = deviceUsedService.pageList(pageRequest);
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+
+            PageResult<DeviceUsed> pageResult = deviceUsedService.pageListByStore(pageRequest, merchantStore1.getId());
             List<DeviceUsed> deviceUsedList = pageResult.getList();
             resp.setRecordsTotal(pageResult.getRecordsTotal());
             resp.setRecordsFiltered(pageResult.getRecordsFiltered());
@@ -65,6 +73,14 @@ public class DeviceUsedController {
     @ResponseBody
     public AjaxResponse updateDeviceUsed(@Valid @RequestBody DeviceUsed deviceUsed, HttpServletRequest request) {
         try {
+            AjaxResponse resp = new AjaxResponse();
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+
+            deviceUsed.setStore(merchantStore1);
             deviceUsedService.update(deviceUsed);
             return AjaxResponse.success();
         } catch (ServiceException e) {

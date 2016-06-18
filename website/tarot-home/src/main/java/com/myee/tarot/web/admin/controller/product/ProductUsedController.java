@@ -5,6 +5,7 @@ import com.myee.tarot.catalog.domain.ProductUsedAttribute;
 import com.myee.tarot.catalog.type.ProductType;
 import com.myee.tarot.catalog.view.ProductUsedAttributeView;
 import com.myee.tarot.catalog.view.ProductUsedView;
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
@@ -52,7 +53,13 @@ public class ProductUsedController {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         String currentUser = request.getRemoteUser();
         try {
-            PageResult<ProductUsed> pageList = productUsedService.pageList(pageRequest);
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+
+            PageResult<ProductUsed> pageList = productUsedService.pageListByStore(pageRequest, merchantStore1.getId());
             resp.setRecordsTotal(pageList.getRecordsTotal());
             resp.setRecordsFiltered(pageList.getRecordsFiltered());
             List<ProductUsed> productUsedList = pageList.getList();

@@ -27,4 +27,9 @@ public class DeviceUsedServiceImpl extends GenericEntityServiceImpl<Long, Device
     public PageResult<DeviceUsed> pageList(PageRequest pageRequest) {
         return deviceUsedDao.pageList(pageRequest);
     }
+
+    @Override
+    public PageResult<DeviceUsed> pageListByStore(PageRequest pageRequest, Long id){
+        return deviceUsedDao.pageListByStore(pageRequest, id);
+    }
 }
