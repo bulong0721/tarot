@@ -224,7 +224,11 @@ function merchantShopCtrl($scope, $resource, $compile, Constants) {
                 'type': 'input',
                 'templateOptions': {'disabled': true, 'label': '商户名称', 'placeholder': '商户名称'}
             },
-            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '门店名称', 'placeholder': '门店名称'}},
+            {
+                'key': 'name',
+                'type': 'input',
+                'templateOptions': {'label': '门店名称', required: true, 'placeholder': '门店名称'}
+            },
             {
                 'key': 'address.province.id',
                 'type': 'select',
@@ -264,7 +268,7 @@ function merchantShopCtrl($scope, $resource, $compile, Constants) {
             },
             {'key': 'address.address', 'type': 'input', 'templateOptions': {'label': '地址', 'placeholder': '地址'}},
             {'key': 'phone', 'type': 'input', 'templateOptions': {'label': '联系电话', 'placeholder': '联系电话'}},
-            {'key': 'code', 'type': 'input', 'templateOptions': {'label': '门店码', 'placeholder': '门店码'}},
+            {'key': 'code', 'type': 'input', 'templateOptions': {'label': '门店码', required: true, 'placeholder': '门店码'}},
         ],
         api: {
             read: '/admin/merchantStore/pagingByMerchant',
@@ -308,11 +312,12 @@ function merchantCtrl($scope, $resource, $compile, Constants) {
             {
                 'key': 'name',
                 'type': 'input',
-                'templateOptions': {'type': 'text', 'label': '商户名称', 'placeholder': '商户名称'}
+                'templateOptions': {'type': 'text', 'label': '商户名称', required: true, 'placeholder': '商户名称'}
             },
             {
                 'key': 'businessType', 'type': 'select',
                 'templateOptions': {
+                    required: true,
                     'label': '商户类型',
                     'options': Constants.merchantType
                 }
@@ -320,7 +325,7 @@ function merchantCtrl($scope, $resource, $compile, Constants) {
             {
                 'key': 'cuisineType',
                 'type': 'input',
-                'templateOptions': {'type': 'text', 'label': '商户菜系', 'placeholder': '商户菜系'}
+                'templateOptions': {'type': 'text', 'label': '商户菜系', required: true, 'placeholder': '商户菜系'}
             },
             {
                 'key': 'imgFile',
@@ -602,8 +607,13 @@ function deviceCtrl($scope, $compile, $resource, Constants) {
         return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
     }
 
+    function detailsHtml(data, type, full, meta) {
+        return '<a ng-click="goDetails(' + meta.row + ')"><i class="btn-icon fa fa-list-alt bigger-130"></a>';
+    }
+
     var mgrData = {
         columns: [
+            {title: '', width: 2, render: detailsHtml, className: 'details-control', orderable: false},
             {data: 'name', title: '名称', width: 40, orderable: false},
             {data: 'versionNum', title: '版本号', width: 40, orderable: false},
             {data: 'description', title: '描绘', width: 60, orderable: false},
@@ -611,35 +621,52 @@ function deviceCtrl($scope, $compile, $resource, Constants) {
 
         ],
         fields: [
-            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', 'placeholder': '名称'}},
+            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
             {'key': 'versionNum', 'type': 'input', 'templateOptions': {'label': '版本号', 'placeholder': '版本号'}},
             {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}}
         ],
+        detailFields: [
+            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '参数名', required: true, 'placeholder': '参数名'}},
+            {
+                'key': 'parentId',
+                'type': 'input',
+                'templateOptions': {'disabled': true, 'label': '父节点ID', required: true, 'placeholder': '父节点ID'}
+            },
+            {'key': 'value', 'type': 'input', 'templateOptions': {'label': '参数值', required: true, 'placeholder': '参数值'}}
+        ],
         api: {
             read: '/device/paging',
-            update: '/device/update'
+            update: '/device/update',
+            updateDetail: '/device/attribute/save',
+            attributeList: '/device/attribute/listByProductId',
+            attributeDelete: '/device/attribute/delete'
         }
 
     };
 
     Constants.initMgrCtrl(mgrData, $scope, $resource, $compile);
 
-    $scope.dtColumns = mgrData.columns;
-
-    $scope.dtOptions = Constants.buildOption(mgrData.api.read, function (data) {
-        angular.extend(data, $scope.where);
-    }, function (row, data, dataIndex) {
-        var elem = angular.element(row);
-        var content = elem.contents();
-        var scope = $scope;
-        $compile(content)(scope);
-    });
+    //$scope.dtColumns = mgrData.columns;
+    //
+    //$scope.dtOptions = Constants.buildOption(mgrData.api.read, function (data) {
+    //    angular.extend(data, $scope.where);
+    //}, function (row, data, dataIndex) {
+    //    var elem = angular.element(row);
+    //    var content = elem.contents();
+    //    var scope = $scope;
+    //    $compile(content)(scope);
+    //});
 }
 
 function deviceUsedCtrl($scope, $compile, $resource, Constants) {
 
     function actionsHtml(data, type, full, meta) {
-        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
+        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></i></a>' +
+            '&nbsp;<a class="m-l-xs red" ng-click="doDelete(' + meta.row + ')"><i class="btn-icon fa fa-trash-o bigger-130"></i></a>';
+    }
+
+    function detailsHtml(data, type, full, meta) {
+        return '<a ng-click="goDetails(' + meta.row + ')"><i class="btn-icon fa fa-list-alt bigger-130"></a>';
     }
 
     function getDeviceList() {
@@ -654,15 +681,15 @@ function deviceUsedCtrl($scope, $compile, $resource, Constants) {
 
     var mgrData = {
         columns: [
-            //{data: 'store.name', title: '门店名', width: 60, orderable: false},
+            {title: '', width: 2, render: detailsHtml, className: 'details-control', orderable: false},
+            {data: 'store.name', title: '门店名称', width: 60, orderable: false},
             {data: 'name', title: '名称', width: 40, orderable: false},
             {data: 'heartbeat', title: '心跳', width: 40, orderable: false},
             {data: 'boardNo', title: '牌号', width: 60, orderable: false},
             {data: 'deviceNum', title: '设备号', width: 60, orderable: false},
             {data: 'description', title: '描绘', width: 60, orderable: false},
-            {data: 'device.name', title: '设备名', width: 60, orderable: false},
+            {data: 'device.name', title: '设备类型', width: 60, orderable: false},
             {title: '动作', width: 35, render: actionsHtml, className: 'center'}
-
         ],
         fields: [
             {
@@ -672,39 +699,56 @@ function deviceUsedCtrl($scope, $compile, $resource, Constants) {
                 'templateOptions': {'disabled': true, 'label': '门店名称', 'placeholder': '门店名称'}
             },
             //{'key': 'store.id', 'type': 'select', 'templateOptions': {'label': '门店名', 'options': getStoreList()}},
-            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', 'placeholder': '名称'}},
+            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
             {'key': 'heartbeat', 'type': 'input', 'templateOptions': {'label': '心跳', 'placeholder': '心跳'}},
             {'key': 'boardNo', 'type': 'input', 'templateOptions': {'label': '牌号', 'placeholder': '牌号'}},
             {'key': 'deviceNum', 'type': 'input', 'templateOptions': {'label': '设备号', 'placeholder': '设备号'}},
             {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}},
-            {'key': 'device.id', 'type': 'select', 'templateOptions': {'label': '选择设备', 'options': getDeviceList()}}
+            {
+                'key': 'device.id',
+                'type': 'select',
+                'templateOptions': {'label': '选择设备类型', required: true, 'options': getDeviceList()}
+            }
 
+        ],
+        detailFields: [
+            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '参数名', required: true, 'placeholder': '参数名'}},
+            {
+                'key': 'parentId',
+                'type': 'input',
+                'templateOptions': {'disabled': true, 'label': '父节点ID', required: true, 'placeholder': '父节点ID'}
+            },
+            {'key': 'value', 'type': 'input', 'templateOptions': {'label': '参数值', required: true, 'placeholder': '参数值'}}
         ],
         api: {
             read: '/deviceUsed/paging',
-            update: '/deviceUsed/update'
+            update: '/deviceUsed/update',
+            delete: '/deviceUsed/delete',
+            updateDetail: '/deviceUsed/attribute/save',
+            attributeList: '/deviceUsed/attribute/listByProductId',
+            attributeDelete: '/deviceUsed/attribute/delete'
         }
 
     };
 
     Constants.initMgrCtrl(mgrData, $scope, $resource, $compile);
 
-    $scope.dtColumns = mgrData.columns;
-
-    $scope.dtOptions = Constants.buildOption(mgrData.api.read, function (data) {
-        angular.extend(data, $scope.where);
-    }, function (row, data, dataIndex) {
-        var elem = angular.element(row);
-        var content = elem.contents();
-        var scope = $scope;
-        $compile(content)(scope);
-    });
+    //$scope.dtColumns = mgrData.columns;
+    //
+    //$scope.dtOptions = Constants.buildOption(mgrData.api.read, function (data) {
+    //    angular.extend(data, $scope.where);
+    //}, function (row, data, dataIndex) {
+    //    var elem = angular.element(row);
+    //    var content = elem.contents();
+    //    var scope = $scope;
+    //    $compile(content)(scope);
+    //});
 }
 
 function productUsedCtrl($scope, $compile, Constants) {
 
     function actionsHtml(data, type, full, meta) {
-        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
+        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"/></a>';
     }
 
     function detailsHtml(data, type, full, meta) {
@@ -721,14 +765,20 @@ function productUsedCtrl($scope, $compile, Constants) {
             {data: 'storeId', visible: false},
             {data: 'productTypeList', visible: false},
             {title: '', width: 2, render: detailsHtml, className: 'details-control', orderable: false},
+            {data: 'storeName', title: '店铺名称', width: 60, orderable: false},
             {data: 'code', title: '产品编号', width: 60, orderable: false},
             {data: 'name', title: '产品名称', width: 60, orderable: false},
             {data: 'productNum', title: '产品版本', width: 60, orderable: false},
-            {data: 'storeName', title: '店铺名称', width: 60, orderable: false},
             {data: 'description', title: '描述', width: 100, orderable: false},
-            {title: '动作', width: 20, render: actionsHtml, className: 'center', orderable: false}
+            {title: '动作', width: 50, render: actionsHtml, className: 'center', orderable: false}
         ],
         fields: [
+            {
+                'id': 'storeName',
+                'key': 'storeName',
+                'type': 'input',
+                'templateOptions': {'disabled': true, 'label': '门店名称', 'placeholder': '门店名称'}
+            },
             {
                 'key': 'code',
                 'type': 'input',
@@ -744,18 +794,6 @@ function productUsedCtrl($scope, $compile, Constants) {
                     valueProp: 'type',
                     labelProp: 'friendlyType',
                     options: productOpts
-                }
-            },
-            {
-                'key': 'storeId',
-                'type': 'select',
-                'templateOptions': {
-                    'label': '店铺名称',
-                    required: true,
-                    'placeholder': '店铺名称',
-                    valueProp: 'id',
-                    labelProp: 'name',
-                    options: storeOpts
                 }
             },
             {

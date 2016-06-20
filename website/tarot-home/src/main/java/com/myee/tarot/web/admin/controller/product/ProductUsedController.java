@@ -91,9 +91,16 @@ public class ProductUsedController {
     @RequestMapping(value = "/product/used/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveUsedProduct(@Valid @RequestBody ProductUsedView productUsedView, HttpServletRequest request) throws Exception {
-        MerchantStore merchantStore = merchantStoreService.getEntity(MerchantStore.class, productUsedView.getStoreId());
+//        MerchantStore merchantStore = merchantStoreService.getEntity(MerchantStore.class, productUsedView.getStoreId());
+        AjaxPageableResponse resp = new AjaxPageableResponse();
+        if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            resp.setErrorString("请先切换门店");
+            return resp;
+        }
+        MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+
         ProductUsed productUsed = new ProductUsed(productUsedView);
-        productUsed.setStore(merchantStore);
+        productUsed.setStore(merchantStore1);
         productUsedService.update(productUsed);
         return AjaxResponse.success();
     }

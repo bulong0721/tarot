@@ -209,9 +209,13 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
         }
     };
     var deviceUsedInit = function (scope) {
-        //console.log(vm.thisMerchantStore)
         if (vm.thisMerchantStore) {
             scope.formData.model={store: {name: vm.thisMerchantStore.name}};
+        }
+    };
+    var productUsedInit = function (scope) {
+        if (vm.thisMerchantStore) {
+            scope.formData.model={storeName: vm.thisMerchantStore.name};
         }
     };
 
@@ -271,7 +275,10 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
                     case "deviceUsed":
                         deviceUsedInit(scope);
                         break;
-                    case "default":
+                    case "productUsed":
+                        productUsedInit(scope);
+                        break;
+                    default:
                         break;
                 }
             }
@@ -338,8 +345,10 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
             tables += "<tr><td><a ng-click='goDetailEditor(-1, \"" + rowIndex + "\", \"" + parentId + "\")'><i class='fa fa-plus'></i></a></td></tr>";
             angular.forEach(scope.infoDetail, function (value) {
                 tables += "<tr><td>" + value.name + "</td> <td>" + value.value + "</td>";
-                tables += "<td><a ng-click='goDetailEditor(\"" + value.index + "\", \"" + rowIndex + "\", \"" + parentId + "\")'><i class='fa fa-pencil'></i></a></td>";
-                tables += "<td><a ng-click='goDetailsDelete(\"" + value.id + "\", \"" + rowIndex + "\")'><i class='fa fa-remove'></i></a></td>";
+                if(value.id != 0 ){
+                    tables += "<td><a ng-click='goDetailEditor(\"" + value.index + "\", \"" + rowIndex + "\", \"" + parentId + "\")'><i class='fa fa-pencil'></i></a></td>";
+                    tables += "<td><a ng-click='goDetailsDelete(\"" + value.id + "\", \"" + rowIndex + "\")'><i class='fa fa-remove'></i></a></td>";
+                }
                 tables += "</tr>";
             });
             tables += '</table>';

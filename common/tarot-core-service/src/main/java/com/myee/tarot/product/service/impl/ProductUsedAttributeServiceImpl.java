@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Created by Enva on 2016/6/1.
+ * Chay on 2016/6/19.
  */
 @Service
 public class ProductUsedAttributeServiceImpl extends GenericEntityServiceImpl<Long, ProductUsedAttribute> implements ProductUsedAttributeService {

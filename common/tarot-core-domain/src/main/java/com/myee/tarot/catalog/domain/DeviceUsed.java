@@ -4,6 +4,7 @@ import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Created by Martin on 2016/4/18.
@@ -41,12 +42,12 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
     @JoinColumn(name = "DEVICE_ID")
     protected Device device;
 
-    @ManyToOne(targetEntity = ProductUsed.class, optional = false)
+    @ManyToMany(targetEntity = ProductUsed.class, cascade = CascadeType.REFRESH)
     @JoinTable(name = "C_PRODUCT_USED_DEV_XREF",
-            joinColumns = {@JoinColumn(name = "DEVICE_USED_ID", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "PRODUCT_USED_ID", nullable = false, updatable = false)}
+            joinColumns = {@JoinColumn(name = "DEVICE_USED_ID", nullable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "PRODUCT_USED_ID", nullable = false)}
     )
-    protected ProductUsed productUsed;
+    protected List<ProductUsed> productUsed;
 
 //    @OneToMany(mappedBy = "deviceUsed", targetEntity = DeviceUsedAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
 //    @MapKey(name = "name")
@@ -62,11 +63,19 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
         this.id = id;
     }
 
-    public ProductUsed getProductUsed() {
+//    public ProductUsed getProductUsed() {
+//        return productUsed;
+//    }
+//
+//    public void setProductUsed(ProductUsed productUsed) {
+//        this.productUsed = productUsed;
+//    }
+
+    public List<ProductUsed> getProductUsed() {
         return productUsed;
     }
 
-    public void setProductUsed(ProductUsed productUsed) {
+    public void setProductUsed(List<ProductUsed> productUsed) {
         this.productUsed = productUsed;
     }
 

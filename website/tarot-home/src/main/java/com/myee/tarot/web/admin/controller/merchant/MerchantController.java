@@ -75,6 +75,9 @@ public class MerchantController {
             //把商户信息写入session
             request.getSession().setAttribute(Constants.ADMIN_MERCHANT, merchantOld);
             resp.addDataEntry(objectToEntry(merchantOld));
+
+            //清空已有的门店session，让用户重新选择门店
+            request.getSession().removeAttribute(Constants.ADMIN_STORE);
         } catch (Exception e) {
             e.printStackTrace();
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
