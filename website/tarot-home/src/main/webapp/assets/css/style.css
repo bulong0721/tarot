@@ -9976,17 +9976,28 @@ body.md-skin {
 }
 
 .btn-icon {
-    font-size: 17px;
+    color: #aaa;
+    font-size: 16px;
     font-weight: 500;
 }
 
 .btn-icon:hover {
-    font-size: 20px;
+    color: #0e9aef;
+    font-size: 16px;
     font-weight: 500;
 }
 
 th.center, td.center {
     text-align: center !important;
+}
+
+.divider {
+    position: relative;
+    display: inline-block;
+    height: 13px;
+    width: 1px;
+    margin: 0 10px;
+    background: #aaa;
 }
 
 .space-6 {

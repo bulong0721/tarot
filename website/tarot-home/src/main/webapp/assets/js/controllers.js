@@ -17,7 +17,9 @@ function MainCtrl() {
 function roleMgrCtrl($scope, $compile, Constants) {
 
     function actionsHtml(data, type, full, meta) {
-        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
+        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></i></a>'
+            + '<span class="divider"></span>'
+            + '<a ng-click="doDelete(' + meta.row + ')"><i class="btn-icon fa fa-trash-o bigger-130"></i></a>';
     }
 
     var mgrData = {
@@ -56,7 +58,9 @@ function roleMgrCtrl($scope, $compile, Constants) {
 
 function userMgrCtrl($scope, Constants) {
     function actionsHtml(data, type, full, meta) {
-        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
+        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></i></a>'
+            + '<span class="divider"></span>'
+            + '<a ng-click="doDelete(' + meta.row + ')"><i class="btn-icon fa fa-trash-o bigger-130"></i></a>';
     }
 
     function dateHtml(data, type, full, meta) {
@@ -483,7 +487,9 @@ function explorerCtrl($scope, $resource) {
 
 function tableTypeMgrCtrl($scope, Constants) {
     function actionsHtml(data, type, full, meta) {
-        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
+        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></i></a>'
+            + '<span class="divider"></span>'
+            + '<a ng-click="doDelete(' + meta.row + ')"><i class="btn-icon fa fa-trash-o bigger-130"></i></a>';
     }
 
     var mgrData = {
@@ -520,8 +526,9 @@ function tableTypeMgrCtrl($scope, Constants) {
 
 function tableZoneMgrCtrl($scope, Constants) {
     function actionsHtml(data, type, full, meta) {
-        return '<a class="green" ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></i></a>'
-            + '<a class="m-l-xs red" ng-click="doDelete(' + meta.row + ')"><i class="btn-icon fa fa-trash-o bigger-130"></i></a>';
+        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></i></a>'
+                + '<span class="divider"></span>'
+             + '<a ng-click="doDelete(' + meta.row + ')"><i class="btn-icon fa fa-trash-o bigger-130"></i></a>';
     }
 
     var mgrData = {
@@ -529,7 +536,7 @@ function tableZoneMgrCtrl($scope, Constants) {
             {data: 'id', visible: false},
             {data: 'name', title: '名称', width: 85, orderable: false},
             {data: 'description', title: '描述', width: 60, orderable: false},
-            {title: '操作', width: 35, render: actionsHtml, orderable: false, className: 'center'}
+            {title: '操作', width: 20, render: actionsHtml, orderable: false, className: 'center'}
         ],
         fields: [
             {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
@@ -551,7 +558,9 @@ function tableZoneMgrCtrl($scope, Constants) {
 
 function tableMgrCtrl($scope, $resource, Constants) {
     function actionsHtml(data, type, full, meta) {
-        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
+        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></i></a>'
+            + '<span class="divider"></span>'
+            + '<a ng-click="doDelete(' + meta.row + ')"><i class="btn-icon fa fa-trash-o bigger-130"></i></a>';
     }
 
     var typeOpts = $resource('/admin/catering/type/options').query();
