@@ -1,5 +1,6 @@
 package com.myee.tarot.web.admin.controller.device;
 
+import com.alibaba.fastjson.JSON;
 import com.myee.tarot.catalog.domain.DeviceAttribute;
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catalog.domain.DeviceUsedAttribute;
@@ -71,6 +72,10 @@ public class DeviceUsedController {
                 entry.put("description",deviceUsed.getDescription());
                 entry.put("store",deviceUsed.getStore());
                 entry.put("device",deviceUsed.getDevice());
+                for(int i=0;i<deviceUsed.getProductUsed().size();i++){
+                    deviceUsed.getProductUsed().get(i).setDeviceUsed(null);
+                }
+                entry.put("productUsedList",deviceUsed.getProductUsed());
                 resp.addDataEntry(entry);
             }
             resp.setRecordsTotal(pageResult.getRecordsTotal());
@@ -87,6 +92,7 @@ public class DeviceUsedController {
         try {
             AjaxResponse resp = new AjaxResponse();
             if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
@@ -94,9 +100,32 @@ public class DeviceUsedController {
             deviceUsed.setStore(merchantStore1);
 
             //测试无实体关系表用的--------
-            List<ProductUsed> productUsedList = productUsedService.list();
-            deviceUsed.setProductUsed(productUsedList);
+//            List<ProductUsed> productUsedList = productUsedService.list();
+//            deviceUsed.setProductUsed(productUsedList);
             //------------------------
+
+            deviceUsedService.update(deviceUsed);
+            return AjaxResponse.success();
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+        return AjaxResponse.failed(-1);
+    }
+
+    @RequestMapping(value = "/deviceUsed/bindProductUsed", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse deviceUsedBindProductUsed(@RequestParam(value = "bindString") String bindString,@RequestParam(value = "deviceUsedId") Long deviceUsedId, HttpServletRequest request) {
+        try {
+            AjaxResponse resp = new AjaxResponse();
+            List<Long> bindList = JSON.parseArray(bindString,Long.class);
+            DeviceUsed deviceUsed = deviceUsedService.getEntity(DeviceUsed.class,deviceUsedId);
+            if (deviceUsed == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("参数不正确");
+                return resp;
+            }
+            List<ProductUsed> productUsedList = productUsedService.listByIDs(bindList);
+            deviceUsed.setProductUsed(productUsedList);
 
             deviceUsedService.update(deviceUsed);
             return AjaxResponse.success();
@@ -112,6 +141,7 @@ public class DeviceUsedController {
         try {
             AjaxResponse resp = new AjaxResponse();
             if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
@@ -148,6 +178,7 @@ public class DeviceUsedController {
         AjaxResponse resp = new AjaxResponse();
         try {
             if (StringUtil.isNullOrEmpty(id.toString())) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("参数不能为空");
                 return resp;
             }

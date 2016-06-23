@@ -34,7 +34,7 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
         info: true,
         searching: false,
         lengthChange: false,
-        serverSide: false,
+        serverSide: true,
         pagingType: "simple_numbers",
         pageLength: 10,
         deferLoading: 0,
@@ -67,11 +67,47 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
         }
     };
 
+    //关联设备产品时的option
+    vm.bindProductOptions = {
+        info: true,
+        searching: true,
+        lengthChange: true,
+        serverSide: false,
+        pagingType: "simple_numbers",
+        pageLength: 10,
+        deferLoading: 0,
+        statusCode: {
+            302: function () {
+                $state.go('/');
+            }
+        },
+        language: {
+            info: "显示 _START_ - _END_条，共 _TOTAL_ 条",
+            infoEmpty: "显示 0 - 0条，共 0 条",
+            emptyTable: "没有查找到数据",
+            loadingRecords: "加载中...",
+            processing: "处理中...",
+            zeroRecords: "没找到匹配的记录",
+            search:"搜索",
+            sLengthMenu:"每页显示 _MENU_ 项",
+            paginate: {
+                first: "第一页",
+                last: "最后页",
+                next: "下一页>",
+                previous: "<上一页"
+            },
+            aria: {
+                sortAscending: ": 升序",
+                sortDescending: ": 降序"
+            }
+        }
+    };
+
     vm.compile4Row = function (row, data, dataIndex) {
         $compile(angular.element(row).contents())($scope);
     };
 
-    vm.buildOption = function (url, bindWhere, compile4Row) {
+    vm.buildOption = function (url, bindWhere, compile4Row,options) {
         return angular.extend(
             {
                 ajax: {
@@ -80,7 +116,7 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
                     data: bindWhere
                 },
                 createdRow: compile4Row
-            }, vm.defaultOptions);
+            }, options);
     };
 
     //从后台拿商户类型
@@ -201,24 +237,6 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
     vm.malls = [];
     //....
 
-    //自定义店铺模块初始化处理,新增门店显示商户名
-    var merchantStoreInit = function (scope) {
-        //console.log(vm.thisMerchant)
-        if (vm.thisMerchant) {
-            scope.formData.model={merchant: {name: vm.thisMerchant.name}};
-        }
-    };
-    var deviceUsedInit = function (scope) {
-        if (vm.thisMerchantStore) {
-            scope.formData.model={store: {name: vm.thisMerchantStore.name}};
-        }
-    };
-    var productUsedInit = function (scope) {
-        if (vm.thisMerchantStore) {
-            scope.formData.model={storeName: vm.thisMerchantStore.name};
-        }
-    };
-
     vm.initMgrCtrl = function (mgrData, scope) {
         $.fn.dataTable.ext.errMode = 'none';
 
@@ -237,6 +255,7 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
 
         scope.showInfoEditor = false;
         scope.showDetailEditor = false;
+
 
         scope.goDataTable = function () {
             scope.showDataTable = true;
@@ -262,26 +281,7 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
             scope.showEditor = true;
             scope.showInfoEditor = true;
             scope.showDetailEditor = false;
-        };
-
-        scope.goEditorCustom = function (custom, rowIndex) {
-            scope.goEditor(rowIndex);
-
-            if (custom) {
-                switch (custom) {
-                    case "merchantStore":
-                        merchantStoreInit(scope);
-                        break;
-                    case "deviceUsed":
-                        deviceUsedInit(scope);
-                        break;
-                    case "productUsed":
-                        productUsedInit(scope);
-                        break;
-                    default:
-                        break;
-                }
-            }
+            scope.showBindEditor = false;
         };
 
         scope.goDetailEditor = function (index, rowIndex, parentId) {
@@ -299,6 +299,7 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
             scope.showEditor = true;
             scope.showInfoEditor = false;
             scope.showDetailEditor = true;
+            scope.showBindEditor = false;
         };
 
         scope.doDelete = function (rowIndex) {
@@ -413,11 +414,12 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
         scope.dtInstance = null;
         scope.dtColumns = mgrData.columns;
         scope.dtOptions = vm.buildOption(mgrData.api.read, function (data) {
-            angular.extend(data, scope.where);
-        }, function (row, data, dataIndex) {
-            var content = angular.element(row).contents();
-            $compile(content)(scope);
-        });
+                angular.extend(data, scope.where);
+            }, function (row, data, dataIndex) {
+                var content = angular.element(row).contents();
+                $compile(content)(scope);
+            },
+            vm.defaultOptions);
 
         function saveSuccess(response) {
             if (0 != response.status) {

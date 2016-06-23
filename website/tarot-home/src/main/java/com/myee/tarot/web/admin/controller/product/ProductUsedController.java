@@ -59,7 +59,49 @@ public class ProductUsedController {
             }
             MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
 
-            PageResult<ProductUsed> pageList = productUsedService.pageListByStore(pageRequest, merchantStore1.getId());
+            PageResult<ProductUsed> pageList = productUsedService.pageListByStore(pageRequest, merchantStore1.getId(),Constants.PAGING);
+            resp.setRecordsTotal(pageList.getRecordsTotal());
+            resp.setRecordsFiltered(pageList.getRecordsFiltered());
+            List<ProductUsed> productUsedList = pageList.getList();
+            for (ProductUsed productUsed : productUsedList) {
+                Map entry = new HashMap();
+                entry.put("id", productUsed.getId());
+                entry.put("code", productUsed.getCode());
+                entry.put("name", productUsed.getName());
+                entry.put("type", productUsed.getType());
+                entry.put("productNum", productUsed.getProductNum());
+                entry.put("description", productUsed.getDescription());
+                entry.put("storeName", productUsed.getStore().getName());
+                entry.put("storeId", productUsed.getStore().getId());
+//                entry.put("productTypeList", ProductType.getProductTypeList());
+//                for(ProductUsedAttribute attribute : productUsed.getProductUsedAttributeList()){
+//                    attribute.setProductUsed(null);
+//                    attributes.add(attribute);
+//                }
+//                entry.put("attributeList", attributes);
+                resp.addDataEntry(entry);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOGGER.error("Error while paging products", e);
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "/product/used/listByStoreId", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    AjaxPageableResponse listByStoreId( HttpServletRequest request, PageRequest pageRequest) {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
+        String currentUser = request.getRemoteUser();
+        try {
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+
+            PageResult<ProductUsed> pageList = productUsedService.pageListByStore(pageRequest, merchantStore1.getId(), Constants.NOPAGING);
             resp.setRecordsTotal(pageList.getRecordsTotal());
             resp.setRecordsFiltered(pageList.getRecordsFiltered());
             List<ProductUsed> productUsedList = pageList.getList();
@@ -92,8 +134,9 @@ public class ProductUsedController {
     @ResponseBody
     public AjaxResponse saveUsedProduct(@Valid @RequestBody ProductUsedView productUsedView, HttpServletRequest request) throws Exception {
 //        MerchantStore merchantStore = merchantStoreService.getEntity(MerchantStore.class, productUsedView.getStoreId());
-        AjaxPageableResponse resp = new AjaxPageableResponse();
+        AjaxResponse resp = new AjaxResponse();
         if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("请先切换门店");
             return resp;
         }
@@ -121,6 +164,7 @@ public class ProductUsedController {
         AjaxResponse resp = new AjaxResponse();
         try {
             if (StringUtil.isNullOrEmpty(id.toString())) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("参数不能为空");
                 return resp;
             }
@@ -142,6 +186,7 @@ public class ProductUsedController {
         AjaxResponse resp = new AjaxResponse();
         try {
             if (StringUtil.isNullOrEmpty(parentId.toString())) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("参数不能为空");
                 return resp;
             }

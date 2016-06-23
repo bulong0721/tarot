@@ -77,6 +77,14 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
         return id;
     }
 
+    public List<DeviceUsed> getDeviceUsed() {
+        return deviceUsed;
+    }
+
+    public void setDeviceUsed(List<DeviceUsed> deviceUsed) {
+        this.deviceUsed = deviceUsed;
+    }
+
     @Override
     public void setId(Long id) {
         this.id = id;

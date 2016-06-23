@@ -15,6 +15,16 @@ public class PageRequest {
 
     private String queryName;
 
+    private int ifPagint;//是否需要分页显示list，0分页，1不分页
+
+    public int getIfPagint() {
+        return ifPagint;
+    }
+
+    public void setIfPagint(int ifPagint) {
+        this.ifPagint = ifPagint;
+    }
+
     public int getStart() {
         return start;
     }

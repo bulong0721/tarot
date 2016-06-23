@@ -117,8 +117,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             data: {
                 pageTitle: '设备管理',
                 subTitle: '设备列表',
-                datatable:'assets/views/device/deviceUsed_datatable.html',
-                editor: 'assets/views/product/product_used_editor.html'
+                datatable:'assets/views/device/device_used_datatable.html',
+                editor: 'assets/views/device/device_used_editor.html'
             }
         })
         .state('device.productUsedList', {

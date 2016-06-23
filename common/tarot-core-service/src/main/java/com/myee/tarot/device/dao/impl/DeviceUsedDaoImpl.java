@@ -35,11 +35,11 @@ public class DeviceUsedDaoImpl extends GenericEntityDaoImpl<Long, DeviceUsed> im
         PageResult<DeviceUsed> pageList = new PageResult<DeviceUsed>();
         QDeviceUsed qDeviceUsed = QDeviceUsed.deviceUsed;
         JPQLQuery<DeviceUsed> query = new JPAQuery(getEntityManager());
+        query.where(qDeviceUsed.store.id.eq(id));
         pageList.setRecordsTotal(query.from(qDeviceUsed).fetchCount());
         if(StringUtils.isNotBlank(pageRequest.getQueryName())){
             query.where(qDeviceUsed.name.like("%" + pageRequest.getQueryName() + "%"));
         }
-        query.where(qDeviceUsed.store.id.eq(id));
         pageList.setRecordsFiltered(query.fetchCount());
         pageList.setList(query.offset(pageRequest.getStart()).limit(pageRequest.getLength()).fetch());
         return pageList;

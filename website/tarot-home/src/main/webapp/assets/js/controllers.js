@@ -258,16 +258,12 @@ function merchantShopCtrl($scope, $resource, $compile, Constants) {
 
     Constants.initMgrCtrl(mgrData, $scope);
 
-    $scope.dtColumns = mgrData.columns;
-
-    $scope.dtOptions = Constants.buildOption(mgrData.api.read, function (data) {
-        angular.extend(data, $scope.where);
-    }, function (row, data, dataIndex) {
-        var elem = angular.element(row);
-        var content = elem.contents();
-        var scope = $scope;
-        $compile(content)(scope);
-    });
+    $scope.goEditorCustom = function (rowIndex) {
+        $scope.goEditor(rowIndex);
+        if (Constants.thisMerchant) {
+            $scope.formData.model={merchant: {name: Constants.thisMerchant.name}};
+        }
+    };
 }
 
 function merchantCtrl($scope, $resource, $compile, Constants) {
@@ -324,16 +320,16 @@ function merchantCtrl($scope, $resource, $compile, Constants) {
     };
     Constants.initMgrCtrl(mgrData, $scope);
 
-    $scope.dtColumns = mgrData.columns;
-
-    $scope.dtOptions = Constants.buildOption(mgrData.api.read, function (data) {
-        angular.extend(data, $scope.where);
-    }, function (row, data, dataIndex) {
-        var elem = angular.element(row);
-        var content = elem.contents();
-        var scope = $scope;
-        $compile(content)(scope);
-    });
+    //$scope.dtColumns = mgrData.columns;
+    //
+    //$scope.dtOptions = Constants.buildOption(mgrData.api.read, function (data) {
+    //    angular.extend(data, $scope.where);
+    //}, function (row, data, dataIndex) {
+    //    var elem = angular.element(row);
+    //    var content = elem.contents();
+    //    var scope = $scope;
+    //    $compile(content)(scope);
+    //});
 
 }
 
@@ -587,22 +583,133 @@ function deviceCtrl($scope, $compile, $resource, Constants) {
 
     };
 
-    Constants.initMgrCtrl(mgrData, $scope, $resource, $compile);
+    Constants.initMgrCtrl(mgrData, $scope);
 
-    //$scope.dtColumns = mgrData.columns;
-    //
-    //$scope.dtOptions = Constants.buildOption(mgrData.api.read, function (data) {
-    //    angular.extend(data, $scope.where);
-    //}, function (row, data, dataIndex) {
-    //    var elem = angular.element(row);
-    //    var content = elem.contents();
-    //    var scope = $scope;
-    //    $compile(content)(scope);
-    //});
 }
 
-function deviceUsedCtrl($scope, $compile, $resource, Constants) {
+function deviceUsedCtrl($scope,$rootScope, $compile, $resource, Constants,DTColumnBuilder,DTOptionsBuilder,$q) {
+    //绑定产品相关参数
+    var vm = $scope.showCase = {};
+    vm.selected = {};
+    vm.selectAll = false;
+    vm.toggleAll = toggleAll;
+    vm.toggleOne = toggleOne;
 
+    var titleHtml = '<input type="checkbox" ng-model="showCase.selectAll" ng-click="showCase.toggleAll(showCase.selectAll, showCase.selected)">';
+
+    vm.dtBindOptions = angular.extend(
+        {
+            ajax: {
+                url: '/product/used/listByStoreId',
+                dataSrc: "rows",
+                data: function (data,$scope) {
+                    angular.extend(data, $scope.where);
+                }
+            },
+            createdRow: function (row, data, dataIndex) {
+                $compile(angular.element(row).contents())($scope);
+            },
+            headerCallback:function(header) {
+                if (!vm.headerCompiled) {
+                    // Use this headerCompiled field to only compile header once
+                    vm.headerCompiled = true;
+                    $compile(angular.element(header).contents())($scope);
+                }
+            }
+        }, Constants.bindProductOptions
+    );
+
+    vm.dtBindColumns = [
+        DTColumnBuilder.newColumn(null).withTitle(titleHtml).notSortable()
+            .renderWith(function(data, type, full, meta) {
+                vm.selected[full.id] = false;
+                return '<input type="checkbox" ng-model="showCase.selected[' + data.id + ']" ng-click="showCase.toggleOne(showCase.selected)">';
+            }),
+        {data: 'id', visible: false},
+        {data: 'code', title: '产品编号', width: 60, sortable: true},
+        {data: 'name', title: '产品名称', width: 60, sortable: true},
+        {data: 'productNum', title: '产品版本', width: 60, sortable: true}
+    ];
+
+    function  toggleAll(selectAll, selectedItems) {
+        for (var id in selectedItems) {
+            if (selectedItems.hasOwnProperty(id)) {
+                selectedItems[id] = selectAll;
+            }
+        }
+    }
+    function  toggleOne(selectedItems) {
+        for (var id in selectedItems) {
+            if (selectedItems.hasOwnProperty(id)) {
+                if(!selectedItems[id]) {
+                    vm.selectAll = false;
+                    return;
+                }
+            }
+        }
+        vm.selectAll = true;
+    }
+
+    //-----------------------------
+    $scope.formBindData = {
+    };
+    $scope.showBindEditor = false;
+
+    $scope.goDeviceBindProductEditor = function (rowIndex) {
+        $scope.addNew = true;
+        if ($scope.dtApi && rowIndex > -1) {
+            var data = $scope.dtApi.DataTable.row(rowIndex).data();
+            $scope.formBindData.model = data;
+            $scope.formBindData.model.bindShowName = '设备名称:'+data.name+' | 门店名称:'+data.store.name+' | 主板编号:'+data.boardNo+' | 设备号:'+data.deviceNum;
+
+            //根据已关联的产品去勾选对应的checkbox
+            $scope.showCase.toggleAll(false,$scope.showCase.selected);//先取消所有checkbox的勾选状态
+            for (var value in data.productUsedList) {
+                var productId = data.productUsedList[value].id;
+                $scope.showCase.selected[productId] = true;
+                $scope.showCase.toggleOne($scope.showCase.selected);//判断全选框是否要被checked
+            }
+
+            $scope.addNew = false;
+            $scope.rowIndex = rowIndex;
+        } else {
+            $scope.formBindData.model = {};
+        }
+        $scope.showDataTable = false;
+        $scope.showEditor = true;
+        $scope.showInfoEditor = false;
+        $scope.showDetailEditor = false;
+        $scope.showBindEditor = true;
+    };
+
+    $scope.processBindSubmit = function () {
+        //var formly = scope.formDetailData;
+        //if (formly.form.$valid) {
+        //    console.log(formly.options)
+        //    formly.options.updateInitialValue();
+        //    $resource(mgrData.api.updateDetail).save({}, formly.model, saveDetailSuccess, saveFailed);
+        //}
+        var result = [];
+        angular.forEach($scope.showCase.selected, function (data,index,array) {
+            //data等价于array[index]
+            //console.log(index + data);
+            if(data == true){
+                result.push(index);
+            }
+        });
+        console.log(result)
+        //console.log($scope.formBindData.model)
+        console.log("deviceUsedId:"+$scope.formBindData.model.id)
+        $resource('/deviceUsed/bindProductUsed').save({'bindString':JSON.stringify(result),'deviceUsedId':$scope.formBindData.model.id},{},function (respSucc){
+            if (0 != respSucc.status) {
+                return;
+            }
+            $scope.goDataTable();
+        }, function (respFail){console.log(respFail);});
+        //console.log("bindSubmit")
+    };
+
+    //----------------------------
     function actionsHtml(data, type, full, meta) {
         return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></i></a>' +
             '&nbsp;<a class="m-l-xs red" ng-click="doDelete(' + meta.row + ')"><i class="btn-icon fa fa-trash-o bigger-130"></i></a>';
@@ -610,6 +717,10 @@ function deviceUsedCtrl($scope, $compile, $resource, Constants) {
 
     function detailsHtml(data, type, full, meta) {
         return '<a ng-click="goDetails(' + meta.row + ')"><i class="btn-icon fa fa-list-alt bigger-130"></a>';
+    }
+
+    function bindProductHtml(data, type, full, meta) {
+        return '<a ng-click="goDeviceBindProductEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></i></a>';
     }
 
     function getDeviceList() {
@@ -628,10 +739,11 @@ function deviceUsedCtrl($scope, $compile, $resource, Constants) {
             {data: 'store.name', title: '门店名称', width: 60, orderable: false},
             {data: 'name', title: '名称', width: 40, orderable: false},
             {data: 'heartbeat', title: '心跳', width: 40, orderable: false},
-            {data: 'boardNo', title: '牌号', width: 60, orderable: false},
+            {data: 'boardNo', title: '主板编号', width: 60, orderable: false},
             {data: 'deviceNum', title: '设备号', width: 60, orderable: false},
             {data: 'description', title: '描绘', width: 60, orderable: false},
             {data: 'device.name', title: '设备类型', width: 60, orderable: false},
+            {title: '关联产品',render: bindProductHtml, width: 60, orderable: false},
             {title: '动作', width: 35, render: actionsHtml, className: 'center'}
         ],
         fields: [
@@ -644,7 +756,7 @@ function deviceUsedCtrl($scope, $compile, $resource, Constants) {
             //{'key': 'store.id', 'type': 'select', 'templateOptions': {'label': '门店名', 'options': getStoreList()}},
             {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
             {'key': 'heartbeat', 'type': 'input', 'templateOptions': {'label': '心跳', 'placeholder': '心跳'}},
-            {'key': 'boardNo', 'type': 'input', 'templateOptions': {'label': '牌号', 'placeholder': '牌号'}},
+            {'key': 'boardNo', 'type': 'input', 'templateOptions': {'label': '主板编号', 'placeholder': '主板编号'}},
             {'key': 'deviceNum', 'type': 'input', 'templateOptions': {'label': '设备号', 'placeholder': '设备号'}},
             {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}},
             {
@@ -674,18 +786,16 @@ function deviceUsedCtrl($scope, $compile, $resource, Constants) {
 
     };
 
-    Constants.initMgrCtrl(mgrData, $scope, $resource, $compile);
+    Constants.initMgrCtrl(mgrData, $scope);
 
-    //$scope.dtColumns = mgrData.columns;
-    //
-    //$scope.dtOptions = Constants.buildOption(mgrData.api.read, function (data) {
-    //    angular.extend(data, $scope.where);
-    //}, function (row, data, dataIndex) {
-    //    var elem = angular.element(row);
-    //    var content = elem.contents();
-    //    var scope = $scope;
-    //    $compile(content)(scope);
-    //});
+    $scope.goEditorCustom = function (rowIndex) {
+        $scope.goEditor(rowIndex);
+        if (Constants.thisMerchant) {
+            $scope.formData.model={store: {name: Constants.thisMerchant.name}};
+        }
+    };
+
+
 }
 
 function productUsedCtrl($scope, $compile, Constants) {
@@ -751,7 +861,7 @@ function productUsedCtrl($scope, $compile, Constants) {
             {
                 'key': 'parentId',
                 'type': 'input',
-                'templateOptions': {'disabled': true, 'label': '父节点ID', required: true, 'placeholder': '父节点ID'}
+                'templateOptions': {'disabled': true,  required: true, 'placeholder': '父节点ID'}
             },
             {'key': 'value', 'type': 'input', 'templateOptions': {'label': '参数值', required: true, 'placeholder': '参数值'}}
         ],
@@ -760,10 +870,18 @@ function productUsedCtrl($scope, $compile, Constants) {
             update: '/product/used/save',
             updateDetail: '/product/attribute/save',
             attributeList: '/product/attribute/listByProductId',
-            attributeDelete: '/product/attribute/delete'
+            attributeDelete: '/product/attribute/delete',
+            productList:'/product/used/listByStoreId'
         }
     };
     Constants.initMgrCtrl(mgrData, $scope);
+
+    $scope.goEditorCustom = function (rowIndex) {
+        $scope.goEditor(rowIndex);
+        if (Constants.thisMerchant) {
+            $scope.formData.model={storeName: Constants.thisMerchant.name};
+        }
+    };
 
     //$scope.dtColumns = mgrData.columns;
     //

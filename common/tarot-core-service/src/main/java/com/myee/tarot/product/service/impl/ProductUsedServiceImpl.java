@@ -9,6 +9,8 @@ import com.myee.tarot.product.service.ProductUsedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by Enva on 2016/6/1.
  */
@@ -29,8 +31,13 @@ public class ProductUsedServiceImpl extends GenericEntityServiceImpl<Long, Produ
     }
 
     @Override
-    public PageResult<ProductUsed> pageListByStore(PageRequest pageRequest, Long id){
-        return productUsedDao.pageListByStore(pageRequest,id);
+    public PageResult<ProductUsed> pageListByStore(PageRequest pageRequest, Long id,int isPaging){
+        return productUsedDao.pageListByStore(pageRequest, id, isPaging);
+    }
+
+    @Override
+    public List<ProductUsed> listByIDs(List<Long> idList){
+        return productUsedDao.listByIDs(idList);
     }
 
 }

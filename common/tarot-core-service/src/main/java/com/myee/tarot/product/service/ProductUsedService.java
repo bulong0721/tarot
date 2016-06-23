@@ -5,6 +5,8 @@ import com.myee.tarot.core.service.GenericEntityService;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 
+import java.util.List;
+
 /**
  * Created by Enva on 2016/6/1.
  */
@@ -12,5 +14,7 @@ public interface ProductUsedService extends GenericEntityService<Long, ProductUs
 
     public PageResult<ProductUsed> pageList(PageRequest pageRequest);
 
-    PageResult<ProductUsed> pageListByStore(PageRequest pageRequest, Long id);
+    PageResult<ProductUsed> pageListByStore(PageRequest pageRequest, Long id,int isPaging);
+
+    List<ProductUsed> listByIDs(List<Long> idList);
 }
