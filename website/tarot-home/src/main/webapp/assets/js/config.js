@@ -43,7 +43,12 @@ function managerLoader($ocLazyLoad) {
             serie: true,
             name: 'formlyBootstrap',
             files: ['assets/js/plugins/formly/angular-formly-templates-bootstrap.js']
-        }
+        },
+        {
+            serie: true,
+            name: 'ngTable',
+            files: ['assets/js/plugins/ng-table/ng-table.js', 'assets/js/plugins/ng-table/ng-table.css']
+        },
     ]);
 }
 

@@ -12,8 +12,29 @@
 <div class="row">
     <div class="col-xs-12">
         <div class="ibox float-e-margins">
-            <table id="example" datatable="" dt-options="dtOptions" dt-instance="dtInstance" dt-columns="dtColumns"
-                   class="table table-striped table-bordered table-hover">
+            <table id="example" ng-table="tableOpts" class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th width="20%" class="center">名称</th>
+                    <th width="30%" class="center">描述</th>
+                    <th width="20%" class="center">桌型</th>
+                    <th width="20%" class="center">区域</th>
+                    <th width="10%" class="center">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="row in $data">
+                    <td>{{::row.name}}</td>
+                    <td>{{::row.description}}</td>
+                    <td class="center">{{::row.tableType.name}}</td>
+                    <td class="center">{{::row.tableZone.name}}</td>
+                    <td class="center">
+                        <a ng-click="goEditor($index)"><i class="btn-icon fa fa-pencil"></i></a>
+                        <span class="divider"></span>
+                        <a ng-click="doDelete($index)"><i class="btn-icon fa fa-trash-o"></i></a>
+                    </td>
+                </tr>
+                </tbody>
             </table>
         </div>
     </div>

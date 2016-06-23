@@ -14,21 +14,8 @@ function MainCtrl() {
 
 }
 
-function roleMgrCtrl($scope, $compile, Constants) {
-
-    function actionsHtml(data, type, full, meta) {
-        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></i></a>'
-            + '<span class="divider"></span>'
-            + '<a ng-click="doDelete(' + meta.row + ')"><i class="btn-icon fa fa-trash-o bigger-130"></i></a>';
-    }
-
-    var mgrData = {
-        columns: [
-            {data: 'id', visible: false},
-            {data: 'roleName', title: '角色名', width: 60, orderable: false},
-            {data: 'description', title: '描述', width: 100, orderable: false},
-            {title: '动作', width: 20, render: actionsHtml, orderable: false, className: 'center'}
-        ],
+function roleMgrCtrl($scope, Constants) {
+    var mgrOpts = {
         fields: [
             {
                 'key': 'roleName',
@@ -42,21 +29,11 @@ function roleMgrCtrl($scope, $compile, Constants) {
             update: '/admin/roles/save'
         }
     };
-    Constants.initMgrCtrl(mgrData, $scope);
 
-    $scope.dtColumns = mgrData.columns;
-
-    $scope.dtOptions = Constants.buildOption(mgrData.api.read, function (data) {
-        angular.extend(data, $scope.where);
-    }, function (row, data, dataIndex) {
-        var elem = angular.element(row);
-        var content = elem.contents();
-        var scope = $scope;
-        $compile(content)(scope);
-    });
+    Constants.initNgMgrCtrl(mgrOpts, $scope);
 }
 
-function userMgrCtrl($scope, Constants) {
+function userMgrCtrl1($scope, Constants) {
     function actionsHtml(data, type, full, meta) {
         return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></i></a>'
             + '<span class="divider"></span>'
@@ -120,32 +97,30 @@ function userMgrCtrl($scope, Constants) {
     Constants.initMgrCtrl(mgrData, $scope);
 }
 
-function datatablesCtrl($scope, $resource, $compile, Constants) {
+function userMgrCtrl($scope, $resource, $compile, Constants) {
     var mgrData = {
-        columns: [
-            {data: 'name', title: '名称', width: 85, orderable: false},
-            {data: 'login', title: '用户名', width: 60, orderable: false},
-            {data: 'type', title: '账号类型', width: 55, orderable: false},
-            {data: 'dateLeast', title: '最后登录时间', width: 70, orderable: false, align: 'center'},
-            {data: 'ipLeast', title: '最后登录IP', width: 70, orderable: false},
-            {data: 'phone', title: '电话号码', width: 65, orderable: false},
-            {data: 'email', title: '电子邮件', width: 100, orderable: false},
-            {data: 'active', title: '状态', width: 40, orderable: false},
-            {title: '动作', width: 35, render: actionsHtml, orderable: false, className: 'center'}
-        ],
         fields: [
-            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', 'placeholder': '名称'}},
-            {'key': 'login', 'type': 'input', 'templateOptions': {'label': '用户名', 'placeholder': '用户名'}},
-            {'key': 'type', 'type': 'input', 'templateOptions': {'label': '类型', 'placeholder': '类型'}}
+            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '昵称', required: true, 'placeholder': '昵称'}},
+            {
+                'key': 'login',
+                'type': 'input',
+                'templateOptions': {'label': '登录名', required: true, 'placeholder': '登录名'}
+            },
+            {'key': 'phoneNumber', 'type': 'input', 'templateOptions': {'label': '电话号码', 'placeholder': '电话号码'}},
+            {
+                'key': 'email',
+                'type': 'input',
+                'templateOptions': {type: 'email', 'label': '电子邮件', required: true, 'placeholder': '电子邮件'}
+            },
+            {'key': 'activeStatusFlag', 'type': 'checkbox', 'templateOptions': {'label': '状态', 'placeholder': '状态'}}
         ],
         api: {
             read: '/admin/users/paging',
             update: '/admin/users/save'
         }
-
     };
 
-    Constants.initMgrCtrl(mgrData, $scope);
+    Constants.initNgMgrCtrl(mgrData, $scope);
 
     $scope.dtColumns = mgrData.columns;
 
@@ -486,21 +461,7 @@ function explorerCtrl($scope, $resource) {
 }
 
 function tableTypeMgrCtrl($scope, Constants) {
-    function actionsHtml(data, type, full, meta) {
-        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></i></a>'
-            + '<span class="divider"></span>'
-            + '<a ng-click="doDelete(' + meta.row + ')"><i class="btn-icon fa fa-trash-o bigger-130"></i></a>';
-    }
-
     var mgrData = {
-        columns: [
-            {data: 'id', visible: false},
-            {data: 'name', title: '名称', width: 85, orderable: false},
-            {data: 'description', title: '描述', width: 60, orderable: false},
-            {data: 'capacity', title: '容纳人数', width: 70, orderable: false},
-            {data: 'minimum', title: '最小就坐', width: 70, orderable: false},
-            {title: '操作', width: 35, render: actionsHtml, orderable: false, className: 'center'}
-        ],
         fields: [
             {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
             {
@@ -521,23 +482,11 @@ function tableTypeMgrCtrl($scope, Constants) {
         }
     };
 
-    Constants.initMgrCtrl(mgrData, $scope);
+    Constants.initNgMgrCtrl(mgrData, $scope);
 }
 
 function tableZoneMgrCtrl($scope, Constants) {
-    function actionsHtml(data, type, full, meta) {
-        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></i></a>'
-                + '<span class="divider"></span>'
-             + '<a ng-click="doDelete(' + meta.row + ')"><i class="btn-icon fa fa-trash-o bigger-130"></i></a>';
-    }
-
     var mgrData = {
-        columns: [
-            {data: 'id', visible: false},
-            {data: 'name', title: '名称', width: 85, orderable: false},
-            {data: 'description', title: '描述', width: 60, orderable: false},
-            {title: '操作', width: 20, render: actionsHtml, orderable: false, className: 'center'}
-        ],
         fields: [
             {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
             {
@@ -553,29 +502,14 @@ function tableZoneMgrCtrl($scope, Constants) {
         }
     };
 
-    Constants.initMgrCtrl(mgrData, $scope);
+    Constants.initNgMgrCtrl(mgrData, $scope);
 }
 
 function tableMgrCtrl($scope, $resource, Constants) {
-    function actionsHtml(data, type, full, meta) {
-        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></i></a>'
-            + '<span class="divider"></span>'
-            + '<a ng-click="doDelete(' + meta.row + ')"><i class="btn-icon fa fa-trash-o bigger-130"></i></a>';
-    }
-
     var typeOpts = $resource('/admin/catering/type/options').query();
-
     var zoneOpts = $resource('/admin/catering/zone/options').query();
 
     var mgrData = {
-        columns: [
-            {data: 'id', visible: false},
-            {data: 'name', title: '名称', width: 85, orderable: false},
-            {data: 'description', title: '描述', width: 120, orderable: false},
-            {data: 'tableType.name', title: '桌型', width: 75, orderable: false},
-            {data: 'tableZone.name', title: '区域', width: 75, orderable: false},
-            {title: '操作', width: 35, render: actionsHtml, orderable: false, className: 'center'}
-        ],
         fields: [
             {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
             {
@@ -606,7 +540,7 @@ function tableMgrCtrl($scope, $resource, Constants) {
         }
     };
 
-    Constants.initMgrCtrl(mgrData, $scope);
+    Constants.initNgMgrCtrl(mgrData, $scope);
 }
 
 
@@ -847,7 +781,6 @@ angular
     .module('inspinia')
     .controller('deviceCtrl', deviceCtrl)
     .controller('deviceUsedCtrl', deviceUsedCtrl)
-    .controller('datatablesCtrl', datatablesCtrl)
     .controller('tableTypeMgrCtrl', tableTypeMgrCtrl)
     .controller('tableZoneMgrCtrl', tableZoneMgrCtrl)
     .controller('tableMgrCtrl', tableMgrCtrl)

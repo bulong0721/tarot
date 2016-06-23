@@ -32,17 +32,16 @@ public class TableZoneDaoImpl extends GenericEntityDaoImpl<Long, TableZone> impl
     }
 
     @Override
-    public PageResult<TableZone> pageListByStore(PageRequest pageRequest, Long id){
+    public PageResult<TableZone> pageByStore(Long id, PageRequest pageRequest){
         PageResult<TableZone> pageList = new PageResult<TableZone>();
         QTableZone qTableZone = QTableZone.tableZone;
         JPQLQuery<TableZone> query = new JPAQuery(getEntityManager());
-        pageList.setRecordsTotal(query.from(qTableZone).fetchCount());
         if(StringUtils.isNotBlank(pageRequest.getQueryName())){
             query.where(qTableZone.name.like("%" + pageRequest.getQueryName() + "%"));
         }
         query.where(qTableZone.store.id.eq(id));
-        pageList.setRecordsFiltered(query.fetchCount());
-        pageList.setList(query.offset(pageRequest.getStart()).limit(pageRequest.getLength()).fetch());
+        pageList.setRecordsTotal(query.from(qTableZone).fetchCount());
+        pageList.setList(query.offset(pageRequest.getOffset()).limit(pageRequest.getCount()).fetch());
         return pageList;
     }
 }

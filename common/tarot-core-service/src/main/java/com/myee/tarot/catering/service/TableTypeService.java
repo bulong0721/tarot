@@ -14,5 +14,5 @@ public interface TableTypeService extends GenericEntityService<Long, TableType> 
 
     List<TableType> listByStore(long storeId);
 
-    PageResult<TableType> pageListByStore(PageRequest pageRequest, Long id);
+    PageResult<TableType> pageByStore(Long id, PageRequest pageRequest);
 }

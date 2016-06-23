@@ -115,11 +115,7 @@ public class TableController {
             return resp;
         }
         MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
-
-        PageResult<TableType> pageList = typeService.pageListByStore(pageRequest, merchantStore1.getId());
-        resp.setRecordsTotal(pageList.getRecordsTotal());
-        resp.setRecordsFiltered(pageList.getRecordsFiltered());
-
+        PageResult<TableType> pageList = typeService.pageByStore(merchantStore1.getId(), pageRequest);
         List<TableType> typeList = pageList.getList();
         for (TableType type : typeList) {
             Map entry = new HashMap();
@@ -130,6 +126,7 @@ public class TableController {
             entry.put("minimum", type.getMinimum());
             resp.addDataEntry(entry);
         }
+        resp.setRecordsTotal(pageList.getRecordsTotal());
         return resp;
     }
 
@@ -200,10 +197,7 @@ public class TableController {
         }
         MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
 
-        PageResult<TableZone> pageList = zoneService.pageListByStore(pageRequest, merchantStore1.getId());
-        resp.setRecordsTotal(pageList.getRecordsTotal());
-        resp.setRecordsFiltered(pageList.getRecordsFiltered());
-
+        PageResult<TableZone> pageList = zoneService.pageByStore(merchantStore1.getId(), pageRequest);
         List<TableZone> typeList = pageList.getList();
         for (TableZone zone : typeList) {
             Map entry = new HashMap();
@@ -212,6 +206,9 @@ public class TableController {
             entry.put("description", zone.getDescription());
             resp.addDataEntry(entry);
         }
+
+        resp.setRecordsTotal(pageList.getRecordsTotal());
+
         return resp;
     }
 
@@ -283,11 +280,7 @@ public class TableController {
             return resp;
         }
         MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
-
-        PageResult<Table> pageList = tableService.pageListByStore(pageRequest, merchantStore1.getId());
-        resp.setRecordsTotal(pageList.getRecordsTotal());
-        resp.setRecordsFiltered(pageList.getRecordsFiltered());
-
+        PageResult<Table> pageList = tableService.pageByStore(merchantStore1.getId(), pageRequest);
 
         List<Table> typeList = pageList.getList();
         for (Table table : typeList) {
@@ -299,6 +292,8 @@ public class TableController {
             entry.put("tableZone", new ZoneDTO(table.getTableZone()));
             resp.addDataEntry(entry);
         }
+        resp.setRecordsTotal(pageList.getRecordsTotal());
+        resp.setRecordsFiltered(pageList.getRecordsFiltered());
         return resp;
     }
 

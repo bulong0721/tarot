@@ -1,7 +1,7 @@
 /**
  * Created by Martin on 2016/4/12.
  */
-function constServiceCtor($filter, $compile, $resource, $state, $q) {
+function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParams) {
     var vm = this;
 
     vm.sizeFormatter = function (value, opts, row) {
@@ -34,7 +34,7 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
         info: true,
         searching: false,
         lengthChange: false,
-        serverSide: true,
+        serverSide: false,
         pagingType: "simple_numbers",
         pageLength: 10,
         deferLoading: 0,
@@ -471,8 +471,84 @@ function constServiceCtor($filter, $compile, $resource, $state, $q) {
             }
         };
 
-    }
-    ;
+    };
+
+    vm.initNgMgrCtrl = function(mgrOpts, scope) {
+        scope.where = {};
+        scope.formData = {
+            fields: mgrOpts.fields
+        };
+        scope.showDataTable = true;
+        scope.showEditor = false;
+
+        scope.goDataTable = function () {
+            scope.showDataTable = true;
+            scope.showEditor = false;
+        };
+
+        scope.goEditor = function (rowIndex) {
+            if (rowIndex > -1) {
+                var data = scope.tableOpts.data[rowIndex];
+                scope.formData.model = data;
+            } else {
+                scope.formData.model = {};
+            }
+            scope.rowIndex = rowIndex;
+            scope.showDataTable = false;
+            scope.showEditor = true;
+        };
+
+        scope.doDelete = function (rowIndex) {
+            if (mgrOpts.api.delete && rowIndex > -1) {
+                var data = scope.tableOpts.data[rowIndex];
+                $resource(mgrOpts.api.delete).save({}, data, saveSuccess, saveFailed);
+            }
+        };
+
+        function saveSuccess(response) {
+            if (0 != response.status) {
+                return;
+            }
+            var data = scope.formData.model;
+            if (scope.rowIndex > -1) {
+                scope.tableOpts.data.splice(scope.rowIndex, 1, data);
+            } else {
+                scope.tableOpts.data.splice(0, 0, data);
+            }
+            scope.goDataTable();
+        }
+
+        function saveFailed(response) {
+        }
+
+        scope.processSubmit = function () {
+            var formly = scope.formData;
+            if (formly.form.$valid) {
+                formly.options.updateInitialValue();
+                var xhr = $resource(mgrOpts.api.update);
+                xhr.save({}, formly.model).$promise.then(saveSuccess, saveFailed);
+            }
+        };
+
+        scope.tableOpts = new NgTableParams({}, {
+            getData: function (params) {
+                if (!scope.loadByInit) {
+                    return [];
+                }
+                var xhr = $resource(mgrOpts.api.read);
+                var args = angular.extend(params.url(), scope.where);
+                return xhr.get(args).$promise.then(function (data) {
+                    params.total(data.recordsTotal);
+                    return data.rows;
+                });
+            }
+        });
+
+        scope.search = function () {
+            scope.loadByInit = true;
+            scope.tableOpts.reload();
+        };
+    };
 }
 
 angular

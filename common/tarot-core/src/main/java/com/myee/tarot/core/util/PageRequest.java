@@ -5,6 +5,10 @@ package com.myee.tarot.core.util;
  */
 public class PageRequest {
 
+    private int count;
+
+    private int page;
+
     private int start;
 
     private int length;
@@ -32,6 +36,29 @@ public class PageRequest {
     }
 
     public void setQueryName(String queryName) {
-        this.queryName = queryName ;
+        this.queryName = queryName;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public int getOffset() {
+        if (page > 0) {
+            return (page - 1) * count;
+        }
+        return 0;
     }
 }

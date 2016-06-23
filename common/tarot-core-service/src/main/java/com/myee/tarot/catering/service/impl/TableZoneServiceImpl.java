@@ -31,7 +31,7 @@ public class TableZoneServiceImpl extends GenericEntityServiceImpl<Long, TableZo
     }
 
     @Override
-    public PageResult<TableZone> pageListByStore(PageRequest pageRequest, Long id){
-        return tableZoneDao.pageListByStore(pageRequest,id);
+    public PageResult<TableZone> pageByStore(Long id, PageRequest pageRequest){
+        return tableZoneDao.pageByStore(id, pageRequest);
     }
 }

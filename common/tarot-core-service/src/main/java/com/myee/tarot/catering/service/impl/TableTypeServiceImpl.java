@@ -31,7 +31,7 @@ public class TableTypeServiceImpl extends GenericEntityServiceImpl<Long, TableTy
     }
 
     @Override
-    public PageResult<TableType> pageListByStore(PageRequest pageRequest, Long id){
-        return tableTypeDao.pageListByStore(pageRequest,id);
+    public PageResult<TableType> pageByStore(Long id, PageRequest pageRequest){
+        return tableTypeDao.pageByStore(id, pageRequest);
     }
 }

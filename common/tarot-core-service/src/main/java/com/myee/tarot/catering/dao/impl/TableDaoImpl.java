@@ -32,17 +32,16 @@ public class TableDaoImpl extends GenericEntityDaoImpl<Long, Table> implements T
     }
 
     @Override
-    public PageResult<Table> pageListByStore(PageRequest pageRequest, Long id){
+    public PageResult<Table> pageByStore(Long id, PageRequest pageRequest){
         PageResult<Table> pageList = new PageResult<Table>();
         QTable qTable = QTable.table;
         JPQLQuery<Table> query = new JPAQuery(getEntityManager());
-        pageList.setRecordsTotal(query.from(qTable).fetchCount());
         if(StringUtils.isNotBlank(pageRequest.getQueryName())){
             query.where(qTable.name.like("%" + pageRequest.getQueryName() + "%"));
         }
         query.where(qTable.store.id.eq(id));
-        pageList.setRecordsFiltered(query.fetchCount());
-        pageList.setList(query.offset(pageRequest.getStart()).limit(pageRequest.getLength()).fetch());
+        pageList.setRecordsTotal(query.from(qTable).fetchCount());
+        pageList.setList(query.offset(pageRequest.getOffset()).limit(pageRequest.getCount()).fetch());
         return pageList;
     }
 }
