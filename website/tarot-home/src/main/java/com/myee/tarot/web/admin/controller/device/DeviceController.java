@@ -46,8 +46,6 @@ public class DeviceController {
         try {
             PageResult<Device> pageList = deviceService.pageList(pageRequest);
             List<Device> deviceList = pageList.getList();
-            resp.setRecordsTotal(pageList.getRecordsTotal());
-            resp.setRecordsFiltered(pageList.getRecordsFiltered());
             for (Device device : deviceList) {
                 Map entry = new HashMap();
                 entry.put("id",device.getId());
@@ -56,6 +54,8 @@ public class DeviceController {
                 entry.put("description",device.getDescription());
                 resp.addDataEntry(entry);
             }
+            resp.setRecordsTotal(pageList.getRecordsTotal());
+            resp.setRecordsFiltered(pageList.getRecordsFiltered());
         } catch (Exception e) {
             LOGGER.error("Error while paging products", e);
         }

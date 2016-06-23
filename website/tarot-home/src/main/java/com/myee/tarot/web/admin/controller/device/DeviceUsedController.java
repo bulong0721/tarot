@@ -61,8 +61,6 @@ public class DeviceUsedController {
 
             PageResult<DeviceUsed> pageResult = deviceUsedService.pageListByStore(pageRequest, merchantStore1.getId());
             List<DeviceUsed> deviceUsedList = pageResult.getList();
-            resp.setRecordsTotal(pageResult.getRecordsTotal());
-            resp.setRecordsFiltered(pageResult.getRecordsFiltered());
             for (DeviceUsed deviceUsed : deviceUsedList) {
                 Map entry = new HashMap();
                 entry.put("id",deviceUsed.getId());
@@ -75,6 +73,8 @@ public class DeviceUsedController {
                 entry.put("device",deviceUsed.getDevice());
                 resp.addDataEntry(entry);
             }
+            resp.setRecordsTotal(pageResult.getRecordsTotal());
+            resp.setRecordsFiltered(pageResult.getRecordsFiltered());
         } catch (Exception e) {
             LOGGER.error("Error while paging products", e);
         }
