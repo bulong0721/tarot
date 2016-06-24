@@ -14,7 +14,7 @@ public interface ProductUsedService extends GenericEntityService<Long, ProductUs
 
     public PageResult<ProductUsed> pageList(PageRequest pageRequest);
 
-    PageResult<ProductUsed> pageListByStore(PageRequest pageRequest, Long id,int isPaging);
+    PageResult<ProductUsed> pageByStore(Long id, PageRequest pageRequest);
 
     List<ProductUsed> listByIDs(List<Long> idList);
 }

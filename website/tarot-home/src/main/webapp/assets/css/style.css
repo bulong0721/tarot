@@ -10016,13 +10016,18 @@ th.center, td.center {
 }
 
 .blue {
-    color: #478fca!important
+    color: #478fca !important
 }
 
 .red {
-    color: #dd5a43!important;
+    color: #dd5a43 !important;
 }
 
 .green {
-    color: #69aa46!important;
+    color: #69aa46 !important;
+}
+
+.table {
+    width: 100%;
+    max-width: 100%;
 }

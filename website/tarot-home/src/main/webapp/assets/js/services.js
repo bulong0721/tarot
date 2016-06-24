@@ -72,7 +72,7 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
         info: true,
         searching: true,
         lengthChange: true,
-        serverSide: false,
+        serverSide: true,
         pagingType: "simple_numbers",
         pageLength: 10,
         deferLoading: 0,
@@ -491,11 +491,12 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
         scope.goEditor = function (rowIndex) {
             if (rowIndex > -1) {
                 var data = scope.tableOpts.data[rowIndex];
-                scope.formData.model = data;
+                scope.formData.model = angular.copy(data);
+                scope.rowIndex = rowIndex;
             } else {
                 scope.formData.model = {};
+                scope.rowIndex = -1;
             }
-            scope.rowIndex = rowIndex;
             scope.showDataTable = false;
             scope.showEditor = true;
         };
@@ -512,10 +513,10 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
                 return;
             }
             var data = scope.formData.model;
-            if (scope.rowIndex > -1) {
-                scope.tableOpts.data.splice(scope.rowIndex, 1, data);
-            } else {
+            if (scope.rowIndex < 0)  {
                 scope.tableOpts.data.splice(0, 0, data);
+            } else {
+                scope.tableOpts.data.splice(scope.rowIndex, 1, data);
             }
             scope.goDataTable();
         }

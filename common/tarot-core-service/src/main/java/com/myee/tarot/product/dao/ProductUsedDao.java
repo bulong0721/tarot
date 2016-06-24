@@ -16,7 +16,7 @@ public interface ProductUsedDao extends GenericEntityDao<Long, ProductUsed> {
 
     PageResult<ProductUsed> pageList(PageRequest pageRequest);
 
-    PageResult<ProductUsed> pageListByStore(PageRequest pageRequest, Long id,int isPaging);
+    PageResult<ProductUsed> pageByStore(Long id, PageRequest pageRequest);
 
     List<ProductUsed> listByIDs(List<Long>idList);
 }

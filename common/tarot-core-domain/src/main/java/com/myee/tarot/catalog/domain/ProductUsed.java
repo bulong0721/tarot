@@ -49,10 +49,9 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
             inverseJoinColumns = {@JoinColumn(name = "DEVICE_USED_ID", nullable = false)}
     )
     protected List<DeviceUsed> deviceUsed;
-//    @OneToMany(mappedBy = "productUsed", targetEntity = ProductUsedAttribute.class, fetch = FetchType.LAZY)
-////    @MapKey(name = "name")
-////    protected Map<String, ProductUsedAttribute> productUsedAttribute = new HashMap<String, ProductUsedAttribute>();
-//    protected List<ProductUsedAttribute> productUsedAttributeList = new ArrayList<ProductUsedAttribute>();
+
+    @OneToMany(mappedBy = "productUsed", targetEntity = ProductUsedAttribute.class, fetch = FetchType.LAZY)
+    protected List<ProductUsedAttribute> attributes = new ArrayList<ProductUsedAttribute>();
 
 //    @OneToMany(targetEntity = DeviceUsed.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
 //    @JoinTable(name = "C_PRODUCT_USED_DEV_XREF",
@@ -119,13 +118,13 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
         this.description = description;
     }
 
-//    public List<ProductUsedAttribute> getProductUsedAttributeList() {
-//        return productUsedAttributeList;
-//    }
-//
-//    public void setProductUsedAttributeList(List<ProductUsedAttribute> productUsedAttributeList) {
-//        this.productUsedAttributeList = productUsedAttributeList;
-//    }
+    public List<ProductUsedAttribute> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<ProductUsedAttribute> attributes) {
+        this.attributes = attributes;
+    }
 
     public String getProductNum() {
         return productNum;

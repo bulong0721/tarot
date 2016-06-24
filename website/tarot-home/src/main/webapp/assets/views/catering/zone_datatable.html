@@ -22,8 +22,8 @@
                 </thead>
                 <tbody>
                 <tr ng-repeat="row in $data">
-                    <td>{{::row.name}}</td>
-                    <td>{{::row.description}}</td>
+                    <td>{{row.name}}</td>
+                    <td>{{row.description}}</td>
                     <td class="center">
                         <a ng-click="goEditor($index)"><i class="btn-icon fa fa-pencil"></i></a>
                         <span class="divider"></span>

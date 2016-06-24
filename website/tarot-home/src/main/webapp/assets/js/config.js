@@ -121,15 +121,15 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
                 editor: 'assets/views/device/device_used_editor.html'
             }
         })
-        .state('device.productUsedList', {
-            url: "/productUsedList",
+        .state('device.product', {
+            url: "/product",
             templateUrl: "assets/views/manager.html",
             controller: 'productUsedCtrl',
             data: {
                 pageTitle: '产品管理',
                 subTitle: '产品管理',
-                datatable: 'assets/views/product/product_used_datatable.html',
-                editor: 'assets/views/product/product_used_editor.html'
+                datatable: 'assets/views/device/product_used_datatable.html',
+                editor: 'assets/views/device/product_used_editor.html'
             }
         })
         .state('explorer', {

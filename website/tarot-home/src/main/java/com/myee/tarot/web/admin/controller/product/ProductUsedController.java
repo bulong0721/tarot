@@ -1,5 +1,7 @@
 package com.myee.tarot.web.admin.controller.product;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.myee.tarot.catalog.domain.ProductUsed;
 import com.myee.tarot.catalog.domain.ProductUsedAttribute;
 import com.myee.tarot.catalog.type.ProductType;
@@ -10,7 +12,6 @@ import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
-import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.product.service.ProductUsedAttributeService;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -59,9 +61,7 @@ public class ProductUsedController {
             }
             MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
 
-            PageResult<ProductUsed> pageList = productUsedService.pageListByStore(pageRequest, merchantStore1.getId(),Constants.PAGING);
-            resp.setRecordsTotal(pageList.getRecordsTotal());
-            resp.setRecordsFiltered(pageList.getRecordsFiltered());
+            PageResult<ProductUsed> pageList = productUsedService.pageByStore(merchantStore1.getId(), pageRequest);
             List<ProductUsed> productUsedList = pageList.getList();
             for (ProductUsed productUsed : productUsedList) {
                 Map entry = new HashMap();
@@ -71,16 +71,17 @@ public class ProductUsedController {
                 entry.put("type", productUsed.getType());
                 entry.put("productNum", productUsed.getProductNum());
                 entry.put("description", productUsed.getDescription());
-                entry.put("storeName", productUsed.getStore().getName());
-                entry.put("storeId", productUsed.getStore().getId());
-//                entry.put("productTypeList", ProductType.getProductTypeList());
-//                for(ProductUsedAttribute attribute : productUsed.getProductUsedAttributeList()){
-//                    attribute.setProductUsed(null);
-//                    attributes.add(attribute);
-//                }
-//                entry.put("attributeList", attributes);
+                List<AttributeDTO> attributeDTOs = Lists.transform(productUsed.getAttributes(), new Function<ProductUsedAttribute, AttributeDTO>() {
+                    @Nullable
+                    @Override
+                    public AttributeDTO apply(ProductUsedAttribute input) {
+                        return new AttributeDTO(input);
+                    }
+                });
+                entry.put("attributes", attributeDTOs);
                 resp.addDataEntry(entry);
             }
+            resp.setRecordsTotal(pageList.getRecordsTotal());
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error("Error while paging products", e);
@@ -101,9 +102,7 @@ public class ProductUsedController {
             }
             MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
 
-            PageResult<ProductUsed> pageList = productUsedService.pageListByStore(pageRequest, merchantStore1.getId(), Constants.NOPAGING);
-            resp.setRecordsTotal(pageList.getRecordsTotal());
-            resp.setRecordsFiltered(pageList.getRecordsFiltered());
+            PageResult<ProductUsed> pageList = productUsedService.pageByStore(merchantStore1.getId(), pageRequest);
             List<ProductUsed> productUsedList = pageList.getList();
             for (ProductUsed productUsed : productUsedList) {
                 Map entry = new HashMap();
@@ -113,16 +112,17 @@ public class ProductUsedController {
                 entry.put("type", productUsed.getType());
                 entry.put("productNum", productUsed.getProductNum());
                 entry.put("description", productUsed.getDescription());
-                entry.put("storeName", productUsed.getStore().getName());
-                entry.put("storeId", productUsed.getStore().getId());
-//                entry.put("productTypeList", ProductType.getProductTypeList());
-//                for(ProductUsedAttribute attribute : productUsed.getProductUsedAttributeList()){
-//                    attribute.setProductUsed(null);
-//                    attributes.add(attribute);
-//                }
-//                entry.put("attributeList", attributes);
+                List<AttributeDTO> attributeDTOs = Lists.transform(productUsed.getAttributes(), new Function<ProductUsedAttribute, AttributeDTO>() {
+                    @Nullable
+                    @Override
+                    public AttributeDTO apply(ProductUsedAttribute input) {
+                        return new AttributeDTO(input);
+                    }
+                });
+                entry.put("attributes", attributeDTOs);
                 resp.addDataEntry(entry);
             }
+            resp.setRecordsTotal(pageList.getRecordsTotal());
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error("Error while paging products", e);
@@ -150,26 +150,28 @@ public class ProductUsedController {
 
     @RequestMapping(value = "/product/attribute/save", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse saveAttribute(@Valid @RequestBody ProductUsedAttributeView productUsedAttributeView, HttpServletRequest request) throws Exception {
-        ProductUsed productUsed = productUsedService.getEntity(ProductUsed.class, productUsedAttributeView.getParentId());
-        ProductUsedAttribute productUsedAttribute = new ProductUsedAttribute(productUsedAttributeView);
-        productUsedAttribute.setProductUsed(productUsed);
-        productUsedAttributeService.update(productUsedAttribute);
+    public AjaxResponse saveAttribute(@ModelAttribute ProductUsed product, @Valid @RequestBody ProductUsedAttribute attribute, HttpServletRequest request) throws Exception {
+        ProductUsedAttribute entity = attribute;
+        if (null != attribute.getId()) {
+            entity = productUsedAttributeService.findById(attribute.getId());
+            entity.setName(attribute.getName());
+            entity.setValue(attribute.getValue());
+        } else {
+            entity.setProductUsed(product);
+        }
+        productUsedAttributeService.update(entity);
         return AjaxResponse.success();
     }
 
-    @RequestMapping(value = "/product/attribute/delete", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/product/attribute/delete", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse deleteAttributeProduct(@RequestParam Long id, HttpServletRequest request) throws Exception {
+    public AjaxResponse deleteAttributeProduct(@Valid @RequestBody ProductUsedAttribute attribute,  HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
-            if (StringUtil.isNullOrEmpty(id.toString())) {
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-                resp.setErrorString("参数不能为空");
-                return resp;
+            if (null != attribute.getId()) {
+                ProductUsedAttribute entity = productUsedAttributeService.findById(attribute.getId());
+                productUsedAttributeService.delete(entity);
             }
-            ProductUsedAttribute productUsedAttribute = productUsedAttributeService.getEntity(ProductUsedAttribute.class, id);
-            productUsedAttributeService.delete(productUsedAttribute);
             return AjaxResponse.success();
         } catch (Exception e) {
             e.printStackTrace();
