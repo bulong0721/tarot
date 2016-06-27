@@ -10031,3 +10031,22 @@ th.center, td.center {
     width: 100%;
     max-width: 100%;
 }
+
+
+/*====================================new style====================================*/
+.wrapper-content {padding: 15px 0px 20px;}
+.textAlign {text-align: center; background: #fff;}
+
+.c_formly_line {margin: 10px 0;}
+.c_formly_line .form-group {overflow: hidden;}
+.c_formly_line label {margin: 0; text-align: right; padding: 6px 0;}
+.c_formly_line input ,.c_formly_line select {width: 450px}
+.c_formly_line .radio-group .radio {display: inline-block;margin: 0 10px 10px 20px;}
+.c_formly_line .radio-group input,.c_formly_line .checkbox input {width: auto;}
+.c_formly_line .checkbox {margin: 0 0 0 20px;}
+
+.file-box {float: none; display: inline-block;}
+.search-input {margin: 0em 1em;display: block;padding: 4px;border-radius: 5px;border: 1px solid silver;}
+.nav-bareheaded {display: none;}
+.ngtables {overflow: hidden;}
+.ngtables .pagination {margin: 0;}

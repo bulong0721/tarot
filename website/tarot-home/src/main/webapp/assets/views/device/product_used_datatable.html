@@ -25,6 +25,9 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr>
+                    <td colspan="8" class="textAlign" ng-if="$data.length<=0">请先搜索数据</td>
+                </tr>
                 <tr ng-repeat-start="row in $data">
                     <td class="center"><a ng-click="row.showDetail=!row.showDetail"><i class="btn-icon fa fa-bars"></i></a></td>
                     <td>{{::row.code}}</td>
@@ -33,7 +36,7 @@
                     <td>{{::row.productNum}}</td>
                     <td>{{::row.description}}</td>
                     <td class="center">
-                        <a ng-click="goEditor($index)"><i class="btn-icon fa fa-pencil"></i></a>
+                        <a ng-click="goEditorCustom($index)"><i class="btn-icon fa fa-pencil"></i></a>
                         <span class="divider"></span>
                         <a ng-click="doDelete($index)"><i class="btn-icon fa fa-trash-o"></i></a>
                     </td>
