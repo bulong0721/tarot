@@ -23,7 +23,7 @@
 
 <!-- ControllerAs syntax -->
 <!-- Main controller with serveral data used in Inspinia theme on diferent view -->
-<body ng-controller="MainCtrl as main">
+<body ng-controller="mainCtrl as main">
 
 <!-- Main view  -->
 <div ui-view></div>
