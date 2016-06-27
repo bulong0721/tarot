@@ -27,12 +27,16 @@ public class DeviceDaoImpl extends GenericEntityDaoImpl<Long, Device> implements
         PageResult<Device> pageList = new PageResult<Device>();
         QDevice qDevice = QDevice.device;
         JPQLQuery<Device> query = new JPAQuery(getEntityManager());
-        pageList.setRecordsTotal(query.from(qDevice).fetchCount());
+
         if(StringUtils.isNotBlank(pageRequest.getQueryName())){
             query.where(qDevice.name.like("%" + pageRequest.getQueryName() + "%"));
         }
-        pageList.setRecordsFiltered(query.fetchCount());
-        pageList.setList(query.offset(pageRequest.getStart()).limit(pageRequest.getLength()).fetch());
+        pageList.setRecordsTotal(query.from(qDevice).fetchCount());
+        pageList.setRecordsFiltered(query.from(qDevice).fetchCount());
+        if( pageRequest.getLength() > 0){
+            query.offset(pageRequest.getStart()).limit(pageRequest.getLength());
+        }
+        pageList.setList(query.fetch());
         return pageList;
     }
 }

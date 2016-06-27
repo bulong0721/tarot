@@ -16,9 +16,9 @@ public interface MerchantStoreService extends GenericEntityService<Long, Merchan
 
     Long getCountById(Long id);
 
-    List<MerchantStore> listByMerchant(Long id);
+//    List<MerchantStore> listByMerchant(Long id);
 
-    PageResult<MerchantStore> pageListByMerchant(PageRequest pageRequest, Long id);
+    PageResult<MerchantStore> pageListByMerchant(Long id,PageRequest pageRequest );
 
     Long getCountById(Long merchantStoreId, Long merchantId);
 }

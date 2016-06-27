@@ -69,10 +69,10 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
 
     //关联设备产品时的option
     vm.bindProductOptions = {
-        info: true,
-        searching: true,
-        lengthChange: true,
-        serverSide: true,
+        info: true,//开启显示信息
+        searching: true,//开启搜索框
+        lengthChange: true,//开启每页显示多少行切换
+        serverSide: false,//客户端模式
         pagingType: "simple_numbers",
         pageLength: 10,
         deferLoading: 0,
@@ -534,6 +534,7 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
         };
 
         scope.tableOpts = new NgTableParams({}, {
+            counts: [],
             getData: function (params) {
                 if (!scope.loadByInit) {
                     return [];

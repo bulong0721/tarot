@@ -16,32 +16,24 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class DeviceUsedDaoImpl extends GenericEntityDaoImpl<Long, DeviceUsed> implements DeviceUsedDao {
-    @Override
-    public PageResult<DeviceUsed> pageList(PageRequest pageRequest) {
-        PageResult<DeviceUsed> pageList = new PageResult<DeviceUsed>();
-        QDeviceUsed qDeviceUsed = QDeviceUsed.deviceUsed;
-        JPQLQuery<DeviceUsed> query = new JPAQuery(getEntityManager());
-        pageList.setRecordsTotal(query.from(qDeviceUsed).fetchCount());
-        if(StringUtils.isNotBlank(pageRequest.getQueryName())){
-            query.where(qDeviceUsed.name.like("%" + pageRequest.getQueryName() + "%"));
-        }
-        pageList.setRecordsFiltered(query.fetchCount());
-        pageList.setList(query.offset(pageRequest.getStart()).limit(pageRequest.getLength()).fetch());
-        return pageList;
-    }
 
     @Override
-    public PageResult<DeviceUsed> pageListByStore(PageRequest pageRequest, Long id){
+    public PageResult<DeviceUsed> pageListByStore(Long id,PageRequest pageRequest){
         PageResult<DeviceUsed> pageList = new PageResult<DeviceUsed>();
         QDeviceUsed qDeviceUsed = QDeviceUsed.deviceUsed;
         JPQLQuery<DeviceUsed> query = new JPAQuery(getEntityManager());
-        query.where(qDeviceUsed.store.id.eq(id));
-        pageList.setRecordsTotal(query.from(qDeviceUsed).fetchCount());
+        if(id != null) {
+            query.where(qDeviceUsed.store.id.eq(id));
+        }
         if(StringUtils.isNotBlank(pageRequest.getQueryName())){
             query.where(qDeviceUsed.name.like("%" + pageRequest.getQueryName() + "%"));
         }
-        pageList.setRecordsFiltered(query.fetchCount());
-        pageList.setList(query.offset(pageRequest.getStart()).limit(pageRequest.getLength()).fetch());
+        pageList.setRecordsTotal(query.from(qDeviceUsed).fetchCount());
+        pageList.setRecordsFiltered(query.from(qDeviceUsed).fetchCount());
+        if( pageRequest.getLength() > 0){
+            query.offset(pageRequest.getStart()).limit(pageRequest.getLength());
+        }
+        pageList.setList(query.fetch());
         return pageList;
     }
 }

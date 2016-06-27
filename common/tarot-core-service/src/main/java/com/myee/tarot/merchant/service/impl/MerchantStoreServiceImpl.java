@@ -34,10 +34,10 @@ public class MerchantStoreServiceImpl extends GenericEntityServiceImpl<Long, Mer
         return storeDaoDao.getCountById(merchantStoreId, merchantId);
     }
 
-    @Override
-    public List<MerchantStore> listByMerchant(Long id){
-        return storeDaoDao.listByMerchant(id);
-    }
+//    @Override
+//    public List<MerchantStore> listByMerchant(Long id){
+//        return storeDaoDao.listByMerchant(id);
+//    }
 
     @Override
     public MerchantStore getByCode(String storeCode) {
@@ -45,7 +45,7 @@ public class MerchantStoreServiceImpl extends GenericEntityServiceImpl<Long, Mer
     }
 
     @Override
-    public PageResult<MerchantStore> pageListByMerchant(PageRequest pageRequest, Long id){
-        return storeDaoDao.pageListByMerchant(pageRequest, id);
+    public PageResult<MerchantStore> pageListByMerchant(Long id,PageRequest pageRequest ){
+        return storeDaoDao.pageListByMerchant(id,pageRequest);
     }
 }

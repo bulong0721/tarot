@@ -52,6 +52,16 @@ function managerLoader($ocLazyLoad) {
     ]);
 }
 
+//动态加载controller
+function ctrlManagerLoader(oclazyload,ctrl) {
+    return oclazyload.load([
+        {
+            name: 'inspinia',//属于哪个模块
+            files: ['assets/apps/'+ctrl+'.js']
+        }
+    ])
+}
+
 function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
     $urlRouterProvider.otherwise("/merchant/shop");
 
@@ -76,8 +86,13 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             data: {
                 pageTitle: '门店管理',
                 subTitle: '门店管理',
-                datatable: 'assets/views/merchant/shop_datatable.html',
+                datatable: 'assets/apps/merchant/view/shop_datatable.html',
                 editor: 'assets/views/formly/basic_editor.html'
+            },
+            resolve: {
+                loadPlugin: function($ocLazyLoad){
+                    return ctrlManagerLoader($ocLazyLoad,'merchant/controller/shopCtrl');
+                }
             }
         })
         .state('merchant.merchant', {
@@ -87,8 +102,13 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             data: {
                 pageTitle: '门店管理',
                 subTitle: '商户管理',
-                datatable:'assets/views/merchant/merchant_datatable.html',
+                datatable:'assets/apps/merchant/view/merchant_datatable.html',
                 editor: 'assets/views/formly/basic_editor.html'
+            },
+            resolve: {
+                loadPlugin: function($ocLazyLoad){
+                    return ctrlManagerLoader($ocLazyLoad,'merchant/controller/merchantCtrl')
+                }
             }
         })
         .state('device', {
@@ -101,24 +121,34 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         })
         .state('device.type', {
             url: "/type",
-            templateUrl: "assets/views/device/type.html",
+            templateUrl: "assets/views/manager.html",
             controller: 'deviceCtrl',
             data: {
                 pageTitle: '设备管理',
                 subTitle:'设备类型',
-                datatable:'assets/views/device/device_datatable.html',
-                editor: 'assets/views/product/product_used_editor.html'
+                datatable:'assets/apps/device/view/device_datatable.html',
+                editor: 'assets/apps/device/view/product_used_editor.html'
+            },
+            resolve: {
+                loadPlugin: function($ocLazyLoad){
+                    return ctrlManagerLoader($ocLazyLoad,'device/controller/deviceCtrl');
+                }
             }
         })
         .state('device.list', {
             url: "/list",
-            templateUrl: "assets/views/device/list.html",
+            templateUrl: "assets/views/manager.html",
             controller: "deviceUsedCtrl",
             data: {
                 pageTitle: '设备管理',
                 subTitle: '设备列表',
-                datatable:'assets/views/device/device_used_datatable.html',
-                editor: 'assets/views/device/device_used_editor.html'
+                datatable:'assets/apps/device/view/device_used_datatable.html',
+                editor: 'assets/apps/device/view/device_used_editor.html'
+            },
+            resolve: {
+                loadPlugin: function($ocLazyLoad){
+                    return ctrlManagerLoader($ocLazyLoad,'device/controller/deviceUsedCtrl');
+                }
             }
         })
         .state('device.product', {
@@ -128,8 +158,13 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             data: {
                 pageTitle: '产品管理',
                 subTitle: '产品管理',
-                datatable: 'assets/views/device/product_used_datatable.html',
-                editor: 'assets/views/device/product_used_editor.html'
+                datatable: 'assets/apps/device/view/product_used_datatable.html',
+                editor: 'assets/apps/device/view/product_used_editor.html'
+            },
+            resolve: {
+                loadPlugin: function($ocLazyLoad){
+                    return ctrlManagerLoader($ocLazyLoad,'device/controller/productUsedCtrl');
+                }
             }
         })
         .state('explorer', {

@@ -10,7 +10,5 @@ import com.myee.tarot.core.util.PageResult;
  */
 public interface DeviceUsedService extends GenericEntityService<Long, DeviceUsed> {
 
-    PageResult<DeviceUsed> pageList(PageRequest pageRequest);
-
-    PageResult<DeviceUsed> pageListByStore(PageRequest pageRequest, Long id);
+    PageResult<DeviceUsed> pageListByStore(Long id,PageRequest pageRequest );
 }

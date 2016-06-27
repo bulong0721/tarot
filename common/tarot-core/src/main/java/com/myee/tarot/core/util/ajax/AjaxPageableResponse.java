@@ -3,9 +3,9 @@ package com.myee.tarot.core.util.ajax;
 import java.util.Map;
 
 public class AjaxPageableResponse extends AjaxResponse {
-    private long draw;
+    private long draw;//对于ng-table来说可以删除，datatables有用
     private long recordsTotal;
-    private long recordsFiltered;
+    private long recordsFiltered;//对于ng-table来说可以删除，datatables有用
 
     @Override
     public void addDataEntry(Map<String, Object> dataEntry) {

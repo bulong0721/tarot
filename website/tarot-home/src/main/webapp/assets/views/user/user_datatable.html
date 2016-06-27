@@ -26,6 +26,9 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr>
+                    <td colspan="8" class="textAlign" ng-if="$data.length<=0">请先搜索数据</td>
+                </tr>
                 <tr ng-repeat="row in $data">
                     <td>{{::row.name}}</td>
                     <td>{{::row.login}}</td>

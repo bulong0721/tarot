@@ -213,13 +213,13 @@ public class MerchantController {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
             PageResult<Merchant> pageList = merchantService.pageList(pageRequest);
-            resp.setRecordsTotal(pageList.getRecordsTotal());
-            resp.setRecordsFiltered(pageList.getRecordsFiltered());
 
             List<Merchant> merchantList = pageList.getList();
             for (Merchant merchant : merchantList) {
                 resp.addDataEntry(objectToEntry(merchant));
             }
+            resp.setRecordsTotal(pageList.getRecordsTotal());
+            resp.setRecordsFiltered(pageList.getRecordsFiltered());
         } catch (Exception e) {
             e.printStackTrace();
             resp.setErrorString("出错");
@@ -320,37 +320,6 @@ public class MerchantController {
         return AjaxResponse.success();
     }
 
-//    @RequestMapping(value = "/admin/merchantStore/edit", method = RequestMethod.POST)
-//    @ResponseBody
-//    public AjaxResponse editMerchantStore(@RequestBody MerchantStore merchantStore,HttpServletRequest request) throws Exception {
-//        AjaxResponse resp = new AjaxResponse();
-//        try {
-//            if(merchantStore.getId() == null ){
-//                //抛出异常给异常处理机制
-//                resp.setError("参数错误！");
-//                return resp;
-//            }
-//            Long numFind = merchantStoreService.getCountById(merchantStore);
-//            if (numFind != 1L) {
-//                //抛出异常给异常处理机制
-//                resp.setErrorString("要修改的门店不存在");
-//                return resp;
-//            }
-//            MerchantStore merchantStoreOld = merchantStoreService.getEntity(MerchantStore.class, merchantStore.getId());
-//            merchantStoreOld.setName(StringUtil.nullToString(merchantStore.getName())); //不能为空
-//            merchantStoreOld.setCode(StringUtil.nullToString(merchantStore.getCode()));//不能为空
-//            merchantStoreOld.setAddress(merchantStore.getAddress());
-//            merchantStoreOld.setCpp(merchantStore.getCpp());
-//            merchantStoreOld.setDescription(merchantStore.getDescription());
-//            merchantStoreOld.setPhone(merchantStore.getPhone());
-//            merchantStoreService.save(merchantStoreOld);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            resp.setErrorString("更新出错");
-//        }
-//        return resp;
-//    }
-
     @RequestMapping(value = "/admin/merchantStore/get", method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse getMerchantStore(@RequestParam Long id, HttpServletRequest request) throws Exception {
@@ -417,7 +386,7 @@ public class MerchantController {
 
             Merchant merchant = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
 
-            List<MerchantStore> merchantStoreList = merchantStoreService.listByMerchant(merchant.getId());
+            List<MerchantStore> merchantStoreList = merchantStoreService.pageListByMerchant(merchant.getId(), new PageRequest()).getList();
             for (MerchantStore merchantStore : merchantStoreList) {
                 resp.addDataEntry(objectToEntry(merchantStore));
             }
@@ -442,14 +411,14 @@ public class MerchantController {
 
             Merchant merchant = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
 
-            PageResult<MerchantStore> pageList = merchantStoreService.pageListByMerchant(pageRequest, merchant.getId());
-            resp.setRecordsTotal(pageList.getRecordsTotal());
-            resp.setRecordsFiltered(pageList.getRecordsFiltered());
+            PageResult<MerchantStore> pageList = merchantStoreService.pageListByMerchant(merchant.getId(), pageRequest );
 
             List<MerchantStore> merchantStoreList = pageList.getList();
             for (MerchantStore merchantStore : merchantStoreList) {
                 resp.addDataEntry(objectToEntry(merchantStore));
             }
+            resp.setRecordsTotal(pageList.getRecordsTotal());
+            resp.setRecordsFiltered(pageList.getRecordsFiltered());
         } catch (Exception e) {
             e.printStackTrace();
             resp.setErrorString("出错");
@@ -473,7 +442,7 @@ public class MerchantController {
             }
 
             Merchant merchant = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
-            List<MerchantStore> merchantStoreList = merchantStoreService.listByMerchant(merchant.getId());
+            List<MerchantStore> merchantStoreList = merchantStoreService.pageListByMerchant(merchant.getId(), new PageRequest()).getList();
             for (MerchantStore merchantStore : merchantStoreList) {
                 Map entry = new HashMap();
                 entry.put("name", merchantStore.getName());
@@ -550,6 +519,7 @@ public class MerchantController {
         return resp;
     }
 
+    //enva测试用的-----------------
     @RequestMapping(value = "/admin/merchantStore/storeOpts", method = RequestMethod.GET)
     @ResponseBody
     public List<MerchantStoreView> listByCommon(HttpServletRequest request) throws Exception {
@@ -560,7 +530,7 @@ public class MerchantController {
 //                return null;
 //            }
 //            Merchant merchant = (Merchant)request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
-            List<MerchantStore> merchantStoreList = merchantStoreService.listByMerchant(100L);
+            List<MerchantStore> merchantStoreList = merchantStoreService.pageListByMerchant(100L, new PageRequest()).getList();
             for (MerchantStore store : merchantStoreList) {
                 merchantStoreViewList.add(new MerchantStoreView(store));
             }

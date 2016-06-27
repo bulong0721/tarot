@@ -60,7 +60,7 @@ public class DeviceUsedController {
             }
             MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
 
-            PageResult<DeviceUsed> pageResult = deviceUsedService.pageListByStore(pageRequest, merchantStore1.getId());
+            PageResult<DeviceUsed> pageResult = deviceUsedService.pageListByStore(merchantStore1.getId(),pageRequest );
             List<DeviceUsed> deviceUsedList = pageResult.getList();
             for (DeviceUsed deviceUsed : deviceUsedList) {
                 Map entry = new HashMap();

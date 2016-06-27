@@ -44,30 +44,36 @@ public class MerchantStoreDaoImpl extends GenericEntityDaoImpl<Long, MerchantSto
         return query.fetchCount();
     }
 
+//    @Override
+//    public List<MerchantStore> listByMerchant(Long id) {
+//        QMerchantStore qMerchantStore = QMerchantStore.merchantStore;
+//        JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
+//        query.from(qMerchantStore)
+//                .where(qMerchantStore.merchant.id.eq(id));
+//        log.info(query.fetchCount());
+//
+//        return query.fetch();
+//
+//    }
+
     @Override
-    public List<MerchantStore> listByMerchant(Long id) {
-        QMerchantStore qMerchantStore = QMerchantStore.merchantStore;
-        JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
-        query.from(qMerchantStore)
-                .where(qMerchantStore.merchant.id.eq(id));
-        log.info(query.fetchCount());
-
-        return query.fetch();
-
-    }
-
-    @Override
-    public PageResult<MerchantStore> pageListByMerchant(PageRequest pageRequest, Long id) {
+    public PageResult<MerchantStore> pageListByMerchant(Long id ,PageRequest pageRequest ) {
         PageResult<MerchantStore> pageList = new PageResult<MerchantStore>();
         QMerchantStore qMerchantStore = QMerchantStore.merchantStore;
         JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
-        pageList.setRecordsTotal(query.from(qMerchantStore).fetchCount());
+
         if (StringUtils.isNotBlank(pageRequest.getQueryName())) {
             query.where(qMerchantStore.name.like("%" + pageRequest.getQueryName() + "%"));
         }
-        query.where(qMerchantStore.merchant.id.eq(id));
-        pageList.setRecordsFiltered(query.fetchCount());
-        pageList.setList(query.offset(pageRequest.getStart()).limit(pageRequest.getLength()).fetch());
+        if(id != null) {
+            query.where(qMerchantStore.merchant.id.eq(id));
+        }
+        pageList.setRecordsTotal(query.from(qMerchantStore).fetchCount());
+        pageList.setRecordsFiltered(query.from(qMerchantStore).fetchCount());
+        if( pageRequest.getLength() > 0){
+            query.offset(pageRequest.getStart()).limit(pageRequest.getLength());
+        }
+        pageList.setList(query.fetch());
         return pageList;
     }
 

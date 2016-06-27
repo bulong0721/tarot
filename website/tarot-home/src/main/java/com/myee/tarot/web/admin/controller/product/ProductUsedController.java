@@ -182,31 +182,31 @@ public class ProductUsedController {
 
     }
 
-    @RequestMapping(value = "/product/attribute/listByProductId", method = RequestMethod.GET)
-    @ResponseBody
-    public AjaxResponse listByProductId(@RequestParam Long parentId, HttpServletRequest request) throws Exception {
-        AjaxResponse resp = new AjaxResponse();
-        try {
-            if (StringUtil.isNullOrEmpty(parentId.toString())) {
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-                resp.setErrorString("参数不能为空");
-                return resp;
-            }
-            List<ProductUsedAttribute> attributeList = productUsedAttributeService.listByProductId(parentId);
-            for (ProductUsedAttribute attribute : attributeList) {
-                Map entry = new HashMap();
-                List<ProductUsedAttribute> attributes = new ArrayList<ProductUsedAttribute>();
-                entry.put("id", attribute.getId());
-                entry.put("name", attribute.getName());
-                entry.put("value", attribute.getValue());
-                resp.addDataEntry(entry);
-            }
-        } catch (Exception e) {
-            LOGGER.error("Error while paging productAttributes", e);
-        }
-        return resp;
-
-    }
+//    @RequestMapping(value = "/product/attribute/listByProductId", method = RequestMethod.GET)
+//    @ResponseBody
+//    public AjaxResponse listByProductId(@RequestParam Long parentId, HttpServletRequest request) throws Exception {
+//        AjaxResponse resp = new AjaxResponse();
+//        try {
+//            if (StringUtil.isNullOrEmpty(parentId.toString())) {
+//                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+//                resp.setErrorString("参数不能为空");
+//                return resp;
+//            }
+//            List<ProductUsedAttribute> attributeList = productUsedAttributeService.listByProductId(parentId);
+//            for (ProductUsedAttribute attribute : attributeList) {
+//                Map entry = new HashMap();
+//                List<ProductUsedAttribute> attributes = new ArrayList<ProductUsedAttribute>();
+//                entry.put("id", attribute.getId());
+//                entry.put("name", attribute.getName());
+//                entry.put("value", attribute.getValue());
+//                resp.addDataEntry(entry);
+//            }
+//        } catch (Exception e) {
+//            LOGGER.error("Error while paging productAttributes", e);
+//        }
+//        return resp;
+//
+//    }
 
     @RequestMapping(value = "/product/type/productOpts", method = RequestMethod.GET)
     public
