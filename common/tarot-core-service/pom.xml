@@ -5,9 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
+        <artifactId>tarot</artifactId>
         <groupId>com.myee.tarot</groupId>
-        <artifactId>common</artifactId>
         <version>0.7</version>
+        <relativePath>../..</relativePath>
     </parent>
 
     <artifactId>tarot-core-service</artifactId>
