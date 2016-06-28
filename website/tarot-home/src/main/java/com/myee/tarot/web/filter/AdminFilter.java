@@ -74,9 +74,12 @@ public class AdminFilter extends HandlerInterceptorAdapter {
 
         if (store == null && user != null) {
 //            store = merchantStoreService.getByCode(storeCode);
+            String storeName = user.getMerchantStore().getName();
+            System.out.println("storeName:"+storeName);
             store = user.getMerchantStore();
             Merchant merchant = merchantService.findById(store.getMerchant().getId());
             request.getSession().setAttribute(Constants.ADMIN_STORE, store);
+            request.getSession().setAttribute(Constants.ADMIN_MERCHANT, merchant);
         }
         request.setAttribute(Constants.ADMIN_STORE, store);
 
