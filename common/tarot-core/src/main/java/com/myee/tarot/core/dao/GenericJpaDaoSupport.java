@@ -69,12 +69,13 @@ public class GenericJpaDaoSupport {
 		}
 	}
 	
-	protected <T> void update(T entity) {
+	protected <T> T update(T entity) {
 		if (!getEntityManager().contains(entity)) {
-			getEntityManager().merge(entity);
+			return getEntityManager().merge(entity);
 			//throw new PersistenceException("Updated entity must be attached");
 		}
 		//TODO: http://blog.xebia.com/2009/03/23/jpa-implementation-patterns-saving-detached-entities/
+		return entity;
 	}
 	
 	protected <T> void save(T entity) {

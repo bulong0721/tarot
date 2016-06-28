@@ -37,7 +37,7 @@ public interface GenericEntityDao<K extends Serializable & Comparable<K>, E exte
 	/**
 	 * @param entity entity
 	 */
-	void update(E entity);
+	E update(E entity);
 	
 	/** 
 	 * @param entity entity

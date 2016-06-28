@@ -234,8 +234,8 @@ function deviceUsedCtrl($scope, $compile, $resource, Constants, DTColumnBuilder)
 
     $scope.goEditorCustom = function (rowIndex) {
         $scope.goEditor(rowIndex);
-        if (Constants.thisMerchant) {
-            $scope.formData.model.store={name: Constants.thisMerchant.name};
+        if (Constants.thisMerchantStore) {
+            $scope.formData.model.store={name: Constants.thisMerchantStore.name};
         }
     };
 

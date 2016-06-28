@@ -13,4 +13,5 @@ public interface MerchantService extends GenericEntityService<Long, Merchant> {
     Long getCountById(Long id);
 
     PageResult<Merchant> pageList(PageRequest pageRequest);
+
 }

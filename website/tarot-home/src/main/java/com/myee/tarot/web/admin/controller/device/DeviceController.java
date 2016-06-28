@@ -96,7 +96,7 @@ public class DeviceController {
     @RequestMapping(value = "/device/attribute/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveAttribute(@Valid @RequestBody ProductUsedAttributeView productUsedAttributeView, HttpServletRequest request) throws Exception {
-        Device device = deviceService.getEntity(Device.class, productUsedAttributeView.getParentId());
+        Device device = deviceService.findById( productUsedAttributeView.getParentId());
         DeviceAttribute deviceAttribute = new DeviceAttribute();
         deviceAttribute.setId(productUsedAttributeView.getId());
         deviceAttribute.setName(productUsedAttributeView.getName());
@@ -116,7 +116,7 @@ public class DeviceController {
                 resp.setErrorString("参数不能为空");
                 return resp;
             }
-            DeviceAttribute deviceAttribute = deviceAttributeService.getEntity(DeviceAttribute.class, id);
+            DeviceAttribute deviceAttribute = deviceAttributeService.findById(id);
             deviceAttributeService.delete(deviceAttribute);
             return AjaxResponse.success();
         } catch (Exception e) {

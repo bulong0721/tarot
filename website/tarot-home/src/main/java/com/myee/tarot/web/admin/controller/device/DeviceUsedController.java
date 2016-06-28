@@ -118,7 +118,7 @@ public class DeviceUsedController {
         try {
             AjaxResponse resp = new AjaxResponse();
             List<Long> bindList = JSON.parseArray(bindString,Long.class);
-            DeviceUsed deviceUsed = deviceUsedService.getEntity(DeviceUsed.class,deviceUsedId);
+            DeviceUsed deviceUsed = deviceUsedService.findById(deviceUsedId);
             if (deviceUsed == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("参数不正确");
@@ -148,7 +148,7 @@ public class DeviceUsedController {
             //先手动删除所有该对象关联的属性，再删除该对象。因为关联关系是属性多对一该对象，关联字段放在属性表里，不能通过删对象级联删除属性。
             deviceUsedAttributeService.deleteByDeviceUsedId(deviceUsed.getId());
 
-            DeviceUsed deviceUsed1 = deviceUsedService.getEntity(DeviceUsed.class,deviceUsed.getId());
+            DeviceUsed deviceUsed1 = deviceUsedService.findById(deviceUsed.getId());
             deviceUsedService.delete(deviceUsed1);
             return AjaxResponse.success();
         } catch (ServiceException e) {
@@ -160,7 +160,7 @@ public class DeviceUsedController {
     @RequestMapping(value = "/deviceUsed/attribute/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveAttribute(@Valid @RequestBody ProductUsedAttributeView productUsedAttributeView, HttpServletRequest request) throws Exception {
-        DeviceUsed deviceUsed = deviceUsedService.getEntity(DeviceUsed.class, productUsedAttributeView.getParentId());//查出来为空，不知道为什么
+        DeviceUsed deviceUsed = deviceUsedService.findById(productUsedAttributeView.getParentId());//查出来为空，不知道为什么
         //看后台查询语句，发现是inner join ProductUsed时出的问题。
         DeviceUsedAttribute deviceUsedAttribute = new DeviceUsedAttribute();
         deviceUsedAttribute.setId(productUsedAttributeView.getId());
@@ -182,7 +182,7 @@ public class DeviceUsedController {
                 resp.setErrorString("参数不能为空");
                 return resp;
             }
-            DeviceUsedAttribute deviceAttribute = deviceUsedAttributeService.getEntity(DeviceUsedAttribute.class, id);
+            DeviceUsedAttribute deviceAttribute = deviceUsedAttributeService.findById(id);
             deviceUsedAttributeService.delete(deviceAttribute);
             return AjaxResponse.success();
         } catch (Exception e) {

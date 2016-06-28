@@ -28,7 +28,6 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
     };
 
     vm.productOpts = $resource('/product/type/productOpts').query();
-    vm.storeOpts = $resource('/admin/merchantStore/storeOpts').query();
 
     vm.defaultOptions = {
         info: true,
@@ -122,76 +121,43 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
     //从后台拿商户类型
     vm.merchantType = $resource('/admin/merchant/typeList4Select').query();
 
-    //从后台拿商户列表
-    //vm.merchants = [];
-    //vm.getMerchants = function () {
-    //    var deferred = $q.defer();
-    //    $resource('/admin/merchant/list4Select').query({}, function (resp) {
-    //        vm.merchants = resp;
-    //        deferred.resolve(vm.merchants);
-    //    });
-    //    return deferred.promise;
-    //};
-
-
+    //切换门店
     vm.thisMerchant = {};
     vm.getSwitchMerchant = function(){
         var deferred = $q.defer();
-        vm.getMerchants().then(function () {
-            $resource('/admin/merchant/getSwitch').get({}, function (resp) {
-                if (resp.rows.length > 0) {
-                    vm.flushThisMerchant(resp.rows[0].id, vm.merchants);
-                }
-                deferred.resolve(vm.thisMerchant);
-            });
+        $resource('/admin/merchant/getSwitch').get({}, function (resp) {
+            if (resp.rows.length > 0) {
+                //vm.flushThisMerchant(resp.rows[0].id, vm.merchants);
+                vm.thisMerchant = resp.rows[0];
+            }
+            deferred.resolve(vm.thisMerchant);
         });
         return deferred.promise;
-    }
-
-    vm.flushThisMerchant = function (value, merchants) {
-        var length = merchants.length;
-        for (var i = 0; i < length; i++) {
-            if (merchants[i].id == value) {
-                break;
-            }
-        }
-        vm.thisMerchant = merchants[i];
     }
 
     //从后台拿店铺列表
     vm.merchantStores = [];
     vm.getMerchantStores = function () {
         var deferred = $q.defer();
-        $resource('/admin/merchantStore/listByMerchantForSelect').query({}, function (resp) {
-            vm.merchantStores = resp;
+        $resource('/admin/merchantStore/list').get({}, function (resp) {
+            console.log(resp)
+            vm.merchantStores = resp.rows;
             deferred.resolve(vm.merchantStores);
         });
         return deferred.promise;
     };
 
-
+    //切换门店
     vm.thisMerchantStore = {};
     vm.getSwitchMerchantStore = function(){
         var deferred = $q.defer();
-        vm.getMerchantStores().then(function () {
-            $resource('/admin/merchantStore/getSwitch').get({}, function (resp) {
-                if (resp.rows.length > 0) {
-                    vm.flushThisMerchantStore(resp.rows[0].id, vm.merchantStores);
-                }
-                deferred.resolve(vm.thisMerchantStore);
-            });
+        $resource('/admin/merchantStore/getSwitch').get({}, function (resp) {
+            if (resp.rows.length > 0) {
+                vm.thisMerchantStore = resp.rows[0];
+            }
+            deferred.resolve(vm.thisMerchantStore);
         });
         return deferred.promise;
-    }
-
-    vm.flushThisMerchantStore = function (value, merchantStores) {
-        var length = merchantStores.length;
-        for (var i = 0; i < length; i++) {
-            if (merchantStores[i].value == value) {
-                break;
-            }
-        }
-        vm.thisMerchantStore = merchantStores[i];
     }
 
     //从后台拿到省列表
@@ -199,7 +165,7 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
 
     //根据省从后台拿市列表
     vm.citys = [];
-    vm.getCitysByProvince = function (provinceId, scope) {
+    vm.getCitysByProvince = function (provinceId) {
         if (provinceId) {
             $resource('/admin/city/listByProvince').get({id: provinceId}, function (resp) {
                 var length = resp.rows.length;

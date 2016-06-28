@@ -3,7 +3,9 @@ package com.myee.tarot.web.filter;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.admin.service.AdminUserService;
 import com.myee.tarot.core.Constants;
+import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.merchant.service.MerchantService;
 import com.myee.tarot.merchant.service.MerchantStoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +23,9 @@ public class AdminFilter extends HandlerInterceptorAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminFilter.class);
 
     @Autowired
-    private MerchantStoreService merchantService;
+    private MerchantStoreService merchantStoreService;
+    @Autowired
+    private MerchantService merchantService;
 
     @Autowired
     private AdminUserService userService;
@@ -29,6 +33,7 @@ public class AdminFilter extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         AdminUser user = (AdminUser) request.getSession().getAttribute(Constants.ADMIN_USER);
+//        System.out.println("################userSession:"+user.getName());
 
         String storeCode = MerchantStore.DEFAULT_STORE;
         MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
@@ -67,9 +72,11 @@ public class AdminFilter extends HandlerInterceptorAdapter {
             }
         }
 
-        if (store == null) {
-//            store = merchantService.getByCode(storeCode);
-//            request.getSession().setAttribute(Constants.ADMIN_STORE, store);
+        if (store == null && user != null) {
+//            store = merchantStoreService.getByCode(storeCode);
+            store = user.getMerchantStore();
+            Merchant merchant = merchantService.findById(store.getMerchant().getId());
+            request.getSession().setAttribute(Constants.ADMIN_STORE, store);
         }
         request.setAttribute(Constants.ADMIN_STORE, store);
 

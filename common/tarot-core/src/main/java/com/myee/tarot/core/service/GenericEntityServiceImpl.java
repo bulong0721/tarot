@@ -54,12 +54,12 @@ public abstract class GenericEntityServiceImpl<K extends Serializable & Comparab
         save(entity);
     }
 
-    public final void update(E entity) throws ServiceException {
-        updateEntity(entity);
+    public final E update(E entity) throws ServiceException {
+        return updateEntity(entity);
     }
 
-    protected void updateEntity(E entity) throws ServiceException {
-        genericDao.update(entity);
+    protected E updateEntity(E entity) throws ServiceException {
+        return genericDao.update(entity);
     }
 
     public void delete(E entity) throws ServiceException {

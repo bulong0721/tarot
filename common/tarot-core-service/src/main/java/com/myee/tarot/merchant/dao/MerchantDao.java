@@ -13,4 +13,5 @@ public interface MerchantDao extends GenericEntityDao<Long, Merchant> {
     Long getCountById(Long id);
 
     PageResult<Merchant> pageList(PageRequest pageRequest);
+
 }

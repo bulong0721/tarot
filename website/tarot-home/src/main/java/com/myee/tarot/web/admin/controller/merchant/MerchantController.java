@@ -51,41 +51,6 @@ public class MerchantController {
     /**
      * 商户接口
      */
-
-    //切换商户接口
-    @RequestMapping(value = "/admin/merchant/switch", method = RequestMethod.POST)
-    @ResponseBody
-    public AjaxResponse switchMerchant(@RequestBody Long id, HttpServletRequest request) throws Exception {
-        AjaxResponse resp = new AjaxResponse();
-        try {
-            if (id == null) {
-                //抛出异常给异常处理机制
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-                resp.setErrorString("请切换商户！");
-                return resp;
-            }
-            Long numFind = merchantService.getCountById(id);
-            if (numFind != 1L) {
-                //抛出异常给异常处理机制
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-                resp.setErrorString("要切换的商户信息错误");
-                return resp;
-            }
-            Merchant merchantOld = merchantService.getEntity(Merchant.class, id);
-            //把商户信息写入session
-            request.getSession().setAttribute(Constants.ADMIN_MERCHANT, merchantOld);
-            resp.addDataEntry(objectToEntry(merchantOld));
-
-            //清空已有的门店session，让用户重新选择门店
-            request.getSession().removeAttribute(Constants.ADMIN_STORE);
-        } catch (Exception e) {
-            e.printStackTrace();
-            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-            resp.setErrorString("切换出错");
-        }
-        return resp;
-    }
-
     @RequestMapping(value = "/admin/merchant/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveMerchant(@RequestBody Merchant merchant, HttpServletRequest request) throws Exception {
@@ -99,7 +64,18 @@ public class MerchantController {
                 resp.setErrorString("名称/菜系/商户类型不能为空");
                 return resp;
             }
-            merchantService.update(merchant);//新建或更新
+            Merchant merchant1 = merchantService.update(merchant);//新建或更新
+
+            Long counts = merchantService.getCountById(merchant1.getId());
+            if (counts == 0) {
+                //新建商户后，如果商户下没有门店自动新建一个默认店铺
+                MerchantStore merchantStore = new MerchantStore();
+                merchantStore.setMerchant(merchant1);
+                merchantStore.setName(merchant1.getName() + "默认门店");
+                merchantStore.setCode("defaultCode0000");
+                merchantStoreService.update(merchantStore);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -109,42 +85,12 @@ public class MerchantController {
         return AjaxResponse.success();
     }
 
-//    @RequestMapping(value = "/admin/merchant/edit", method = RequestMethod.POST)
-//    @ResponseBody
-//    public AjaxResponse editMerchant(@RequestBody Merchant merchant,HttpServletRequest request) throws Exception {
-//        AjaxResponse resp = new AjaxResponse();
-//        try {
-//            if(merchant.getId() == null ){
-//                //抛出异常给异常处理机制
-//                resp.setError("参数错误！");
-//                return resp;
-//            }
-//            Long numFind = merchantService.getCountById(merchant);
-//            if (numFind != 1L) {
-//                //抛出异常给异常处理机制
-//                resp.setError("要修改的商户信息有误");
-//                return resp;
-//            }
-//            Merchant merchantOld = merchantService.getEntity(Merchant.class, merchant.getId());
-//            merchantOld.setName(StringUtil.nullToString(merchant.getName())); //不能为空
-//            merchantOld.setLogo(merchant.getLogo());
-//            merchantOld.setCuisineType(StringUtil.nullToString(merchant.getCuisineType()));//不能为空
-//            merchantOld.setDescription(merchant.getDescription());
-//            merchantOld.setBusinessType(StringUtil.nullToString(merchant.getBusinessType()));//不能为空
-//            merchantService.save(merchantOld);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            resp.setError("更新出错");
-//        }
-//        return resp;
-//    }
-
     @RequestMapping(value = "/admin/merchant/get", method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse getMerchant(@RequestParam Long id, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
-            Merchant merchant1 = merchantService.getEntity(Merchant.class, id);//id由前端切换商户传进来
+            Merchant merchant1 = merchantService.findById(id);//id由前端切换商户传进来
             resp.addDataEntry(objectToEntry(merchant1));
         } catch (Exception e) {
             e.printStackTrace();
@@ -180,7 +126,7 @@ public class MerchantController {
     public AjaxResponse deleteMerchant(@RequestParam Long id, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
-            Merchant merchant = merchantService.getEntity(Merchant.class, id);
+            Merchant merchant = merchantService.findById(id);
             if (merchant != null) merchantService.delete(merchant);
         } catch (Exception e) {
             e.printStackTrace();
@@ -209,7 +155,7 @@ public class MerchantController {
 
     @RequestMapping(value = "/admin/merchant/paging", method = RequestMethod.GET)
     @ResponseBody
-    public AjaxPageableResponse pageMerchant(HttpServletRequest request,PageRequest pageRequest) throws Exception {
+    public AjaxPageableResponse pageMerchant(HttpServletRequest request, PageRequest pageRequest) throws Exception {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
             PageResult<Merchant> pageList = merchantService.pageList(pageRequest);
@@ -289,25 +235,27 @@ public class MerchantController {
             merchantStore.setMerchant(merchant);
             Address address = merchantStore.getAddress();
             GeoZone geoZone = new GeoZone();
-            if (address.getProvince() != null && address.getProvince().getId() != null && !address.getProvince().getId().toString().equals("")) {
-                geoZone = geoZoneService.getEntity(GeoZone.class, address.getProvince().getId());
-                address.setProvince(geoZone);
-            }
-            if (address.getCity() != null && address.getCity().getId() != null && !address.getCity().getId().toString().equals("")) {
-                geoZone = geoZoneService.getEntity(GeoZone.class, address.getCity().getId());
-                address.setCity(geoZone);
-            }
-            if (address.getCounty() != null && address.getCounty().getId() != null && !address.getCounty().getId().toString().equals("")) {
-                geoZone = geoZoneService.getEntity(GeoZone.class, address.getCounty().getId());
-                address.setCounty(geoZone);
-            }
-            if (address.getCircle() != null && address.getCircle().getId() != null && !address.getCircle().getId().toString().equals("")) {
-                geoZone = geoZoneService.getEntity(GeoZone.class, address.getCircle().getId());
-                address.setCircle(geoZone);
-            }
-            if (address.getMall() != null && address.getMall().getId() != null && !address.getMall().getId().toString().equals("")) {
-                geoZone = geoZoneService.getEntity(GeoZone.class, address.getMall().getId());
-                address.setMall(geoZone);
+            if (address != null) {
+                if (validGeoZone(address.getProvince())) {
+                    geoZone = geoZoneService.findById(address.getProvince().getId());
+                    address.setProvince(geoZone);
+                }
+                if (validGeoZone(address.getCity())) {
+                    geoZone = geoZoneService.findById(address.getCity().getId());
+                    address.setCity(geoZone);
+                }
+                if (validGeoZone(address.getCounty())) {
+                    geoZone = geoZoneService.findById(address.getCounty().getId());
+                    address.setCounty(geoZone);
+                }
+                if (validGeoZone(address.getCircle())) {
+                    geoZone = geoZoneService.findById(address.getCircle().getId());
+                    address.setCircle(geoZone);
+                }
+                if (validGeoZone(address.getMall())) {
+                    geoZone = geoZoneService.findById(address.getMall().getId());
+                    address.setMall(geoZone);
+                }
             }
             merchantStore.setAddress(address);
             merchantStoreService.update(merchantStore);//新建或更新
@@ -320,12 +268,20 @@ public class MerchantController {
         return AjaxResponse.success();
     }
 
+    private boolean validGeoZone(GeoZone geoZone) {
+        if (geoZone != null && geoZone.getId() != null && !geoZone.getId().toString().equals("")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @RequestMapping(value = "/admin/merchantStore/get", method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse getMerchantStore(@RequestParam Long id, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
-            MerchantStore merchantStore1 = merchantStoreService.getEntity(MerchantStore.class, id);//id由前端切换商户传进来
+            MerchantStore merchantStore1 = merchantStoreService.findById(id);//id由前端切换商户传进来
             resp.addDataEntry(objectToEntry(merchantStore1));
         } catch (Exception e) {
             e.printStackTrace();
@@ -345,7 +301,7 @@ public class MerchantController {
                 resp.setErrorString("参数错误");
                 return resp;
             }
-            MerchantStore merchantStore = merchantStoreService.getEntity(MerchantStore.class, id);
+            MerchantStore merchantStore = merchantStoreService.findById(id);
             if (merchantStore != null) merchantStoreService.delete(merchantStore);
         } catch (Exception e) {
             e.printStackTrace();
@@ -400,7 +356,7 @@ public class MerchantController {
 
     @RequestMapping(value = "/admin/merchantStore/pagingByMerchant", method = RequestMethod.GET)
     @ResponseBody
-    public AjaxPageableResponse pagingMerchantStoreByMerchant(HttpServletRequest request,PageRequest pageRequest) throws Exception {
+    public AjaxPageableResponse pagingMerchantStoreByMerchant(HttpServletRequest request, PageRequest pageRequest) throws Exception {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
             //从session中取账号关联的商户信息
@@ -411,7 +367,7 @@ public class MerchantController {
 
             Merchant merchant = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
 
-            PageResult<MerchantStore> pageList = merchantStoreService.pageListByMerchant(merchant.getId(), pageRequest );
+            PageResult<MerchantStore> pageList = merchantStoreService.pageListByMerchant(merchant.getId(), pageRequest);
 
             List<MerchantStore> merchantStoreList = pageList.getList();
             for (MerchantStore merchantStore : merchantStoreList) {
@@ -462,28 +418,24 @@ public class MerchantController {
     public AjaxResponse switchMerchantStore(@RequestBody Long id, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
-            Merchant merchant1 = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
-            if(merchant1 == null){
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-                resp.setErrorString("请切换商户！");
-                return resp;
-            }
             if (id == null) {
                 //抛出异常给异常处理机制
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请切换门店！");
                 return resp;
             }
-            Long numFind = merchantStoreService.getCountById(id,merchant1.getId());//根据门店和商户id一起搜索,要切换的门店必须属于session里的商户
+            Long numFind = merchantStoreService.getCountById(id);//根据门店和商户id一起搜索,要切换的门店必须属于session里的商户
             if (numFind != 1L) {
                 //抛出异常给异常处理机制
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("要切换的商户信息错误");
                 return resp;
             }
-            MerchantStore merchantStoreOld = merchantStoreService.getEntity(MerchantStore.class, id);
+            MerchantStore merchantStoreOld = merchantStoreService.findById(id);
+            Merchant merchantOld = merchantService.findById(merchantStoreOld.getMerchant().getId());
             //把商户信息写入session
             request.getSession().setAttribute(Constants.ADMIN_STORE, merchantStoreOld);
+            request.getSession().setAttribute(Constants.ADMIN_MERCHANT, merchantOld);
             resp.addDataEntry(objectToEntry(merchantStoreOld));
         } catch (Exception e) {
             e.printStackTrace();
@@ -498,11 +450,6 @@ public class MerchantController {
     public AjaxResponse getSwitchMerchantStore(HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
-            if (request.getSession().getAttribute(Constants.ADMIN_MERCHANT) == null) {
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-                resp.setErrorString("请先切换商户");
-                return resp;
-            }
             //从session中读取merchantStore信息，如果为空，则提示用户先切换门店
             if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -520,25 +467,25 @@ public class MerchantController {
     }
 
     //enva测试用的-----------------
-    @RequestMapping(value = "/admin/merchantStore/storeOpts", method = RequestMethod.GET)
-    @ResponseBody
-    public List<MerchantStoreView> listByCommon(HttpServletRequest request) throws Exception {
-        List<MerchantStoreView> merchantStoreViewList = new ArrayList<MerchantStoreView>();
-        try {
-            //从session中取账号关联的商户信息
-//            if(request.getSession().getAttribute(Constants.ADMIN_MERCHANT) == null ){
-//                return null;
+//    @RequestMapping(value = "/admin/merchantStore/storeOpts", method = RequestMethod.GET)
+//    @ResponseBody
+//    public List<MerchantStoreView> listByCommon(HttpServletRequest request) throws Exception {
+//        List<MerchantStoreView> merchantStoreViewList = new ArrayList<MerchantStoreView>();
+//        try {
+//            //从session中取账号关联的商户信息
+////            if(request.getSession().getAttribute(Constants.ADMIN_MERCHANT) == null ){
+////                return null;
+////            }
+////            Merchant merchant = (Merchant)request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
+//            List<MerchantStore> merchantStoreList = merchantStoreService.pageListByMerchant(100L, new PageRequest()).getList();
+//            for (MerchantStore store : merchantStoreList) {
+//                merchantStoreViewList.add(new MerchantStoreView(store));
 //            }
-//            Merchant merchant = (Merchant)request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
-            List<MerchantStore> merchantStoreList = merchantStoreService.pageListByMerchant(100L, new PageRequest()).getList();
-            for (MerchantStore store : merchantStoreList) {
-                merchantStoreViewList.add(new MerchantStoreView(store));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return merchantStoreViewList;
-    }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return merchantStoreViewList;
+//    }
 
     //把类转换成entry返回给前端，解耦和
     private Map objectToEntry(MerchantStore merchantStore) {

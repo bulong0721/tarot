@@ -7,7 +7,9 @@ import com.myee.tarot.merchant.dao.MerchantDao;
 import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.QMerchant;
 import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.JPQLQueryFactory;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,4 +47,5 @@ public class MerchantDaoImpl extends GenericEntityDaoImpl<Long, Merchant> implem
         pageList.setList(query.offset(pageRequest.getStart()).limit(pageRequest.getLength()).fetch());
         return pageList;
     }
+
 }

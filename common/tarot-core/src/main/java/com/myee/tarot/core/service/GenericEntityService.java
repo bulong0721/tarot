@@ -10,7 +10,7 @@ public interface GenericEntityService<K extends Serializable & Comparable<K>, E 
 
     void save(E entity) throws ServiceException;
 
-    void update(E entity) throws ServiceException;
+    E update(E entity) throws ServiceException;
 
     void create(E entity) throws ServiceException;
 

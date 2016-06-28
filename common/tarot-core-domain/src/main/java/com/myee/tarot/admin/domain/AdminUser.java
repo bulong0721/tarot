@@ -44,7 +44,7 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
     @Column(name = "ACTIVE_STATUS_FLAG")
     protected Boolean activeStatusFlag = Boolean.TRUE;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne//(fetch = FetchType.LAZY, targetEntity = MerchantStore.class)//懒加载会使用户登录时得到的用户信息中不包含门店，就没办法设置session默认门店
     @JoinColumn(name = "STORE_ID")
     private MerchantStore merchantStore;
 

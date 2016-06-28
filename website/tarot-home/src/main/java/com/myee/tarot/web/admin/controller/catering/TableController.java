@@ -88,12 +88,7 @@ public class TableController {
                 resp.setErrorString("参数错误");
                 return resp;
             }
-            TableType tableType = typeService.getEntity(TableType.class,type.getId());
-//            if(tableType == null || (tableType.getStore().getId() != merchantStore1.getId())){
-//                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-//                resp.setErrorString("要删除的数据与门店不匹配");
-//                return resp;
-//            }
+            TableType tableType = typeService.findById(type.getId());
 
             typeService.delete(tableType);
             return AjaxResponse.success();
@@ -108,7 +103,7 @@ public class TableController {
     @RequestMapping(value = "/type/paging", method = RequestMethod.GET)
     public
     @ResponseBody
-    AjaxPageableResponse pageTypes(Model model, HttpServletRequest request,PageRequest pageRequest) {
+    AjaxPageableResponse pageTypes(Model model, HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
             resp.setErrorString("请先切换门店");
@@ -168,13 +163,7 @@ public class TableController {
                 resp.setErrorString("参数错误");
                 return resp;
             }
-            TableZone tableZone = zoneService.getEntity(TableZone.class,zone.getId());
-//            System.out.println("tableZone Store Id:"+tableZone.getStore().getId());
-//            if(tableZone == null || (tableZone.getStore().getId() != merchantStore1.getId())){
-//                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-//                resp.setErrorString("要删除的数据与门店不匹配");
-//                return resp;
-//            }
+            TableZone tableZone = zoneService.findById(zone.getId());
 
             zoneService.delete(tableZone);
             return AjaxResponse.success();
@@ -189,7 +178,7 @@ public class TableController {
     @RequestMapping(value = "/zone/paging", method = RequestMethod.GET)
     public
     @ResponseBody
-    AjaxPageableResponse pageZones(Model model, HttpServletRequest request,PageRequest pageRequest) {
+    AjaxPageableResponse pageZones(Model model, HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
             resp.setErrorString("请先切换门店");
@@ -250,14 +239,7 @@ public class TableController {
                 resp.setErrorString("参数错误");
                 return resp;
             }
-            Table table1 = tableService.getEntity(Table.class,table.getId());
-            //20160616奇怪:type和zone查询出来的对象，store的id也为空，但是能执行下去不报错，而table不行，查询出来store的id为空，报错？？？
-//            System.out.println("table Store Id:"+table.getStore().getId());
-//            if(table == null || (table.getStore().getId() != merchantStore1.getId())){
-//                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-//                resp.setErrorString("要删除的数据与门店不匹配");
-//                return resp;
-//            }
+            Table table1 = tableService.findById(table.getId());
 
             tableService.delete(table1);
             return AjaxResponse.success();
@@ -267,13 +249,12 @@ public class TableController {
             resp.setErrorString("出错");
             return resp;
         }
-
     }
 
     @RequestMapping(value = "/table/paging", method = RequestMethod.GET)
     public
     @ResponseBody
-    AjaxPageableResponse pageTables(Model model, HttpServletRequest request,PageRequest pageRequest) {
+    AjaxPageableResponse pageTables(Model model, HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
             resp.setErrorString("请先切换门店");

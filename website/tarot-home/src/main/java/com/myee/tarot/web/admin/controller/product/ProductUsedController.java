@@ -133,7 +133,6 @@ public class ProductUsedController {
     @RequestMapping(value = "/product/used/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveUsedProduct(@Valid @RequestBody ProductUsedView productUsedView, HttpServletRequest request) throws Exception {
-//        MerchantStore merchantStore = merchantStoreService.getEntity(MerchantStore.class, productUsedView.getStoreId());
         AjaxResponse resp = new AjaxResponse();
         if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);

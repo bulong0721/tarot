@@ -40,8 +40,8 @@ public abstract class GenericEntityDaoImpl<K extends Serializable & Comparable<K
         return super.getByField(getObjectClass(), attribute, fieldValue);
     }
 
-    public void update(E entity) {
-        super.update(entity);
+    public E update(E entity) {
+        return super.update(entity);
     }
 
     public void save(E entity) {
