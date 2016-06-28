@@ -123,15 +123,15 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
     vm.merchantType = $resource('/admin/merchant/typeList4Select').query();
 
     //从后台拿商户列表
-    vm.merchants = [];
-    vm.getMerchants = function () {
-        var deferred = $q.defer();
-        $resource('/admin/merchant/list4Select').query({}, function (resp) {
-            vm.merchants = resp;
-            deferred.resolve(vm.merchants);
-        });
-        return deferred.promise;
-    };
+    //vm.merchants = [];
+    //vm.getMerchants = function () {
+    //    var deferred = $q.defer();
+    //    $resource('/admin/merchant/list4Select').query({}, function (resp) {
+    //        vm.merchants = resp;
+    //        deferred.resolve(vm.merchants);
+    //    });
+    //    return deferred.promise;
+    //};
 
 
     vm.thisMerchant = {};

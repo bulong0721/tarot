@@ -147,6 +147,203 @@ function minimalizaSidebar($timeout) {
     };
 }
 
+/**
+ * showThisMerchant
+ */
+function showThisMerchant(Constants,$resource,$state) {
+
+    return {
+        template: [
+            '<a ng-click="$root.rightSidebar = !$root.rightSidebar"><i class="fa fa-tasks"></i>当前门店<span>{{merchantStoreSelect.name}}</span></a>'
+        ].join(' '),
+        link:function($scope){
+            $scope.merchantStoreSelect = {name:"门店100"};
+            //获取门店列表，并切换到之前切换的门店
+            //Constants.getSwitchMerchantStore().then(
+            //    function () {
+            //        if (Constants.thisMerchantStore){$scope.merchantStoreSelect = Constants.thisMerchantStore};
+            //    }
+            //);
+
+        }
+    };
+}
+
+/**
+ * switchMerchant
+ */
+function switchMerchant(Constants,$resource,$state) {
+
+    return {
+        template: [
+            '<div class="input-group"><input type="text" class="form-control" placeholder="输入门店名或地址搜索"> <span class="input-group-btn"> <button type="button" class="btn btn-primary">走你!</button> </span></div>',
+            '<div class="sidebar-message" ng-repeat="merchantStore in merchantStores">',
+            '<a href="#"><div class="media-body">{{merchantStore.name}}<br>',
+            '<small class="text-muted">{{merchantStore.address.province.name}}{{merchantStore.address.city.name}}</small>',
+            '</div></a></div>'
+        ].join(' '),
+        link:function($scope){
+
+            $scope.merchantStores=[
+                {
+                    "id": 7,
+                    "address": {
+                        "id": 2,
+                        "new": false
+                    },
+                    "merchant": {
+                        "businessType": "FOOD",
+                        "cuisineType": "tttt2",
+                        "description": "1232344124",
+                        "id": 100,
+                        "name": "商户100",
+                        "new": false
+                    },
+                    "name": "门店7",
+                    "experience": false,
+                    "code": "23423432"
+                },
+                {
+                    "id": 22,
+                    "phone": "1",
+                    "address": {
+                        "address": "1",
+                        "city": {
+                            "code": "100000",
+                            "id": 66,
+                            "level": 2,
+                            "name": "北京市",
+                            "new": false
+                        },
+                        "id": 16,
+                        "new": false,
+                        "province": {
+                            "code": "110000",
+                            "id": 1,
+                            "level": 1,
+                            "name": "北京市",
+                            "new": false
+                        }
+                    },
+                    "merchant": {
+                        "businessType": "FOOD",
+                        "cuisineType": "tttt2",
+                        "description": "1232344124",
+                        "id": 100,
+                        "name": "商户100",
+                        "new": false
+                    },
+                    "name": "1",
+                    "experience": false,
+                    "code": "1"
+                },
+                {
+                    "id": 23,
+                    "phone": "1",
+                    "address": {
+                        "address": "1",
+                        "city": {
+                            "code": "066000",
+                            "id": 70,
+                            "level": 2,
+                            "name": "秦皇岛市",
+                            "new": false
+                        },
+                        "id": 17,
+                        "new": false,
+                        "province": {
+                            "code": "130000",
+                            "id": 3,
+                            "level": 1,
+                            "name": "河北省",
+                            "new": false
+                        }
+                    },
+                    "merchant": {
+                        "businessType": "FOOD",
+                        "cuisineType": "tttt2",
+                        "description": "1232344124",
+                        "id": 100,
+                        "name": "商户100",
+                        "new": false
+                    },
+                    "name": "2",
+                    "experience": false,
+                    "code": "1"
+                },
+                {
+                    "id": 100,
+                    "address": {
+                        "circle": {
+                            "code": "110000",
+                            "id": 1,
+                            "level": 1,
+                            "name": "北京市",
+                            "new": false
+                        },
+                        "city": {
+                            "code": "110000",
+                            "id": 1,
+                            "level": 1,
+                            "name": "北京市",
+                            "new": false
+                        },
+                        "id": 250,
+                        "mall": {
+                            "code": "110000",
+                            "id": 1,
+                            "level": 1,
+                            "name": "北京市",
+                            "new": false
+                        },
+                        "new": false,
+                        "province": {
+                            "code": "110000",
+                            "id": 1,
+                            "level": 1,
+                            "name": "北京市",
+                            "new": false
+                        }
+                    },
+                    "merchant": {
+                        "businessType": "FOOD",
+                        "cuisineType": "tttt2",
+                        "description": "1232344124",
+                        "id": 100,
+                        "name": "商户100",
+                        "new": false
+                    },
+                    "name": "门店100",
+                    "experience": false,
+                    "code": "23423432"
+                }
+            ];
+
+            //Constants.getMerchants().then(function () {
+            //
+            //    ////点击切换商户
+            //    //$scope.switchMerchant = function () {
+            //    //    $resource('/admin/merchant/switch').save($scope.merchantSelect.id, function (resp) {
+            //    //        Constants.flushThisMerchant(resp.rows[0].id, Constants.merchants);
+            //    //        $state.go($state.current, {}, {reload: true});
+            //    //
+            //    //    });
+            //    //};
+            //
+            //
+            //});
+
+            //点击切换门店
+            $scope.switchMerchantStore = function () {
+                $resource('/admin/merchantStore/switch').save($scope.merchantStoreSelect.value, function (resp) {
+                    Constants.flushThisMerchantStore(resp.rows[0].id, Constants.merchantStores);
+                    $state.go($state.current, {}, {reload: true});
+                });
+            };
+        }
+    };
+}
+
 
 /**
  *
@@ -158,4 +355,6 @@ angular
     .directive('sideNavigation', sideNavigation)
     .directive('iboxTools', iboxTools)
     .directive('minimalizaSidebar', minimalizaSidebar)
-    .directive('iboxToolsFullScreen', iboxToolsFullScreen);
+    .directive('iboxToolsFullScreen', iboxToolsFullScreen)
+    .directive('switchMerchant', switchMerchant)
+    .directive('showThisMerchant', showThisMerchant)
