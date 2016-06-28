@@ -1448,7 +1448,7 @@ button.dim:active:before {
     background-color: #FFFFFF;
     border: 1px solid #DDDDDD;
     color: inherit;
-    float: left;
+    float: left;4
     line-height: 1.42857;
     margin-left: -1px;
     padding: 4px 10px;
@@ -10035,18 +10035,30 @@ th.center, td.center {
 
 /*/!*====================================new style====================================*!/*/
 /*.wrapper-content {padding: 15px 0px 20px;}*/
-/*.textAlign {text-align: center; background: #fff;}*/
+.textAlign {text-align: center; background: #fff;}
+.nav>li{vertical-align: top;}
+.nav>li>a {border-left: #eee 1px solid;}
+#right-sidebar {background: rgba(0,0,0,.1);  border: none;  top: 0;  width: 100% !important;  z-index: 9999;  bottom: 0;  position: fixed;  right:0;  }
+#right-sidebar .sidebar-container {width: 650px; margin: 100px auto 0; background: #fff;border: rgba(0,0,0,.2) 8px solid;}
+#right-sidebar .sidebar-container .ibox {margin: 0; text-align: center;}
+#right-sidebar .sidebar-container .ibox-content {text-align: left}
+#right-sidebar .sidebar-container ul {margin: 0 0 20px 0; cursor: pointer}
+.sidebar-container .sidebar-message {padding: 8px 10px;}
+.showThisMerchant {padding: 10px;}
+.showThisMerchant span {display: block}
+.showThisMerchant span:first-child{color: #1ab394;}
+.showThisMerchant i{color: #ccc; font-size: 12px; margin-left: 5px;}
 
-/*.c_formly_line {margin: 10px 0;}*/
-/*.c_formly_line .form-group {overflow: hidden;}*/
-/*.c_formly_line label {margin: 0; text-align: right; padding: 6px 0;}*/
-/*.c_formly_line input ,.c_formly_line select {width: 450px}*/
-/*.c_formly_line .radio-group .radio {display: inline-block;margin: 0 10px 10px 20px;}*/
-/*.c_formly_line .radio-group input,.c_formly_line .checkbox input {width: auto;}*/
-/*.c_formly_line .checkbox {margin: 0 0 0 20px;}*/
+.c_formly_line {margin: 10px 0;}
+.c_formly_line .form-group {overflow: hidden;}
+.c_formly_line label {margin: 0; text-align: right; padding: 6px 0;}
+.c_formly_line input ,.c_formly_line select {width: 450px}
+.c_formly_line .radio-group .radio {display: inline-block;margin: 0 10px 10px 20px;}
+.c_formly_line .radio-group input,.c_formly_line .checkbox input {width: auto;}
+.c_formly_line .checkbox {margin: 0 0 0 20px;}
 
-/*.file-box {float: none; display: inline-block;}*/
-/*.search-input {margin: 0em 1em;display: block;padding: 4px;border-radius: 5px;border: 1px solid silver;}*/
-/*.nav-bareheaded {display: none;}*/
-/*.ngtables {overflow: hidden;}*/
-/*.ngtables .pagination {margin: 0;}*/
+.file-box {float: none; display: inline-block;}
+.search-input {margin: 0em 1em;display: block;padding: 4px;border-radius: 5px;border: 1px solid silver;}
+.nav-bareheaded {display: none;}
+.ngtables {overflow: hidden;}
+.ngtables .pagination {margin: 0;}
