@@ -21,11 +21,21 @@ public class JSTreeDTO {
 
     private String status;
 
+    private String detailType;
+
     public JSTreeDTO() {
     }
 
     public JSTreeDTO(String id) {
         this.id = id;
+    }
+
+    public String getDetailType() {
+        return detailType;
+    }
+
+    public void setDetailType(String detailType) {
+        this.detailType = detailType;
     }
 
     public String getStatus() {

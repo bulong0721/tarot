@@ -67,6 +67,7 @@ public class FilesController {
             jt.setText(dto.getName());
             jt.setType(dto.isLeaf() ? "file" : "default");
             jt.setLastModify(new Date(dto.getMtime()));
+            jt.setDetailType(dto.getType());
             tree.add(jt);
         }
         return tree;
