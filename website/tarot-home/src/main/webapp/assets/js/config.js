@@ -71,7 +71,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             controller: 'merchantShopCtrl',
             data: {
                 pageTitle: '门店管理',
-                subTitle: '门店管理',
+                subTitle: '门店列表',
                 datatable: 'assets/mvc/merchant/view/shop_datatable.html'
             },
             resolve: {

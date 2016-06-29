@@ -4,17 +4,20 @@ angular.module('inspinia', [])
 /**
  * merchantCtrl - controller
  */
-merchantCtrl.$inject = ['$scope', 'Constants','cTables'];
-function merchantCtrl($scope, Constants,cTables) {
+merchantCtrl.$inject = ['$scope', 'Constants','cTables','cfromly'];
+function merchantCtrl($scope, Constants,cTables,cfromly) {
     var mgrData = {
         fields: [
             {
                 'key': 'name',
-                'type': 'input',
+                'type': 'c_input',
+                'className':'c_formly_line',
                 'templateOptions': {'type': 'text', 'label': '商户名称', required: true, 'placeholder': '商户名称'}
             },
             {
-                'key': 'businessType', 'type': 'select',
+                'key': 'businessType',
+                'type': 'c_select',
+                'className':'c_formly_line',
                 'templateOptions': {
                     required: true,
                     'label': '商户类型',
@@ -23,17 +26,20 @@ function merchantCtrl($scope, Constants,cTables) {
             },
             {
                 'key': 'cuisineType',
-                'type': 'input',
+                'type': 'c_input',
+                'className':'c_formly_line',
                 'templateOptions': {'type': 'text', 'label': '商户菜系', required: true, 'placeholder': '商户菜系'}
             },
             {
                 'key': 'imgFile',
-                'type': 'input',
+                'type': 'c_input',
+                'className':'c_formly_line',
                 'templateOptions': {'type': 'file', 'label': '商户图标', 'placeholder': '商户图标'}
             },
             {
                 'key': 'description',
-                'type': 'textarea',
+                'type': 'c_textarea',
+                'className':'c_formly_line',
                 'templateOptions': {'label': '商户描述', 'placeholder': '商户描述', "rows": 10}
             }
         ],

@@ -201,135 +201,127 @@ function cTablesService($resource,NgTableParams){
 * cfromly
 * */
 function cfromlyService(formlyConfig,$window){
-    var vm = this;
-    vm.init = function(){
+    //自定义formly Label&input一行显示
+    formlyConfig.setWrapper({
+        name: 'lineLabel',
+        template: [
+            '<label ng-hide="hide" for="{{::id}}" class="col-sm-2 control-label">',
+            '{{to.label}} {{to.required ? "*" : ""}}',
+            '</label>',
+            '<div ng-hide="hide" class="col-sm-8">',
+            '<formly-transclude></formly-transclude>',
+            '</div>'
+        ].join(' ')
+    });
 
-        //自定义formly Label&input一行显示
-        formlyConfig.setWrapper({
-            name: 'lineLabel',
-            template: [
-                '<label ng-hide="hide" for="{{::id}}" class="col-sm-2 control-label">',
-                '{{to.label}} {{to.required ? "*" : ""}}',
-                '</label>',
-                '<div ng-hide="hide" class="col-sm-8">',
-                '<formly-transclude></formly-transclude>',
-                '</div>'
-            ].join(' ')
-        });
+    /*以下 使用forEach*/
 
-        /*以下 使用forEach*/
+    //input
+    formlyConfig.setType({
+        name: 'c_input',
+        extends: 'input',
+        wrapper: ['lineLabel', 'bootstrapHasError'],
+    });
 
-        //input
-        formlyConfig.setType({
-            name: 'c_input',
-            extends: 'input',
-            wrapper: ['lineLabel', 'bootstrapHasError'],
-        });
+    //select
+    formlyConfig.setType({
+        name: 'c_select',
+        extends: 'select',
+        wrapper: ['lineLabel', 'bootstrapHasError']
+    });
 
-        //select
-        formlyConfig.setType({
-            name: 'c_select',
-            extends: 'select',
-            wrapper: ['lineLabel', 'bootstrapHasError']
-        });
+    //textarea
+    formlyConfig.setType({
+        name: 'c_textarea',
+        extends: 'textarea',
+        wrapper: ['lineLabel', 'bootstrapHasError']
+    });
 
-        //textarea
-        formlyConfig.setType({
-            name: 'c_textarea',
-            extends: 'textarea',
-            wrapper: ['lineLabel', 'bootstrapHasError']
-        });
+    //checkbox
+    formlyConfig.setType({
+        name: 'c_checkbox',
+        extends: 'checkbox',
+        wrapper: ['lineLabel', 'bootstrapHasError']
+    });
 
-        //checkbox
-        formlyConfig.setType({
-            name: 'c_checkbox',
-            extends: 'checkbox',
-            wrapper: ['lineLabel', 'bootstrapHasError']
-        });
+    //radio
+    formlyConfig.setType({
+        name: 'c_radio',
+        extends: 'radio',
+        wrapper: ['lineLabel', 'bootstrapHasError']
+    });
 
-        //radio
-        formlyConfig.setType({
-            name: 'c_radio',
-            extends: 'radio',
-            wrapper: ['lineLabel', 'bootstrapHasError']
-        });
-
-        //file
-        formlyConfig.setType({
-            name: 'upload',
-            extends: 'input',
-            wrapper: ['bootstrapLabel', 'bootstrapHasError'],
-            defaultOptions: {
-                templateOptions: {
-                    type: 'file',
-                    required: true
-                }
-            },
-            link: function(scope, el, attrs) {
-                el.on("change", function(changeEvent) {
-                    var file = changeEvent.target.files[0];
-                    if (file) {
-                        var fd = new FormData();
-                        fd.append('file', file);
-                        scope.$emit('fileToUpload', fd);
-                        var fileProp = {};
-                        for (var properties in file) {
-                            if (!angular.isFunction(file[properties])) {
-                                fileProp[properties] = file[properties];
-                            }
-                        }
-                        scope.fc.$setViewValue(fileProp);
-                    } else {
-                        scope.fc.$setViewValue(undefined);
-                    }
-                });
-                el.on("focusout", function(focusoutEvent) {
-                    if ($window.document.activeElement.id === scope.id) {
-                        scope.$apply(function(scope) {
-                            scope.fc.$setUntouched();
-                        });
-                    } else {
-                        scope.fc.$validate();
-                    }
-                });
+    //file
+    formlyConfig.setType({
+        name: 'upload',
+        extends: 'input',
+        wrapper: ['bootstrapLabel', 'bootstrapHasError'],
+        defaultOptions: {
+            templateOptions: {
+                type: 'file',
+                required: true
             }
-        });
-
-        //datepicker
-        formlyConfig.setType({
-            name: 'datepicker',
-            template: [
-                '<p class="input-group">',
-                '<input  type="text" id="{{::id}}" name="{{::id}}" ng-model="model[options.key]" class="form-control" ng-click="datepicker.open($event)" uib-datepicker-popup="{{to.datepickerOptions.format}}" is-open="datepicker.opened" datepicker-options="to.datepickerOptions" />',
-                '<span class="input-group-btn">',
-                '<button type="button" class="btn btn-default" ng-click="datepicker.open($event)" ng-disabled="to.disabled"><i class="fa fa-calendar"></i></button>',
-                '</span></p>'
-            ].join(' '),
-            wrapper: ['bootstrapLabel', 'bootstrapHasError'],
-            defaultOptions: {
-                ngModelAttrs: {},
-                templateOptions: {
-                    datepickerOptions: {
-                        format: 'yyyy.MM.dd',
-                        initDate: new Date()
+        },
+        link: function(scope, el, attrs) {
+            el.on("change", function(changeEvent) {
+                var file = changeEvent.target.files[0];
+                if (file) {
+                    var fd = new FormData();
+                    fd.append('file', file);
+                    scope.$emit('fileToUpload', fd);
+                    var fileProp = {};
+                    for (var properties in file) {
+                        if (!angular.isFunction(file[properties])) {
+                            fileProp[properties] = file[properties];
+                        }
                     }
+                    scope.fc.$setViewValue(fileProp);
+                } else {
+                    scope.fc.$setViewValue(undefined);
                 }
-            },
-            controller: ['$scope', function ($scope) {
-                $scope.datepicker = {};
+            });
+            el.on("focusout", function(focusoutEvent) {
+                if ($window.document.activeElement.id === scope.id) {
+                    scope.$apply(function(scope) {
+                        scope.fc.$setUntouched();
+                    });
+                } else {
+                    scope.fc.$validate();
+                }
+            });
+        }
+    });
 
-                $scope.datepicker.opened = false;
+    //datepicker
+    formlyConfig.setType({
+        name: 'datepicker',
+        template: [
+            '<p class="input-group">',
+            '<input  type="text" id="{{::id}}" name="{{::id}}" ng-model="model[options.key]" class="form-control" ng-click="datepicker.open($event)" uib-datepicker-popup="{{to.datepickerOptions.format}}" is-open="datepicker.opened" datepicker-options="to.datepickerOptions" />',
+            '<span class="input-group-btn">',
+            '<button type="button" class="btn btn-default" ng-click="datepicker.open($event)" ng-disabled="to.disabled"><i class="fa fa-calendar"></i></button>',
+            '</span></p>'
+        ].join(' '),
+        wrapper: ['bootstrapLabel', 'bootstrapHasError'],
+        defaultOptions: {
+            ngModelAttrs: {},
+            templateOptions: {
+                datepickerOptions: {
+                    format: 'yyyy.MM.dd',
+                    initDate: new Date()
+                }
+            }
+        },
+        controller: ['$scope', function ($scope) {
+            $scope.datepicker = {};
 
-                $scope.datepicker.open = function ($event) {
-                    $scope.datepicker.opened = !$scope.datepicker.opened;
-                };
-            }]
-        });
-    }
-    //formly相关按钮事件
-    vm.initNgMgrCtrl = function(mgrOpts, scope) {
+            $scope.datepicker.opened = false;
 
-    }
+            $scope.datepicker.open = function ($event) {
+                $scope.datepicker.opened = !$scope.datepicker.opened;
+            };
+        }]
+    });
 }
 
 
