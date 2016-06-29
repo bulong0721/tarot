@@ -17,12 +17,12 @@
                 <tr>
                     <th width="5%" class="center"></th>
                     <th width="15%" class="center">名称</th>
-                    <th width="10%" class="center">心跳</th>
+                    <th width="15%" class="center">心跳</th>
                     <th width="15%" class="center">主板编号</th>
                     <th width="15%" class="center">设备号</th>
                     <th width="15%" class="center">描述</th>
                     <th width="10%" class="center">类型</th>
-                    <th width="10%" class="center">关联产品</th>
+                    <th width="5%" class="center">关联产品</th>
                     <th class="center">操作</th>
                 </tr>
                 </thead>
@@ -38,7 +38,6 @@
                     <td>{{::row.deviceNum}}</td>
                     <td>{{::row.description}}</td>
                     <td>{{::row.device.name}}</td>
-                    <td>{{::row.description}}</td>
                     <td>
                         <a ng-click="goDeviceBindProductEditor($index)"><i class="btn-icon fa fa-pencil"></i></a>
                     </td>
