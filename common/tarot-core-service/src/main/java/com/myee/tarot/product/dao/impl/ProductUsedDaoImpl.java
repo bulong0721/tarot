@@ -2,7 +2,6 @@ package com.myee.tarot.product.dao.impl;
 
 import com.myee.tarot.catalog.domain.ProductUsed;
 import com.myee.tarot.catalog.domain.QProductUsed;
-import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
@@ -30,8 +29,8 @@ public class ProductUsedDaoImpl extends GenericEntityDaoImpl<Long, ProductUsed> 
             query.where(qProductUsed.code.like("%" + pageRequest.getQueryName() + "%"));
         }
         pageList.setRecordsFiltered(query.fetchCount());
-        if( pageRequest.getLength() > 0){
-            query.offset(pageRequest.getStart()).limit(pageRequest.getLength());
+        if( pageRequest.getCount() > 0){
+            query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
         pageList.setList(query.fetch());
         return pageList;
@@ -48,8 +47,8 @@ public class ProductUsedDaoImpl extends GenericEntityDaoImpl<Long, ProductUsed> 
             query.where(qProductUsed.code.like("%" + pageRequest.getQueryName() + "%"));
         }
         pageList.setRecordsTotal(query.from(qProductUsed).fetchCount());
-        if( pageRequest.getLength() > 0){
-            query.offset(pageRequest.getStart()).limit(pageRequest.getLength());
+        if( pageRequest.getCount() > 0){
+            query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
         pageList.setList(query.fetch());
         return pageList;
