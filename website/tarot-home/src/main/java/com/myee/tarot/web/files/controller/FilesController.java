@@ -42,7 +42,40 @@ public class FilesController {
 
     @RequestMapping(value = "/admin/files/list")
     @ResponseBody
-    public AjaxResponse processListFiles(HttpServletRequest http,HttpServletResponse response) {
+    public List<JSTreeDTO> processListFiles(HttpServletRequest http,HttpServletResponse response) {
+        List<JSTreeDTO> tree = Lists.newArrayList();
+        String id = http.getParameter("id");
+        File dir = null;
+        if(id.equals("#")){
+            dir = DOWNLOAD_HOME;
+            //resp.put("text",dir.getPath());
+            //resp.put("id",dir.getPath());
+        }else{
+            dir = new File(id);
+        }
+//        if (null != req.getNodeid()) {
+//            dir = FileUtils.getFile(req.getNodeid());
+//        }
+        Map<String, FileDTO> resMap = Maps.newHashMap();
+        listFiles(dir, resMap);
+        List<FileDTO> dtos = Lists.newArrayList(resMap.values());
+        Collections.sort(dtos);
+        for (FileDTO dto : dtos) {
+            JSTreeDTO jt = new JSTreeDTO();
+            jt.setId(dto.getId());
+            jt.setChildren(!dto.isLeaf());
+            jt.setText(dto.getName());
+            jt.setType(dto.isLeaf() ? "file" : "default");
+            jt.setLastModify(new Date(dto.getMtime()));
+            tree.add(jt);
+        }
+        return tree;
+    }
+
+
+    @RequestMapping(value = "/admin/files/showList")
+    @ResponseBody
+    public AjaxResponse listFiles(HttpServletRequest http,HttpServletResponse response) {
         AjaxResponse resp = new AjaxResponse();
         List<JSTreeDTO> tree = Lists.newArrayList();
         String id = http.getParameter("id");
@@ -76,7 +109,7 @@ public class FilesController {
 
     @RequestMapping(value = "/admin/files/change")
     @ResponseBody
-    public AjaxResponse changeFile(HttpServletRequest request,HttpServletResponse response) {
+    public  JSTreeDTO changeFile(HttpServletRequest request,HttpServletResponse response) {
         AjaxResponse resp = new AjaxResponse();
         String operation = request.getParameter("operation");
         String id = request.getParameter("id");
@@ -99,8 +132,7 @@ public class FilesController {
                     }
                 }
                 if(isNew){
-                    resp.addEntry("JSTreeDTO",new JSTreeDTO(file.getPath()));
-                    return resp;
+                    return new JSTreeDTO(file.getPath());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -113,8 +145,7 @@ public class FilesController {
                 if(isDelete){
                     JSTreeDTO tree = new JSTreeDTO();
                     tree.setStatus("OK");
-                    resp.addEntry("JSTreeDTO",tree);
-                    return resp;
+                    return tree;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -131,12 +162,10 @@ public class FilesController {
                         isRename = file.renameTo(newFile);
                     }
                     if(isRename){
-                        resp.addEntry("JSTreeDTO",new JSTreeDTO(newFile.getPath()));
-                        return resp;
+                        return new JSTreeDTO(newFile.getPath());
                     }
                 }else{
-                    resp.addEntry("JSTreeDTO", new JSTreeDTO(newFile.getPath()));
-                    return resp;
+                    return new JSTreeDTO(newFile.getPath());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
