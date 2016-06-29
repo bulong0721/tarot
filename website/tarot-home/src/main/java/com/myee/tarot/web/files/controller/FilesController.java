@@ -2,6 +2,7 @@ package com.myee.tarot.web.files.controller;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.web.files.FileDTO;
 import com.myee.tarot.web.files.JSTreeDTO;
 import org.springframework.stereotype.Controller;
@@ -12,10 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Martin on 2016/4/21.
@@ -23,7 +21,7 @@ import java.util.Map;
 @Controller
 public class FilesController {
 
-    private static final File DOWNLOAD_HOME = new File("D://ceshi");
+    private static final File DOWNLOAD_HOME = new File("D://");
 
    /* @RequestMapping(value = "/admin/files/list.html")
     public
@@ -44,8 +42,8 @@ public class FilesController {
 
     @RequestMapping(value = "/admin/files/list")
     @ResponseBody
-    public List<JSTreeDTO> processListFiles(HttpServletRequest http,HttpServletResponse response) {
-        Map<String,Object> resp = Maps.newHashMap();
+    public AjaxResponse processListFiles(HttpServletRequest http,HttpServletResponse response) {
+        AjaxResponse resp = new AjaxResponse();
         List<JSTreeDTO> tree = Lists.newArrayList();
         String id = http.getParameter("id");
         File dir = null;
@@ -68,17 +66,18 @@ public class FilesController {
             jt.setId(dto.getId());
             jt.setChildren(!dto.isLeaf());
             jt.setText(dto.getName());
-            jt.setType(dto.isLeaf() ? "file":"default");
+            jt.setType(dto.isLeaf() ? "file" : "default");
             jt.setLastModify(new Date(dto.getMtime()));
             tree.add(jt);
         }
-
-        return tree;
+        resp.addEntry("tree",tree);
+        return resp;
     }
 
     @RequestMapping(value = "/admin/files/change")
     @ResponseBody
-    public JSTreeDTO changeFile(HttpServletRequest request,HttpServletResponse response) {
+    public AjaxResponse changeFile(HttpServletRequest request,HttpServletResponse response) {
+        AjaxResponse resp = new AjaxResponse();
         String operation = request.getParameter("operation");
         String id = request.getParameter("id");
         String text = request.getParameter("text");
@@ -100,7 +99,8 @@ public class FilesController {
                     }
                 }
                 if(isNew){
-                    return new JSTreeDTO(file.getPath());
+                    resp.addEntry("JSTreeDTO",new JSTreeDTO(file.getPath()));
+                    return resp;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -113,7 +113,8 @@ public class FilesController {
                 if(isDelete){
                     JSTreeDTO tree = new JSTreeDTO();
                     tree.setStatus("OK");
-                    return tree;
+                    resp.addEntry("JSTreeDTO",tree);
+                    return resp;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -130,10 +131,12 @@ public class FilesController {
                         isRename = file.renameTo(newFile);
                     }
                     if(isRename){
-                        return new JSTreeDTO(newFile.getPath());
+                        resp.addEntry("JSTreeDTO",new JSTreeDTO(newFile.getPath()));
+                        return resp;
                     }
                 }else{
-                    return new JSTreeDTO(newFile.getPath());
+                    resp.addEntry("JSTreeDTO", new JSTreeDTO(newFile.getPath()));
+                    return resp;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
