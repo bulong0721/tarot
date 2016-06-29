@@ -23,7 +23,7 @@ import java.util.Map;
 @Controller
 public class FilesController {
 
-    private static final File DOWNLOAD_HOME = new File("D://");
+    private static final File DOWNLOAD_HOME = new File("D://ceshi");
 
    /* @RequestMapping(value = "/admin/files/list.html")
     public
