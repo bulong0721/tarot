@@ -424,7 +424,7 @@ public class MerchantController {
                 resp.setErrorString("请切换门店！");
                 return resp;
             }
-            Long numFind = merchantStoreService.getCountById(null,id);
+            Long numFind = merchantStoreService.getCountById(id,null);
             if (numFind != 1L) {
                 //抛出异常给异常处理机制
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
