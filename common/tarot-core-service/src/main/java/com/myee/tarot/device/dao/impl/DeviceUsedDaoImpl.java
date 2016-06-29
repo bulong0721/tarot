@@ -29,7 +29,6 @@ public class DeviceUsedDaoImpl extends GenericEntityDaoImpl<Long, DeviceUsed> im
             query.where(qDeviceUsed.name.like("%" + pageRequest.getQueryName() + "%"));
         }
         pageList.setRecordsTotal(query.from(qDeviceUsed).fetchCount());
-        pageList.setRecordsFiltered(query.from(qDeviceUsed).fetchCount());
         if( pageRequest.getCount() > 0){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }

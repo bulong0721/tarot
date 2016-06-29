@@ -165,7 +165,6 @@ public class MerchantController {
                 resp.addDataEntry(objectToEntry(merchant));
             }
             resp.setRecordsTotal(pageList.getRecordsTotal());
-            resp.setRecordsFiltered(pageList.getRecordsFiltered());
         } catch (Exception e) {
             e.printStackTrace();
             resp.setErrorString("出错");
@@ -374,7 +373,6 @@ public class MerchantController {
                 resp.addDataEntry(objectToEntry(merchantStore));
             }
             resp.setRecordsTotal(pageList.getRecordsTotal());
-            resp.setRecordsFiltered(pageList.getRecordsFiltered());
         } catch (Exception e) {
             e.printStackTrace();
             resp.setErrorString("出错");

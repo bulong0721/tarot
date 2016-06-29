@@ -274,7 +274,6 @@ public class TableController {
             resp.addDataEntry(entry);
         }
         resp.setRecordsTotal(pageList.getRecordsTotal());
-        resp.setRecordsFiltered(pageList.getRecordsFiltered());
         return resp;
     }
 

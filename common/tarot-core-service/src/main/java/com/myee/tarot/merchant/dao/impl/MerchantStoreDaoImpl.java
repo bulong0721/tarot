@@ -73,7 +73,6 @@ public class MerchantStoreDaoImpl extends GenericEntityDaoImpl<Long, MerchantSto
             query.where(qMerchantStore.merchant.id.eq(id));
         }
         pageList.setRecordsTotal(query.from(qMerchantStore).fetchCount());
-        pageList.setRecordsFiltered(query.from(qMerchantStore).fetchCount());
         if( pageRequest.getCount() > 0){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }

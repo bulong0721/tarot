@@ -41,7 +41,6 @@ public class MerchantDaoImpl extends GenericEntityDaoImpl<Long, Merchant> implem
             query.where(qMerchant.name.like("%" + pageRequest.getQueryName() + "%"));
         }
         pageList.setRecordsTotal(query.from(qMerchant).fetchCount());
-        pageList.setRecordsFiltered(query.from(qMerchant).fetchCount());
         if( pageRequest.getCount() > 0){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }

@@ -79,7 +79,6 @@ public class DeviceUsedController {
                 resp.addDataEntry(entry);
             }
             resp.setRecordsTotal(pageResult.getRecordsTotal());
-            resp.setRecordsFiltered(pageResult.getRecordsFiltered());
         } catch (Exception e) {
             LOGGER.error("Error while paging products", e);
         }

@@ -24,11 +24,10 @@ public class ProductUsedDaoImpl extends GenericEntityDaoImpl<Long, ProductUsed> 
         PageResult<ProductUsed> pageList = new PageResult<ProductUsed>();
         QProductUsed qProductUsed = QProductUsed.productUsed;
         JPQLQuery<ProductUsed> query = new JPAQuery(getEntityManager());
-        pageList.setRecordsTotal(query.from(qProductUsed).fetchCount());
         if (StringUtils.isNotBlank(pageRequest.getQueryName())) {
             query.where(qProductUsed.code.like("%" + pageRequest.getQueryName() + "%"));
         }
-        pageList.setRecordsFiltered(query.fetchCount());
+        pageList.setRecordsTotal(query.from(qProductUsed).fetchCount());
         if( pageRequest.getCount() > 0){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }

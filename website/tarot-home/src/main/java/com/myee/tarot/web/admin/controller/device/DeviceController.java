@@ -55,7 +55,6 @@ public class DeviceController {
                 resp.addDataEntry(entry);
             }
             resp.setRecordsTotal(pageList.getRecordsTotal());
-            resp.setRecordsFiltered(pageList.getRecordsFiltered());
         } catch (Exception e) {
             LOGGER.error("Error while paging products", e);
         }
