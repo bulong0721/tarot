@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface MerchantStoreDao extends GenericEntityDao<Long, MerchantStore> {
 
-    Long getCountById(Long id);
+//    Long getCountById(Long id);
 
 //    List<MerchantStore> listByMerchant(Long id);
 

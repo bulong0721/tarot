@@ -66,7 +66,7 @@ public class MerchantController {
             }
             Merchant merchant1 = merchantService.update(merchant);//新建或更新
 
-            Long counts = merchantService.getCountById(merchant1.getId());
+            Long counts = merchantStoreService.getCountById( merchant1.getId(),null);
             if (counts == 0) {
                 //新建商户后，如果商户下没有门店自动新建一个默认店铺
                 MerchantStore merchantStore = new MerchantStore();
@@ -424,7 +424,7 @@ public class MerchantController {
                 resp.setErrorString("请切换门店！");
                 return resp;
             }
-            Long numFind = merchantStoreService.getCountById(id);//根据门店和商户id一起搜索,要切换的门店必须属于session里的商户
+            Long numFind = merchantStoreService.getCountById(null,id);
             if (numFind != 1L) {
                 //抛出异常给异常处理机制
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);

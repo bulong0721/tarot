@@ -4,23 +4,9 @@ angular.module('inspinia', [])
 /**
  * merchantCtrl - controller
  */
-merchantCtrl.$inject = ['$scope', '$resource','$compile', 'Constants'];
-function merchantCtrl($scope, $resource, $compile, Constants) {
-    function actionsHtml(data, type, full, meta) {
-        return '<a ng-click="goEditor(' + meta.row + ')"><i class="btn-icon fa fa-pencil bigger-130"></a>';
-    }
-
-
+merchantCtrl.$inject = ['$scope', 'Constants'];
+function merchantCtrl($scope, Constants) {
     var mgrData = {
-        columns: [
-            {data: 'id', title: '商户ID', width: 85, orderable: true},
-            {data: 'name', title: '商户名称', width: 85, orderable: true},
-            {data: 'businessTypeKey', title: '商户类型', width: 60, orderable: true},
-            {data: 'cuisineType', title: '商户菜系', width: 55, orderable: true},
-            {data: 'imgFile', title: '商户图标', width: 70, orderable: false, align: 'center'},
-            {data: 'description', title: '商户描述', width: 70, orderable: false},
-            {title: '动作', width: 35, render: actionsHtml}
-        ],
         fields: [
             {
                 'key': 'name',
@@ -56,5 +42,5 @@ function merchantCtrl($scope, $resource, $compile, Constants) {
             update: '/admin/merchant/save'
         }
     };
-    Constants.initMgrCtrl(mgrData, $scope);
+    Constants.initNgMgrCtrl(mgrData, $scope);
 }

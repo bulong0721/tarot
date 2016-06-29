@@ -22,23 +22,29 @@ import java.util.List;
 public class MerchantStoreDaoImpl extends GenericEntityDaoImpl<Long, MerchantStore> implements MerchantStoreDao {
     public static Log log = LogFactory.getLog(MerchantDaoImpl.class);
 
-    @Override
-    public Long getCountById(Long id) {
-        QMerchantStore qMerchantStore = QMerchantStore.merchantStore;
-        JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
-        query.from(qMerchantStore)
-                .where(qMerchantStore.id.eq(id));
-        log.info(query.fetchCount());
-
-        return query.fetchCount();
-    }
+//    @Override
+//    public Long getCountById(Long id) {
+//        QMerchantStore qMerchantStore = QMerchantStore.merchantStore;
+//        JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
+//        query.from(qMerchantStore)
+//                .where(qMerchantStore.id.eq(id));
+//        log.info(query.fetchCount());
+//
+//        return query.fetchCount();
+//    }
 
     @Override
     public Long getCountById(Long merchantStoreId, Long merchantId){
         QMerchantStore qMerchantStore = QMerchantStore.merchantStore;
         JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
-        query.from(qMerchantStore)
-                .where((qMerchantStore.id.eq(merchantStoreId)).and(qMerchantStore.merchant.id.eq(merchantId)));
+        query.from(qMerchantStore);
+        if(merchantStoreId != null){
+            query.where(qMerchantStore.id.eq(merchantStoreId));
+        }
+        if(merchantId != null){
+            query.where(qMerchantStore.merchant.id.eq(merchantId));
+        }
+
         log.info(query.fetchCount());
 
         return query.fetchCount();

@@ -30,7 +30,10 @@ public class ProductUsedDaoImpl extends GenericEntityDaoImpl<Long, ProductUsed> 
             query.where(qProductUsed.code.like("%" + pageRequest.getQueryName() + "%"));
         }
         pageList.setRecordsFiltered(query.fetchCount());
-        pageList.setList(query.offset(pageRequest.getStart()).limit(pageRequest.getLength()).fetch());
+        if( pageRequest.getLength() > 0){
+            query.offset(pageRequest.getStart()).limit(pageRequest.getLength());
+        }
+        pageList.setList(query.fetch());
         return pageList;
     }
 
@@ -45,7 +48,9 @@ public class ProductUsedDaoImpl extends GenericEntityDaoImpl<Long, ProductUsed> 
             query.where(qProductUsed.code.like("%" + pageRequest.getQueryName() + "%"));
         }
         pageList.setRecordsTotal(query.from(qProductUsed).fetchCount());
-        query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
+        if( pageRequest.getLength() > 0){
+            query.offset(pageRequest.getStart()).limit(pageRequest.getLength());
+        }
         pageList.setList(query.fetch());
         return pageList;
     }

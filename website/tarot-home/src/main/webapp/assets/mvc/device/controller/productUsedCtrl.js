@@ -40,15 +40,6 @@ function productUsedCtrl($scope, $resource, Constants) {
             },
             {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}}
         ],
-        //detailFields: [
-        //    {'key': 'name', 'type': 'input', 'templateOptions': {'label': '参数名', required: true, 'placeholder': '参数名'}},
-        //    {
-        //        'key': 'parentId',
-        //        'type': 'input',
-        //        'templateOptions': {'disabled': true, required: true, 'placeholder': '父节点ID'}
-        //    },
-        //    {'key': 'value', 'type': 'input', 'templateOptions': {'label': '参数值', required: true, 'placeholder': '参数值'}}
-        //],
         api: {
             read: '/product/used/paging',
             update: '/product/used/save',
