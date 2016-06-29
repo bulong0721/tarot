@@ -41,7 +41,10 @@ public class TableTypeDaoImpl extends GenericEntityDaoImpl<Long, TableType> impl
         }
         query.where(qTableType.store.id.eq(id));
         pageList.setRecordsTotal(query.from(qTableType).fetchCount());
-        pageList.setList(query.offset(pageRequest.getOffset()).limit(pageRequest.getCount()).fetch());
+        if( pageRequest.getLength() > 0){
+            query.offset(pageRequest.getStart()).limit(pageRequest.getLength());
+        }
+        pageList.setList(query.fetch());
         return pageList;
     }
 }

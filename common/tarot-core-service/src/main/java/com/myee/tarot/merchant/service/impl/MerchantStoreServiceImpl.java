@@ -17,21 +17,22 @@ import java.util.List;
 @Service
 public class MerchantStoreServiceImpl extends GenericEntityServiceImpl<Long, MerchantStore> implements MerchantStoreService {
 
-    protected MerchantStoreDao storeDaoDao;
+    protected MerchantStoreDao storeDao;
 
     @Autowired
-    public MerchantStoreServiceImpl(MerchantStoreDao storeDaoDao) {
-        super(storeDaoDao);
-        this.storeDaoDao = storeDaoDao;
+    public MerchantStoreServiceImpl(MerchantStoreDao storeDao) {
+        super(storeDao);
+        this.storeDao = storeDao;
     }
+
+//    @Override
+//    public Long getCountById(Long id) {
+//        return storeDaoDao.getCountById(id);
+//    }
 
     @Override
-    public Long getCountById(Long id) {
-        return storeDaoDao.getCountById(id);
-    }
-
     public Long getCountById(Long merchantStoreId, Long merchantId){
-        return storeDaoDao.getCountById(merchantStoreId, merchantId);
+        return storeDao.getCountById(merchantStoreId, merchantId);
     }
 
 //    @Override
@@ -46,6 +47,6 @@ public class MerchantStoreServiceImpl extends GenericEntityServiceImpl<Long, Mer
 
     @Override
     public PageResult<MerchantStore> pageListByMerchant(Long id,PageRequest pageRequest ){
-        return storeDaoDao.pageListByMerchant(id,pageRequest);
+        return storeDao.pageListByMerchant(id,pageRequest);
     }
 }

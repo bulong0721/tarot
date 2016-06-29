@@ -186,7 +186,6 @@ function switchMerchant(Constants,$resource,$state,$rootScope) {
             // 从后台获取所有门店列表
             Constants.getMerchantStores().then(
                 function(){
-                    //$scope.merchantStores = Constants.merchantStores;
                     var pages = $scope.pages = {
                         page:1,
                         count:Math.ceil(Constants.merchantStores.length/10),
@@ -194,17 +193,15 @@ function switchMerchant(Constants,$resource,$state,$rootScope) {
                             return Constants.merchantStores.slice(start,end);
                         },
                         onPageChange:function(){
-                            $scope.merchantStores = this.data(pages.page*10-9,pages.page*10+1);
+                            //$scope.merchantStores = this.data(pages.page*10-9,pages.page*10+1);
+                            $scope.merchantStores = this.data(pages.page*10-10,pages.page*10);
                         }
                     };
                 }
             );
 
-            
-            
             //点击切换门店
             $scope.switchMerchantStore = function (id) {
-                //console.log("id:"+id)
                 $resource('/admin/merchantStore/switch').save(id, function (resp) {
                     //关闭侧边栏
                     $rootScope.rightSidebar = !$rootScope.rightSidebar;
