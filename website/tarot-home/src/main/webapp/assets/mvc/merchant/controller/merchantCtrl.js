@@ -4,8 +4,8 @@ angular.module('inspinia', [])
 /**
  * merchantCtrl - controller
  */
-merchantCtrl.$inject = ['$scope', 'Constants'];
-function merchantCtrl($scope, Constants) {
+merchantCtrl.$inject = ['$scope', 'Constants','cTables'];
+function merchantCtrl($scope, Constants,cTables) {
     var mgrData = {
         fields: [
             {
@@ -42,5 +42,5 @@ function merchantCtrl($scope, Constants) {
             update: '/admin/merchant/save'
         }
     };
-    Constants.initNgMgrCtrl(mgrData, $scope);
+    cTables.initNgMgrCtrl(mgrData, $scope);
 }

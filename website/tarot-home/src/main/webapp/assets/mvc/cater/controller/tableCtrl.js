@@ -7,9 +7,9 @@ angular.module('inspinia', [])
 /**
  * roleCtrl - controller
  */
-tableMgrCtrl.$inject = ['$scope', '$resource', 'Constants'];
+tableMgrCtrl.$inject = ['$scope', '$resource', 'cTables'];
 
-function tableMgrCtrl($scope, $resource, Constants) {
+function tableMgrCtrl($scope, $resource,cTables) {
     var typeOpts = $resource('/admin/catering/type/options').query();
     var zoneOpts = $resource('/admin/catering/zone/options').query();
 
@@ -44,5 +44,5 @@ function tableMgrCtrl($scope, $resource, Constants) {
         }
     };
 
-    Constants.initNgMgrCtrl(mgrData, $scope);
+    cTables.initNgMgrCtrl(mgrData, $scope);
 }

@@ -26,7 +26,16 @@
 <body ng-controller="mainCtrl as main">
 
 <!-- Main view  -->
-<div ui-view></div>
+<div id="wrapper">
+    <div ng-include="'assets/mvc/desktop/view/navigation.html'"></div>
+    <div id="page-wrapper" class="gray-bg {{$state.current.name}}">
+        <div ng-include="'assets/mvc/desktop/view/topnavbar.html'"></div>
+        <breadcrumb></breadcrumb>
+        <div class="wrapper wrapper-content animated fadeIn"><div ui-view></div></div>
+        <div ng-include="'assets/mvc/desktop/view/footer.html'"></div>
+    </div>
+    <div ng-include="'assets/mvc/desktop/view/right_sidebar.html'"></div>
+</div>
 
 <!-- jQuery and Bootstrap -->
 <script src="assets/js/jquery/jquery-2.1.1.min.js"></script>
@@ -59,6 +68,7 @@
 <script src="assets/js/directives.js"></script>
 <script src="assets/js/services.js"></script>
 <script src="assets/js/controllers.js"></script>
+<script src="assets/js/filters.js"></script>
 
 </body>
 </html>

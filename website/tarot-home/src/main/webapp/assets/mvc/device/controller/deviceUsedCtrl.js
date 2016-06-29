@@ -4,8 +4,8 @@ angular.module('inspinia', [])
 /**
  * productUsedCtrl - controller
  */
-deviceUsedCtrl.$inject = ['$scope', '$compile','$resource', 'Constants','DTColumnBuilder'];
-function deviceUsedCtrl($scope, $compile, $resource, Constants, DTColumnBuilder) {
+deviceUsedCtrl.$inject = ['$scope', '$compile','$resource', 'Constants','cTables','DTColumnBuilder'];
+function deviceUsedCtrl($scope, $compile, $resource, Constants,cTables, DTColumnBuilder) {
     //绑定产品相关参数
     var vm = $scope.showCase = {};
     vm.selected = {};
@@ -207,7 +207,7 @@ function deviceUsedCtrl($scope, $compile, $resource, Constants, DTColumnBuilder)
             deleteAttr: '/device/attribute/delete',
         }
     };
-    Constants.initNgMgrCtrl(mgrData, $scope);
+    cTables.initNgMgrCtrl(mgrData, $scope);
 
     $scope.insertAttr = function (product) {
         if (!product.attributes) {

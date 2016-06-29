@@ -7,9 +7,9 @@ angular.module('inspinia', [])
 /**
  * roleCtrl - controller
  */
-userMgrCtrl.$inject = ['$scope', 'Constants'];
+userMgrCtrl.$inject = ['$scope', 'cTables'];
 
-function userMgrCtrl($scope, Constants) {
+function userMgrCtrl($scope, cTables) {
     var mgrData = {
         fields: [
             {'key': 'name', 'type': 'input', 'templateOptions': {'label': '昵称', required: true, 'placeholder': '昵称'}},
@@ -32,5 +32,5 @@ function userMgrCtrl($scope, Constants) {
         }
     };
 
-    Constants.initNgMgrCtrl(mgrData, $scope);
+    cTables.initNgMgrCtrl(mgrData, $scope);
 }

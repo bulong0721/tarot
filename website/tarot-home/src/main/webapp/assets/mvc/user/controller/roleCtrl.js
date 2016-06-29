@@ -7,9 +7,9 @@ angular.module('inspinia', [])
 /**
  * roleCtrl - controller
  */
-roleMgrCtrl.$inject = ['$scope', 'Constants'];
+roleMgrCtrl.$inject = ['$scope', 'cTables'];
 
-function roleMgrCtrl($scope, Constants) {
+function roleMgrCtrl($scope, cTables) {
     var mgrOpts = {
         fields: [
             {
@@ -25,5 +25,5 @@ function roleMgrCtrl($scope, Constants) {
         }
     };
 
-    Constants.initNgMgrCtrl(mgrOpts, $scope);
+    cTables.initNgMgrCtrl(mgrOpts, $scope);
 }

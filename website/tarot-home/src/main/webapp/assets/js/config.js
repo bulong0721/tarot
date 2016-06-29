@@ -18,20 +18,6 @@ function managerLoader($ocLazyLoad) {
     return $ocLazyLoad.load([
         {
             serie: true,
-            files: ['assets/js/plugins/dataTables/datatables.min.js', 'assets/css/plugins/dataTables/datatables.min.css']
-        },
-        {
-            serie: true,
-            name: 'datatables',
-            files: ['assets/js/plugins/dataTables/angular-datatables.min.js', 'assets/css/plugins/dataTables/angular-datatables.min.css']
-        },
-        {
-            serie: true,
-            name: 'datatables.buttons',
-            files: ['assets/js/plugins/dataTables/angular-datatables.buttons.min.js']
-        },
-        {
-            serie: true,
             files: ['assets/js/plugins/formly/api-check.min.js']
         },
         {
@@ -74,7 +60,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         .state('merchant', {
             abstract: true,
             url: "/merchant",
-            templateUrl: "assets/mvc/desktop/view/content.html",
+            template: "<div ui-view></div>",
             resolve: {
                 loadPlugin: managerLoader
             }
@@ -112,7 +98,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         .state('device', {
             abstract: true,
             url: "/device",
-            templateUrl: "assets/mvc/desktop/view/content.html",
+            template: "<div ui-view></div>",
             resolve: {
                 loadPlugin: managerLoader
             }
@@ -168,7 +154,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         .state('explorer', {
             abstract: true,
             url: "/explorer",
-            templateUrl: "assets/mvc/desktop/view/content.html",
+            template: "<div ui-view></div>",
             resolve: {
                 loadPlugin: treeLoader
             }
@@ -191,7 +177,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         .state('cater', {
             abstract: true,
             url: "/cater",
-            templateUrl: "assets/mvc/desktop/view/content.html",
+            template: "<div ui-view></div>",
             data: {pageTitle: '餐厅设置'},
             resolve: {
                 loadPlugin: managerLoader
@@ -242,7 +228,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         .state('user', {
             abstract: true,
             url: "/user",
-            templateUrl: "assets/mvc/desktop/view/content.html",
+            template: "<div ui-view></div>",
             resolve: {
                 loadPlugin: managerLoader
             }

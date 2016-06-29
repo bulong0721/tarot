@@ -4,8 +4,8 @@ angular.module('inspinia', [])
 /**
  * productUsedCtrl - controller
  */
-productUsedCtrl.$inject = ['$scope', '$resource','Constants'];
-function productUsedCtrl($scope, $resource, Constants) {
+productUsedCtrl.$inject = ['$scope', '$resource','Constants','cTables'];
+function productUsedCtrl($scope, $resource, Constants,cTables) {
     var productOpts = Constants.productOpts;
 
     var mgrData = {
@@ -47,7 +47,7 @@ function productUsedCtrl($scope, $resource, Constants) {
             deleteAttr: '/product/attribute/delete',
         }
     };
-    Constants.initNgMgrCtrl(mgrData, $scope);
+    cTables.initNgMgrCtrl(mgrData, $scope);
 
     $scope.insertAttr = function (product) {
         if (!product.attributes) {

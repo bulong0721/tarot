@@ -4,8 +4,8 @@ angular.module('inspinia', [])
 /**
  * deviceCtrl - controller
  */
-deviceCtrl.$inject = ['$scope','$resource', 'Constants'];
-function deviceCtrl($scope,$resource, Constants) {
+deviceCtrl.$inject = ['$scope','$resource', 'Constants','cTables'];
+function deviceCtrl($scope,$resource, Constants,cTables) {
 
     var mgrData = {
         fields: [
@@ -20,7 +20,7 @@ function deviceCtrl($scope,$resource, Constants) {
             deleteAttr: '/device/attribute/delete',
         }
     };
-    Constants.initNgMgrCtrl(mgrData, $scope);
+    cTables.initNgMgrCtrl(mgrData, $scope);
 
     $scope.insertAttr = function (product) {
         if (!product.attributes) {

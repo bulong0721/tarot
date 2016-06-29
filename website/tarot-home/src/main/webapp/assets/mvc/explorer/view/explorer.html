@@ -1,63 +1,44 @@
 <div class="main-content">
     <div class="main-content-inner">
         <div class="page-content" ng-controller="explorerCtrl">
-            <div class="page-header">
-                <h1>
-                    资源管理
-                    <small>
-                        <i class="ace-icon fa fa-angle-double-right"></i>
-                        资源管理器
-                    </small>
-                </h1>
-            </div>
             <div class="row">
-                <div class="col-lg-3">
-                    <div class="ibox float-e-margins">
-                        <div class="ibox-content">
-                            <div class="file-manager">
-                                <input type="text" id="folderTree_q" value="" class="search-input" ng-keyup="search()">
-                                <div id="folderTree"/>
-                                <div class="clearfix"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-9 animated fadeInRight">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <div class="alert alert-info">
-                                <div class="btn-group">
-                                    <button class="btn btn-danger" type="button"><i
-                                            class="fa fa-cloud-upload"></i><span class="bold">&nbsp;搜索</span></button>
-                                    <button class="btn btn-danger" type="button" ng-click="addFolder()"><i
-                                            class="fa fa-plus"></i><span class="bold">&nbsp;添加文件夹</span></button>
-                                    <button class="btn btn-danger" type="button" ng-click="addFile()"><i
-                                            class="fa fa-plus"></i><span class="bold">&nbsp;添加文件</span></button>
-                                    <button class="btn btn-danger" type="button" ng-click="delete()"><i
-                                            class="fa fa-remove"></i><span class="bold">&nbsp;删除</span></button>
-                                    <button class="btn btn-danger" type="button" ng-click="rename()"><i
-                                            class="fa fa-pencil"></i><span class="bold">&nbsp;重命名</span></button>
+                <div class="col-lg-12" id="showDetail" >
+                    <div class="col-lg-3">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-content">
+                                <div class="file-manager">
+                                    <div class="btn-group">
+                                        <button class="btn" type="button" ng-click="vm.addFolder()"><i class="fa fa-plus"></i><span class="bold">添加文件夹</span></button>
+                                        <button class="btn" type="button" ng-click="vm.addFile()"><i class="fa fa-plus"></i><span class="bold">添加文件</span></button>
+                                        <button class="btn" type="button" ng-click="vm.delete()"><i class="fa fa-remove"></i><span class="bold">删除</span></button>
+                                        <button class="btn" type="button" ng-click="vm.rename()"><i class="fa fa-pencil"></i><span class="bold">重命名</span></button>
+                                    </div>
+
+                                    <div class="hr-line-dashed"></div>
+                                    <input type="file" />
+                                    <button class="btn btn-primary btn-block">Upload Files</button>
+                                    <div class="hr-line-dashed"></div>
+                                    <h5>资源库</h5>
+                                    <div js-tree="vm.treeConfig" ng-model="treeData" tree="treeInstance"></div>
+                                    <div id="folderTree"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-lg-12" id="showDetail" >
-                            <div class="file-box" ng-repeat="detail in details" >
-                                <div class="file">
-                                    <a href="">
-                                        <span class="corner"></span>
-
-                                        <div class="icon">
-                                            <i class="fa fa-file" ng-if="detail.type=='file'"></i>
-                                            <i class="fa fa-folder" ng-if="detail.type=='default'"></i>
-                                        </div>
-                                        <div class="file-name">
-                                            {{detail.text}}
-                                            <br/>
-                                            <small>Added: {{ detail.lastModify | date : format : timezone}}</small>
-                                        </div>
-                                    </a>
+                    <div class="col-lg-9">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>Formly<small>文件夹</small></h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="file-box" ng-repeat="f in vm.filies">
+                                    <div class="file">
+                                        <a href="">
+                                            <span class="corner"></span>
+                                            <div class="image"><img alt="image" class="img-responsive" src="skin/images/p1.jpg"></div>
+                                            <div class="file-name">{{f.text}}<br><small>{{f.lastModify | dateFormatter}}</small></div>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

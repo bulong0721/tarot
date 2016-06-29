@@ -3,7 +3,6 @@
  *
  */
 
-
 /**
  * pageTitle - Directive for set Page title - mata title
  */
@@ -39,80 +38,6 @@ function sideNavigation($timeout) {
     };
 }
 
-/**
- * iboxTools - Directive for iBox tools elements in right corner of ibox
- */
-function iboxTools($timeout) {
-    return {
-        restrict: 'A',
-        scope: true,
-        templateUrl: 'assets/views/ibox_tools.html',
-        controller: function ($scope, $element) {
-            // Function for collapse ibox
-            $scope.showhide = function () {
-                var ibox = $element.closest('div.ibox');
-                var icon = $element.find('i:first');
-                var content = ibox.find('div.ibox-content');
-                content.slideToggle(200);
-                // Toggle icon from up to down
-                icon.toggleClass('fa-chevron-up').toggleClass('fa-chevron-down');
-                ibox.toggleClass('').toggleClass('border-bottom');
-                $timeout(function () {
-                    ibox.resize();
-                    ibox.find('[id^=map-]').resize();
-                }, 50);
-            },
-                // Function for close ibox
-                $scope.closebox = function () {
-                    var ibox = $element.closest('div.ibox');
-                    ibox.remove();
-                }
-        }
-    };
-}
-
-/**
- * iboxTools with full screen - Directive for iBox tools elements in right corner of ibox with full screen option
- */
-function iboxToolsFullScreen($timeout) {
-    return {
-        restrict: 'A',
-        scope: true,
-        templateUrl: 'views/common/ibox_tools_full_screen.html',
-        controller: function ($scope, $element) {
-            // Function for collapse ibox
-            $scope.showhide = function () {
-                var ibox = $element.closest('div.ibox');
-                var icon = $element.find('i:first');
-                var content = ibox.find('div.ibox-content');
-                content.slideToggle(200);
-                // Toggle icon from up to down
-                icon.toggleClass('fa-chevron-up').toggleClass('fa-chevron-down');
-                ibox.toggleClass('').toggleClass('border-bottom');
-                $timeout(function () {
-                    ibox.resize();
-                    ibox.find('[id^=map-]').resize();
-                }, 50);
-            };
-            // Function for close ibox
-            $scope.closebox = function () {
-                var ibox = $element.closest('div.ibox');
-                ibox.remove();
-            };
-            // Function for full screen
-            $scope.fullscreen = function () {
-                var ibox = $element.closest('div.ibox');
-                var button = $element.find('i.fa-expand');
-                $('body').toggleClass('fullscreen-ibox-mode');
-                button.toggleClass('fa-expand').toggleClass('fa-compress');
-                ibox.toggleClass('fullscreen');
-                setTimeout(function() {
-                    $(window).trigger('resize');
-                }, 100);
-            }
-        }
-    };
-}
 
 /**
  * minimalizaSidebar - Directive for minimalize sidebar
@@ -151,19 +76,17 @@ function minimalizaSidebar($timeout) {
  * showThisMerchant
  */
 function showThisMerchant(Constants,$resource,$state) {
-
     return {
-        template: [
-            '<div class="showThisMerchant" ng-click="$root.rightSidebar = !$root.rightSidebar"><span>当前门店</span><span>{{merchantStoreSelect.name}}<i class="fa fa-chevron-down"></i></span></div>'
-        ].join(' '),
+        template: '<div class="showThisMerchant" ng-click="$root.rightSidebar = !$root.rightSidebar"><span>当前门店</span><span>{{merchantStoreSelect.name}}<i class="fa fa-chevron-down"></i></span></div>',
         link:function($scope){
             //获取门店列表，并切换到之前切换的门店
-            Constants.getSwitchMerchantStore().then(
-                function () {
-                    Constants.getSwitchMerchant();
-                    if (Constants.thisMerchantStore){$scope.merchantStoreSelect = Constants.thisMerchantStore};
-                }
-            );
+            Constants.getSwitchMerchantStore().then(function () {
+                //Constants.getSwitchMerchant();//切换门店
+                Constants.thisMerchant = Constants.thisMerchantStore.merchant;
+                if (Constants.thisMerchantStore){
+                    $scope.merchantStoreSelect = Constants.thisMerchantStore
+                };
+            });
         }
     };
 }
@@ -172,7 +95,6 @@ function showThisMerchant(Constants,$resource,$state) {
  * switchMerchant
  */
 function switchMerchant(Constants,$resource,$state,$rootScope) {
-
     return {
         template: [
             '<div class="ibox"><div class="ibox-title"><h5>切换门店</h5><div class="ibox-tools"> <a ng-click="$root.rightSidebar = !$root.rightSidebar"><i class="fa fa-times"></i></a></div></div><div class="ibox-content"><div class="form-group"><div class="input-group col-md-6"><input type="text" class="form-control" placeholder="输入门店名或地址搜索"> <span class="input-group-btn"> <button type="button" class="btn btn-primary">走你!</button> </span></div></div>',
@@ -182,26 +104,23 @@ function switchMerchant(Constants,$resource,$state,$rootScope) {
             '<pager page-count="pages.count" current-page="pages.page" on-page-change="pages.onPageChange()" page-first="false" page-last="false"></pager></div>',
         ].join(' '),
         link:function($scope){
-
             // 从后台获取所有门店列表
-            Constants.getMerchantStores().then(
-                function(){
-                    var pages = $scope.pages = {
-                        page:1,
-                        count:Math.ceil(Constants.merchantStores.length/10),
-                        data:function(start,end){
-                            return Constants.merchantStores.slice(start,end);
-                        },
-                        onPageChange:function(){
-                            //$scope.merchantStores = this.data(pages.page*10-9,pages.page*10+1);
-                            $scope.merchantStores = this.data(pages.page*10-10,pages.page*10);
-                        }
-                    };
-                }
-            );
+            Constants.getMerchantStores().then(function(){
+                var pages = $scope.pages = {
+                    page:1,
+                    count:Math.ceil(Constants.merchantStores.length/10),
+                    data:function(start,end){
+                        return Constants.merchantStores.slice(start,end);
+                    },
+                    onPageChange:function(){
+                        $scope.merchantStores = this.data(pages.page*10-10,pages.page*10);
+                    }
+                };
+            });
 
             //点击切换门店
             $scope.switchMerchantStore = function (id) {
+                //console.log("id:"+id)
                 $resource('/admin/merchantStore/switch').save(id, function (resp) {
                     //关闭侧边栏
                     $rootScope.rightSidebar = !$rootScope.rightSidebar;
@@ -218,13 +137,7 @@ function switchMerchant(Constants,$resource,$state,$rootScope) {
  * pager
  */
 function pager() {
-    var pagexConfig = {
-        visiblePageCount: 5,
-        firstText: 'First',
-        lastText: 'Last',
-        prevText: '<上一页',
-        nextText: '下一页>'
-    }
+    var pagexConfig = {visiblePageCount: 5, firstText: 'First', lastText: 'Last', prevText: '<上一页', nextText: '下一页>'};
     return {
         link: function(scope, element, attrs) {
             var visiblePageCount = angular.isDefined(attrs.visiblePageCount) ? attrs.visiblePageCount : pagexConfig.visiblePageCount;
@@ -234,11 +147,7 @@ function pager() {
             scope.nextText = angular.isDefined(attrs.nextText) ? attrs.nextText : pagexConfig.nextText;
             scope.currentPage = 1;
             scope.pageChange = function(page) {
-                if (page >= 1 && page <= scope.pageCount) {
-                    scope.currentPage = page;
-                } else {
-                    scope.currentPage = 1;
-                }
+                scope.currentPage = (page >= 1 && page <= scope.pageCount)?page:1;
             }
             function build() {
                 var low, high, v;
@@ -271,18 +180,23 @@ function pager() {
         },
         replace: true,
         restrict: "E",
-        scope: {
-            pageFirst: '=',
-            pageLast: '=',
-            pageCount: '=',
-            currentPage: '=',
-            onPageChange: '&'
-        },
-        template: '<ul class="pagination"><li ng-if="pageFirst" ng-click="pageChange(1)">{{firstText}}</li>' +
-        '<li ng-click="pageChange(currentPage-1>0?currentPage-1:1)"><span>{{prevText}}</span></li>' +
-        '<li ng-repeat="pagenum in pagenums" ng-click="pageChange(pagenum)" ng-class="{active:currentPage===pagenum}"><span>{{pagenum}}</span></li>' +
-        '<li ng-click="pageChange(currentPage+1<=pageCount?currentPage+1:pageCount)"><span>{{nextText}}</span></li>' +
-        '<li ng-if="pageLast" ng-click="pageChange(pageCount)"><span>{{lastText}}</span></li></ul>'
+        scope: {pageFirst: '=', pageLast: '=', pageCount: '=', currentPage: '=', onPageChange: '&'},
+        template: '<ul class="pagination"><li ng-if="pageFirst" ng-click="pageChange(1)">{{firstText}}</li><li ng-click="pageChange(currentPage-1>0?currentPage-1:1)"><span>{{prevText}}</span></li><li ng-repeat="pagenum in pagenums" ng-click="pageChange(pagenum)" ng-class="{active:currentPage===pagenum}"><span>{{pagenum}}</span></li><li ng-click="pageChange(currentPage+1<=pageCount?currentPage+1:pageCount)"><span>{{nextText}}</span></li><li ng-if="pageLast" ng-click="pageChange(pageCount)"><span>{{lastText}}</span></li></ul>'
+    }
+}
+/**
+ * breadcrumb
+ */
+
+function breadcrumb(){
+    return {
+        template:'<div class="row wrapper border-bottom gray-bg page-heading"><div class="col-lg-10"><h1>{{pageTitle}}<small><i class="fa fa-angle-double-right"></i>{{subTitle}}</small></h1></div>',
+        link:function(scope,ele,attr){
+            scope.$on('$stateChangeSuccess',function(event,toState){
+                scope.pageTitle = toState.data.pageTitle;
+                scope.subTitle = toState.data.subTitle;
+            });
+        }
     }
 }
 
@@ -294,9 +208,8 @@ angular
     .module('inspinia')
     .directive('pageTitle', pageTitle)
     .directive('sideNavigation', sideNavigation)
-    .directive('iboxTools', iboxTools)
     .directive('minimalizaSidebar', minimalizaSidebar)
-    .directive('iboxToolsFullScreen', iboxToolsFullScreen)
     .directive('switchMerchant', switchMerchant)
     .directive('showThisMerchant', showThisMerchant)
-    .directive("pager", pager);
+    .directive("pager", pager)
+    .directive("breadcrumb", breadcrumb)

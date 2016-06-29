@@ -4,8 +4,8 @@ angular.module('inspinia', [])
 /**
  * merchantShopCtrl - controller
  */
-merchantShopCtrl.$inject = ['$scope', '$resource','$compile', 'Constants'];
-function merchantShopCtrl($scope, $resource, $compile, Constants) {
+merchantShopCtrl.$inject = ['$scope', '$resource','$compile', 'Constants','cTables'];
+function merchantShopCtrl($scope, $resource, $compile, Constants,cTables) {
 
     var mgrData = {
         fields: [
@@ -64,7 +64,7 @@ function merchantShopCtrl($scope, $resource, $compile, Constants) {
             update: '/admin/merchantStore/save'
         }
     };
-    Constants.initNgMgrCtrl(mgrData, $scope);
+    cTables.initNgMgrCtrl(mgrData, $scope);
 
     $scope.goEditorCustom = function (rowIndex) {
         $scope.goEditor(rowIndex);

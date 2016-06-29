@@ -1,32 +1,10 @@
 /**
  * Created by Martin on 2016/4/12.
  */
-function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParams) {
+function constServiceCtor($resource, $q) {
     var vm = this;
 
-    vm.sizeFormatter = function (value, opts, row) {
-        if (!row.leaf || 0 == value) {
-            return '-';
-        }
-        if (value > 1024 * 1024 * 1024) {
-            return Math.ceil(value / (1024 * 1024 * 1024)) + 'G';
-        }
-        if (value > 1024 * 1024) {
-            return Math.ceil(value / (1024 * 1024)) + 'M';
-        }
-        if (value > 1024) {
-            return Math.ceil(value / 1024) + 'K';
-        }
-        return value + 'B';
-    };
-
-    vm.dateFormatter = function (value, opts, row) {
-        if (value) {
-            return $filter('date')(new Date(value), 'yyyy-MM-dd HH:mm:ss');
-        }
-        return '-';
-    };
-
+    //获取产品类型
     vm.productOpts = $resource('/product/type/productOpts').query();
 
     //从后台拿商户类型
@@ -38,7 +16,6 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
         var deferred = $q.defer();
         $resource('/admin/merchant/getSwitch').get({}, function (resp) {
             if (resp.rows.length > 0) {
-                //vm.flushThisMerchant(resp.rows[0].id, vm.merchants);
                 vm.thisMerchant = resp.rows[0];
             }
             deferred.resolve(vm.thisMerchant);
@@ -51,7 +28,6 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
     vm.getMerchantStores = function () {
         var deferred = $q.defer();
         $resource('/admin/merchantStore/list').get({}, function (resp) {
-            //console.log(resp)
             vm.merchantStores = resp.rows;
             deferred.resolve(vm.merchantStores);
         });
@@ -114,19 +90,54 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
     vm.malls = [];
     //....
 
+
+    //有关列表页 tables&formly事件
     vm.initNgMgrCtrl = function(mgrOpts, scope) {
+
+
+
+    };
+}
+
+/**
+ * cTables
+ * */
+function cTablesService($resource,NgTableParams){
+    var vm = this;
+    vm.initNgMgrCtrl = function(mgrOpts, scope) {
+        //初始化搜索配置
         scope.where = {};
+
+        //formly配置项
         scope.formData = {
             fields: mgrOpts.fields
         };
-        scope.showDataTable = true;
-        scope.showEditor = false;
 
+        //formly返回
         scope.goDataTable = function () {
             scope.showDataTable = true;
             scope.showEditor = false;
         };
 
+        //提交成功预留
+        function saveFailed(response) {
+        }
+
+        //formly提交
+        scope.processSubmit = function () {
+            var formly = scope.formData;
+            if (formly.form.$valid) {
+                formly.options.updateInitialValue();
+                var xhr = $resource(mgrOpts.api.update);
+                xhr.save({}, formly.model).$promise.then(saveSuccess, saveFailed);
+            }
+        };
+
+        //初始化配置tabs的show or hide
+        scope.showDataTable = true;
+        scope.showEditor = false;
+
+        //点击编辑
         scope.goEditor = function (rowIndex) {
             if (rowIndex > -1) {
                 var data = scope.tableOpts.data[rowIndex];
@@ -140,6 +151,7 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
             scope.showEditor = true;
         };
 
+        //点击删除
         scope.doDelete = function (rowIndex) {
             if (mgrOpts.api.delete && rowIndex > -1) {
                 var data = scope.tableOpts.data[rowIndex];
@@ -147,12 +159,13 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
             }
         };
 
+        //增删改查后处理tables数据
         function saveSuccess(response) {
             if (0 != response.status) {
                 return;
             }
             var data = scope.formData.model;
-            if (scope.rowIndex < 0)  {
+            if (scope.rowIndex < 0) {
                 scope.tableOpts.data.splice(0, 0, data);
             } else {
                 scope.tableOpts.data.splice(scope.rowIndex, 1, data);
@@ -160,40 +173,168 @@ function constServiceCtor($filter, $compile, $resource, $state, $q, NgTableParam
             scope.goDataTable();
         }
 
-        function saveFailed(response) {
-        }
-
-        scope.processSubmit = function () {
-            var formly = scope.formData;
-            if (formly.form.$valid) {
-                formly.options.updateInitialValue();
-                var xhr = $resource(mgrOpts.api.update);
-                xhr.save({}, formly.model).$promise.then(saveSuccess, saveFailed);
-            }
-        };
-
+        //tables获取数据
         scope.tableOpts = new NgTableParams({}, {
-            counts: [],
-            getData: function (params) {
-                if (!scope.loadByInit) {
-                    return [];
+             counts: [],
+             getData: function (params) {
+             if (!scope.loadByInit) {
+             return [];
+             }
+             var xhr = $resource(mgrOpts.api.read);
+             var args = angular.extend(params.url(), scope.where);
+             return xhr.get(args).$promise.then(function (data) {
+             params.total(data.recordsTotal);
+             return data.rows;
+             });
+             }
+             });
+
+             //搜索tables的数据
+             scope.search = function () {
+             scope.loadByInit = true;
+             scope.tableOpts.reload();
+         };
+    }
+}
+
+/*
+* cfromly
+* */
+function cfromlyService(formlyConfig,$window){
+    var vm = this;
+    vm.init = function(){
+
+        //自定义formly Label&input一行显示
+        formlyConfig.setWrapper({
+            name: 'lineLabel',
+            template: [
+                '<label ng-hide="hide" for="{{::id}}" class="col-sm-2 control-label">',
+                '{{to.label}} {{to.required ? "*" : ""}}',
+                '</label>',
+                '<div ng-hide="hide" class="col-sm-8">',
+                '<formly-transclude></formly-transclude>',
+                '</div>'
+            ].join(' ')
+        });
+
+        /*以下 使用forEach*/
+
+        //input
+        formlyConfig.setType({
+            name: 'c_input',
+            extends: 'input',
+            wrapper: ['lineLabel', 'bootstrapHasError'],
+        });
+
+        //select
+        formlyConfig.setType({
+            name: 'c_select',
+            extends: 'select',
+            wrapper: ['lineLabel', 'bootstrapHasError']
+        });
+
+        //textarea
+        formlyConfig.setType({
+            name: 'c_textarea',
+            extends: 'textarea',
+            wrapper: ['lineLabel', 'bootstrapHasError']
+        });
+
+        //checkbox
+        formlyConfig.setType({
+            name: 'c_checkbox',
+            extends: 'checkbox',
+            wrapper: ['lineLabel', 'bootstrapHasError']
+        });
+
+        //radio
+        formlyConfig.setType({
+            name: 'c_radio',
+            extends: 'radio',
+            wrapper: ['lineLabel', 'bootstrapHasError']
+        });
+
+        //file
+        formlyConfig.setType({
+            name: 'upload',
+            extends: 'input',
+            wrapper: ['bootstrapLabel', 'bootstrapHasError'],
+            defaultOptions: {
+                templateOptions: {
+                    type: 'file',
+                    required: true
                 }
-                var xhr = $resource(mgrOpts.api.read);
-                var args = angular.extend(params.url(), scope.where);
-                return xhr.get(args).$promise.then(function (data) {
-                    params.total(data.recordsTotal);
-                    return data.rows;
+            },
+            link: function(scope, el, attrs) {
+                el.on("change", function(changeEvent) {
+                    var file = changeEvent.target.files[0];
+                    if (file) {
+                        var fd = new FormData();
+                        fd.append('file', file);
+                        scope.$emit('fileToUpload', fd);
+                        var fileProp = {};
+                        for (var properties in file) {
+                            if (!angular.isFunction(file[properties])) {
+                                fileProp[properties] = file[properties];
+                            }
+                        }
+                        scope.fc.$setViewValue(fileProp);
+                    } else {
+                        scope.fc.$setViewValue(undefined);
+                    }
+                });
+                el.on("focusout", function(focusoutEvent) {
+                    if ($window.document.activeElement.id === scope.id) {
+                        scope.$apply(function(scope) {
+                            scope.fc.$setUntouched();
+                        });
+                    } else {
+                        scope.fc.$validate();
+                    }
                 });
             }
         });
 
-        scope.search = function () {
-            scope.loadByInit = true;
-            scope.tableOpts.reload();
-        };
-    };
+        //datepicker
+        formlyConfig.setType({
+            name: 'datepicker',
+            template: [
+                '<p class="input-group">',
+                '<input  type="text" id="{{::id}}" name="{{::id}}" ng-model="model[options.key]" class="form-control" ng-click="datepicker.open($event)" uib-datepicker-popup="{{to.datepickerOptions.format}}" is-open="datepicker.opened" datepicker-options="to.datepickerOptions" />',
+                '<span class="input-group-btn">',
+                '<button type="button" class="btn btn-default" ng-click="datepicker.open($event)" ng-disabled="to.disabled"><i class="fa fa-calendar"></i></button>',
+                '</span></p>'
+            ].join(' '),
+            wrapper: ['bootstrapLabel', 'bootstrapHasError'],
+            defaultOptions: {
+                ngModelAttrs: {},
+                templateOptions: {
+                    datepickerOptions: {
+                        format: 'yyyy.MM.dd',
+                        initDate: new Date()
+                    }
+                }
+            },
+            controller: ['$scope', function ($scope) {
+                $scope.datepicker = {};
+
+                $scope.datepicker.opened = false;
+
+                $scope.datepicker.open = function ($event) {
+                    $scope.datepicker.opened = !$scope.datepicker.opened;
+                };
+            }]
+        });
+    }
+    //formly相关按钮事件
+    vm.initNgMgrCtrl = function(mgrOpts, scope) {
+
+    }
 }
+
 
 angular
     .module('inspinia')
-    .service('Constants', constServiceCtor);
+    .service('Constants', constServiceCtor)
+    .service('cTables', cTablesService)
+    .service('cfromly', cfromlyService);
