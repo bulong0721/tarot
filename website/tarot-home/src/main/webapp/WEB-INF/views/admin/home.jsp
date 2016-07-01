@@ -28,7 +28,7 @@
 <!-- Main view  -->
 <div id="wrapper">
     <div ng-include="'assets/mvc/desktop/view/navigation.html'"></div>
-    <div id="page-wrapper" class="gray-bg {{$state.current.name}}">
+    <div id="page-wrapper" class="white-bg {{$state.current.name}}">
         <div ng-include="'assets/mvc/desktop/view/topnavbar.html'"></div>
         <breadcrumb></breadcrumb>
         <div class="wrapper wrapper-content animated fadeIn"><div ui-view></div></div>

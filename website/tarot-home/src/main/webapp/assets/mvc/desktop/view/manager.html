@@ -1,16 +1,8 @@
-<div class="row">
-    <div class="col-lg-12">
-        <div class="ibox float-e-margins">
-            <div class="ibox-content p-md">
-                <uib-tabset type="bareheaded">
-                    <uib-tab heading="table" active="showDataTable">
-                        <div ng-include="$state.current.data.datatable"/>
-                    </uib-tab>
-                    <uib-tab heading="editor" active="showEditor">
-                        <div ng-include="$state.current.data.editor || 'assets/mvc/desktop/view/basic_editor.html'"/>
-                    </uib-tab>
-                </uib-tabset>
-            </div>
-        </div>
-    </div>
-</div>
+<uib-tabset type="bareheaded">
+    <uib-tab heading="table" active="showDataTable">
+        <div ng-include="$state.current.data.datatable"/>
+    </uib-tab>
+    <uib-tab heading="editor" active="showEditor">
+        <div ng-include="$state.current.data.editor || 'assets/mvc/desktop/view/basic_editor.html'"/>
+    </uib-tab>
+</uib-tabset>

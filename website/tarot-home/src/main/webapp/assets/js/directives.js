@@ -190,7 +190,7 @@ function pager() {
 
 function breadcrumb(){
     return {
-        template:'<div class="row wrapper border-bottom white-bg page-heading"><div class="col-lg-10"><h1>{{pageTitle}}<small> <i class="fa fa-angle-double-right"></i> {{subTitle}}</small></h1></div>',
+        template:'<div class="row wrapper border-bottom gray-bg page-heading"><div class="col-lg-10"><h1>{{pageTitle}}<small> <i class="fa fa-angle-double-right"></i> {{subTitle}}</small></h1></div>',
         link:function(scope,ele,attr){
             scope.$on('$stateChangeSuccess',function(event,toState){
                 scope.pageTitle = toState.data.pageTitle;
