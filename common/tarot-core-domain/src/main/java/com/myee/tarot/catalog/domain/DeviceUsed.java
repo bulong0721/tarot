@@ -4,6 +4,7 @@ import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,6 +49,9 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
             inverseJoinColumns = {@JoinColumn(name = "PRODUCT_USED_ID", nullable = false)}
     )
     protected List<ProductUsed> productUsed;
+
+    @OneToMany(mappedBy = "deviceUsed", targetEntity = DeviceUsedAttribute.class, fetch = FetchType.LAZY)
+    protected List<DeviceUsedAttribute> attributes = new ArrayList<DeviceUsedAttribute>();
 
 //    @OneToMany(mappedBy = "deviceUsed", targetEntity = DeviceUsedAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
 //    @MapKey(name = "name")
@@ -138,4 +142,11 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
 //        return deviceUsedAttribute;
 //    }
 
+    public List<DeviceUsedAttribute> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<DeviceUsedAttribute> attributes) {
+        this.attributes = attributes;
+    }
 }

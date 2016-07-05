@@ -4,8 +4,8 @@ angular.module('inspinia', [])
 /**
  * productUsedCtrl - controller
  */
-deviceUsedCtrl.$inject = ['$scope', '$compile','$resource', 'Constants','cTables','DTColumnBuilder'];
-function deviceUsedCtrl($scope, $compile, $resource, Constants,cTables, DTColumnBuilder) {
+deviceUsedCtrl.$inject = ['$scope', '$compile', '$resource', 'Constants', 'cTables'];
+function deviceUsedCtrl($scope, $compile, $resource, Constants, cTables) {
     //绑定产品相关参数
     var vm = $scope.showCase = {};
     vm.selected = {};
@@ -15,39 +15,39 @@ function deviceUsedCtrl($scope, $compile, $resource, Constants,cTables, DTColumn
 
     var titleHtml = '<input type="checkbox" ng-model="showCase.selectAll" ng-click="showCase.toggleAll(showCase.selectAll, showCase.selected)">';
 
-    vm.dtBindOptions = angular.extend(
-        {
-            ajax: {
-                url: '/product/used/listByStoreId',
-                dataSrc: "rows",
-                data: function (data, $scope) {
-                    angular.extend(data, $scope.where);
-                }
-            },
-            createdRow: function (row, data, dataIndex) {
-                $compile(angular.element(row).contents())($scope);
-            },
-            headerCallback: function (header) {
-                if (!vm.headerCompiled) {
-                    // Use this headerCompiled field to only compile header once
-                    vm.headerCompiled = true;
-                    $compile(angular.element(header).contents())($scope);
-                }
-            }
-        }, Constants.bindProductOptions
-    );
-
-    vm.dtBindColumns = [
-        DTColumnBuilder.newColumn(null).withTitle(titleHtml).notSortable()
-            .renderWith(function (data, type, full, meta) {
-                vm.selected[full.id] = false;
-                return '<input type="checkbox" ng-model="showCase.selected[' + data.id + ']" ng-click="showCase.toggleOne(showCase.selected)">';
-            }),
-        {data: 'id', visible: false},
-        {data: 'code', title: '产品编号', width: 60, sortable: true},
-        {data: 'name', title: '产品名称', width: 60, sortable: true},
-        {data: 'productNum', title: '产品版本', width: 60, sortable: true}
-    ];
+    //vm.dtBindOptions = angular.extend(
+    //    {
+    //        ajax: {
+    //            url: '/product/used/listByStoreId',
+    //            dataSrc: "rows",
+    //            data: function (data, $scope) {
+    //                angular.extend(data, $scope.where);
+    //            }
+    //        },
+    //        createdRow: function (row, data, dataIndex) {
+    //            $compile(angular.element(row).contents())($scope);
+    //        },
+    //        headerCallback: function (header) {
+    //            if (!vm.headerCompiled) {
+    //                // Use this headerCompiled field to only compile header once
+    //                vm.headerCompiled = true;
+    //                $compile(angular.element(header).contents())($scope);
+    //            }
+    //        }
+    //    }, Constants.bindProductOptions
+    //);
+    //
+    //vm.dtBindColumns = [
+    //    DTColumnBuilder.newColumn(null).withTitle(titleHtml).notSortable()
+    //        .renderWith(function (data, type, full, meta) {
+    //            vm.selected[full.id] = false;
+    //            return '<input type="checkbox" ng-model="showCase.selected[' + data.id + ']" ng-click="showCase.toggleOne(showCase.selected)">';
+    //        }),
+    //    {data: 'id', visible: false},
+    //    {data: 'code', title: '产品编号', width: 60, sortable: true},
+    //    {data: 'name', title: '产品名称', width: 60, sortable: true},
+    //    {data: 'productNum', title: '产品版本', width: 60, sortable: true}
+    //];
 
     function toggleAll(selectAll, selectedItems) {
         for (var id in selectedItems) {
@@ -71,7 +71,10 @@ function deviceUsedCtrl($scope, $compile, $resource, Constants,cTables, DTColumn
 
     //绑定产品相关业务逻辑-----------------------------
     $scope.formBindData = {};
+    $scope.showInfoEditor = false;
+    $scope.showDetailEditor = false;
     $scope.showBindEditor = false;
+
     $scope.showCase.currentRowIndex = 0;
 
     $scope.goDeviceBindProductEditor = function (rowIndex) {
@@ -104,6 +107,7 @@ function deviceUsedCtrl($scope, $compile, $resource, Constants,cTables, DTColumn
         $scope.showInfoEditor = false;
         $scope.showDetailEditor = false;
         $scope.showBindEditor = true;
+
     };
 
     $scope.processBindSubmit = function () {
@@ -139,28 +143,12 @@ function deviceUsedCtrl($scope, $compile, $resource, Constants,cTables, DTColumn
     };
 
     //其他业务逻辑----------------------------
+
+
     function getDeviceList() {
         var data = $resource("/device/list").query();
         return data;
     }
-
-    $scope.goEditorCustom = function (rowIndex) {
-        $scope.goEditor(rowIndex);
-        if (Constants.thisMerchantStore) {
-            $scope.formData.model.store={name: Constants.thisMerchantStore.name};
-        }
-    };
-
-    $scope.processSubmit = function () {
-        var formly = $scope.formData;
-        if (formly.form.$valid) {
-            formly.options.updateInitialValue();
-            $resource(mgrData.api.update).save({
-                startNo: formly.model.startNo,
-                endNo: formly.model.endNo
-            }, formly.model, saveSuccess, saveFailed);
-        }
-    };
 
     var mgrData = {
         fields: [
@@ -175,7 +163,14 @@ function deviceUsedCtrl($scope, $compile, $resource, Constants,cTables, DTColumn
                 'key': 'ifBatch',
                 'type': 'input',
                 'templateOptions': {'label': '批量新增', required: false, 'type': 'checkbox'},
-                defaultValue: true//不初始化就报错，设为false也报错？？
+                defaultValue: false,//不初始化就报错，设为false也报错？？_加了hideExpression就不会报错了，奇怪？？
+                hideExpression: function ($viewValue, $modelValue, scope) {
+                    if (scope.model.id) {
+                        return true;   //修改时隐藏批量修改
+                    } else {
+                        return false;  //新增时显示批量修改
+                    }
+                }
             },
             {
                 'key': 'startNo',
@@ -203,11 +198,59 @@ function deviceUsedCtrl($scope, $compile, $resource, Constants,cTables, DTColumn
         api: {
             read: '/deviceUsed/paging',
             update: '/deviceUsed/update',
-            updateAttr: '/device/attribute/save',
-            deleteAttr: '/device/attribute/delete',
+            updateAttr: '/deviceUsed/attribute/save',
+            deleteAttr: '/deviceUsed/attribute/delete',
         }
     };
     cTables.initNgMgrCtrl(mgrData, $scope);
+
+    $scope.goEditorCustom = function (rowIndex) {
+        $scope.goEditor(rowIndex);
+        if (Constants.thisMerchantStore) {
+            $scope.formData.model.store = {name: Constants.thisMerchantStore.name};
+        }
+        $scope.showBindEditor = false;
+        $scope.showInfoEditor = true;
+        $scope.showDetailEditor = true;
+    };
+
+    //formly提交
+    $scope.processSubmit = function () {
+        var formly = $scope.formData;
+        if (formly.form.$valid) {
+            //formly.options.updateInitialValue();//这句会报错
+            var xhr = $resource(mgrData.api.update);
+            xhr.save({
+                autoStart: formly.model.startNo ? formly.model.startNo : null ,
+                autoEnd: formly.model.endNo ? formly.model.endNo : null
+            }, formly.model).$promise.then(function saveSuccess(response) {
+                if (0 != response.status) {
+                    return;
+                }
+                //批量添加的数据添加到ngtables
+                angular.forEach(response.dataMap.updateResult,function(indexData,index,array){
+                    var data = indexData;
+                    if ($scope.rowIndex < 0) {
+                        $scope.tableOpts.data.splice(0, 0, data);
+                    } else {
+                        $scope.tableOpts.data.splice($scope.rowIndex, 1, data);
+                    }
+                })
+
+                $scope.goDataTable();
+            }, function saveFailed(response) {
+            });
+        }
+    };
+
+    //formly返回
+    $scope.goDataTable = function () {
+        $scope.showDataTable = true;
+        $scope.showEditor = false;
+        $scope.showBindEditor = false;
+        $scope.showInfoEditor = false;
+        $scope.showDetailEditor = false;
+    };
 
     $scope.insertAttr = function (product) {
         if (!product.attributes) {

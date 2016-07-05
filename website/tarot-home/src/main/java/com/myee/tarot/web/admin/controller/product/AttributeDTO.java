@@ -1,5 +1,8 @@
 package com.myee.tarot.web.admin.controller.product;
 
+import com.myee.tarot.catalog.domain.Device;
+import com.myee.tarot.catalog.domain.DeviceAttribute;
+import com.myee.tarot.catalog.domain.DeviceUsedAttribute;
 import com.myee.tarot.catalog.domain.ProductUsedAttribute;
 
 /**
@@ -21,6 +24,14 @@ public class AttributeDTO {
     }
 
     public AttributeDTO(ProductUsedAttribute attr) {
+        this(attr.getId(), attr.getName(), attr.getValue());
+    }
+
+    public AttributeDTO(DeviceAttribute attr) {
+        this(attr.getId(), attr.getName(), attr.getValue());
+    }
+
+    public AttributeDTO(DeviceUsedAttribute attr) {
         this(attr.getId(), attr.getName(), attr.getValue());
     }
 

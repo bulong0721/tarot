@@ -76,13 +76,15 @@ public class MerchantController {
                 merchantStoreService.update(merchantStore);
             }
 
+            resp = AjaxResponse.success();
+            resp.addEntry("updateResult", objectToEntry(merchant1));
         } catch (Exception e) {
             e.printStackTrace();
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
         }
-        return AjaxResponse.success();
+        return resp;
     }
 
     @RequestMapping(value = "/admin/merchant/get", method = RequestMethod.GET)
@@ -214,7 +216,7 @@ public class MerchantController {
     @RequestMapping(value = "/admin/merchantStore/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveMerchantStore(@RequestBody MerchantStore merchantStore, HttpServletRequest request) throws Exception {
-        AjaxResponse resp = null;
+        AjaxResponse resp = new AjaxResponse();
         try {
             //验证name,code，关联merchant_id不能为空
             if (StringUtil.isNullOrEmpty(merchantStore.getName())
@@ -257,14 +259,17 @@ public class MerchantController {
                 }
             }
             merchantStore.setAddress(address);
-            merchantStoreService.update(merchantStore);//新建或更新
+            merchantStore = merchantStoreService.update(merchantStore);//新建或更新
+
+            resp = AjaxResponse.success();
+            resp.addEntry("updateResult",objectToEntry(merchantStore));
         } catch (Exception e) {
             e.printStackTrace();
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
         }
-        return AjaxResponse.success();
+        return resp;
     }
 
     private boolean validGeoZone(GeoZone geoZone) {
@@ -464,27 +469,6 @@ public class MerchantController {
         return resp;
     }
 
-    //enva测试用的-----------------
-//    @RequestMapping(value = "/admin/merchantStore/storeOpts", method = RequestMethod.GET)
-//    @ResponseBody
-//    public List<MerchantStoreView> listByCommon(HttpServletRequest request) throws Exception {
-//        List<MerchantStoreView> merchantStoreViewList = new ArrayList<MerchantStoreView>();
-//        try {
-//            //从session中取账号关联的商户信息
-////            if(request.getSession().getAttribute(Constants.ADMIN_MERCHANT) == null ){
-////                return null;
-////            }
-////            Merchant merchant = (Merchant)request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
-//            List<MerchantStore> merchantStoreList = merchantStoreService.pageListByMerchant(100L, new PageRequest()).getList();
-//            for (MerchantStore store : merchantStoreList) {
-//                merchantStoreViewList.add(new MerchantStoreView(store));
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return merchantStoreViewList;
-//    }
-
     //把类转换成entry返回给前端，解耦和
     private Map objectToEntry(MerchantStore merchantStore) {
         Map entry = new HashMap();
@@ -500,14 +484,6 @@ public class MerchantController {
         entry.put("merchant", merchantStore.getMerchant());
         entry.put("address", merchantStore.getAddress());
         return entry;
-    }
-
-
-    /**
-     * 公共函数
-     */
-    AdminUser getUserInfo(HttpServletRequest req) {
-        return (AdminUser) req.getSession().getAttribute(Constants.ADMIN_USER);//正式用
     }
 
 }

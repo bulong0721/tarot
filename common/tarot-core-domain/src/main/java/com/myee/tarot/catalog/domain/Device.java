@@ -3,6 +3,8 @@ package com.myee.tarot.catalog.domain;
 import com.myee.tarot.core.GenericEntity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Martin on 2016/4/11.
@@ -29,6 +31,9 @@ public class Device extends GenericEntity<Long, Device> {
 //    @OneToMany(mappedBy = "device", targetEntity = DeviceAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
 //    @MapKey(name = "name")
 //    protected Map<String, DeviceAttribute> deviceAttribute = new HashMap<String, DeviceAttribute>();
+
+    @OneToMany(mappedBy = "device", targetEntity = DeviceAttribute.class, fetch = FetchType.LAZY)
+    protected List<DeviceAttribute> attributes = new ArrayList<DeviceAttribute>();
 
     @Override
     public Long getId() {
@@ -68,4 +73,11 @@ public class Device extends GenericEntity<Long, Device> {
 //        return deviceAttribute;
 //    }
 
+    public List<DeviceAttribute> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<DeviceAttribute> attributes) {
+        this.attributes = attributes;
+    }
 }

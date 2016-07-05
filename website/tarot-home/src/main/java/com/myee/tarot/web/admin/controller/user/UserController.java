@@ -38,6 +38,7 @@ public class UserController {
     @RequestMapping(value = "/admin/users/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse addUser(@RequestBody AdminUser user, HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
         if (null != user.getId()) {
             AdminUser dbUser = userService.findById(user.getId());
             dbUser.setName(user.getName());
@@ -49,8 +50,10 @@ public class UserController {
         } else {
             user.setPassword(DEFAULT_PASSWORD);
         }
-        userService.update(user);
-        return AjaxResponse.success();
+        user = userService.update(user);
+        resp = AjaxResponse.success();
+        resp.addEntry("updateResult", user);
+        return resp;
     }
 
     @RequestMapping(value = "/admin/users/paging", method = RequestMethod.GET)
@@ -93,8 +96,11 @@ public class UserController {
     @RequestMapping(value = "/admin/roles/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse mergeRole(@Valid @RequestBody Role role, HttpServletRequest request) throws Exception {
-        roleService.update(role);
-        return AjaxResponse.success();
+        AjaxResponse resp = new AjaxResponse();
+        role = roleService.update(role);
+        resp = AjaxResponse.success();
+        resp.addEntry("updateResult", role);
+        return resp;
     }
 
     @ExceptionHandler({SQLException.class, Exception.class})

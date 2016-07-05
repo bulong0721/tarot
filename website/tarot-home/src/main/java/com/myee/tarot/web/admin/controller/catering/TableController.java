@@ -62,14 +62,17 @@ public class TableController {
             }
             MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
             type.setStore(merchantStore1);
-            typeService.update(type);
+            type = typeService.update(type);
+
+            resp = AjaxResponse.success();
+            resp.addEntry("updateResult", type);
         } catch (ServiceException e) {
             e.printStackTrace();
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
         }
-        return AjaxResponse.success();
+        return resp;
     }
 
     @RequestMapping(value = "/type/delete", method = RequestMethod.POST)
@@ -137,14 +140,17 @@ public class TableController {
             }
             MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
             zone.setStore(merchantStore1);
-            zoneService.update(zone);
+            zone = zoneService.update(zone);
+
+            resp = AjaxResponse.success();
+            resp.addEntry("updateResult", zone);
         } catch (ServiceException e) {
             e.printStackTrace();
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
         }
-        return AjaxResponse.success();
+        return resp;
     }
 
     @RequestMapping(value = "/zone/delete", method = RequestMethod.POST)
@@ -213,14 +219,17 @@ public class TableController {
             }
             MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
             table.setStore(merchantStore1);
-            tableService.update(table);
+            table = tableService.update(table);
+
+            resp = AjaxResponse.success();
+            resp.addEntry("updateResult", table);
         } catch (ServiceException e) {
             e.printStackTrace();
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
         }
-        return AjaxResponse.success();
+        return resp;
     }
 
     @RequestMapping(value = "/table/delete", method = RequestMethod.POST)

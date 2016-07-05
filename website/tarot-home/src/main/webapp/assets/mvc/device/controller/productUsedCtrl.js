@@ -59,6 +59,7 @@ function productUsedCtrl($scope, $resource, Constants,cTables) {
     $scope.updateAttr = function (product, attr) {
         var xhr = $resource(mgrData.api.updateAttr);
         xhr.save({id: product.id}, attr).$promise.then(function (result) {
+            console.log(attr)
             attr.editing = false;
         });
     };

@@ -26,7 +26,7 @@ public class DeviceUsedAttribute extends GenericEntity<Long, DeviceUsedAttribute
     @Column(name = "SEARCHABLE")
     protected boolean searchable = false;
 
-    @ManyToOne(targetEntity = DeviceUsed.class, optional = false)
+    @ManyToOne(targetEntity = DeviceUsed.class, optional = false, cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn(name = "DEVICE_USED_ID",updatable = false)
     @org.hibernate.annotations.Index(name = "DEVICE_USED_ATTRIBUTE_INDEX", columnNames = {"DEVICE_USED_ID"})
     protected DeviceUsed deviceUsed;

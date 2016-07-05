@@ -43,9 +43,6 @@ public class ProductUsedController {
     private ProductUsedService productUsedService;
 
     @Autowired
-    private MerchantStoreService merchantStoreService;
-
-    @Autowired
     private ProductUsedAttributeService productUsedAttributeService;
 
     @RequestMapping(value = "/product/used/paging", method = RequestMethod.GET)
@@ -64,22 +61,7 @@ public class ProductUsedController {
             PageResult<ProductUsed> pageList = productUsedService.pageByStore(merchantStore1.getId(), pageRequest);
             List<ProductUsed> productUsedList = pageList.getList();
             for (ProductUsed productUsed : productUsedList) {
-                Map entry = new HashMap();
-                entry.put("id", productUsed.getId());
-                entry.put("code", productUsed.getCode());
-                entry.put("name", productUsed.getName());
-                entry.put("type", productUsed.getType());
-                entry.put("productNum", productUsed.getProductNum());
-                entry.put("description", productUsed.getDescription());
-                List<AttributeDTO> attributeDTOs = Lists.transform(productUsed.getAttributes(), new Function<ProductUsedAttribute, AttributeDTO>() {
-                    @Nullable
-                    @Override
-                    public AttributeDTO apply(ProductUsedAttribute input) {
-                        return new AttributeDTO(input);
-                    }
-                });
-                entry.put("attributes", attributeDTOs);
-                resp.addDataEntry(entry);
+                resp.addDataEntry(objectToEntry(productUsed));
             }
             resp.setRecordsTotal(pageList.getRecordsTotal());
         } catch (Exception e) {
@@ -105,22 +87,7 @@ public class ProductUsedController {
             PageResult<ProductUsed> pageList = productUsedService.pageByStore(merchantStore1.getId(), pageRequest);
             List<ProductUsed> productUsedList = pageList.getList();
             for (ProductUsed productUsed : productUsedList) {
-                Map entry = new HashMap();
-                entry.put("id", productUsed.getId());
-                entry.put("code", productUsed.getCode());
-                entry.put("name", productUsed.getName());
-                entry.put("type", productUsed.getType());
-                entry.put("productNum", productUsed.getProductNum());
-                entry.put("description", productUsed.getDescription());
-                List<AttributeDTO> attributeDTOs = Lists.transform(productUsed.getAttributes(), new Function<ProductUsedAttribute, AttributeDTO>() {
-                    @Nullable
-                    @Override
-                    public AttributeDTO apply(ProductUsedAttribute input) {
-                        return new AttributeDTO(input);
-                    }
-                });
-                entry.put("attributes", attributeDTOs);
-                resp.addDataEntry(entry);
+                resp.addDataEntry(objectToEntry(productUsed));
             }
             resp.setRecordsTotal(pageList.getRecordsTotal());
         } catch (Exception e) {
@@ -132,7 +99,7 @@ public class ProductUsedController {
 
     @RequestMapping(value = "/product/used/save", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse saveUsedProduct(@Valid @RequestBody ProductUsedView productUsedView, HttpServletRequest request) throws Exception {
+    public AjaxResponse saveUsedProduct(@Valid @RequestBody ProductUsed productUsed, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -141,15 +108,37 @@ public class ProductUsedController {
         }
         MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
 
-        ProductUsed productUsed = new ProductUsed(productUsedView);
         productUsed.setStore(merchantStore1);
-        productUsedService.update(productUsed);
-        return AjaxResponse.success();
+        productUsed = productUsedService.update(productUsed);
+        resp = AjaxResponse.success();
+        resp.addEntry("updateResult", objectToEntry(productUsed));
+        return resp;
+    }
+
+    //把类转换成entry返回给前端，解耦和
+    private Map objectToEntry(ProductUsed productUsed) {
+        Map entry = new HashMap();
+        entry.put("id", productUsed.getId());
+        entry.put("code", productUsed.getCode());
+        entry.put("name", productUsed.getName());
+        entry.put("type", productUsed.getType());
+        entry.put("productNum", productUsed.getProductNum());
+        entry.put("description", productUsed.getDescription());
+        List<AttributeDTO> attributeDTOs = Lists.transform(productUsed.getAttributes(), new Function<ProductUsedAttribute, AttributeDTO>() {
+            @Nullable
+            @Override
+            public AttributeDTO apply(ProductUsedAttribute input) {
+                return new AttributeDTO(input);
+            }
+        });
+        entry.put("attributes", attributeDTOs);
+        return entry;
     }
 
     @RequestMapping(value = "/product/attribute/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveAttribute(@ModelAttribute ProductUsed product, @Valid @RequestBody ProductUsedAttribute attribute, HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
         ProductUsedAttribute entity = attribute;
         if (null != attribute.getId()) {
             entity = productUsedAttributeService.findById(attribute.getId());
@@ -158,8 +147,13 @@ public class ProductUsedController {
         } else {
             entity.setProductUsed(product);
         }
-        productUsedAttributeService.update(entity);
-        return AjaxResponse.success();
+        entity = productUsedAttributeService.update(entity);
+
+//        entity.getProductUsed().setAttributes(null);
+        entity.setProductUsed(null);
+        resp = AjaxResponse.success();
+        resp.addEntry("updateResult", entity);
+        return resp;
     }
 
     @RequestMapping(value = "/product/attribute/delete", method = RequestMethod.POST)
@@ -180,32 +174,6 @@ public class ProductUsedController {
         return resp;
 
     }
-
-//    @RequestMapping(value = "/product/attribute/listByProductId", method = RequestMethod.GET)
-//    @ResponseBody
-//    public AjaxResponse listByProductId(@RequestParam Long parentId, HttpServletRequest request) throws Exception {
-//        AjaxResponse resp = new AjaxResponse();
-//        try {
-//            if (StringUtil.isNullOrEmpty(parentId.toString())) {
-//                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-//                resp.setErrorString("参数不能为空");
-//                return resp;
-//            }
-//            List<ProductUsedAttribute> attributeList = productUsedAttributeService.listByProductId(parentId);
-//            for (ProductUsedAttribute attribute : attributeList) {
-//                Map entry = new HashMap();
-//                List<ProductUsedAttribute> attributes = new ArrayList<ProductUsedAttribute>();
-//                entry.put("id", attribute.getId());
-//                entry.put("name", attribute.getName());
-//                entry.put("value", attribute.getValue());
-//                resp.addDataEntry(entry);
-//            }
-//        } catch (Exception e) {
-//            LOGGER.error("Error while paging productAttributes", e);
-//        }
-//        return resp;
-//
-//    }
 
     @RequestMapping(value = "/product/type/productOpts", method = RequestMethod.GET)
     public
