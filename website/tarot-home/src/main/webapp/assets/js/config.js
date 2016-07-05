@@ -269,5 +269,6 @@ angular
     .module('inspinia')
     .config(config)
     .run(function ($rootScope, $state) {
+        $rootScope.storeInfo = {};
         $rootScope.$state = $state;
     });

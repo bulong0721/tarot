@@ -7,15 +7,16 @@ angular.module('inspinia', [])
 /**
  * roleCtrl - controller
  */
-tableZoneMgrCtrl.$inject = ['$scope', 'cTables'];
+tableZoneMgrCtrl.$inject = ['$scope', 'cTables','cfromly'];
 
-function tableZoneMgrCtrl($scope, cTables) {
+function tableZoneMgrCtrl($scope, cTables,cfromly) {
     var mgrData = {
         fields: [
-            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
+            {'key': 'name', 'type': 'c_input','className':'c_formly_line', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
             {
                 'key': 'description',
-                'type': 'input',
+                'type': 'c_input',
+                'className':'c_formly_line',
                 'templateOptions': {'label': '描述', required: true, 'placeholder': '描述'}
             },
         ],

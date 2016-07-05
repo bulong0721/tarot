@@ -4,8 +4,8 @@ angular.module('inspinia', [])
 /**
  * productUsedCtrl - controller
  */
-deviceUsedCtrl.$inject = ['$scope', '$compile', '$resource', 'Constants', 'cTables'];
-function deviceUsedCtrl($scope, $compile, $resource, Constants, cTables) {
+deviceUsedCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables','cfromly'];
+function deviceUsedCtrl($scope, $resource, Constants, cTables,cfromly) {
     //绑定产品相关参数
     var vm = $scope.showCase = {};
     vm.selected = {};
@@ -155,13 +155,13 @@ function deviceUsedCtrl($scope, $compile, $resource, Constants, cTables) {
             {
                 'id': 'store.name',
                 'key': 'store.name',
-                'type': 'input',
+                'type': 'c_input',
                 'templateOptions': {'disabled': true, 'label': '门店名称', 'placeholder': '门店名称'}
             },
-            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
+            {'key': 'name', 'type': 'c_input','templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
             {
                 'key': 'ifBatch',
-                'type': 'input',
+                'type': 'c_input',
                 'templateOptions': {'label': '批量新增', required: false, 'type': 'checkbox'},
                 defaultValue: false,//不初始化就报错，设为false也报错？？_加了hideExpression就不会报错了，奇怪？？
                 hideExpression: function ($viewValue, $modelValue, scope) {
@@ -174,23 +174,23 @@ function deviceUsedCtrl($scope, $compile, $resource, Constants, cTables) {
             },
             {
                 'key': 'startNo',
-                'type': 'input',
+                'type': 'c_input',
                 'templateOptions': {'label': '开始编号', required: false, 'placeholder': '开始编号'},
                 hideExpression: '!model.ifBatch'
             },
             {
                 'key': 'endNo',
-                'type': 'input',
+                'type': 'c_input',
                 'templateOptions': {'label': '结束编号', required: false, 'placeholder': '结束编号'},
                 hideExpression: '!model.ifBatch'
             },
-            {'key': 'heartbeat', 'type': 'input', 'templateOptions': {'label': '心跳', 'placeholder': '心跳'}},
-            {'key': 'boardNo', 'type': 'input', 'templateOptions': {'label': '主板编号', 'placeholder': '主板编号'}},
-            {'key': 'deviceNum', 'type': 'input', 'templateOptions': {'label': '设备号', 'placeholder': '设备号'}},
-            {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}},
+            {'key': 'heartbeat', 'type': 'c_input', 'templateOptions': {'label': '心跳', 'placeholder': '心跳'}},
+            {'key': 'boardNo', 'type': 'c_input', 'templateOptions': {'label': '主板编号', 'placeholder': '主板编号'}},
+            {'key': 'deviceNum', 'type': 'c_input', 'templateOptions': {'label': '设备号', 'placeholder': '设备号'}},
+            {'key': 'description', 'type': 'c_input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}},
             {
                 'key': 'device.id',
-                'type': 'select',
+                'type': 'c_select',
                 'templateOptions': {'label': '选择设备类型', required: true, 'options': getDeviceList()}
             }
 

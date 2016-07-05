@@ -4,14 +4,14 @@ angular.module('inspinia', [])
 /**
  * deviceCtrl - controller
  */
-deviceCtrl.$inject = ['$scope','$resource', 'Constants','cTables'];
-function deviceCtrl($scope,$resource, Constants,cTables) {
+deviceCtrl.$inject = ['$scope','$resource', 'Constants','cTables','cfromly'];
+function deviceCtrl($scope,$resource, Constants,cTables,cfromly) {
 
     var mgrData = {
         fields: [
-            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
-            {'key': 'versionNum', 'type': 'input', 'templateOptions': {'label': '版本号', 'placeholder': '版本号'}},
-            {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}}
+            {'key': 'name', 'type': 'c_input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
+            {'key': 'versionNum', 'type': 'c_input', 'templateOptions': {'label': '版本号', 'placeholder': '版本号'}},
+            {'key': 'description', 'type': 'c_input','templateOptions': {'label': '描述', 'placeholder': '描述'}}
         ],
         api: {
             read: '/device/paging',

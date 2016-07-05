@@ -7,9 +7,9 @@ angular.module('inspinia', [])
 /**
  * roleCtrl - controller
  */
-explorerCtrl.$inject = ['$scope', '$resource', 'Constants'];
+explorerCtrl.$inject = ['$scope', '$resource', '$uibModal'];
 
-function explorerCtrl($scope, $resource, Constants) {
+function explorerCtrl($scope, $resource, $uibModal) {
     $scope.search = function () {
         var to = false;
         if (to) {
@@ -28,13 +28,27 @@ function explorerCtrl($scope, $resource, Constants) {
         },
         filies:[],
         addFolder:function(){
-            var name = prompt("请输入新建的文件夹名", "新建文件夹"),
-                ref = $('#folderTree').jstree(true),
-                sel = ref.get_selected();
-            if (!sel.length) {
-                return false;
-            }
-            ref.create_node(sel[0], {"type": "default", "text": name});
+            $uibModal.open({
+                templateUrl: 'addFolder.html',
+                size: 'sm',
+                controller: function($scope,$uibModalInstance){
+                    $scope.fileName = '';
+                    $scope.save = function () {
+                        ref = $('#folderTree').jstree(true),
+                            sel = ref.get_selected();
+                        if (!sel.length) {
+                            return false;
+                        }
+                        ref.create_node(sel[0], {"type": "default", "text": $scope.fileName});
+                        $uibModalInstance.close();
+                    };
+
+                    $scope.cancel = function () {
+                        $uibModalInstance.dismiss('cancel');
+                    };
+                }
+            });
+            //var name = prompt("请输入新建的文件夹名", "新建文件夹"),
         },
         addFile:function(){
             var name = prompt("请输入新建的文件名", "新建文件.txt"),

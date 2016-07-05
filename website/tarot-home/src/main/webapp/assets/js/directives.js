@@ -75,16 +75,16 @@ function minimalizaSidebar($timeout) {
 /**
  * showThisMerchant
  */
-function showThisMerchant(Constants,$resource,$state) {
+function showThisMerchant(Constants,$rootScope) {
     return {
-        template: '<div class="showThisMerchant" ng-click="$root.rightSidebar = !$root.rightSidebar"><span>当前门店</span><span>{{merchantStoreSelect.name}}<i class="fa fa-chevron-down"></i></span></div>',
+        template: '<div class="showThisMerchant" ng-click="$root.rightSidebar = !$root.rightSidebar"><span>当前门店</span><span>{{storeInfo.name}}<i class="fa fa-chevron-down"></i></span></div>',
         link:function($scope){
             //获取门店列表，并切换到之前切换的门店
             Constants.getSwitchMerchantStore().then(function () {
                 //Constants.getSwitchMerchant();//切换门店
                 Constants.thisMerchant = Constants.thisMerchantStore.merchant;
                 if (Constants.thisMerchantStore){
-                    $scope.merchantStoreSelect = Constants.thisMerchantStore
+                    $rootScope.storeInfo = Constants.thisMerchantStore
                 };
             });
         }
@@ -125,7 +125,7 @@ function switchMerchant(Constants,$resource,$state,$rootScope) {
                     //关闭侧边栏
                     $rootScope.rightSidebar = !$rootScope.rightSidebar;
                     //刷新当前页面的显示
-                    $scope.merchantStoreSelect = Constants.thisMerchantStore = resp.rows[0];
+                    $rootScope.storeInfo = $scope.merchantStoreSelect = Constants.thisMerchantStore = resp.rows[0];
                     $state.go($state.current, {}, {reload: true});
                 });
             };

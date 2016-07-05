@@ -4,8 +4,8 @@ angular.module('inspinia', [])
 /**
  * productUsedCtrl - controller
  */
-productUsedCtrl.$inject = ['$scope', '$resource','Constants','cTables'];
-function productUsedCtrl($scope, $resource, Constants,cTables) {
+productUsedCtrl.$inject = ['$scope', '$resource','Constants','cTables','cfromly'];
+function productUsedCtrl($scope, $resource, Constants,cTables,cfromly) {
     var productOpts = Constants.productOpts;
 
     var mgrData = {
@@ -13,17 +13,17 @@ function productUsedCtrl($scope, $resource, Constants,cTables) {
             {
                 'id': 'store.name',
                 'key': 'store.name',
-                'type': 'input',
+                'type': 'c_input',
                 'templateOptions': {'disabled': true, 'label': '门店名称', 'placeholder': '门店名称'}
             },
             {
                 'key': 'code',
-                'type': 'input',
+                'type': 'c_input',
                 'templateOptions': {'label': '产品编号', required: true, 'placeholder': '产品编号'}
             },
             {
                 'key': 'type',
-                'type': 'select',
+                'type': 'c_select',
                 'templateOptions': {
                     'label': '产品名称',
                     required: true,
@@ -35,10 +35,10 @@ function productUsedCtrl($scope, $resource, Constants,cTables) {
             },
             {
                 'key': 'productNum',
-                'type': 'input',
+                'type': 'c_input',
                 'templateOptions': {'label': '产品版本', required: true, 'placeholder': '产品版本'}
             },
-            {'key': 'description', 'type': 'input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}}
+            {'key': 'description', 'type': 'c_input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}}
         ],
         api: {
             read: '/product/used/paging',

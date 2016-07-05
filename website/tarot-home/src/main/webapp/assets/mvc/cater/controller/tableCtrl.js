@@ -7,23 +7,25 @@ angular.module('inspinia', [])
 /**
  * roleCtrl - controller
  */
-tableMgrCtrl.$inject = ['$scope', '$resource', 'cTables'];
+tableMgrCtrl.$inject = ['$scope', '$resource', 'cTables','cfromly'];
 
-function tableMgrCtrl($scope, $resource,cTables) {
+function tableMgrCtrl($scope, $resource,cTables,cfromly) {
     var typeOpts = $resource('/admin/catering/type/options').query();
     var zoneOpts = $resource('/admin/catering/zone/options').query();
 
     var mgrData = {
         fields: [
-            {'key': 'name', 'type': 'input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
+            {'key': 'name', 'type': 'c_input','className':'c_formly_line', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
             {
                 'key': 'description',
-                'type': 'input',
+                'type': 'c_input',
+                'className':'c_formly_line',
                 'templateOptions': {'label': '描述', required: true, 'placeholder': '描述'}
             },
             {
                 'key': 'tableType.id',
-                'type': 'select',
+                'type': 'c_select',
+                'className':'c_formly_line',
                 'templateOptions': {
                     'label': '桌型',
                     valueProp: 'id',
@@ -34,7 +36,8 @@ function tableMgrCtrl($scope, $resource,cTables) {
             },
             {
                 'key': 'tableZone.id',
-                'type': 'select',
+                'type': 'c_select',
+                'className':'c_formly_line',
                 'templateOptions': {'label': '区域', valueProp: 'id', options: zoneOpts, 'placeholder': '区域'}
             },
         ],

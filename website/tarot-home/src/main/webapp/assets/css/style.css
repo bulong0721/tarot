@@ -10049,13 +10049,14 @@ th.center, td.center {
 .showThisMerchant span:first-child{color: #1ab394;}
 .showThisMerchant i{color: #ccc; font-size: 12px; margin-left: 5px;}
 
-.c_formly_line {margin: 10px 0;}
-.c_formly_line .form-group {overflow: hidden;}
-.c_formly_line label {margin: 0; text-align: right; padding: 6px 0;}
-.c_formly_line input ,.c_formly_line select {width: 450px}
-.c_formly_line .radio-group .radio {display: inline-block;margin: 0 10px 10px 20px;}
-.c_formly_line .radio-group input,.c_formly_line .checkbox input {width: auto;}
-.c_formly_line .checkbox {margin: 0 0 0 20px;}
+.formly {}
+.formly .formly-field {margin: 10px 0;}
+.formly .formly-field .form-group {overflow: hidden;}
+.formly .formly-field label {margin: 0; text-align: right; padding: 6px 0;}
+.formly .formly-field input ,.c_formly_line select {max-width: 450px}
+.formly .formly-field .radio-group .radio {display: inline-block;margin: 0 10px 10px 20px;}
+.formly .formly-field .radio-group input,.formly .formly-field .checkbox input {width: auto;}
+.formly .formly-field .checkbox {margin: 0 0 0 20px;}
 
 .file-box {float: none; display: inline-block;}
 .search-input {margin: 0em 1em;display: block;padding: 4px;border-radius: 5px;border: 1px solid silver;}
