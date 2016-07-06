@@ -21,7 +21,7 @@ import java.util.*;
 @Controller
 public class FilesController {
 
-    private static final File DOWNLOAD_HOME = new File("D://ceshi");
+    private static final File DOWNLOAD_HOME = new File("D://");
 
    /* @RequestMapping(value = "/admin/files/list.html")
     public
@@ -61,6 +61,9 @@ public class FilesController {
         List<FileDTO> dtos = Lists.newArrayList(resMap.values());
         Collections.sort(dtos);
         for (FileDTO dto : dtos) {
+            if(dto.isLeaf()){
+                continue;
+            }
             JSTreeDTO jt = new JSTreeDTO();
             jt.setId(dto.getId());
             jt.setChildren(!dto.isLeaf());
@@ -96,6 +99,9 @@ public class FilesController {
         List<FileDTO> dtos = Lists.newArrayList(resMap.values());
         Collections.sort(dtos);
         for (FileDTO dto : dtos) {
+            if(!dto.isLeaf()){
+                continue;
+            }
             JSTreeDTO jt = new JSTreeDTO();
             jt.setId(dto.getId());
             jt.setChildren(!dto.isLeaf());
