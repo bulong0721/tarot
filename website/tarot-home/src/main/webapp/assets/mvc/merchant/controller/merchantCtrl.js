@@ -1,4 +1,4 @@
-angular.module('inspinia', [])
+angular.module('myee', [])
     .controller('merchantCtrl', merchantCtrl);
 
 /**

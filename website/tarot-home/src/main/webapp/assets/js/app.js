@@ -3,7 +3,7 @@
  *
  */
 (function () {
-    angular.module('inspinia', [
+    angular.module('myee', [
         'ui.router',                    // Routing
         'ngResource',                   // Resource
         'oc.lazyLoad',                  // ocLazyLoad

@@ -1,7 +1,7 @@
 /**
  * Created by Martin on 2016/6/27.
  */
-angular.module('inspinia', [])
+angular.module('myee', [])
     .controller('tableMgrCtrl', tableMgrCtrl);
 
 /**

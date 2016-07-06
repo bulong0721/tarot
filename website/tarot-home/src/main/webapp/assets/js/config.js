@@ -42,7 +42,7 @@ function managerLoader($ocLazyLoad) {
 function ctrlManagerLoader(oclazyload, dir, ctrl) {
     return oclazyload.load([
         {
-            name: 'inspinia',//属于哪个模块
+            name: 'myee',//属于哪个模块
             files: ['assets/mvc/' + dir + '/controller/' + ctrl]
         }
     ])
@@ -266,7 +266,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         });
 }
 angular
-    .module('inspinia')
+    .module('myee')
     .config(config)
     .run(function ($rootScope, $state) {
         $rootScope.storeInfo = {};

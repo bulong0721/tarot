@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
-<html ng-app="inspinia">
+<html ng-app="myee">
 
 <head>
     <meta charset="utf-8">

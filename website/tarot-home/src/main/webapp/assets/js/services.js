@@ -358,7 +358,7 @@ function cAlerts($uibModal){
 }
 
 angular
-    .module('inspinia')
+    .module('myee')
     .service('Constants', constServiceCtor)
     .service('cTables', cTablesService)
     .service('cfromly', cfromlyService)

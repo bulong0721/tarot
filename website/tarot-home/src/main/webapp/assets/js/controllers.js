@@ -22,5 +22,5 @@ function mainCtrl($scope,cAlerts,$window) {
 }
 
 angular
-    .module('inspinia')
+    .module('myee')
     .controller('mainCtrl', mainCtrl);

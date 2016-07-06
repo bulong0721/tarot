@@ -1,5 +1,5 @@
 angular
-    .module('inspinia')
+    .module('myee')
     .filter('sizeFormatter',sizeFormatter)
     .filter('dateFormatter',dateFormatter)
 
