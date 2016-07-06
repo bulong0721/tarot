@@ -102,7 +102,7 @@ function constServiceCtor($resource, $q) {
 /**
  * cTables
  * */
-function cTablesService($resource,NgTableParams){
+function cTablesService($resource,NgTableParams,cAlerts){
     var vm = this;
     vm.initNgMgrCtrl = function(mgrOpts, scope) {
         //初始化搜索配置
@@ -154,10 +154,16 @@ function cTablesService($resource,NgTableParams){
 
         //点击删除
         scope.doDelete = function (rowIndex) {
-            if (mgrOpts.api.delete && rowIndex > -1) {
-                var data = scope.tableOpts.data[rowIndex];
-                $resource(mgrOpts.api.delete).save({}, data, saveSuccess, saveFailed);
-            }
+            cAlerts.confirm('确定删除?',function(){
+                //点击确定回调
+                if (mgrOpts.api.delete && rowIndex > -1) {
+                    var data = scope.tableOpts.data[rowIndex];
+                    $resource(mgrOpts.api.delete).save({}, data, saveSuccess, saveFailed);
+                }
+            },function(){
+                //点击取消回调
+            });
+
         };
 
         //增删改查后处理tables数据
@@ -324,10 +330,36 @@ function cfromlyService(formlyConfig,$window){
         }]
     });
 }
+/*
+* cAlerts
+* */
 
+function cAlerts($uibModal){
+    return {
+        confirm:function(titile,ok,cancel){
+            $uibModal.open({
+                animation: false,
+                template: '<alerts data-title="'+titile+'"></alerts>',
+                controller: function($scope,$uibModalInstance){
+                    $scope.ok = function(){
+                        $uibModalInstance.close();
+                        ok();
+                    }
+
+                    $scope.cancel = function(){
+                        $uibModalInstance.dismiss('cancel');
+                        cancel();
+                    }
+                },
+                size: 'sm'
+            });
+        }
+    }
+}
 
 angular
     .module('inspinia')
     .service('Constants', constServiceCtor)
     .service('cTables', cTablesService)
-    .service('cfromly', cfromlyService);
+    .service('cfromly', cfromlyService)
+    .factory('cAlerts', cAlerts)

@@ -200,6 +200,18 @@ function breadcrumb(){
     }
 }
 
+/*
+* alerts
+* */
+function alerts(){
+    return {
+        template:'<div class="modal-header"> <h4 class="modal-title">{{title}}</h4> </div> <div class="modal-footer"> <button class="btn btn-primary" type="button" ng-click="ok()">确定</button> <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button> </div>',
+        link:function(scope,ele,attr){
+            scope.title = attr.title;
+        }
+    }
+}
+
 /**
  *
  * Pass all functions into module
@@ -213,3 +225,4 @@ angular
     .directive('showThisMerchant', showThisMerchant)
     .directive("pager", pager)
     .directive("breadcrumb", breadcrumb)
+    .directive("alerts", alerts)
