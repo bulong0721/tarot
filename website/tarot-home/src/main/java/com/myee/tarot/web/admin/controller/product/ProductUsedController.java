@@ -84,6 +84,7 @@ public class ProductUsedController {
             }
             MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
 
+            pageRequest.setCount(-1);//不分页，查询所有结果
             PageResult<ProductUsed> pageList = productUsedService.pageByStore(merchantStore1.getId(), pageRequest);
             List<ProductUsed> productUsedList = pageList.getList();
             for (ProductUsed productUsed : productUsedList) {
@@ -168,7 +169,7 @@ public class ProductUsedController {
             return AjaxResponse.success();
         } catch (Exception e) {
             e.printStackTrace();
-            resp.setErrorString("删除产品属性异常");
+            resp.setErrorString("删除设备组属性异常");
             LOGGER.error("Error delete productAttributes", e);
         }
         return resp;

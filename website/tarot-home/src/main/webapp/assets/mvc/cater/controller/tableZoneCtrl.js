@@ -12,12 +12,12 @@ tableZoneMgrCtrl.$inject = ['$scope', 'cTables','cfromly'];
 function tableZoneMgrCtrl($scope, cTables,cfromly) {
     var mgrData = {
         fields: [
-            {'key': 'name', 'type': 'c_input','className':'c_formly_line', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
+            {key: 'name', type: 'c_input',className:'c_formly_line', templateOptions: {'label': '名称', required: true, placeholder: '名称'}},
             {
-                'key': 'description',
-                'type': 'c_input',
-                'className':'c_formly_line',
-                'templateOptions': {'label': '描述', required: true, 'placeholder': '描述'}
+                key: 'description',
+                type: 'c_input',
+                className:'c_formly_line',
+                templateOptions: {label: '描述', required: true, placeholder: '描述'}
             },
         ],
         api: {

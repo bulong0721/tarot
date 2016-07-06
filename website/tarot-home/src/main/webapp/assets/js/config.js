@@ -111,7 +111,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
                 pageTitle: '设备管理',
                 subTitle: '设备类型',
                 datatable: 'assets/mvc/device/view/device_datatable.html',
-                editor: 'assets/mvc/device/view/product_used_editor.html'
+                editor: 'assets/mvc/device/view/device_editor.html'
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
@@ -140,8 +140,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'productUsedCtrl',
             data: {
-                pageTitle: '产品管理',
-                subTitle: '产品管理',
+                pageTitle: '设备组管理',
+                subTitle: '设备组管理',
                 datatable: 'assets/mvc/device/view/product_used_datatable.html',
                 editor: 'assets/mvc/device/view/product_used_editor.html'
             },

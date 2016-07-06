@@ -144,7 +144,7 @@ public class DeviceController {
             return AjaxResponse.success();
         } catch (Exception e) {
             e.printStackTrace();
-            resp.setErrorString("删除产品属性异常");
+            resp.setErrorString("删除设备类型属性异常");
             LOGGER.error("Error delete productAttributes", e);
         }
         return resp;

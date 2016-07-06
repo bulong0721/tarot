@@ -15,30 +15,30 @@ function tableMgrCtrl($scope, $resource,cTables,cfromly) {
 
     var mgrData = {
         fields: [
-            {'key': 'name', 'type': 'c_input','className':'c_formly_line', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
+            {key: 'name', type: 'c_input',className:'c_formly_line', templateOptions: {label: '名称', required: true, placeholder: '名称'}},
             {
-                'key': 'description',
-                'type': 'c_input',
-                'className':'c_formly_line',
-                'templateOptions': {'label': '描述', required: true, 'placeholder': '描述'}
+                key: 'description',
+                type: 'c_input',
+                className:'c_formly_line',
+                templateOptions: {label: '描述', required: true, placeholder: '描述'}
             },
             {
-                'key': 'tableType.id',
-                'type': 'c_select',
-                'className':'c_formly_line',
-                'templateOptions': {
-                    'label': '桌型',
+                key: 'tableType.id',
+                type: 'c_select',
+                className:'c_formly_line c_select',
+                templateOptions: {
+                    label: '桌型',
                     valueProp: 'id',
                     options: typeOpts,
                     required: true,
-                    'placeholder': '桌型'
+                    placeholder: '桌型'
                 }
             },
             {
-                'key': 'tableZone.id',
-                'type': 'c_select',
-                'className':'c_formly_line',
-                'templateOptions': {'label': '区域', valueProp: 'id', options: zoneOpts, 'placeholder': '区域'}
+                key: 'tableZone.id',
+                type: 'c_select',
+                className:'c_formly_line c_select',
+                templateOptions: {label: '区域', valueProp: 'id', options: zoneOpts, placeholder: '区域'}
             },
         ],
         api: {

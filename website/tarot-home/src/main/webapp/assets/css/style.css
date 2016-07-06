@@ -10061,3 +10061,5 @@ th.center, td.center {
 .nav-bareheaded {display: none;}
 .ngtables {overflow: hidden;}
 .ngtables .pagination {margin: 0;}
+
+.c_select select {max-width:260px;}
