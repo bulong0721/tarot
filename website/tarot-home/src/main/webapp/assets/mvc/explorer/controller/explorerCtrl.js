@@ -34,7 +34,7 @@ function explorerCtrl($scope, $resource, $uibModal) {
                 controller: function($scope,$uibModalInstance){
                     $scope.fileName = '';
                     $scope.save = function () {
-                        ref = $('#folderTree').jstree(true),
+                        var ref = $('#folderTree').jstree(true),
                             sel = ref.get_selected();
                         if (!sel.length) {
                             return false;
@@ -51,13 +51,12 @@ function explorerCtrl($scope, $resource, $uibModal) {
             //var name = prompt("请输入新建的文件夹名", "新建文件夹"),
         },
         addFile:function(){
-            var name = prompt("请输入新建的文件名", "新建文件.txt"),
-                ref = $('#folderTree').jstree(true),
+            /*var ref = $('#folderTree').jstree(true),
                 sel = ref.get_selected();
             if (!sel.length) {
                 return false;
             }
-            ref.create_node(sel[0], {"type": "file", "text": name});
+            ref.create_node(sel[0], {"type": "file", "text": name});*/
         },
         delete:function(){
             if (confirm("确认删除吗？")) {
@@ -76,6 +75,12 @@ function explorerCtrl($scope, $resource, $uibModal) {
                 return false;
             }
             ref.edit(sel[0]);
+        },
+        choiceFiles:[],
+        choiceFile:function(index){
+            console.log(vm.filies[index].check)
+            vm.filies[index].check = vm.filies[index].check == undefined || vm.filies[index].check == false ? true : false;
+            this.choiceFiles.push(index);
         }
     }
 
@@ -90,9 +95,9 @@ function explorerCtrl($scope, $resource, $uibModal) {
                 },
                 check_callback: true,
             },
-            checkbox: {},
+            //checkbox: {},
             types: {default: {icon: 'fa fa-folder'}, file: {icon: 'fa fa-file', valid_children: []}},
-            plugins: ['types', 'checkbox', 'dnd', 'unique', 'search']
+            plugins: ['types', 'dnd', 'unique', 'search']
         })
         .on('delete_node.jstree', function (e, data) {
             $.get('/admin/files/change?operation=delete_node', {'id': data.node.id})
@@ -100,7 +105,6 @@ function explorerCtrl($scope, $resource, $uibModal) {
                     data.instance.refresh();
                 });
         }).on('create_node.jstree', function (e, data) {
-            console.log(data)
             $.get('/admin/files/change?operation=create_node', {
                 'type': data.node.type,
                 'id': data.node.parent,
@@ -121,8 +125,17 @@ function explorerCtrl($scope, $resource, $uibModal) {
                     data.instance.refresh();
                 });
         }).on('select_node.jstree', function (e, data) {
-            $resource('/admin/files/list').query({'id': data.node.id}).$promise.then(function(res){
-                vm.filies = res;
-            });
+            $.get('/admin/files/showList', {'id': data.node.id})
+                .done(function (res) {
+                    $scope.$apply(function() {
+                        vm.filies = res.dataMap.tree;
+                    });
+                })
+                .fail(function () {
+
+                });
+/*            $resource('/admin/files/showList').query({'id': data.node.id}).$promise.then(function(res){
+                    vm.filies = res;
+            });*/
         })
 }
