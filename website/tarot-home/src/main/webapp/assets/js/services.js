@@ -12,7 +12,7 @@ function constServiceCtor($resource, $q) {
 
     //切换门店
     vm.thisMerchant = {};
-    vm.getSwitchMerchant = function(){
+    vm.getSwitchMerchant = function () {
         var deferred = $q.defer();
         $resource('/admin/merchant/getSwitch').get({}, function (resp) {
             if (resp.rows.length > 0) {
@@ -36,7 +36,7 @@ function constServiceCtor($resource, $q) {
 
     //切换门店
     vm.thisMerchantStore = {};
-    vm.getSwitchMerchantStore = function(){
+    vm.getSwitchMerchantStore = function () {
         var deferred = $q.defer();
         $resource('/admin/merchantStore/getSwitch').get({}, function (resp) {
             if (resp.rows.length > 0) {
@@ -92,8 +92,7 @@ function constServiceCtor($resource, $q) {
 
 
     //有关列表页 tables&formly事件
-    vm.initNgMgrCtrl = function(mgrOpts, scope) {
-
+    vm.initNgMgrCtrl = function (mgrOpts, scope) {
 
 
     };
@@ -182,32 +181,32 @@ function cTablesService($resource,NgTableParams,cAlerts){
 
         //tables获取数据
         scope.tableOpts = new NgTableParams({}, {
-             counts: [],
-             getData: function (params) {
-             if (!scope.loadByInit) {
-             return [];
-             }
-             var xhr = $resource(mgrOpts.api.read);
-             var args = angular.extend(params.url(), scope.where);
-             return xhr.get(args).$promise.then(function (data) {
-             params.total(data.recordsTotal);
-             return data.rows;
-             });
-             }
-             });
+            counts: [],
+            getData: function (params) {
+                if (!scope.loadByInit) {
+                    return [];
+                }
+                var xhr = $resource(mgrOpts.api.read);
+                var args = angular.extend(params.url(), scope.where);
+                return xhr.get(args).$promise.then(function (data) {
+                    params.total(data.recordsTotal);
+                    return data.rows;
+                });
+            }
+        });
 
-             //搜索tables的数据
-             scope.search = function () {
-             scope.loadByInit = true;
-             scope.tableOpts.reload();
-         };
+        //搜索tables的数据
+        scope.search = function () {
+            scope.loadByInit = true;
+            scope.tableOpts.reload();
+        };
     }
 }
 
 /*
-* cfromly
-* */
-function cfromlyService(formlyConfig,$window){
+ * cfromly
+ * */
+function cfromlyService(formlyConfig, $window) {
     //自定义formly Label&input一行显示
     formlyConfig.setWrapper({
         name: 'lineLabel',
@@ -269,8 +268,8 @@ function cfromlyService(formlyConfig,$window){
                 required: true
             }
         },
-        link: function(scope, el, attrs) {
-            el.on("change", function(changeEvent) {
+        link: function (scope, el, attrs) {
+            el.on("change", function (changeEvent) {
                 var file = changeEvent.target.files[0];
                 if (file) {
                     var fd = new FormData();
@@ -287,9 +286,9 @@ function cfromlyService(formlyConfig,$window){
                     scope.fc.$setViewValue(undefined);
                 }
             });
-            el.on("focusout", function(focusoutEvent) {
+            el.on("focusout", function (focusoutEvent) {
                 if ($window.document.activeElement.id === scope.id) {
-                    scope.$apply(function(scope) {
+                    scope.$apply(function (scope) {
                         scope.fc.$setUntouched();
                     });
                 } else {

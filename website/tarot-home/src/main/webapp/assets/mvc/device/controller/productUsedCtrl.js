@@ -11,34 +11,35 @@ function productUsedCtrl($scope, $resource, Constants,cTables,cfromly) {
     var mgrData = {
         fields: [
             {
-                'id': 'store.name',
-                'key': 'store.name',
-                'type': 'c_input',
-                'templateOptions': {'disabled': true, 'label': '门店名称', 'placeholder': '门店名称'}
+                id: 'store.name',
+                key: 'store.name',
+                type: 'c_input',
+                templateOptions: {disabled: true, label: '门店名称', placeholder: '门店名称'}
             },
             {
-                'key': 'code',
-                'type': 'c_input',
-                'templateOptions': {'label': '产品编号', required: true, 'placeholder': '产品编号'}
+                key: 'code',
+                type: 'c_input',
+                templateOptions: {label: '设备组编号', required: true, placeholder: '设备组编号'}
             },
             {
-                'key': 'type',
-                'type': 'c_select',
-                'templateOptions': {
-                    'label': '产品名称',
+                key: 'type',
+                type: 'c_select',
+                className:'c_select',
+                templateOptions: {
+                    label: '设备组名称',
                     required: true,
-                    'placeholder': '产品名称',
+                    placeholder: '设备组名称',
                     valueProp: 'type',
                     labelProp: 'friendlyType',
                     options: productOpts
                 }
             },
             {
-                'key': 'productNum',
-                'type': 'c_input',
-                'templateOptions': {'label': '产品版本', required: true, 'placeholder': '产品版本'}
+                key: 'productNum',
+                type: 'c_input',
+                templateOptions: {label: '设备组版本', required: true, placeholder: '设备组版本'}
             },
-            {'key': 'description', 'type': 'c_input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}}
+            {key: 'description', type: 'c_input', templateOptions: {label: '描述', placeholder: '描述'}}
         ],
         api: {
             read: '/product/used/paging',
@@ -61,6 +62,7 @@ function productUsedCtrl($scope, $resource, Constants,cTables,cfromly) {
         xhr.save({id: product.id}, attr).$promise.then(function (result) {
             console.log(attr)
             attr.editing = false;
+            $scope.tableOpts.data.splice($scope.rowIndex, 1, $scope.formData.model);//更新该列表单数据
         });
     };
 

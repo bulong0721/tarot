@@ -133,7 +133,7 @@ public class DeviceUsedController {
 
             deviceUsed = deviceUsedService.update(deviceUsed);
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", deviceUsed);
+            resp.addEntry("updateResult", objectToEntry(deviceUsed));
             return resp;
         } catch (ServiceException e) {
             e.printStackTrace();
@@ -244,7 +244,7 @@ public class DeviceUsedController {
             return AjaxResponse.success();
         } catch (Exception e) {
             e.printStackTrace();
-            resp.setErrorString("删除产品属性异常");
+            resp.setErrorString("删除设备属性异常");
             LOGGER.error("Error delete productAttributes", e);
         }
         return resp;

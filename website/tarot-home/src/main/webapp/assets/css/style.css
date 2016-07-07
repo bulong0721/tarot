@@ -10073,4 +10073,6 @@ th.center, td.center {
 .fileInput input { position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 999; top: 0; left: 0;}
 .fileInput button {}
 .file {position: relative}
-.file i {font-size: 60px; position: absolute; left: 0; top: 30px; width: 100%; text-align: center;}
+.file i {font-size: 60px; position: absolute; left: 0; top: 30px; width: 100%; text-align: center;}.ngtables .pagination {margin: 0;}
+
+.c_select select {max-width:260px;}

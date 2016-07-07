@@ -9,9 +9,9 @@ function deviceCtrl($scope,$resource, Constants,cTables,cfromly) {
 
     var mgrData = {
         fields: [
-            {'key': 'name', 'type': 'c_input', 'templateOptions': {'label': '名称', required: true, 'placeholder': '名称'}},
-            {'key': 'versionNum', 'type': 'c_input', 'templateOptions': {'label': '版本号', 'placeholder': '版本号'}},
-            {'key': 'description', 'type': 'c_input','templateOptions': {'label': '描述', 'placeholder': '描述'}}
+            {key: 'name', type: 'c_input', templateOptions: {label: '名称', required: true, placeholder: '名称'}},
+            {key: 'versionNum', type: 'c_input', templateOptions: {label: '版本号', placeholder: '版本号'}},
+            {key: 'description', type: 'c_input',templateOptions: {label: '描述', placeholder: '描述'}}
         ],
         api: {
             read: '/device/paging',
@@ -33,6 +33,7 @@ function deviceCtrl($scope,$resource, Constants,cTables,cfromly) {
         var xhr = $resource(mgrData.api.updateAttr);
         xhr.save({id: product.id}, attr).$promise.then(function (result) {
             attr.editing = false;
+            $scope.tableOpts.data.splice($scope.rowIndex, 1, $scope.formData.model);//更新该列表单数据
         });
     };
 

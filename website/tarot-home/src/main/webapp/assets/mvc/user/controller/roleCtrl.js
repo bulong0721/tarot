@@ -13,11 +13,11 @@ function roleMgrCtrl($scope, cTables,cfromly) {
     var mgrOpts = {
         fields: [
             {
-                'key': 'roleName',
-                'type': 'c_input',
-                'templateOptions': {'label': '角色名', required: true, 'placeholder': '角色名'}
+                key: 'roleName',
+                type: 'c_input',
+                templateOptions: {label: '角色名', required: true, placeholder: '角色名'}
             },
-            {'key': 'description', 'type': 'c_input', 'templateOptions': {'label': '描述', 'placeholder': '描述'}}
+            {key: 'description', type: 'c_input', templateOptions: {label: '描述', placeholder: '描述'}}
         ],
         api: {
             read: '/admin/roles/paging',
