@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html ng-app="inspinia">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Page title set in pageTitle directive -->
+    <title page-title></title>
+
+    <!-- Font awesome -->
+    <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <!-- Bootstrap and Fonts -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+
+    <!-- iCheck -->
+    <link href="assets/css/plugins/iCheck/custom.css" rel="stylesheet">
+
+    <!-- Chosen Plugin -->
+    <link href="assets/css/plugins/chosen/chosen.css" rel="stylesheet">
+
+    <!-- Data Tables -->
+    <link href="assets/js/plugins/dataTables/jquery.dataTables.css" rel="stylesheet">
+    <link href="assets/js/plugins/dataTables/plugins/bootstrap/datatables.bootstrap.css" rel="stylesheet">
+
+    <!-- DatePicker -->
+    <link href="assets/css/plugins/datepicker/angular-datepicker.css" rel="stylesheet">
+
+    <!-- Style for wizard - based on Steps plugin-->
+    <link href="assets/css/plugins/steps/jquery.steps.css" rel="stylesheet">
+
+    <!-- Main Inspinia CSS files -->
+    <link href="assets/css/animate.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+
+<!-- ControllerAs syntax -->
+<!-- Main controller with serveral data used in Inspinia theme on diferent view -->
+<body>
+
+<!-- Wrapper-->
+<div id="wrapper">
+    <!-- Navigation -->
+    <div ng-include="'assets/views/common/navigation.html'"></div>
+
+    <!-- Page wraper -->
+    <!-- ng-class with current state name give you the ability to extended customization your view -->
+    <div id="page-wrapper" class="gray-bg {{$state.current.name}}">
+
+        <!-- Page wrapper -->
+        <div ng-include="'assets/views/common/topnavbar.html'"></div>
+
+        <!-- Main view  -->
+        <div ui-view></div>
+
+        <!-- Footer -->
+        <div ng-include="'assets/views/common/footer.html'"></div>
+
+    </div>
+    <!-- End page wrapper-->
+</div>
+<!-- End wrapper-->
+
+<!-- jQuery and Bootstrap -->
+<script src="assets/js/jquery/jquery-2.1.1.min.js"></script>
+<script src="assets/js/plugins/jquery-ui/jquery-ui.js"></script>
+<script src="assets/js/bootstrap/bootstrap.min.js"></script>
+
+<!-- iCheck -->
+<script src="assets/js/plugins/iCheck/icheck.min.js"></script>
+
+<!-- Chosen -->
+<script src="assets/js/plugins/chosen/chosen.jquery.js"></script>
+
+<!-- MetsiMenu -->
+<script src="assets/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+
+<!-- Data Tables -->
+<script src="assets/js/plugins/dataTables/jquery.dataTables.js"></script>
+
+<!-- ECharts -->
+<script src="assets/js/plugins/echarts/echarts.js"></script>
+
+<!-- Custom and plugin javascript -->
+<script src="assets/js/inspinia.js"></script>
+
+<!-- Angular scripts-->
+<script src="assets/js/angular/angular.min.js"></script>
+<script src="assets/js/ui-router/angular-ui-router.min.js"></script>
+<script src="assets/js/ng-resource/angular-resource.js"></script>
+<script src="assets/js/bootstrap/ui-bootstrap-tpls-0.11.0.min.js"></script>
+<script src="assets/js/plugins/echarts/angular-echarts.js"></script>
+<script src="assets/js/bootstrap/angular-bootstrap-checkbox.js"></script>
+<script src="assets/js/plugins/datepicker/datePicker.js"></script>
+<script src="assets/js/plugins/chosen/chosen.js"></script>
+<script src="assets/js/plugins/dataTables/angular-datatables.js"></script>
+<script src="assets/js/plugins/dataTables/plugins/bootstrap/angular-datatables.bootstrap.js"></script>
+<script src="assets/js/plugins/base64/angular-base64.js"></script>
+
+<!-- Anglar App Script -->
+<script src="assets/js/app.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/directives.js"></script>
+<script src="assets/js/services.js"></script>
+<script src="assets/js/controllers.js"></script>
+
+</body>
+</html>

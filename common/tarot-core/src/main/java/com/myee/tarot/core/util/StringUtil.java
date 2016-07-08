@@ -104,4 +104,12 @@ public class StringUtil {
     public static String extractFieldNameFromExpression(String expression) {
         return expression.substring(expression.indexOf('[') + 1, expression.lastIndexOf(']'));
     }
+
+    /**
+     * @param text
+     * @return
+     */
+    public static boolean isBlank(String text) {
+        return (null == text || text.length() == 0);
+    }
 }

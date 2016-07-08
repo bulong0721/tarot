@@ -19,4 +19,9 @@ public interface MerchantStoreDao extends GenericEntityDao<Long, MerchantStore> 
     PageResult<MerchantStore> pageListByMerchant(Long id ,PageRequest pageRequest);
 
     Long getCountById(Long merchantStoreId, Long merchantId);
+
+    public MerchantStore findOne(Long shopId);
+
+    public List<MerchantStore> findByClientId(Long clientId);
+
 }

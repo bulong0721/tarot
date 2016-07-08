@@ -13,6 +13,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Created by Martin on 2016/4/21.
  */
@@ -46,6 +48,30 @@ public class MerchantStoreDaoImpl extends GenericEntityDaoImpl<Long, MerchantSto
         log.info(query.fetchCount());
 
         return query.fetchCount();
+    }
+
+    @Override
+    public MerchantStore findOne(Long merchantStoreId) {
+        QMerchantStore qMerchantStore = QMerchantStore.merchantStore;
+        JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
+        query.from(qMerchantStore);
+        if(merchantStoreId != null){
+            query.where(qMerchantStore.id.eq(merchantStoreId));
+        }
+        log.info(query.fetchCount());
+        return query.fetchFirst();
+    }
+
+    @Override
+    public List<MerchantStore> findByClientId(Long merchantId) {
+        QMerchantStore qMerchantStore = QMerchantStore.merchantStore;
+        JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
+        query.from(qMerchantStore);
+        if(merchantId != null){
+            query.where(qMerchantStore.merchant.id.eq(merchantId));
+        }
+        log.info(query.fetchCount());
+        return query.fetch();
     }
 
 //    @Override

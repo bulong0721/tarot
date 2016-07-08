@@ -28,6 +28,14 @@
         <beans:property name="accessDeniedUrl" value="/admin/denied.html"/>
     </beans:bean>
 
+    <beans:bean scope="singleton" class="com.myee.tarot.web.weixin.config.BootStrapConfig" init-method="serverBootstrapInit"></beans:bean>
+
+    <beans:bean id="wxMpMessageRouter" class="me.chanjar.weixin.mp.api.WxMpMessageRouter">
+        <beans:constructor-arg name="wxMpService" ref="wxMpService"></beans:constructor-arg>
+    </beans:bean>
+
+    <beans:bean id="wxMpService" class="me.chanjar.weixin.mp.api.WxMpServiceImpl"></beans:bean>
+
     <!-- updates last user logon timestamp -->
     <beans:bean id="userAuthenticationSuccessHandler" class="com.myee.tarot.admin.web.handler.AdminAuthenticationSuccessHandler">
     </beans:bean>
@@ -60,6 +68,11 @@
                 logout-success-url="/admin/home.html"
                 logout-url="/admin/j_spring_security_logout"/>
         <access-denied-handler ref="adminAccessDenied"/>
+    </http>
+
+    <!-- 微信公众号-->
+    <http pattern="/weixin/**" auto-config="true" use-expressions="true" authentication-manager-ref="userAuthenticationManager">
+        <intercept-url pattern="/weixin/**" access="permitAll"/>
     </http>
 
 

@@ -47,4 +47,9 @@ public class TableTypeDaoImpl extends GenericEntityDaoImpl<Long, TableType> impl
         pageList.setList(query.fetch());
         return pageList;
     }
+
+    @Override
+    public List<TableType> findTypeByOrgId(Long orgID) {
+        return null;
+    }
 }

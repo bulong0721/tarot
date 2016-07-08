@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="clever">
+<head>
+    <meta charset="UTF-8">
+    <title>店铺列表</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <meta name="Keywords" content=""/>
+    <meta name="description" content="">
+    <meta name="format-detection" content="telephone=no, email=no">
+    <link rel="stylesheet" type="text/css" href="weixin/skin/css/clever.css">
+</head>
+<body>
+<div class="main">
+    <div id="sp-page" drag-box>
+        <section class="page-view" ng-view>
+            <svg id="loading" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="#00b4ae"><path opacity=".1" d="M14 0 H18 V8 H14 z" transform="rotate(0 16 16)"><animate attributeName="opacity" from="1" to=".1" dur="1s" repeatCount="indefinite" begin="0"/></path><path opacity=".1" d="M14 0 H18 V8 H14 z" transform="rotate(45 16 16)"><animate attributeName="opacity" from="1" to=".1" dur="1s" repeatCount="indefinite" begin="0.125s"/></path><path opacity=".1" d="M14 0 H18 V8 H14 z" transform="rotate(90 16 16)"><animate attributeName="opacity" from="1" to=".1" dur="1s" repeatCount="indefinite" begin="0.25s"/></path><path opacity=".1" d="M14 0 H18 V8 H14 z" transform="rotate(135 16 16)"><animate attributeName="opacity" from="1" to=".1" dur="1s" repeatCount="indefinite" begin="0.375s"/></path><path opacity=".1" d="M14 0 H18 V8 H14 z" transform="rotate(180 16 16)"><animate attributeName="opacity" from="1" to=".1" dur="1s" repeatCount="indefinite" begin="0.5s"/></path><path opacity=".1" d="M14 0 H18 V8 H14 z" transform="rotate(225 16 16)"><animate attributeName="opacity" from="1" to=".1" dur="1s" repeatCount="indefinite" begin="0.675s"/></path><path opacity=".1" d="M14 0 H18 V8 H14 z" transform="rotate(270 16 16)"><animate attributeName="opacity" from="1" to=".1" dur="1s" repeatCount="indefinite" begin="0.75s"/></path><path opacity=".1" d="M14 0 H18 V8 H14 z" transform="rotate(315 16 16)"><animate attributeName="opacity" from="1" to=".1" dur="1s" repeatCount="indefinite" begin="0.875s"/></path></svg>
+        </section>
+    </div>
+</div>
+</body>
+<script src="weixin/skin/js/lib/zepto.js"></script>
+<script src="weixin/skin/js/lib/angular/angular.min.js"></script>
+<script src="weixin/skin/js/lib/angular/angular-route.min.js"></script>
+<script src="weixin/skin/js/lib/ng-resource/angular-resource.min.js"></script>
+<script src="weixin/skin/js/app.js"></script>
+<script src="weixin/skin/js/controllers.js"></script>
+<script src="weixin/skin/js/services.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>
+    /*
+     * 注意：
+     * 1. 所有的JS接口只能在公众号绑定的域名下调用，公众号开发者需要先登录微信公众平台进入“公众号设置”的“功能设置”里填写“JS接口安全域名”。
+     * 2. 如果发现在 Android 不能分享自定义内容，请到官网下载最新的包覆盖安装，Android 自定义分享接口需升级至 6.0.2.58 版本及以上。
+     * 3. 完整 JS-SDK 文档地址：http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html
+     *
+     * 如有问题请通过以下渠道反馈：
+     * 邮箱地址：weixin-open@qq.com
+     * 邮件主题：【微信JS-SDK反馈】具体问题
+     * 邮件内容说明：用简明的语言描述问题所在，并交代清楚遇到该问题的场景，可附上截屏图片，微信团队会尽快处理你的反馈。
+     */
+    wx.config({
+        debug: true,
+        appId: 'wxe67244505b4041b6',
+        timestamp: 1456104787,
+        nonceStr: 'aAyOc8H5Mpn9qLaJ',
+        signature: '7c63d890e5d5dbbecfa16498e757c61b12923a16',
+        jsApiList: [
+            'checkJsApi',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ',
+            'onMenuShareWeibo',
+            'hideMenuItems',
+            'showMenuItems',
+            'hideAllNonBaseMenuItem',
+            'showAllNonBaseMenuItem',
+            'translateVoice',
+            'startRecord',
+            'stopRecord',
+            'onRecordEnd',
+            'playVoice',
+            'pauseVoice',
+            'stopVoice',
+            'uploadVoice',
+            'downloadVoice',
+            'chooseImage',
+            'previewImage',
+            'uploadImage',
+            'downloadImage',
+            'getNetworkType',
+            'openLocation',
+            'getLocation',
+            'hideOptionMenu',
+            'showOptionMenu',
+            'closeWindow',
+            'scanQRCode',
+            'chooseWXPay',
+            'openProductSpecificView',
+            'addCard',
+            'chooseCard',
+            'openCard'
+        ]
+    });
+    wx.ready(function () {
+        wx.getLocation({
+            success: function (res) {
+                alert(JSON.stringify(res));
+            },
+            cancel: function (res) {
+                alert('用户拒绝授权获取地理位置');
+            }
+        });
+    });
+</script>
+</html>
+

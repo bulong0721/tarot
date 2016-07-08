@@ -4,9 +4,11 @@ import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.reference.domain.Address;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
+import java.util.Date;
 
 /**
  * Created by Martin on 2016/4/11.
@@ -54,6 +56,17 @@ public class MerchantStore extends GenericEntity<Long, MerchantStore> {
 
     @Column(name = "EXPERIENCE")
     private boolean experience = false;
+
+    @Column(name = "STORE_TYPE", length = 20)
+    private String storeType;
+
+    @Column(name = "TIME_OPEN")
+    private Date timeOpen;
+    @Column(name = "TIME_CLOSE")
+    private Date   timeClose;
+
+    @Column(name = "SCORE")
+    private Float  score;
 
     //关联join的门店详细信息
     @ManyToOne(targetEntity = Merchant.class, optional = false, cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -149,4 +162,37 @@ public class MerchantStore extends GenericEntity<Long, MerchantStore> {
     public void setMerchant(Merchant merchant) {
         this.merchant = merchant;
     }
+
+    public String getStoreType() {
+        return storeType;
+    }
+
+    public void setStoreType(String storeType) {
+        this.storeType = storeType;
+    }
+
+    public Date getTimeOpen() {
+        return timeOpen;
+    }
+
+    public void setTimeOpen(Date timeOpen) {
+        this.timeOpen = timeOpen;
+    }
+
+    public Date getTimeClose() {
+        return timeClose;
+    }
+
+    public void setTimeClose(Date timeClose) {
+        this.timeClose = timeClose;
+    }
+
+    public Float getScore() {
+        return score;
+    }
+
+    public void setScore(Float score) {
+        this.score = score;
+    }
+
 }
