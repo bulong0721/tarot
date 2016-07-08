@@ -1,5 +1,7 @@
 package com.myee.tarot.weixin.domain;
 
+import com.myee.tarot.catering.domain.TableType;
+
 public class RTableTypeVo {
     private long   typeId;
     private String typeName;
