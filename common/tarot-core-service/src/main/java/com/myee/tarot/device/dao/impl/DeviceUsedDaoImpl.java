@@ -1,6 +1,7 @@
 package com.myee.tarot.device.dao.impl;
 
 import com.myee.tarot.catalog.domain.DeviceUsed;
+import com.myee.tarot.catalog.domain.QDevice;
 import com.myee.tarot.catalog.domain.QDeviceUsed;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageRequest;
@@ -11,6 +12,8 @@ import com.querydsl.jpa.impl.JPAQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Created by Administrator on 2016/5/31.
  */
@@ -18,7 +21,7 @@ import org.springframework.stereotype.Repository;
 public class DeviceUsedDaoImpl extends GenericEntityDaoImpl<Long, DeviceUsed> implements DeviceUsedDao {
 
     @Override
-    public PageResult<DeviceUsed> pageListByStore(Long id,PageRequest pageRequest){
+    public PageResult<DeviceUsed> pageByStore(Long id,PageRequest pageRequest){
         PageResult<DeviceUsed> pageList = new PageResult<DeviceUsed>();
         QDeviceUsed qDeviceUsed = QDeviceUsed.deviceUsed;
         JPQLQuery<DeviceUsed> query = new JPAQuery(getEntityManager());
@@ -34,5 +37,14 @@ public class DeviceUsedDaoImpl extends GenericEntityDaoImpl<Long, DeviceUsed> im
         }
         pageList.setList(query.fetch());
         return pageList;
+    }
+
+    @Override
+    public List<DeviceUsed> listByIDs(List<Long> bindList){
+        QDeviceUsed qDeviceUsed = QDeviceUsed.deviceUsed;
+        JPQLQuery<DeviceUsed> query = new JPAQuery(getEntityManager());
+        query.from(qDeviceUsed);
+        query.where(qDeviceUsed.id.in(bindList));
+        return query.fetch();
     }
 }

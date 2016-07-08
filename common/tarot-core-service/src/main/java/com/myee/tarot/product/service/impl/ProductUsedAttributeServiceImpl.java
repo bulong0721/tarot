@@ -32,4 +32,9 @@ public class ProductUsedAttributeServiceImpl extends GenericEntityServiceImpl<Lo
 
     }
 
+    @Override
+    public void deleteByProductUsedId(Long id){
+        productUsedAttributeDao.deleteByProductUsedId(id);
+    }
+
 }

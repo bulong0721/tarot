@@ -9,6 +9,8 @@ import com.myee.tarot.device.service.DeviceUsedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by Administrator on 2016/5/31.
  */
@@ -24,7 +26,12 @@ public class DeviceUsedServiceImpl extends GenericEntityServiceImpl<Long, Device
     }
 
     @Override
-    public PageResult<DeviceUsed> pageListByStore(Long id,PageRequest pageRequest ){
-        return deviceUsedDao.pageListByStore(id,pageRequest );
+    public PageResult<DeviceUsed> pageByStore(Long id,PageRequest pageRequest ){
+        return deviceUsedDao.pageByStore(id,pageRequest );
+    }
+
+    @Override
+    public List<DeviceUsed> listByIDs(List<Long> bindList){
+        return deviceUsedDao.listByIDs(bindList);
     }
 }

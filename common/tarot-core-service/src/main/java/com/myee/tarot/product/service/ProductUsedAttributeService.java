@@ -13,4 +13,5 @@ public interface ProductUsedAttributeService extends GenericEntityService<Long, 
 
     List<ProductUsedAttribute> listByProductId(Long id);
 
+    void deleteByProductUsedId(Long id);
 }

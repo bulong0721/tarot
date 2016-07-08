@@ -7,7 +7,9 @@ import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.product.dao.ProductUsedAttributeDao;
 import com.myee.tarot.product.dao.ProductUsedDao;
 import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.JPQLQueryFactory;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
@@ -31,5 +33,15 @@ public class ProductUsedAttributeDaoImpl extends GenericEntityDaoImpl<Long, Prod
 
         return query.fetch();
 
+    }
+
+    @Override
+    public void deleteByProductUsedId(Long id){
+        QProductUsedAttribute qProductUsedAttribute = QProductUsedAttribute.productUsedAttribute;
+        JPQLQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
+
+        queryFactory.delete(qProductUsedAttribute)
+                .where(qProductUsedAttribute.productUsed.id.eq(id))
+                .execute();
     }
 }
