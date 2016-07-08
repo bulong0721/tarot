@@ -406,6 +406,16 @@ public class OperationsManager extends RedisOperation implements OperationsServi
         return result;
     }
 
+    @Override
+    public ResponseData sendResourceToCloud(String resourceType, String filePath) {
+        return null;
+    }
+
+    @Override
+    public ResponseData getShopInfo(String clientId) {
+        return null;
+    }
+
     private String readfile(File file){
         SAXReader saxReader = new SAXReader();
         JSONObject object = new JSONObject();
