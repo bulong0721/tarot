@@ -40,6 +40,4 @@ public class Constants {
 	public final static int NOPAGING = 1;//不分页
 	public final static int PAGING = 0;//分页
 
-	public static final String DOWNLOAD_HTTP = System.getProperty("cleverm.push.http");
-	public static final String DOWNLOAD_HOME = System.getProperty("cleverm.push.dirs");
 }
