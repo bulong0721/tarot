@@ -10,7 +10,7 @@ function constServiceCtor($resource, $q) {
     //从后台拿商户类型
     vm.merchantType = $resource('/admin/merchant/typeList4Select').query();
 
-    //切换门店
+    //切换商户
     vm.thisMerchant = {};
     vm.getSwitchMerchant = function () {
         var deferred = $q.defer();
@@ -157,7 +157,12 @@ function cTablesService($resource,NgTableParams,cAlerts){
                 //点击确定回调
                 if (mgrOpts.api.delete && rowIndex > -1) {
                     var data = scope.tableOpts.data[rowIndex];
-                    $resource(mgrOpts.api.delete).save({}, data, saveSuccess, saveFailed);
+                    $resource(mgrOpts.api.delete).save({}, data,function deleteSuccess(response){
+                        if (0 != response.status) {
+                            return;
+                        }
+                        scope.tableOpts.data.splice(rowIndex, 1);//更新数据表
+                    }, saveFailed);
                 }
             },function(){
                 //点击取消回调
@@ -188,6 +193,7 @@ function cTablesService($resource,NgTableParams,cAlerts){
                 }
                 var xhr = $resource(mgrOpts.api.read);
                 var args = angular.extend(params.url(), scope.where);
+
                 return xhr.get(args).$promise.then(function (data) {
                     params.total(data.recordsTotal);
                     return data.rows;

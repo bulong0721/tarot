@@ -8,8 +8,10 @@
             </div>
             <div class="col-xs-6">
                 <formly-form model="formData.model" fields="formData.fields" form="formData.form" options="formData.options">
-                    <button class="btn btn-primary" ng-click="processSubmit()"><i class="fa fa-sm fa-check"></i>&nbsp;提交</button>
-                    <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
+                    <div class="text-center col-xs-8">
+                        <button class="btn btn-primary" ng-click="processSubmit()"><i class="fa fa-sm fa-check"></i>&nbsp;提交</button>
+                        <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
+                    </div>
                 </formly-form>
             </div>
         </div>
@@ -22,12 +24,15 @@
             <table id="details" width="45%" class="table table-bordered">
                 <thead>
                 <tr>
-                    <th width="35%" class="center">键</th>
-                    <th width="45%" class="center">值</th>
+                    <th width="35%" class="center">属性名</th>
+                    <th width="45%" class="center">属性值</th>
                     <th class="center"><a ng-click="insertAttr(formData.model)"><i class="btn-icon fa fa-plus"></i></a></th>
                 </tr>
                 </thead>
                 <tbody>
+                <tr>
+                    <td colspan="9" class="center" ng-if="formData.model.attributes.length<=0">没有查找到数据</td>
+                </tr>
                 <tr ng-repeat="attr in formData.model.attributes" ng-switch="attr.editing">
                     <td>
                         <span ng-switch-default>{{::attr.name}}</span>

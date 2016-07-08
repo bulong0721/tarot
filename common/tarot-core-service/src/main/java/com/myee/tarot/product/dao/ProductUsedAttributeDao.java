@@ -12,4 +12,6 @@ import java.util.List;
 public interface ProductUsedAttributeDao extends GenericEntityDao<Long, ProductUsedAttribute> {
 
     public List<ProductUsedAttribute> listByProductId(Long id);
+
+    void deleteByProductUsedId(Long id);
 }

@@ -51,7 +51,7 @@ public class DeviceUsedController {
     @Autowired
     private ProductUsedService productUsedService;
 
-    @RequestMapping(value = "/deviceUsed/paging", method = RequestMethod.GET)
+    @RequestMapping(value = "/device/used/paging", method = RequestMethod.GET)
     @ResponseBody
     public AjaxPageableResponse pagedeviceUsed(Model model, HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
@@ -62,7 +62,7 @@ public class DeviceUsedController {
             }
             MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
 
-            PageResult<DeviceUsed> pageResult = deviceUsedService.pageListByStore(merchantStore1.getId(),pageRequest );
+            PageResult<DeviceUsed> pageResult = deviceUsedService.pageByStore(merchantStore1.getId(), pageRequest);
             List<DeviceUsed> deviceUsedList = pageResult.getList();
             for (DeviceUsed deviceUsed : deviceUsedList) {
                 resp.addDataEntry(objectToEntry(deviceUsed));
@@ -74,7 +74,33 @@ public class DeviceUsedController {
         return resp;
     }
 
-    @RequestMapping(value = "/deviceUsed/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/device/used/listByStoreId", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    AjaxPageableResponse listByStoreId( HttpServletRequest request, PageRequest pageRequest) {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
+        try {
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+
+            pageRequest.setCount(-1);//不分页，查询所有结果
+            PageResult<DeviceUsed> pageList = deviceUsedService.pageByStore(merchantStore1.getId(), pageRequest);
+            List<DeviceUsed> deviceUsedList = pageList.getList();
+            for (DeviceUsed deviceUsed : deviceUsedList) {
+                resp.addDataEntry(objectToEntry(deviceUsed));
+            }
+            resp.setRecordsTotal(pageList.getRecordsTotal());
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOGGER.error("Error while paging products", e);
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "/device/used/update", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveUsedProduct(@Valid @RequestBody DeviceUsed deviceUsed,@RequestParam(value = "autoStart")Long autoStart,@RequestParam(value = "autoEnd")Long autoEnd, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -116,7 +142,7 @@ public class DeviceUsedController {
         return resp;
     }
 
-    @RequestMapping(value = "/deviceUsed/bindProductUsed", method = RequestMethod.POST)
+    @RequestMapping(value = "/device/used/bindProductUsed", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse deviceUsedBindProductUsed(@RequestParam(value = "bindString") String bindString,@RequestParam(value = "deviceUsedId") Long deviceUsedId, HttpServletRequest request) {
         try {
@@ -141,7 +167,7 @@ public class DeviceUsedController {
         return AjaxResponse.failed(-1);
     }
 
-    @RequestMapping(value = "/deviceUsed/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/device/used/delete", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse deleteDeviceUsed(@Valid @RequestBody DeviceUsed deviceUsed, HttpServletRequest request) {
         try {
@@ -172,7 +198,6 @@ public class DeviceUsedController {
         entry.put("boardNo",deviceUsed.getBoardNo());
         entry.put("deviceNum",deviceUsed.getDeviceNum());
         entry.put("description",deviceUsed.getDescription());
-        entry.put("store",deviceUsed.getStore());
         deviceUsed.getDevice().setAttributes(null);
         entry.put("device",deviceUsed.getDevice());
         if(deviceUsed.getProductUsed() != null ){
@@ -193,7 +218,7 @@ public class DeviceUsedController {
         return entry;
     }
 
-    @RequestMapping(value = "/deviceUsed/attribute/save", method = RequestMethod.POST)
+    @RequestMapping(value = "/device/used/attribute/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveAttribute(@ModelAttribute DeviceUsed deviceUsed, @Valid @RequestBody DeviceUsedAttribute attribute, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -213,7 +238,7 @@ public class DeviceUsedController {
         return resp;
     }
 
-    @RequestMapping(value = "/deviceUsed/attribute/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/device/used/attribute/delete", method = RequestMethod.POST)
     @ResponseBody
 //    public AjaxResponse deleteAttributeDevice(@RequestParam Long id, HttpServletRequest request) throws Exception {
 //        AjaxResponse resp = new AjaxResponse();
@@ -252,7 +277,7 @@ public class DeviceUsedController {
     }
 
 
-    @RequestMapping(value = "/deviceUsed/attribute/listByProductId", method = RequestMethod.GET)
+    @RequestMapping(value = "/device/used/attribute/listByProductId", method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse listByDeviceId(@RequestParam Long parentId, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();

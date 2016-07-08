@@ -10062,7 +10062,10 @@ th.center, td.center {
 .ngtables {overflow: hidden;}
 .ngtables .pagination {margin: 0;}
 
-.filies {}
+.c_select select {max-width:260px;}
+.formly-min-checkbox input {width: auto; height: auto;margin-top: 9px;}.filies {}
+
+
 .filies .ibox-content {border:1px solid #e7eaec;}
 .filies .file-but {}
 .filieConfirm {}
@@ -10074,5 +10077,3 @@ th.center, td.center {
 .fileInput button {}
 .file {position: relative}
 .file i {font-size: 60px; position: absolute; left: 0; top: 30px; width: 100%; text-align: center;}.ngtables .pagination {margin: 0;}
-
-.c_select select {max-width:260px;}

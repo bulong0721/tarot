@@ -1,17 +1,21 @@
 package com.myee.tarot.web.admin.controller.product;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catalog.domain.ProductUsed;
 import com.myee.tarot.catalog.domain.ProductUsedAttribute;
 import com.myee.tarot.catalog.type.ProductType;
 import com.myee.tarot.catalog.view.ProductUsedAttributeView;
 import com.myee.tarot.catalog.view.ProductUsedView;
 import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
+import com.myee.tarot.device.service.DeviceUsedService;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.product.service.ProductUsedAttributeService;
@@ -41,6 +45,8 @@ public class ProductUsedController {
 
     @Autowired
     private ProductUsedService productUsedService;
+    @Autowired
+    private DeviceUsedService deviceUsedService;
 
     @Autowired
     private ProductUsedAttributeService productUsedAttributeService;
@@ -100,20 +106,91 @@ public class ProductUsedController {
 
     @RequestMapping(value = "/product/used/save", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse saveUsedProduct(@Valid @RequestBody ProductUsed productUsed, HttpServletRequest request) throws Exception {
+    public AjaxResponse saveUsedProduct(@Valid @RequestBody ProductUsed productUsed,@RequestParam(value = "autoStart")Long autoStart,@RequestParam(value = "autoEnd")Long autoEnd, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
-        if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
-            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-            resp.setErrorString("请先切换门店");
-            return resp;
-        }
-        MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        try {
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            if(autoEnd != null && autoStart !=null && autoEnd < autoStart){
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("结束编号不能小于开始编号");
+                return resp;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
 
-        productUsed.setStore(merchantStore1);
-        productUsed = productUsedService.update(productUsed);
-        resp = AjaxResponse.success();
-        resp.addEntry("updateResult", objectToEntry(productUsed));
+            List<Object> updateResult = new ArrayList<Object>();
+            productUsed.setStore(merchantStore1);
+            if(autoEnd != null && autoStart !=null &&  autoEnd >= 0 && autoStart >= 0 ){//批量新增
+                String commonName = productUsed.getName();
+                for(Long i=autoStart;i < autoEnd+1;i++){
+                    ProductUsed productUsedResult = new ProductUsed();
+                    productUsed.setCode( i +"");
+                    productUsedResult = productUsedService.update(productUsed);
+                    updateResult.add(objectToEntry(productUsedResult));
+                }
+            }
+            else {//单个新增或修改
+                productUsed = productUsedService.update(productUsed);
+                updateResult.add(objectToEntry(productUsed));
+            }
+
+            resp = AjaxResponse.success();
+            resp.addEntry("updateResult", updateResult);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            resp = AjaxResponse.failed(-1);
+        }
         return resp;
+    }
+
+    @RequestMapping(value = "/product/used/bindDeviceUsed", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse productUsedBindDeviceUsed(@RequestParam(value = "bindString") String bindString,@RequestParam(value = "productUsedId") Long productUsedId, HttpServletRequest request) {
+        try {
+            AjaxResponse resp = new AjaxResponse();
+            List<Long> bindList = JSON.parseArray(bindString, Long.class);
+            ProductUsed productUsed = productUsedService.findById(productUsedId);
+            if (productUsed == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("参数不正确");
+                return resp;
+            }
+            List<DeviceUsed> deviceUsedList = deviceUsedService.listByIDs(bindList);
+            productUsed.setDeviceUsed(deviceUsedList);
+
+            productUsed = productUsedService.update(productUsed);
+            resp = AjaxResponse.success();
+            resp.addEntry("updateResult", objectToEntry(productUsed));
+            return resp;
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+        return AjaxResponse.failed(-1);
+    }
+
+    @RequestMapping(value = "/product/used/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse deleteProductUsed(@Valid @RequestBody ProductUsed productUsed, HttpServletRequest request) {
+        try {
+            AjaxResponse resp = new AjaxResponse();
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            //先手动删除所有该对象关联的属性，再删除该对象。因为关联关系是属性多对一该对象，关联字段放在属性表里，不能通过删对象级联删除属性。
+            productUsedAttributeService.deleteByProductUsedId(productUsed.getId());
+
+            ProductUsed productUsed1 = productUsedService.findById(productUsed.getId());
+            productUsedService.delete(productUsed1);
+            return AjaxResponse.success();
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+        return AjaxResponse.failed(-1);
     }
 
     //把类转换成entry返回给前端，解耦和
@@ -125,6 +202,14 @@ public class ProductUsedController {
         entry.put("type", productUsed.getType());
         entry.put("productNum", productUsed.getProductNum());
         entry.put("description", productUsed.getDescription());
+        if(productUsed.getDeviceUsed() != null ){
+            for(DeviceUsed deviceUsed : productUsed.getDeviceUsed()){
+                deviceUsed.setProductUsed(null);
+                deviceUsed.setAttributes(null);
+                deviceUsed.getDevice().setAttributes(null);
+            }
+        }
+        entry.put("deviceUsedList", productUsed.getDeviceUsed());
         List<AttributeDTO> attributeDTOs = Lists.transform(productUsed.getAttributes(), new Function<ProductUsedAttribute, AttributeDTO>() {
             @Nullable
             @Override

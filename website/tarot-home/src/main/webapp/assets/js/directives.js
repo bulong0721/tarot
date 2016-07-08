@@ -97,8 +97,8 @@ function showThisMerchant(Constants,$rootScope) {
 function switchMerchant(Constants,$resource,$state,$rootScope) {
     return {
         template: [
-            '<div class="ibox"><div class="ibox-title"><h5>切换门店</h5><div class="ibox-tools"> <a ng-click="$root.rightSidebar = !$root.rightSidebar"><i class="fa fa-times"></i></a></div></div><div class="ibox-content"><div class="form-group"><div class="input-group col-md-6"><input type="text" class="form-control" placeholder="输入门店名或地址搜索"> <span class="input-group-btn"> <button type="button" class="btn btn-primary">走你!</button> </span></div></div>',
-            '<div class="sidebar-message" ng-repeat="merchantStore in merchantStores">',
+            '<div class="ibox"><div class="ibox-title"><h5>切换门店</h5><div class="ibox-tools"> <a ng-click="$root.rightSidebar = !$root.rightSidebar"><i class="fa fa-times"></i></a></div></div><div class="ibox-content"><div class="form-group"><div class="input-group col-md-6"><input type="text" class="form-control" ng-model="nameFilter" placeholder="输入门店名或地址搜索"> </div></div>',
+            '<div class="sidebar-message" ng-repeat="merchantStore in merchantStores | filter : nameFilter">',
             '<a ng-click="switchMerchantStore(merchantStore.id)" data-id="{{merchantStore.id}}"><div class="media-body">{{merchantStore.name}}<br>',
             '<small class="text-muted">{{merchantStore.address.province.name}}{{merchantStore.address.city.name}}</small></div></a></div></div>',
             '<pager page-count="pages.count" current-page="pages.page" on-page-change="pages.onPageChange()" page-first="false" page-last="false"></pager></div>',
