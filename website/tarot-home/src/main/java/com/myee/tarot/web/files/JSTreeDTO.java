@@ -23,6 +23,8 @@ public class JSTreeDTO {
 
     private String detailType;
 
+    private String downloadPath;
+
     public JSTreeDTO() {
     }
 
@@ -92,5 +94,13 @@ public class JSTreeDTO {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getDownloadPath() {
+        return downloadPath;
+    }
+
+    public void setDownloadPath(String downloadPath) {
+        this.downloadPath = downloadPath;
     }
 }
