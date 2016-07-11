@@ -9,6 +9,7 @@ import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.files.FileDTO;
 import com.myee.tarot.web.files.JSTreeDTO;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +30,8 @@ import java.util.*;
 @Controller
 public class FilesController {
 
+    @Value("${cleverm.push.dirs}")
+    private String DOWNLOAD_HOME;
 //    private static final File DOWNLOAD_HOME = new File(Constants.DOWNLOAD_HOME );
 
    /* @RequestMapping(value = "/admin/files/list.html")
@@ -51,11 +54,12 @@ public class FilesController {
     @RequestMapping(value = "/admin/files/list")
     @ResponseBody
     public List<JSTreeDTO> processListFiles(HttpServletRequest request,HttpServletResponse response) {
+        System.out.println(DOWNLOAD_HOME);
         List<JSTreeDTO> tree = Lists.newArrayList();
         String id = request.getParameter("id");
         File dir = null;
         if(id.equals("#")){
-            dir = new File(Constants.DOWNLOAD_HOME + File.separator + ((MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE)).getId() );
+            dir = new File(DOWNLOAD_HOME + File.separator + ((MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE)).getId() );
             //resp.put("text",dir.getPath());
             //resp.put("id",dir.getPath());
         }else{
@@ -93,7 +97,7 @@ public class FilesController {
         String id = request.getParameter("id");
         File dir = null;
         if(id.equals("#")){
-            dir = new File(Constants.DOWNLOAD_HOME + File.separator + ((MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE)).getId() );
+            dir = new File(DOWNLOAD_HOME + File.separator + ((MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE)).getId() );
             //resp.put("text",dir.getPath());
             //resp.put("id",dir.getPath());
         }
@@ -224,7 +228,7 @@ public class FilesController {
 
             MerchantStore merchantStore = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
 
-            File dest = FileUtils.getFile(Constants.DOWNLOAD_HOME, String.valueOf(merchantStore.getId()),File.separator + path);
+            File dest = FileUtils.getFile(DOWNLOAD_HOME, String.valueOf(merchantStore.getId()),File.separator + path);
 
 
             if (type.equals("default")) {
@@ -253,7 +257,7 @@ public class FilesController {
             return;
         }
         for (File file : parentFile.listFiles()) {
-            FileDTO resourceVo = new FileDTO(file, new File(Constants.DOWNLOAD_HOME + File.separator + ((MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE)).getId() ));
+            FileDTO resourceVo = new FileDTO(file, new File(DOWNLOAD_HOME + File.separator + ((MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE)).getId() ));
             resMap.put(file.getName(), resourceVo);
         }
     }

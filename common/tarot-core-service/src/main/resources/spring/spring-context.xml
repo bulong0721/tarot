@@ -120,6 +120,7 @@
         <property name="locations">
             <list>
                 <value>classpath:database.properties</value>
+                <value>classpath:download.properties</value>
                 <value>classpath:email.properties</value>
                 <value>classpath:configs.properties</value>
             </list>
