@@ -45,11 +45,4 @@ function deviceCtrl($scope,$resource, Constants,cTables,cfromly) {
         });
     };
 
-    $scope.goEditorCustom = function (rowIndex) {
-        $scope.goEditor(rowIndex);
-        if (Constants.thisMerchantStore) {
-            $scope.formData.model.store={name: Constants.thisMerchantStore.name};
-        }
-    };
-
 }
