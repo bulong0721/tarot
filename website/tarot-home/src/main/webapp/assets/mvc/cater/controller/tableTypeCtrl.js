@@ -28,8 +28,8 @@ function tableTypeMgrCtrl($scope, cTables,cfromly) {
             }
         ],
         api: {
-            read: '/admin/catering/type/paging',
-            update: '/admin/catering/type/save'
+            read: '../admin/catering/type/paging',
+            update: '../admin/catering/type/save'
         }
     };
 

@@ -35,7 +35,7 @@ public class UserController {
     @Autowired
     private RoleService roleService;
 
-    @RequestMapping(value = "/admin/users/save", method = RequestMethod.POST)
+    @RequestMapping(value = "admin/users/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse addUser(@RequestBody AdminUser user, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -56,7 +56,7 @@ public class UserController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/users/paging", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/users/paging", method = RequestMethod.GET)
     public
     @ResponseBody
     AjaxPageableResponse pageUsers(Model model, HttpServletRequest request) {
@@ -77,7 +77,7 @@ public class UserController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/roles/paging", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/roles/paging", method = RequestMethod.GET)
     public
     @ResponseBody
     AjaxPageableResponse pageRoles(Model model, HttpServletRequest request) {
@@ -93,7 +93,7 @@ public class UserController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/roles/save", method = RequestMethod.POST)
+    @RequestMapping(value = "admin/roles/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse mergeRole(@Valid @RequestBody Role role, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();

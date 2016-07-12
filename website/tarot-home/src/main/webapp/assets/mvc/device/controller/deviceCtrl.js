@@ -14,10 +14,10 @@ function deviceCtrl($scope,$resource, Constants,cTables,cfromly) {
             {key: 'description', type: 'c_input',templateOptions: {label: '描述', placeholder: '描述'}}
         ],
         api: {
-            read: '/device/paging',
-            update: '/device/update',
-            updateAttr: '/device/attribute/save',
-            deleteAttr: '/device/attribute/delete',
+            read: '../device/paging',
+            update: '../device/update',
+            updateAttr: '../device/attribute/save',
+            deleteAttr: '../device/attribute/delete',
         }
     };
     cTables.initNgMgrCtrl(mgrData, $scope);

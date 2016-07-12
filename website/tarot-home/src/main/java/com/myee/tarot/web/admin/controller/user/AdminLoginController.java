@@ -23,19 +23,19 @@ public class AdminLoginController extends AdminAbstractController {
     @Autowired
     protected AdminUserService adminUserService;
 
-    @RequestMapping(value = "/admin/login.html", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/login.html", method = RequestMethod.GET)
     public String displayLogin(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return "/admin/login";
+        return "admin/login";
     }
 
-    @RequestMapping(value = "/admin/forgotUsername", method = RequestMethod.POST)
+    @RequestMapping(value = "admin/forgotUsername", method = RequestMethod.POST)
     @ResponseBody
     public String processForgotUserName(HttpServletRequest request,
                                         @RequestParam("emailAddress") String email) {
         return null;
     }
 
-    @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
+    @RequestMapping(value = "changePassword", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse processChangePassword(HttpServletRequest request, HttpServletResponse response, Model model,
                                               @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm) {

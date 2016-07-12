@@ -121,7 +121,7 @@ function switchMerchant(Constants,$resource,$state,$rootScope) {
             //点击切换门店
             $scope.switchMerchantStore = function (id) {
                 //console.log("id:"+id)
-                $resource('/admin/merchantStore/switch').save(id, function (resp) {
+                $resource('/tarot/admin/merchantStore/switch').save(id, function (resp) {
                     //关闭侧边栏
                     $rootScope.rightSidebar = !$rootScope.rightSidebar;
                     //刷新当前页面的显示
