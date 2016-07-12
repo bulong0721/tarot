@@ -20,8 +20,8 @@ function roleMgrCtrl($scope, cTables,cfromly) {
             {key: 'description', type: 'c_input', templateOptions: {label: '描述', placeholder: '描述'}}
         ],
         api: {
-            read: '/admin/roles/paging',
-            update: '/admin/roles/save'
+            read: '../admin/roles/paging',
+            update: '../admin/roles/save'
         }
     };
 

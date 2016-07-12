@@ -31,7 +31,7 @@ public class AddressController {
     /**
      * 省市区县商圈
      */
-    @RequestMapping(value = "/admin/province/list", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/province/list", method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse listProvince(HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -47,7 +47,7 @@ public class AddressController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/province/list4Select", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/province/list4Select", method = RequestMethod.GET)
     @ResponseBody
     public List listProvince4Select(HttpServletRequest request) throws Exception {
         List resp = new ArrayList();
@@ -65,7 +65,7 @@ public class AddressController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/city/listByProvince", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/city/listByProvince", method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse listCityByProvince(@RequestParam Long id,HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -81,7 +81,7 @@ public class AddressController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/city/listByProvince4Select", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/city/listByProvince4Select", method = RequestMethod.GET)
     @ResponseBody
     public List listCityByProvince4Select(@RequestParam Long id,HttpServletRequest request) throws Exception {
         List resp = new ArrayList();
@@ -99,7 +99,7 @@ public class AddressController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/district/listByCity", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/district/listByCity", method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse listDistrictByCity(@RequestParam Long id,HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -115,7 +115,7 @@ public class AddressController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/district/listByCity4Select", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/district/listByCity4Select", method = RequestMethod.GET)
     @ResponseBody
     public List listDistrictByCity4Select(@RequestParam Long id,HttpServletRequest request) throws Exception {
         List resp = new ArrayList();

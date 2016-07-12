@@ -51,7 +51,7 @@ public class MerchantController {
     /**
      * 商户接口
      */
-    @RequestMapping(value = "/admin/merchant/save", method = RequestMethod.POST)
+    @RequestMapping(value = "admin/merchant/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveMerchant(@RequestBody Merchant merchant, HttpServletRequest request) throws Exception {
         AjaxResponse resp = null;
@@ -87,7 +87,7 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/merchant/get", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/merchant/get", method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse getMerchant(@RequestParam Long id, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -102,7 +102,7 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/merchant/getSwitch", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/merchant/getSwitch", method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse getSwitchMerchant(HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -123,7 +123,7 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/merchant/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "admin/merchant/delete", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse deleteMerchant(@RequestParam Long id, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -138,7 +138,7 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/merchant/list", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/merchant/list", method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse listMerchant(HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -155,7 +155,7 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/merchant/paging", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/merchant/paging", method = RequestMethod.GET)
     @ResponseBody
     public AjaxPageableResponse pageMerchant(HttpServletRequest request, PageRequest pageRequest) throws Exception {
         AjaxPageableResponse resp = new AjaxPageableResponse();
@@ -174,7 +174,7 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/merchant/list4Select", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/merchant/list4Select", method = RequestMethod.GET)
     @ResponseBody
     public List listMerchant4Select(HttpServletRequest request) throws Exception {
         List resp = new ArrayList();
@@ -189,7 +189,7 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/merchant/typeList4Select", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/merchant/typeList4Select", method = RequestMethod.GET)
     @ResponseBody
     public List getMerchantType4Select() {
         return new BusinessType().getMerchantBusinessType4Select();
@@ -213,7 +213,7 @@ public class MerchantController {
      * 门店接口
      */
 
-    @RequestMapping(value = "/admin/merchantStore/save", method = RequestMethod.POST)
+    @RequestMapping(value = "admin/merchantStore/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveMerchantStore(@RequestBody MerchantStore merchantStore, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -280,7 +280,7 @@ public class MerchantController {
         }
     }
 
-    @RequestMapping(value = "/admin/merchantStore/get", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/merchantStore/get", method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse getMerchantStore(@RequestParam Long id, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -295,7 +295,7 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/merchantStore/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "admin/merchantStore/delete", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse deleteMerchantStore(@RequestParam Long id, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -315,7 +315,7 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/merchantStore/list", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/merchantStore/list", method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse listMerchantStore(HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -332,7 +332,7 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/merchantStore/listByMerchant", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/merchantStore/listByMerchant", method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse listMerchantStoreByMerchant(HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -358,7 +358,7 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/merchantStore/pagingByMerchant", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/merchantStore/pagingByMerchant", method = RequestMethod.GET)
     @ResponseBody
     public AjaxPageableResponse pagingMerchantStoreByMerchant(HttpServletRequest request, PageRequest pageRequest) throws Exception {
         AjaxPageableResponse resp = new AjaxPageableResponse();
@@ -385,7 +385,7 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/merchantStore/listByMerchantForSelect", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/merchantStore/listByMerchantForSelect", method = RequestMethod.GET)
     @ResponseBody
     public List listMerchantStoreByMerchantForSelect(HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -416,7 +416,7 @@ public class MerchantController {
     }
 
     //切换门店接口
-    @RequestMapping(value = "/admin/merchantStore/switch", method = RequestMethod.POST)
+    @RequestMapping(value = "admin/merchantStore/switch", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse switchMerchantStore(@RequestBody Long id, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -448,7 +448,7 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "/admin/merchantStore/getSwitch", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/merchantStore/getSwitch", method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse getSwitchMerchantStore(HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();

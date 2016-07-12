@@ -88,7 +88,7 @@ function explorerCtrl($scope, $resource, $uibModal) {
         .jstree({
             core : {
                 data:{
-                    url: '/admin/files/list',
+                    url: '../admin/files/list',
                     'data' : function (node) {
                         return {'id' : node.id};
                     }
@@ -100,12 +100,12 @@ function explorerCtrl($scope, $resource, $uibModal) {
             plugins: ['types', 'dnd', 'unique', 'search']
         })
         .on('delete_node.jstree', function (e, data) {
-            $.get('/admin/files/change?operation=delete_node', {'id': data.node.id})
+            $.get('../admin/files/change?operation=delete_node', {'id': data.node.id})
                 .fail(function () {
                     data.instance.refresh();
                 });
         }).on('create_node.jstree', function (e, data) {
-            $.get('/admin/files/change?operation=create_node', {
+            $.get('../admin/files/change?operation=create_node', {
                 'type': data.node.type,
                 'id': data.node.parent,
                 'text': data.node.text
@@ -117,7 +117,7 @@ function explorerCtrl($scope, $resource, $uibModal) {
                     data.instance.refresh();
                 });
         }).on('rename_node.jstree', function (e, data) {
-            $.get('/admin/files/change?operation=rename_node', {'id': data.node.id, 'text': data.text})
+            $.get('../admin/files/change?operation=rename_node', {'id': data.node.id, 'text': data.text})
                 .done(function (d) {
                     data.instance.set_id(data.node, d.id);
                 })
@@ -125,7 +125,7 @@ function explorerCtrl($scope, $resource, $uibModal) {
                     data.instance.refresh();
                 });
         }).on('select_node.jstree', function (e, data) {
-            $.get('/admin/files/showList', {'id': data.node.id})
+            $.get('../admin/files/showList', {'id': data.node.id})
                 .done(function (res) {
                     $scope.$apply(function() {
                         vm.filies = res.dataMap.tree;

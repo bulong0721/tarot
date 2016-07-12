@@ -27,8 +27,8 @@ function userMgrCtrl($scope, cTables,cfromly) {
             {key: 'activeStatusFlag', type: 'c_checkbox', templateOptions: {label: '状态', placeholder: '状态'}}
         ],
         api: {
-            read: '/admin/users/paging',
-            update: '/admin/users/save'
+            read: '../admin/users/paging',
+            update: '../admin/users/save'
         }
     };
 

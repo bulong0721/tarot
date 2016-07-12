@@ -213,11 +213,11 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
             {key: 'description', type: 'c_input', templateOptions: {label: '描述', placeholder: '描述'}}
         ],
         api: {
-            read: '/product/used/paging',
-            update: '/product/used/save',
-            delete: '/product/used/delete',
-            updateAttr: '/product/attribute/save',
-            deleteAttr: '/product/attribute/delete',
+            read: '../product/used/paging',
+            update: '../product/used/save',
+            delete: '../product/used/delete',
+            updateAttr: '../product/attribute/save',
+            deleteAttr: '../product/attribute/delete',
         }
     };
     cTables.initNgMgrCtrl(mgrData, $scope);

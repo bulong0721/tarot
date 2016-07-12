@@ -51,7 +51,7 @@ public class ProductUsedController {
     @Autowired
     private ProductUsedAttributeService productUsedAttributeService;
 
-    @RequestMapping(value = "/product/used/paging", method = RequestMethod.GET)
+    @RequestMapping(value = "product/used/paging", method = RequestMethod.GET)
     public
     @ResponseBody
     AjaxPageableResponse pageUsers(Model model, HttpServletRequest request, PageRequest pageRequest) {
@@ -77,7 +77,7 @@ public class ProductUsedController {
         return resp;
     }
 
-    @RequestMapping(value = "/product/used/listByStoreId", method = RequestMethod.GET)
+    @RequestMapping(value = "product/used/listByStoreId", method = RequestMethod.GET)
     public
     @ResponseBody
     AjaxPageableResponse listByStoreId( HttpServletRequest request, PageRequest pageRequest) {
@@ -104,7 +104,7 @@ public class ProductUsedController {
         return resp;
     }
 
-    @RequestMapping(value = "/product/used/save", method = RequestMethod.POST)
+    @RequestMapping(value = "product/used/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveUsedProduct(@Valid @RequestBody ProductUsed productUsed,@RequestParam(value = "autoStart")Long autoStart,@RequestParam(value = "autoEnd")Long autoEnd, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -146,7 +146,7 @@ public class ProductUsedController {
         return resp;
     }
 
-    @RequestMapping(value = "/product/used/bindDeviceUsed", method = RequestMethod.POST)
+    @RequestMapping(value = "product/used/bindDeviceUsed", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse productUsedBindDeviceUsed(@RequestParam(value = "bindString") String bindString,@RequestParam(value = "productUsedId") Long productUsedId, HttpServletRequest request) {
         try {
@@ -171,7 +171,7 @@ public class ProductUsedController {
         return AjaxResponse.failed(-1);
     }
 
-    @RequestMapping(value = "/product/used/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "product/used/delete", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse deleteProductUsed(@Valid @RequestBody ProductUsed productUsed, HttpServletRequest request) {
         try {
@@ -221,7 +221,7 @@ public class ProductUsedController {
         return entry;
     }
 
-    @RequestMapping(value = "/product/attribute/save", method = RequestMethod.POST)
+    @RequestMapping(value = "product/attribute/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveAttribute(@ModelAttribute ProductUsed product, @Valid @RequestBody ProductUsedAttribute attribute, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -242,7 +242,7 @@ public class ProductUsedController {
         return resp;
     }
 
-    @RequestMapping(value = "/product/attribute/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "product/attribute/delete", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse deleteAttributeProduct(@Valid @RequestBody ProductUsedAttribute attribute,  HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -261,7 +261,7 @@ public class ProductUsedController {
 
     }
 
-    @RequestMapping(value = "/product/type/productOpts", method = RequestMethod.GET)
+    @RequestMapping(value = "product/type/productOpts", method = RequestMethod.GET)
     public
     @ResponseBody
     List<ProductType> type(Model model, HttpServletRequest request) {

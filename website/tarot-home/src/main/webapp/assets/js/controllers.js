@@ -13,7 +13,7 @@ function mainCtrl($scope,cAlerts,$window) {
     var main = $scope.main = {
         logout:function(){//登出
             cAlerts.confirm('确定登出?',function(){
-                $window.location.href = '/admin/j_spring_security_logout';
+                $window.location.href = '/tarot/admin/j_spring_security_logout';
             },function(){
 
             });
