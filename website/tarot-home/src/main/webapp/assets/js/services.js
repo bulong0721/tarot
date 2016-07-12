@@ -125,7 +125,7 @@ function cTablesService($resource,NgTableParams,cAlerts){
         //formly提交
         scope.processSubmit = function () {
             var formly = scope.formData;
-            console.log(formly)
+            //console.log(formly)
             if (formly.form.$valid) {
                 formly.options.updateInitialValue();
                 var xhr = $resource(mgrOpts.api.update);

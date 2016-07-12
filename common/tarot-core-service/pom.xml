@@ -25,17 +25,17 @@
         <dependency>
             <groupId>com.myee.djinn</groupId>
             <artifactId>rpc-shared</artifactId>
-            <version>0.7</version>
+            <version>0.7-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.myee.djinn</groupId>
             <artifactId>itf-server</artifactId>
-            <version>0.7</version>
+            <version>0.7-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.myee.djinn</groupId>
             <artifactId>itf-endpoint</artifactId>
-            <version>0.7</version>
+            <version>0.7-SNAPSHOT</version>
         </dependency>
 
         <dependency>
