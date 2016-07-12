@@ -4,10 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.util.CryptoUtil;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.files.FileDTO;
+import com.myee.tarot.web.files.HotfixSetVo;
+import com.myee.tarot.web.files.HotfixVo;
 import com.myee.tarot.web.files.JSTreeDTO;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -36,7 +40,18 @@ public class FilesController {
     private String DOWNLOAD_HOME;
     @Value("${cleverm.push.http}")
     private String DOWNLOAD_HTTP;
-//    private static final File DOWNLOAD_HOME = new File(Constants.DOWNLOAD_HOME );
+
+    private static final String RESOURCE_TYPE_DIR   = "default";
+    private static final String RESOURCE_TYPE_FILE  = "file";
+
+    private static final String RESOURCE_PARAM_ID           = "id";
+    private static final String RESOURCE_PARAM_OPERATION    = "operation";
+    private static final String RESOURCE_PARAM_TEXT         = "text";
+    private static final String RESOURCE_PARAM_TYPE         = "type";
+
+    private static final String RESOURCE_OPERATION_CREATE    = "create_node";
+    private static final String RESOURCE_OPERATION_DELETE    = "delete_node";
+    private static final String RESOURCE_OPERATION_RENAME    = "rename_node";
 
    /* @RequestMapping(value = "/admin/files/list.html")
     public
@@ -59,7 +74,7 @@ public class FilesController {
     @ResponseBody
     public List<JSTreeDTO> processListFiles(HttpServletRequest request, HttpServletResponse response) {
         List<JSTreeDTO> tree = Lists.newArrayList();
-        String id = request.getParameter("id");
+        String id = request.getParameter(RESOURCE_PARAM_ID);
         File dir = null;
         if (id.equals("#")) {
             dir = new File(DOWNLOAD_HOME + File.separator + ((MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE)).getId());
@@ -83,19 +98,18 @@ public class FilesController {
             jt.setId(dto.getId());
             jt.setChildren(!dto.isLeaf());
             jt.setText(dto.getName());
-            jt.setType(dto.isLeaf() ? "file" : "default");
+            jt.setType(dto.isLeaf() ? RESOURCE_TYPE_FILE : RESOURCE_TYPE_DIR);
             jt.setLastModify(new Date(dto.getMtime()));
             jt.setDetailType(dto.getType());
-            jt.setDownloadPath(getDownloadPath(dto,request));
+            jt.setDownloadPath(getDownloadPath(dto.getId(),dto.isLeaf()));
             tree.add(jt);
         }
         return tree;
     }
 
     //根据FileDTO换算对应的下载文件的URL
-    private String getDownloadPath(FileDTO dto,HttpServletRequest request){
-        if(dto.isLeaf()) {//是文件，才有下载链接
-            String filePath = dto.getId();
+    private String getDownloadPath(String filePath,Boolean isLeaf){
+        if(isLeaf) {//是文件，才有下载链接
             String tempFilePath = filePath.replaceAll("\\\\", "/");//把路径中的反斜杠替换成斜杠
             String tempDownloadPath = DOWNLOAD_HOME.replaceAll("\\\\","/")+"/";//准备用于替换成url的下载文件夹路径
             String path = tempFilePath.replaceAll(tempDownloadPath,DOWNLOAD_HTTP);
@@ -109,7 +123,7 @@ public class FilesController {
     public AjaxResponse listFiles(HttpServletRequest request, HttpServletResponse response) {
         AjaxResponse resp = new AjaxResponse();
         List<JSTreeDTO> tree = Lists.newArrayList();
-        String id = request.getParameter("id");
+        String id = request.getParameter(RESOURCE_PARAM_ID);
         File dir = null;
         if (id.equals("#")) {
             dir = new File(DOWNLOAD_HOME + File.separator + ((MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE)).getId());
@@ -133,10 +147,10 @@ public class FilesController {
             jt.setId(dto.getId());
             jt.setChildren(!dto.isLeaf());
             jt.setText(dto.getName());
-            jt.setType(dto.isLeaf() ? "file" : "default");
+            jt.setType(dto.isLeaf() ? RESOURCE_TYPE_FILE : RESOURCE_TYPE_DIR);
             jt.setLastModify(new Date(dto.getMtime()));
             jt.setDetailType(dto.getType());
-            jt.setDownloadPath(getDownloadPath(dto, request));
+            jt.setDownloadPath(getDownloadPath(dto.getId(),dto.isLeaf()));
             tree.add(jt);
         }
         resp.addEntry("tree", tree);
@@ -154,15 +168,15 @@ public class FilesController {
     @ResponseBody
     public JSTreeDTO changeFile(HttpServletRequest request, HttpServletResponse response) {
         AjaxResponse resp = new AjaxResponse();
-        String operation = request.getParameter("operation");
-        String id = request.getParameter("id");
-        String text = request.getParameter("text");
-        String type = request.getParameter("type");
-        if (operation.equals("create_node")) {
+        String operation = request.getParameter(RESOURCE_PARAM_OPERATION);
+        String id = request.getParameter(RESOURCE_PARAM_ID);
+        String text = request.getParameter(RESOURCE_PARAM_TEXT);
+        String type = request.getParameter(RESOURCE_PARAM_TYPE);
+        if (operation.equals(RESOURCE_OPERATION_CREATE)) {
             File file = new File(id, text);
             try {
                 boolean isNew = false;
-                if (type.equals("default")) {
+                if (type.equals(RESOURCE_TYPE_DIR)) {
                     //创建文件夹并不实际创建
                     //isNew = file.mkdirs();
                     isNew = true;
@@ -183,7 +197,7 @@ public class FilesController {
                 e.printStackTrace();
             }
         }
-        if (operation.equals("delete_node")) {
+        if (operation.equals(RESOURCE_OPERATION_DELETE)) {
             try {
                 File file = new File(id);
                 boolean isDelete = delete(file);
@@ -196,7 +210,7 @@ public class FilesController {
                 e.printStackTrace();
             }
         }
-        if (operation.equals("rename_node")) {
+        if (operation.equals(RESOURCE_OPERATION_RENAME)) {
             try {
                 boolean isRename = false;
                 File file = new File(id);
@@ -246,9 +260,9 @@ public class FilesController {
             File dest = FileUtils.getFile(DOWNLOAD_HOME, String.valueOf(merchantStore.getId()), File.separator + path);
 
 
-            if (type.equals("default")) {
+            if (type.equals(RESOURCE_TYPE_DIR)) {
                 dest.mkdirs();
-            } else if (!file.isEmpty() && type.equals("file")) {
+            } else if (!file.isEmpty() && type.equals(RESOURCE_TYPE_FILE)) {
 //                System.out.println(file.getFileItem().getName());
                 dest.mkdirs();
                 String fileName = file.getFileItem().getName();
@@ -276,35 +290,43 @@ public class FilesController {
         return resp;
     }
 
-//    @RequestMapping("packResource")
-//    @ResponseBody
-//    public HotfixSetVo packResource(Long orgID, String pushRes, boolean compress) {
-//        HotfixSetVo hotfixSetVo = new HotfixSetVo();
-//        List<ResourceVo> resList = JSON.parseArray(pushRes, ResourceVo.class);
-//        Set<HotfixVo> hotfixSet = Sets.newHashSet();
-//        hotfixSetVo.setPublisher(currentUser().getUsername());
-//        if (compress) {
-//            String fileName = CryptoUtil.md5(pushRes) + ".gz";
-//            File gzFile = new File(DOWNLOAD_HOME, fileName);
-//            if (!gzFile.exists() && null != resList) {
-//                for (ResourceVo resVo : resList) {
-//
-//                }
-//            }
-//            hotfixSet.add(new HotfixVo(fileName, getHttpUrl(gzFile), null, true));
-//        } else {
-//            if (resList != null && resList.size() > 0) {
-//                for (ResourceVo resVo : resList) {
-//                    if (RESOURCE_TYPE_DIR != resVo.getResType()) {
-//                        String absPath = resVo.getPath();
-//                        hotfixSet.add(new HotfixVo(resVo.getName(), getHttpUrl(resVo.getSalt(), absPath), getTargetDir(absPath), false));
-//                    }
-//                }
-//            }
-//        }
-//        hotfixSetVo.setHotfixSet(hotfixSet);
-//        return hotfixSetVo;
-//    }
+    @RequestMapping("/admin/files/packResource")
+    @ResponseBody
+    public HotfixSetVo packResource(String pushRes, boolean compress,HttpServletRequest request) {
+        HotfixSetVo hotfixSetVo = new HotfixSetVo();
+        List<JSTreeDTO> resList = JSON.parseArray(pushRes, JSTreeDTO.class);
+        Set<HotfixVo> hotfixSet = Sets.newHashSet();
+        hotfixSetVo.setPublisher(currentUser(request).getName());
+        if (compress) {
+            String fileName = CryptoUtil.md5(pushRes) + ".gz";
+            File gzFile = new File(DOWNLOAD_HOME, fileName);
+            if (!gzFile.exists() && null != resList) {
+                for (JSTreeDTO jsTreeDTO : resList) {
+
+                }
+            }
+            hotfixSet.add(new HotfixVo(fileName, getHttpUrl(gzFile), null, true));
+        } else {
+            if (resList != null && resList.size() > 0) {
+                for (JSTreeDTO jsTreeDTO : resList) {
+                    if (RESOURCE_TYPE_FILE == jsTreeDTO.getType()) {
+                        String targetDir = jsTreeDTO.getId();
+                        hotfixSet.add(new HotfixVo(jsTreeDTO.getText(), getDownloadPath(jsTreeDTO.getId(),true), targetDir, false));
+                    }
+                }
+            }
+        }
+        hotfixSetVo.setHotfixSet(hotfixSet);
+        return hotfixSetVo;
+    }
+
+    public AdminUser currentUser(HttpServletRequest request){
+        return (AdminUser) request.getSession().getAttribute(Constants.ADMIN_USER);
+    }
+
+    String getHttpUrl(File zipFile) {
+        return DOWNLOAD_HTTP + "/temp/" + zipFile.getName();
+    }
 
     private void listFiles(File parentFile, Map<String, FileDTO> resMap, HttpServletRequest request) {
         if (!parentFile.exists() || !parentFile.isDirectory() || null == parentFile.listFiles()) {
