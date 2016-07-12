@@ -10,6 +10,7 @@ import com.myee.tarot.device.dao.DeviceUsedDao;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -46,5 +47,24 @@ public class DeviceUsedDaoImpl extends GenericEntityDaoImpl<Long, DeviceUsed> im
         query.from(qDeviceUsed);
         query.where(qDeviceUsed.id.in(bindList));
         return query.fetch();
+    }
+
+    /**
+     * 根据设备的主板编号查询对应的店铺信息
+     * @param mainBoardCode
+     * @return
+     */
+    @Override
+    public DeviceUsed getStoreInfoByMbCode(String mainBoardCode) {
+        QDeviceUsed qDeviceUsed = QDeviceUsed.deviceUsed;
+        JPQLQuery<DeviceUsed> query = new JPAQuery(getEntityManager());
+        query.from(qDeviceUsed);
+        query.where(qDeviceUsed.boardNo.eq(mainBoardCode));
+        DeviceUsed deviceUsed = query.fetchFirst();
+        Hibernate.initialize(deviceUsed.getStore());
+        Hibernate.initialize(deviceUsed.getProductUsed());
+        Hibernate.initialize(deviceUsed.getAttributes());
+        Hibernate.initialize(deviceUsed.getStore().getMerchant());
+        return deviceUsed;
     }
 }

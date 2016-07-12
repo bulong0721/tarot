@@ -8,6 +8,9 @@ import com.myee.djinn.dto.ResponseData;
 import com.myee.djinn.dto.WaitToken;
 import com.myee.djinn.dto.WaitTokenState;
 import com.myee.djinn.server.operations.OperationsService;
+import com.myee.tarot.catalog.domain.DeviceUsed;
+import com.myee.tarot.device.service.DeviceUsedService;
+import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.weixin.common.Constants;
 import com.myee.tarot.weixin.dao.RWaitTokenDao;
 import com.myee.tarot.weixin.domain.RWaitToken;
@@ -53,6 +56,9 @@ public class OperationsManager extends RedisOperation implements OperationsServi
 
     static int i = 0;
 
+    @Autowired
+    private DeviceUsedService deviceUsedService;
+
     /*
      * 小女生取号
      *
@@ -81,8 +87,6 @@ public class OperationsManager extends RedisOperation implements OperationsServi
         WxMpQrCodeTicket myticket = null;
         try {
             myticket = wxMpService.qrCodeCreateTmpTicket(Integer.parseInt(waitToken.getSceneId()), 2592000);
-            logger.info("QrCodeUrl-----Take-------->"+ myticket.getUrl());
-            System.out.println("QrCodeUrl-----Take");
         } catch (WxErrorException e) {
             e.printStackTrace();
         }
@@ -101,8 +105,6 @@ public class OperationsManager extends RedisOperation implements OperationsServi
 
     @Override
     public ResponseData skip(WaitToken waitToken) {
-        logger.info("-----Skip-----");
-        System.out.println("-----Skip-----");
         return statusChange(WaitTokenState.SKIP.getValue(),waitToken);
     }
 
@@ -130,8 +132,6 @@ public class OperationsManager extends RedisOperation implements OperationsServi
       */
     @Override
     public ResponseData repast(WaitToken waitToken, long tableId) {
-        logger.info("-----repast-----");
-        System.out.println("-----repast-----");
         return statusChange(WaitTokenState.REPASTING.getValue(),waitToken);
     }
 
@@ -350,15 +350,11 @@ public class OperationsManager extends RedisOperation implements OperationsServi
 
     @Override
     public ResponseData cancel(WaitToken waitToken, String reason) {
-        logger.info("----cancel----");
-        System.out.println("----cancel----");
         return new ResponseData(true);
     }
 
     @Override
     public ResponseData draw(DrawToken drawToken) {
-        logger.info("----draw----");
-        System.out.println("----draw----");
         return new ResponseData(true);
     }
 
@@ -366,7 +362,6 @@ public class OperationsManager extends RedisOperation implements OperationsServi
     public ResponseData getWaitTokenInfo(Long tableTypeId) {
         return null;
     }
-
 
    /* @Override
     public ResponseData getWaitTokenInfo(int tableTypeId) {
@@ -411,9 +406,22 @@ public class OperationsManager extends RedisOperation implements OperationsServi
         return null;
     }
 
+    /**
+     * 根据主板编号返回店铺信息
+     * @param mainBoardCode
+     * @return
+     */
     @Override
-    public ResponseData getShopInfo(String clientId) {
-        return null;
+    public ResponseData getShopInfo(String mainBoardCode) {
+        DeviceUsed deviceUsed = deviceUsedService.getStoreInfoByMbCode(mainBoardCode);
+        MerchantStore merchantStore = deviceUsed.getStore();
+        ResponseData result = null;
+        if (merchantStore != null) {
+            result = ResponseData.successData(merchantStore);
+        } else {
+            result = ResponseData.errorData("error");
+        }
+        return result;
     }
 
     private String readfile(File file){
@@ -437,4 +445,5 @@ public class OperationsManager extends RedisOperation implements OperationsServi
         String identityCode = getSimple(redisKeyOfUcdScId).toString();
         return identityCode;
     }
+
 }

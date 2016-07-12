@@ -34,4 +34,9 @@ public class DeviceUsedServiceImpl extends GenericEntityServiceImpl<Long, Device
     public List<DeviceUsed> listByIDs(List<Long> bindList){
         return deviceUsedDao.listByIDs(bindList);
     }
+
+    @Override
+    public DeviceUsed getStoreInfoByMbCode(String mainBoardCode) {
+        return deviceUsedDao.getStoreInfoByMbCode(mainBoardCode);
+    }
 }

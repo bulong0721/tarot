@@ -14,4 +14,6 @@ public interface DeviceUsedDao extends GenericEntityDao<Long, DeviceUsed> {
     PageResult<DeviceUsed> pageByStore(Long id,PageRequest pageRequest );
 
     List<DeviceUsed> listByIDs(List<Long> bindList);
+
+    DeviceUsed getStoreInfoByMbCode(String mainBoardCode);
 }
