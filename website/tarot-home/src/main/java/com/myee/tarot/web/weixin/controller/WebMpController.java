@@ -38,7 +38,7 @@ import java.util.Map;
  * Created by Martin on 2016/1/8.
  */
 @Controller
-@RequestMapping("/weixin/wxmp")
+@RequestMapping("weixin/wxmp")
 public class WebMpController {
     private static final Logger logger = LoggerFactory.getLogger(WebMpController.class);
     private static final String wpSite = "http://www.myee7.com/biplus";
@@ -266,7 +266,7 @@ public class WebMpController {
         return ClientAjaxResult.success("菜单创建成功！");
     }
 
-    @RequestMapping(value = "generate_qrPic", method = RequestMethod.POST)
+    @RequestMapping(value = "generate_qrPic", method = {RequestMethod.POST})
     @ResponseBody
     public WxMpQrCodeTicket generateQrCodePic(Long shopId) {
         WxMpQrCodeTicket ticket = null;
