@@ -97,12 +97,12 @@ public class WebMpController {
                     } else {
                         msgMap.put("valid", "该唯一码已过期或无效，查询进度失败!");
                     }
-                    inMessage.setMap(msgMap);
+//                    inMessage.setMap(msgMap);
                 }
                 //点击事件
                 if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent()!= null && inMessage.getEvent().equals(WxConsts.EVT_CLICK)) {
                     Map<String,Object> msgMap = checkLatestDevelopments(inMessage.getFromUserName(), WaitTokenState.WAITING.getValue());
-                    inMessage.setMap(msgMap);
+//                    inMessage.setMap(msgMap);
                 }
                 //微信自带的扫二维码，未关注
                 if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent() != null && inMessage.getEvent().equals(WxConsts.EVT_SUBSCRIBE) && inMessage.getTicket() != null) {
@@ -117,14 +117,14 @@ public class WebMpController {
                     } else {
                         msgMap.put("vaild","该唯一码已过期或无效，查询进度失败!");
                     }
-                    inMessage.setMap(msgMap);
+//                    inMessage.setMap(msgMap);
                 }
             //正则表达式判断是否包含字母数字(6位)
             String pattern = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6}$";
             //直接输唯一码
             if(inMessage.getMsgType() != null && inMessage.getMsgType().equals("text") && inMessage.getContent() != null && inMessage.getContent().matches(pattern)) {
                 Map<String,Object> msgMap = checkLatestDevelopments(inMessage.getContent());
-                inMessage.setMap(msgMap);
+//                inMessage.setMap(msgMap);
             }
                 WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage);
                 String str = outMessage.toXml();
