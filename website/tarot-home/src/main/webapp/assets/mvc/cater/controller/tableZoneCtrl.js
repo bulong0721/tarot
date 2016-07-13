@@ -21,9 +21,9 @@ function tableZoneMgrCtrl($scope, cTables,cfromly) {
             },
         ],
         api: {
-            read: '/admin/catering/zone/paging',
-            update: '/admin/catering/zone/save',
-            delete: '/admin/catering/zone/delete',
+            read: '../admin/catering/zone/paging',
+            update: '../admin/catering/zone/save',
+            delete: '../admin/catering/zone/delete',
         }
     };
 

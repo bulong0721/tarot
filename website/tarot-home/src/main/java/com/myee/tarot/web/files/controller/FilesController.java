@@ -55,7 +55,7 @@ public class FilesController {
         return resp;
     }*/
 
-    @RequestMapping(value = "/admin/files/list")
+    @RequestMapping(value = "admin/files/list")
     @ResponseBody
     public List<JSTreeDTO> processListFiles(HttpServletRequest request, HttpServletResponse response) {
         List<JSTreeDTO> tree = Lists.newArrayList();
@@ -104,7 +104,7 @@ public class FilesController {
         return "";
     }
 
-    @RequestMapping(value = "/admin/files/showList")
+    @RequestMapping(value = "admin/files/showList")
     @ResponseBody
     public AjaxResponse listFiles(HttpServletRequest request, HttpServletResponse response) {
         AjaxResponse resp = new AjaxResponse();
@@ -150,7 +150,7 @@ public class FilesController {
      * @param response
      * @return
      */
-    @RequestMapping(value = "/admin/files/change")
+    @RequestMapping(value = "admin/files/change")
     @ResponseBody
     public JSTreeDTO changeFile(HttpServletRequest request, HttpServletResponse response) {
         AjaxResponse resp = new AjaxResponse();
@@ -229,7 +229,7 @@ public class FilesController {
      * @throws IllegalStateException
      * @throws IOException
      */
-    @RequestMapping("/admin/files/create")
+    @RequestMapping("admin/files/create")
     @ResponseBody
     public AjaxResponse createResource(@RequestParam("resFile") CommonsMultipartFile file, String path, HttpServletRequest request) throws IllegalStateException, IOException {
         AjaxResponse resp = AjaxResponse.success();

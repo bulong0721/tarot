@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class AdminController {
 
-    @RequestMapping(value = {"/admin/home.html", "/admin/", "/admin"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"admin/home.html", "admin/", "admin"}, method = RequestMethod.GET)
     public String displayDashboard(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return "/admin/home";
+        return "admin/home";
     }
 }

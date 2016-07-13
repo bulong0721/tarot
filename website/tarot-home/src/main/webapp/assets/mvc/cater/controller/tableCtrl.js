@@ -10,8 +10,8 @@ angular.module('myee', [])
 tableMgrCtrl.$inject = ['$scope', '$resource', 'cTables','cfromly'];
 
 function tableMgrCtrl($scope, $resource,cTables,cfromly) {
-    var typeOpts = $resource('/admin/catering/type/options').query();
-    var zoneOpts = $resource('/admin/catering/zone/options').query();
+    var typeOpts = $resource('../admin/catering/type/options').query();
+    var zoneOpts = $resource('../admin/catering/zone/options').query();
 
     var mgrData = {
         fields: [
@@ -42,8 +42,8 @@ function tableMgrCtrl($scope, $resource,cTables,cfromly) {
             },
         ],
         api: {
-            read: '/admin/catering/table/paging',
-            update: '/admin/catering/table/save'
+            read: '../admin/catering/table/paging',
+            update: '../admin/catering/table/save'
         }
     };
 

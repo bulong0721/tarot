@@ -43,8 +43,8 @@ function merchantCtrl($scope, Constants,cTables,cfromly) {
             }
         ],
         api: {
-            read: '/admin/merchant/paging',
-            update: '/admin/merchant/save'
+            read: '../admin/merchant/paging',
+            update: '../admin/merchant/save'
         }
     };
     cTables.initNgMgrCtrl(mgrData, $scope);

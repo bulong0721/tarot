@@ -31,7 +31,7 @@
             <!--Continually expanded and constantly improved Inspinia Admin Them (IN+)-->
         </p>
         <p>Login in. To see it in action.</p>
-        <form class="m-t" role="form" method="post" action="/admin/j_spring_security_check">
+        <form class="m-t" role="form" method="post" action="../admin/j_spring_security_check">
             <div class="form-group">
                 <input type="text" name="username" class="form-control" placeholder="Username" required="">
             </div>

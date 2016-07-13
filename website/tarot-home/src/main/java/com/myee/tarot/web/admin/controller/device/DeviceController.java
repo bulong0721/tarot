@@ -44,7 +44,7 @@ public class DeviceController {
     @Autowired
     private DeviceAttributeService deviceAttributeService;
 
-    @RequestMapping(value = "/device/paging", method = RequestMethod.GET)
+    @RequestMapping(value = "device/paging", method = RequestMethod.GET)
     @ResponseBody
     public AjaxPageableResponse pagedevice(Model model, HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
@@ -79,7 +79,7 @@ public class DeviceController {
         return entry;
     }
 
-    @RequestMapping(value = "/device/update", method = RequestMethod.POST)
+    @RequestMapping(value = "device/update", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse updateDevice(@Valid @RequestBody Device device, HttpServletRequest request) {
         try {
@@ -94,7 +94,7 @@ public class DeviceController {
         return AjaxResponse.failed(-1);
     }
 
-    @RequestMapping(value = "/device/list", method = RequestMethod.GET)
+    @RequestMapping(value = "device/list", method = RequestMethod.GET)
     @ResponseBody
     public List deviceList(HttpServletRequest request) {
         AjaxResponse resp = new AjaxResponse();
@@ -113,7 +113,7 @@ public class DeviceController {
         return null;
     }
 
-    @RequestMapping(value = "/device/attribute/save", method = RequestMethod.POST)
+    @RequestMapping(value = "device/attribute/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveAttribute(@ModelAttribute Device device, @Valid @RequestBody DeviceAttribute attribute, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -132,7 +132,7 @@ public class DeviceController {
         return resp;
     }
 
-    @RequestMapping(value = "/device/attribute/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "device/attribute/delete", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse deleteAttribute(@Valid @RequestBody DeviceAttribute attribute,  HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
