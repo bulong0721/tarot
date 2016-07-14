@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.myee.tarot.admin.domain.AdminUser;
+import com.myee.djinn.dto.ResponseData;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.CryptoUtil;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
@@ -18,6 +19,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -360,5 +362,27 @@ public class FilesController {
             System.out.print("unable to delete the folder!");
         }
         return false;
+    }
+
+    /**
+     * 机器自检及器件状态上传接口（非结构化数据，每天）
+     * @param file
+     * @return
+     */
+    @RequestMapping(value = "admin/files/mSelfCheckStatUpload", method = RequestMethod.POST)
+    @ResponseBody
+    public Integer machineSelfCheckAndStatusUpload(CommonsMultipartFile file, String path, Long storeId) {
+        Integer result = 0;
+        try {
+            File dest = FileUtils.getFile(DOWNLOAD_HOME, String.valueOf(storeId), File.separator + path);
+            dest.mkdirs();
+            String fileName = file.getFileItem().getName();
+            dest = FileUtils.getFile(dest.getPath(), File.separator + fileName);
+            file.transferTo(dest);
+            result = 1;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

@@ -26,7 +26,7 @@ import java.util.*;
  * Created by Martin on 2016/1/8.
  */
 @Controller
-@RequestMapping("/weixin/wxitf")
+@RequestMapping("weixin/wxitf")
 public class WebWxController {
     private Logger logger = LoggerFactory.getLogger(WebWxController.class);
     private static final String wpSite = "http://www.myee7.com/biplus";
