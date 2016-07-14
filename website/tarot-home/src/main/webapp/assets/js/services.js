@@ -125,7 +125,6 @@ function cTablesService($resource,NgTableParams,cAlerts){
         //formly提交
         scope.processSubmit = function () {
             var formly = scope.formData;
-            //console.log(formly)
             if (formly.form.$valid) {
                 formly.options.updateInitialValue();
                 var xhr = $resource(mgrOpts.api.update);
@@ -181,6 +180,7 @@ function cTablesService($resource,NgTableParams,cAlerts){
             } else {
                 scope.tableOpts.data.splice(scope.rowIndex, 1, data);
             }
+            scope.tableOpts.reload();
             scope.goDataTable();
         }
 

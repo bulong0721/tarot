@@ -48,13 +48,15 @@ function ctrlManagerLoader(oclazyload, dir, ctrl) {
     ])
 }
 
-function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
-    $urlRouterProvider.otherwise("merchant/shop");
+function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpProvider) {
+    $urlRouterProvider.otherwise("/merchant/shop");
 
     $ocLazyLoadProvider.config({
         // Set to true if you want to see what and when is dynamically loaded
         debug: false
     });
+
+    $httpProvider.defaults.headers.post['Content-Type'] = undefined;
 
     $stateProvider
         .state('merchant', {
@@ -156,7 +158,16 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             url: "/explorer",
             template: "<div ui-view></div>",
             resolve: {
-                loadPlugin: treeLoader
+                loadPlugin: treeLoader,
+                loadToaster:  function($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        {
+                            insertBefore: '#loadBefore',
+                            name: 'toaster',
+                            files: ['assets/js/plugins/toastr/toastr.min.js', 'assets/css/plugins/toastr/toastr.min.css']
+                        }
+                    ]);
+                }
             }
         })
         .state('explorer.explorer', {
