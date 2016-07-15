@@ -1,3 +1,4 @@
+<toaster-container></toaster-container>
 <script type="text/ng-template" id="addFolder.html">
     <div class="inmodal filieConfirm">
         <div class="modal-header">
@@ -34,19 +35,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-9" ng-show="vm.filies.length>0">
+                <div class="col-xs-9">
                     <div class="ibox float-e-margins">
                         <div class="ibox-title">
-                            <h5>Formly<small>文件夹</small></h5>
+                            <h5>{{vm.filePath}}</h5>
                             <div class="ibox-tools dropdown">
                                 <span  class="btn btn-sm btn-primary fileInput">
-                                    <input type="file" value="上传资源"  />
+                                    <input type="file" value="上传资源" onchange="angular.element(this).scope().vm.addFile(this)" ng-model="vm.fileRes"  />
                                     <i class="fa fa-folder-o"></i> 添加文件
                                 </span>
                                 <span class="btn btn-sm btn-white"><i class="fa fa-paper-plane"></i> 推送 </span>
                             </div>
                         </div>
-                        <div class="ibox-content">
+                        <div class="ibox-content" ng-show="vm.filies.length>0">
                             <div class="file-box" ng-repeat="f in vm.filies" ng-click="vm.choiceFile($index)">
                                 <div class="file">
                                     <a href="">

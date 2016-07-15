@@ -104,6 +104,7 @@ function switchMerchant(Constants,$resource,$state,$rootScope) {
             '<pager page-count="pages.count" current-page="pages.page" on-page-change="pages.onPageChange()" page-first="false" page-last="false"></pager></div>',
         ].join(' '),
         link:function($scope){
+
             // 从后台获取所有门店列表
             Constants.getMerchantStores().then(function(){
                 var pages = $scope.pages = {
@@ -121,7 +122,7 @@ function switchMerchant(Constants,$resource,$state,$rootScope) {
             //点击切换门店
             $scope.switchMerchantStore = function (id) {
                 //console.log("id:"+id)
-                $resource('/tarot/admin/merchantStore/switch').save(id, function (resp) {
+                $resource('merchantStore/switch').save(id, function (resp) {
                     //关闭侧边栏
                     $rootScope.rightSidebar = !$rootScope.rightSidebar;
                     //刷新当前页面的显示

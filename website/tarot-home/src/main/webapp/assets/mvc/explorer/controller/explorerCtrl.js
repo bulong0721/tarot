@@ -7,9 +7,10 @@ angular.module('myee', [])
 /**
  * roleCtrl - controller
  */
-explorerCtrl.$inject = ['$scope', '$resource', '$uibModal'];
+explorerCtrl.$inject = ['$scope', '$resource', '$uibModal','toaster'];
 
-function explorerCtrl($scope, $resource, $uibModal) {
+function explorerCtrl($scope, $resource, $uibModal,toaster) {
+
     $scope.search = function () {
         var to = false;
         if (to) {
@@ -20,25 +21,25 @@ function explorerCtrl($scope, $resource, $uibModal) {
             $('#folderTree').jstree(true).search(v);
         }, 250);
 
-    }
-
+    };
+    //ng配置/点击
     var vm = $scope.vm = {
-        treeConfig:{
-            plugins : ['types']
-        },
+        treeConfig:{plugins : ['types']},
         filies:[],
+        filePath:'',
         addFolder:function(){
+            var ref = $('#folderTree').jstree(true),
+                sel = ref.get_selected();
+            if (!sel.length) {
+                toaster.warning({ body:"请先选择文件夹！"});
+                return false;
+            }
             $uibModal.open({
                 templateUrl: 'addFolder.html',
                 size: 'sm',
                 controller: function($scope,$uibModalInstance){
                     $scope.fileName = '';
                     $scope.save = function () {
-                        var ref = $('#folderTree').jstree(true),
-                            sel = ref.get_selected();
-                        if (!sel.length) {
-                            return false;
-                        }
                         ref.create_node(sel[0], {"type": "default", "text": $scope.fileName});
                         $uibModalInstance.close();
                     };
@@ -48,21 +49,22 @@ function explorerCtrl($scope, $resource, $uibModal) {
                     };
                 }
             });
-            //var name = prompt("请输入新建的文件夹名", "新建文件夹"),
         },
-        addFile:function(){
-            /*var ref = $('#folderTree').jstree(true),
-                sel = ref.get_selected();
-            if (!sel.length) {
-                return false;
-            }
-            ref.create_node(sel[0], {"type": "file", "text": name});*/
+        addFile:function(path){
+            var fd = new FormData();
+            fd.append("resFile",path.files[0]);
+            fd.append("path",vm.filePath);
+            //fd.append("type",'flie');
+            $resource('files/create').save({type:'file'}, fd,function deleteSuccess(res){
+                console.log(res)
+            });
         },
         delete:function(){
             if (confirm("确认删除吗？")) {
                 var ref = $('#folderTree').jstree(true),
                     sel = ref.get_selected();
                 if (!sel.length) {
+                    toaster.warning({ body:"请先选择需删除的文件夹！"});
                     return false;
                 }
                 ref.delete_node(sel);
@@ -72,18 +74,19 @@ function explorerCtrl($scope, $resource, $uibModal) {
             var ref = $('#folderTree').jstree(true),
                 sel = ref.get_selected();
             if (!sel.length) {
+                toaster.warning({ body:"请先选择重命名的文件夹！"});
                 return false;
             }
             ref.edit(sel[0]);
         },
         choiceFiles:[],
         choiceFile:function(index){
-            console.log(vm.filies[index].check)
             vm.filies[index].check = vm.filies[index].check == undefined || vm.filies[index].check == false ? true : false;
             this.choiceFiles.push(index);
         }
     }
 
+    //jq配置/点击
     $('#folderTree')
         .jstree({
             core : {
@@ -124,18 +127,14 @@ function explorerCtrl($scope, $resource, $uibModal) {
                 .fail(function () {
                     data.instance.refresh();
                 });
-        }).on('select_node.jstree', function (e, data) {
+        });
+        $('#folderTree').on('select_node.jstree', function (e, data) {
+            vm.filePath = data.node.id.split('\\').pop();
             $.get('../admin/files/showList', {'id': data.node.id})
                 .done(function (res) {
                     $scope.$apply(function() {
                         vm.filies = res.dataMap.tree;
                     });
-                })
-                .fail(function () {
-
                 });
-/*            $resource('/admin/files/showList').query({'id': data.node.id}).$promise.then(function(res){
-                    vm.filies = res;
-            });*/
-        })
+        });
 }
