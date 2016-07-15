@@ -96,4 +96,27 @@ public class WebAppController {
             }
         }
     }
+
+    @RequestMapping("admin/getContentText")
+    @ResponseBody
+    public String getContentText(Long orgID, String absPath) {
+        String downloadHome = DOWNLOAD_HOME;
+        File resFile = getResFile(orgID, downloadHome, absPath);
+        if (!resFile.exists()) {
+            return "";
+        }
+        if (resFile.length() > 4096L) {
+            throw new BusinessException("超过文本读取大小限制。");
+        }
+        try {
+            String value = FileUtils.readFileToString(resFile, "utf-8");
+            return value;
+        } catch (IOException ie) {
+            throw new BusinessException(ie);
+        }
+    }
+
+    static File getResFile(Long orgID, String dowloadHome, String absPath) {
+        return FileUtils.getFile(dowloadHome, Long.toString(orgID), absPath);
+    }
 }
