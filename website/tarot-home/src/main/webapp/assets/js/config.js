@@ -74,7 +74,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             data: {
                 pageTitle: '门店管理',
                 subTitle: '门店列表',
-                datatable: 'assets/mvc/merchant/view/shop_datatable.html'
+                datatable: 'assets/mvc/merchant/view/shop_datatable.html',
+                editor: 'assets/mvc/merchant/view/shop_editor.html'
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {

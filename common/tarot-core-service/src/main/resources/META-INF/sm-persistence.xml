@@ -57,5 +57,10 @@
         <class>com.myee.tarot.weixin.domain.RInstructionLog</class>
         <class>com.myee.tarot.weixin.domain.RWaitToken</class>
         <class>com.myee.tarot.weixin.domain.WFeedBack</class>
+
+        <class>com.myee.tarot.pricedraw.domain.MerchantActivity</class>
+        <class>com.myee.tarot.pricedraw.domain.MerchantPrice</class>
+        <class>com.myee.tarot.pricedraw.domain.PriceInfo</class>
+        <class>com.myee.tarot.pricedraw.domain.SaleCorpMerchant</class>
     </persistence-unit>
 </persistence>
