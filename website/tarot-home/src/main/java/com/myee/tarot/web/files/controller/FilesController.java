@@ -245,9 +245,9 @@ public class FilesController {
      * @throws IllegalStateException
      * @throws IOException
      */
-    @RequestMapping("admin/files/create")
+    @RequestMapping(value = {"services/public/files/upload","admin/files/create"})
     @ResponseBody
-    public AjaxResponse createResource(@RequestParam("resFile") CommonsMultipartFile file, String path, HttpServletRequest request) throws IllegalStateException, IOException {
+    public AjaxResponse createResource(@RequestParam("resFile") CommonsMultipartFile file, String path, Long storeId,HttpServletRequest request) throws IllegalStateException, IOException {
         AjaxResponse resp = AjaxResponse.success();
         try {
             String type = request.getParameter("type");
@@ -256,11 +256,15 @@ public class FilesController {
                 resp.setErrorString("参数错误");
                 return resp;
             }
-
-            MerchantStore merchantStore = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
-
-            File dest = FileUtils.getFile(DOWNLOAD_HOME, String.valueOf(merchantStore.getId()), File.separator + path);
-
+            String storeIdStr;
+            if(storeId == null ) {
+                MerchantStore merchantStore  = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+                storeIdStr = String.valueOf(merchantStore.getId());
+            }
+            else {
+                storeIdStr = String.valueOf(storeId);
+            }
+            File dest  = FileUtils.getFile(DOWNLOAD_HOME, storeIdStr, File.separator + path);
 
             if (type.equals(RESOURCE_TYPE_DIR)) {
                 dest.mkdirs();
@@ -277,7 +281,7 @@ public class FilesController {
                 jt.setType("file");
                 jt.setLastModify(new Date(dest.lastModified()));
                 jt.setDetailType(FilenameUtils.getExtension(fileName));
-                jt.setDownloadPath(DOWNLOAD_HTTP + String.valueOf(merchantStore.getId()) + "/" + path + "/" + file.getFileItem().getName());
+                jt.setDownloadPath(DOWNLOAD_HTTP + storeIdStr + "/" + path + "/" + file.getFileItem().getName());
                 resp.addEntry("tree", jt);
             }
             //20160708文本编辑放到另一个接口，以后再做
