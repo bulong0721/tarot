@@ -292,7 +292,7 @@ public class FilesController {
         return resp;
     }
 
-    @RequestMapping("/admin/files/packResource")
+    @RequestMapping("admin/files/packResource")
     @ResponseBody
     public HotfixSetVo packResource(String pushRes, boolean compress,HttpServletRequest request) {
         HotfixSetVo hotfixSetVo = new HotfixSetVo();
@@ -364,25 +364,4 @@ public class FilesController {
         return false;
     }
 
-    /**
-     * 机器自检及器件状态上传接口（非结构化数据，每天）
-     * @param file
-     * @return
-     */
-    @RequestMapping(value = "admin/files/mSelfCheckStatUpload", method = RequestMethod.POST)
-    @ResponseBody
-    public Integer machineSelfCheckAndStatusUpload(CommonsMultipartFile file, String path, Long storeId) {
-        Integer result = 0;
-        try {
-            File dest = FileUtils.getFile(DOWNLOAD_HOME, String.valueOf(storeId), File.separator + path);
-            dest.mkdirs();
-            String fileName = file.getFileItem().getName();
-            dest = FileUtils.getFile(dest.getPath(), File.separator + fileName);
-            file.transferTo(dest);
-            result = 1;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
 }
