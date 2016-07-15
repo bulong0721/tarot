@@ -109,6 +109,7 @@
           entry-point-ref="servicesAuthenticationEntryPoint">
         <intercept-url pattern="/services/private/**" access="hasRole('AUTH')"/>
         <intercept-url pattern="/services/public/**" access="permitAll"/>
+        <csrf disabled="true"/>
         <form-login authentication-success-handler-ref="servicesAuthenticationSuccessHandler"/>
         <http-basic/>
     </http>
