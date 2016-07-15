@@ -44,6 +44,24 @@
             <version>${version.c3p0}</version>
         </dependency>
 
+        <!--<dependency>
+            <groupId>com.weibo</groupId>
+            <artifactId>motan-core</artifactId>
+            <version>0.1.1</version>
+        </dependency>-->
+
+        <!--<dependency>
+            <groupId>com.weibo</groupId>
+            <artifactId>motan-transport-netty</artifactId>
+            <version>0.1.1</version>
+        </dependency>-->
+
+        <!--only needed for spring-based features &ndash -->
+       <!--<dependency>
+            <groupId>com.weibo</groupId>
+            <artifactId>motan-springsupport</artifactId>
+            <version>0.1.1</version>
+        </dependency>-->
         <dependency>
             <groupId>me.chanjar</groupId>
             <artifactId>weixin-java-cp</artifactId>
@@ -70,4 +88,7 @@
             <version>1.2.1.RELEASE</version>
         </dependency>
     </dependencies>
+
+
+
 </project>
