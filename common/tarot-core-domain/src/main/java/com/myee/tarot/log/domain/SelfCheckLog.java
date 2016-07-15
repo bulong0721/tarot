@@ -45,18 +45,14 @@ public class SelfCheckLog extends GenericEntity<Long, SelfCheckLog> {
     private String data;
 
     @ManyToOne(targetEntity = EventLevelLog.class)
-//    @ManyToOne(targetEntity = EventLevelLog.class, optional = true, cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn(name = "EVENT_LEVEL",referencedColumnName = "EVENT", nullable = true, insertable =false, updatable = false)
     protected EventLevelLog eventLevelLog;
 
     @ManyToOne(targetEntity = ModuleLog.class)
-//    @ManyToOne(targetEntity = ModuleLog.class, optional = true, cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumnsOrFormulas({
             @JoinColumnOrFormula(column=@JoinColumn(name ="MODULE_ID", referencedColumnName ="MODULE_ID", nullable = true, insertable =false, updatable = false)),
             @JoinColumnOrFormula(column=@JoinColumn(name ="FUNCTION_ID", referencedColumnName ="FUNCTION_ID", nullable = true, insertable =false, updatable = false))
-            //            @JoinColumnOrFormula( formula=@JoinFormula(value="select 1 from dual", referencedColumnName="ID_MEGA")),
     })
-    //    @JoinColumn(name = "moduleId",referencedColumnName = "moduleId")
     protected ModuleLog moduleLog;
 
     @Override
