@@ -9,7 +9,6 @@ import java.math.BigDecimal;
  * Created by Martin on 2016/4/19.
  */
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="C_PGTMPLT_FLDGRP_XREF")
 public class PageTemplateFieldGroupXref extends GenericEntity<Long, PageTemplateFieldGroupXref> {
 

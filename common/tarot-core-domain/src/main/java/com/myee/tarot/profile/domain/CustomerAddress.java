@@ -10,7 +10,6 @@ import javax.persistence.*;
  * Created by Martin on 2016/4/14.
  */
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "C_CUSTOMER_ADDRESS")
 public class CustomerAddress extends GenericEntity<Long, CustomerAddress> {
     @Id

@@ -238,6 +238,12 @@ public class MerchantController {
                 resp.setErrorString("请先切换商户");
                 return resp;
             }
+            //code不能重复
+            if(merchantStoreService.getByCode(merchantStore.getCode()) != null){
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("错误:重复的门店码，请修改后重新提交");
+                return resp;
+            }
 
             Merchant merchant = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
             merchantStore.setMerchant(merchant);
@@ -324,16 +330,18 @@ public class MerchantController {
 
     @RequestMapping(value = "admin/merchantStore/list", method = RequestMethod.GET)
     @ResponseBody
-    public AjaxResponse listMerchantStore(HttpServletRequest request) throws Exception {
-        AjaxResponse resp = new AjaxResponse();
+    public AjaxPageableResponse listMerchantStore(PageRequest pageRequest , HttpServletRequest request) throws Exception {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
-            List<MerchantStore> merchantStoreList = merchantStoreService.list();
+            PageResult<MerchantStore> pageList = merchantStoreService.pageListByMerchant(null, pageRequest);
+
+            List<MerchantStore> merchantStoreList = pageList.getList();
             for (MerchantStore merchantStore : merchantStoreList) {
                 resp.addDataEntry(objectToEntry(merchantStore));
             }
+            resp.setRecordsTotal(pageList.getRecordsTotal());
         } catch (Exception e) {
             e.printStackTrace();
-            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
         }
         return resp;

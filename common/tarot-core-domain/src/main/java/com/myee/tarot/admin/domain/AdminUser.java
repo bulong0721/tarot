@@ -14,7 +14,6 @@ import java.util.Set;
  * Created by Martin on 2016/4/11.
  */
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "C_ADMIN_USER")
 @DynamicUpdate
 public class AdminUser extends GenericEntity<Long, AdminUser> {

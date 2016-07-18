@@ -8,7 +8,6 @@ import javax.persistence.*;
  * Created by Martin on 2016/4/11.
  */
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "C_ADMIN_PERMISSION_ENTITY")
 public class AdminPermissionQualifiedEntity extends GenericEntity<Long, AdminPermissionQualifiedEntity> {
 

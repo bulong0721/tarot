@@ -11,7 +11,6 @@ import java.util.List;
  * Created by Martin on 2016/4/19.
  */
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="C_PAGE_TMPLT")
 public class PageTemplate extends GenericEntity<Long, PageTemplate> {
 

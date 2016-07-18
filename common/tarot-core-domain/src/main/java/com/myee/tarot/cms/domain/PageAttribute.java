@@ -8,7 +8,6 @@ import javax.persistence.*;
  * Created by Martin on 2016/4/19.
  */
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="C_PAGE_ATTRIBUTES")
 public class PageAttribute extends GenericEntity<Long, PageAttribute> {
 

@@ -10,7 +10,6 @@ import java.util.List;
  * Created by Martin on 2016/4/18.
  */
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "C_CMS_MENU")
 public class Menu extends GenericEntity<Long, Menu> {
 

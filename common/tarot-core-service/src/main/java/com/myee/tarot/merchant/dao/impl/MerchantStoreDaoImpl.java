@@ -74,6 +74,17 @@ public class MerchantStoreDaoImpl extends GenericEntityDaoImpl<Long, MerchantSto
         return query.fetch();
     }
 
+    @Override
+    public MerchantStore getByCode(String storeCode){
+        QMerchantStore qMerchantStore = QMerchantStore.merchantStore;
+        JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
+        query.from(qMerchantStore);
+        if(storeCode != null){
+            query.where(qMerchantStore.merchantStore.code.eq(storeCode));
+        }
+        return query.fetchFirst();
+    }
+
 //    @Override
 //    public List<MerchantStore> listByMerchant(Long id) {
 //        QMerchantStore qMerchantStore = QMerchantStore.merchantStore;

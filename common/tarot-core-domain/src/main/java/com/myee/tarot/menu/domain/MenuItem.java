@@ -12,7 +12,6 @@ import java.math.BigDecimal;
  * Created by Martin on 2016/4/18.
  */
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "C_CMS_MENU_ITEM")
 public class MenuItem extends GenericEntity<Long, MenuItem> {
 

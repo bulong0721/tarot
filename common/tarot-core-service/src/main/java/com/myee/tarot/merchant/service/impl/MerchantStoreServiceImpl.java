@@ -42,7 +42,7 @@ public class MerchantStoreServiceImpl extends GenericEntityServiceImpl<Long, Mer
 
     @Override
     public MerchantStore getByCode(String storeCode) {
-        return null;
+        return storeDao.getByCode(storeCode);
     }
 
     @Override

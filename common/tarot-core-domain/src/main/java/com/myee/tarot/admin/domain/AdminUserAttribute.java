@@ -8,7 +8,6 @@ import javax.persistence.*;
  * Created by Martin on 2016/4/11.
  */
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "C_ADMIN_USER_ADDTL_FIELDS")
 public class AdminUserAttribute extends GenericEntity<Long, AdminUserAttribute> {
 
