@@ -40,4 +40,9 @@ public class Constants {
 	public final static int NOPAGING = 1;//不分页
 	public final static int PAGING = 0;//分页
 
+	//抽奖 奖项状态
+	public final static int PRICEINFO_USED = 0; //已使用
+	public final static int PRICEINFO_UNUSED = 1; //未使用
+	public final static int PRICEINFO_ = 2; //EXPIRE过期
+
 }

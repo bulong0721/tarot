@@ -1,5 +1,6 @@
 package com.myee.tarot.merchant.domain;
 
+import com.google.common.collect.Lists;
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.reference.domain.Address;
 import org.hibernate.annotations.DynamicUpdate;
@@ -9,6 +10,7 @@ import org.joda.time.DateTime;
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Martin on 2016/4/11.

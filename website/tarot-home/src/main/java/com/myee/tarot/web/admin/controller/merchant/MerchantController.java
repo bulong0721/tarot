@@ -1,5 +1,7 @@
 package com.myee.tarot.web.admin.controller.merchant;
 
+import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
 import com.myee.tarot.address.service.GeoZoneService;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.core.Constants;
@@ -13,10 +15,13 @@ import com.myee.tarot.merchant.service.MerchantService;
 import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.merchant.type.BusinessType;
 import com.myee.tarot.merchant.view.MerchantStoreView;
+import com.myee.tarot.pricedraw.domain.SaleCorpMerchant;
+import com.myee.tarot.pricedraw.service.SaleCorpMerchantService;
 import com.myee.tarot.reference.domain.Address;
 import com.myee.tarot.reference.domain.GeoZone;
 import com.myee.tarot.web.util.DateUtil;
 import com.myee.tarot.web.util.StringUtil;
+import me.chanjar.weixin.common.util.StringUtils;
 import org.hibernate.criterion.Expression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +52,8 @@ public class MerchantController {
     private MerchantStoreService merchantStoreService;
     @Autowired
     private GeoZoneService geoZoneService;
+    @Autowired
+    private SaleCorpMerchantService saleCorpMerchantService;
 
     /**
      * 商户接口
@@ -262,7 +269,7 @@ public class MerchantController {
             merchantStore = merchantStoreService.update(merchantStore);//新建或更新
 
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult",objectToEntry(merchantStore));
+            resp.addEntry("updateResult", objectToEntry(merchantStore));
         } catch (Exception e) {
             e.printStackTrace();
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -375,7 +382,16 @@ public class MerchantController {
 
             List<MerchantStore> merchantStoreList = pageList.getList();
             for (MerchantStore merchantStore : merchantStoreList) {
-                resp.addDataEntry(objectToEntry(merchantStore));
+                SaleCorpMerchant saleCorpMerchant = saleCorpMerchantService.findByMerchantId(merchantStore.getId());
+                List<MerchantStore> bindStores = Lists.newArrayList();
+                if(saleCorpMerchant!=null&& StringUtils.isNotBlank(saleCorpMerchant.getRelatedMerchants())){
+                    List<Long> bindStore = JSON.parseArray(saleCorpMerchant.getRelatedMerchants(), Long.class);
+                    for (Long storeId : bindStore) {
+                        MerchantStore store = merchantStoreService.findById(storeId);
+                        bindStores.add(store);
+                    }
+                }
+                resp.addDataEntry(objectToEntryAdd(merchantStore,bindStores));
             }
             resp.setRecordsTotal(pageList.getRecordsTotal());
         } catch (Exception e) {
@@ -469,6 +485,23 @@ public class MerchantController {
         return resp;
     }
 
+    @RequestMapping(value = "admin/merchantStore/getAllStoreExceptSelf", method = RequestMethod.GET)
+    @ResponseBody
+    public AjaxResponse getAllStoreExceptSelf(){
+        try {
+            AjaxResponse resp =  new AjaxResponse();
+            List<MerchantStore> result = merchantStoreService.list();
+            for (MerchantStore merchantStore : result) {
+                resp.addDataEntry(objectToEntry(merchantStore));
+            }
+            return resp;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResponse.failed(-1);
+
+    }
+
     //把类转换成entry返回给前端，解耦和
     private Map objectToEntry(MerchantStore merchantStore) {
         Map entry = new HashMap();
@@ -483,6 +516,13 @@ public class MerchantController {
         entry.put("ratings", merchantStore.getRatings());
         entry.put("merchant", merchantStore.getMerchant());
         entry.put("address", merchantStore.getAddress());
+        return entry;
+    }
+
+    //把类转换成entry返回给前端，解耦和  额外添加个绑定属性
+    private Map objectToEntryAdd(MerchantStore merchantStore,List<MerchantStore> bindStores) {
+        Map entry = objectToEntry(merchantStore);
+        entry.put("bindStores",bindStores);
         return entry;
     }
 

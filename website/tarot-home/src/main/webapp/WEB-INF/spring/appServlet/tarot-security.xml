@@ -80,11 +80,12 @@
     </http>
 
     <!-- 微信公众号-->
-    <http pattern="/weixin/**" auto-config="true" use-expressions="true" authentication-manager-ref="userAuthenticationManager">
-        <intercept-url pattern="/weixin/**" access="permitAll"/>
-        <csrf disabled="true"/>
+    <http pattern="/weixin/**" security="none">
     </http>
 
+    <!-- 小女生-->
+    <http pattern="/api/**" security="none">
+    </http>
 
     <http pattern="/shop/**" auto-config="true" use-expressions="true" authentication-manager-ref="customerAuthenticationManager">
         <intercept-url pattern="/shop" access="permitAll"/>
@@ -109,6 +110,7 @@
           entry-point-ref="servicesAuthenticationEntryPoint">
         <intercept-url pattern="/services/private/**" access="hasRole('AUTH')"/>
         <intercept-url pattern="/services/public/**" access="permitAll"/>
+        <csrf disabled="true"/>
         <form-login authentication-success-handler-ref="servicesAuthenticationSuccessHandler"/>
         <http-basic/>
     </http>
