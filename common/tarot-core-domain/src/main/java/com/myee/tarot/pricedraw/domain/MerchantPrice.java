@@ -13,7 +13,6 @@ import java.util.Date;
  * Created by Administrator on 2016/7/11.
  */
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "P_MERCHANT_PRICE")
 public class MerchantPrice extends GenericEntity<Long, MerchantPrice>{
     @Id

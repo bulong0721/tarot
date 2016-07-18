@@ -11,7 +11,6 @@ import java.util.List;
  * Created by Administrator on 2016/7/11.
  */
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "P_MERCHANT_ACTIVITY")
 public class MerchantActivity extends GenericEntity<Long, MerchantActivity>{
     @Id
