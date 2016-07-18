@@ -404,11 +404,6 @@ public class OperationsManager extends RedisOperation implements OperationsServi
         return result;
     }
 
-    @Override
-    public ResponseData sendResourceToCloud(String resourceType, String filePath) {
-        return null;
-    }
-
     /**
      * 根据主板编号返回店铺信息
      * @param mainBoardCode
@@ -420,7 +415,7 @@ public class OperationsManager extends RedisOperation implements OperationsServi
         MerchantStore merchantStore = deviceUsed.getStore();
         ResponseData result = null;
         if (merchantStore != null) {
-            result = ResponseData.successData(merchantStore);
+            result = ResponseData.successData(JSON.toJSONString(merchantStore));
         } else {
             result = ResponseData.errorData("error");
         }

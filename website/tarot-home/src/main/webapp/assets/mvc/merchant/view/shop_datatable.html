@@ -33,7 +33,7 @@
                 <tr>
                     <td colspan="11" class="center" ng-if="$data.length<=0">没有查找到数据</td>
                 </tr>
-                <tr ng-repeat="row in $data">
+                <tr ng-repeat-start="row in $data">
                     <td>{{::row.name}}</td>
                     <td>{{::row.address.province.name}}</td>
                     <td>{{::row.address.city.name}}</td>
@@ -44,12 +44,35 @@
                     <td>{{::row.phone}}</td>
                     <td>{{::row.code}}</td>
                     <td class="center">
-                        <a ng-click="goShopBindEditor($index)"><i class="btn-icon fa fa-pencil"></i></a>
+                        <a ng-click="goShopBindEditor($index)"><i class="btn-icon fa fa-share"></i></a>
+                        <span class="divider"></span>
+                        <a ng-click="row.showDetail=!row.showDetail"><i class="btn-icon fa fa-bars"></i></a>
                     </td>
                     <td class="center">
                         <a ng-click="goEditorCustom($index)"><i class="btn-icon fa fa-pencil"></i></a>
                         <span class="divider"></span>
                         <a ng-click="doDelete($index)"><i class="btn-icon fa fa-trash-o"></i></a>
+                    </td>
+                </tr>
+                <tr ng-repeat-end ng-if="row.showDetail">
+                    <td colspan="5">
+                        <table id="details2" width="45%" class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th width="50%" class="center">引流门店名称</th>
+                                <th width="50%" class="center">引流商户名称</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td colspan="5" class="center" ng-if="row.bindStores<=0">没有查找到数据</td>
+                            </tr>
+                            <tr ng-repeat="bind in row.bindStores">
+                                <td class="center">{{::bind.name}}</td>
+                                <td class="center">{{::bind.merchant.name}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </td>
                 </tr>
                 </tbody>

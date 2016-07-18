@@ -1,9 +1,11 @@
-<formly-form model="formData.model" fields="formData.fields" form="formData.form" options="formData.options" ng-show="showInfoEditor">
-    <div class="text-center col-xs-8">
-        <button class="btn btn-primary" ng-click="processSubmit()"><i class="fa fa-sm fa-check"></i>&nbsp;提交</button>
-        <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
-    </div>
-</formly-form>
+<div ng-show="showInfoEditor">
+    <formly-form model="formData.model" fields="formData.fields" form="formData.form" options="formData.options">
+        <div class="text-center col-xs-8">
+            <button class="btn btn-primary" ng-click="processSubmit()"><i class="fa fa-sm fa-check"></i>&nbsp;提交</button>
+            <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
+        </div>
+    </formly-form>
+</div>
 <div ng-show="showBindEditor">
     <uib-tabset type="bareheaded">
         <uib-tab heading="绑定设备">
@@ -23,8 +25,8 @@
                                         <tr>
                                             <th width="5%" class="center"><input type="checkbox" ng-model="showCase.selectAll" ng-click="showCase.toggleAll(showCase.selectAll, showCase.selected)"></th>
                                             <th width="15%" ng-show="false">id</th>
-                                            <th width="15%" class="center">关联门店名称</th>
-                                            <th width="15%" class="center">关联商户品牌</th>
+                                            <th width="15%" class="center">引流门店名称</th>
+                                            <th width="15%" class="center">引流商户名称</th>
                                         </tr>
                                         </thead>
                                         <tbody>
