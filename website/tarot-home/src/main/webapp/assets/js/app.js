@@ -8,7 +8,8 @@
         'ngResource',                   // Resource
         'oc.lazyLoad',                  // ocLazyLoad
         'ui.bootstrap',                 // Ui Bootstrap
-        'ngSanitize'                    // ngSanitize
+        'ngSanitize',                    // ngSanitize
+        'ngTable'                    // ngTable
     ])
 })();
 

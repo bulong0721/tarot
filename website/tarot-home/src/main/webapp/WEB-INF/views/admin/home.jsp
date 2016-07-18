@@ -16,6 +16,9 @@
     <!-- Bootstrap and Fonts -->
     <link href="assets/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- ngTable css -->
+    <link href="assets/js/plugins/ng-table/ng-table.css" rel="stylesheet">
+
     <!-- Main Inspinia CSS files -->
     <link href="assets/css/animate.css" rel="stylesheet">
     <link id="loadBefore" href="assets/css/style.css" rel="stylesheet">
@@ -61,6 +64,7 @@
 <script src="assets/js/ui-router/angular-ui-router.min.js"></script>
 <script src="assets/js/angular/angular-resource.min.js"></script>
 <script src="assets/js/bootstrap/ui-bootstrap-tpls-1.1.2.min.js"></script>
+<script src="assets/js/plugins/ng-table/ng-table.js"></script>
 
 <!-- Anglar App Script -->
 <script src="assets/js/app.js"></script>
