@@ -237,7 +237,7 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
         if (formly.form.$valid) {
             //formly.options.updateInitialValue();//这句会报错
             var xhr = $resource(mgrData.api.update);
-            formly.model.code = formly.model.code || "";//保证编号不为空，后台才能正常，虽然用不到
+            formly.model.code = formly.model.code || formly.model.startNo;//保证编号不为空，后台才能正常，虽然用不到
             xhr.save({
                 autoStart: formly.model.startNo ? formly.model.startNo : "",
                 autoEnd: formly.model.endNo ? formly.model.endNo : ""
