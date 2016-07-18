@@ -24,4 +24,5 @@ public interface MerchantStoreDao extends GenericEntityDao<Long, MerchantStore> 
 
     public List<MerchantStore> findByClientId(Long clientId);
 
+    MerchantStore getByCode(String storeCode);
 }

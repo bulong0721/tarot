@@ -238,6 +238,12 @@ public class MerchantController {
                 resp.setErrorString("请先切换商户");
                 return resp;
             }
+            //code不能重复
+            if(merchantStoreService.getByCode(merchantStore.getCode()) != null){
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("错误:重复的门店码，请修改后重新提交");
+                return resp;
+            }
 
             Merchant merchant = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
             merchantStore.setMerchant(merchant);
