@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * Created by Administrator on 2016/7/11.
  */
 @Controller
+@RequestMapping(value = "api")
 public class PriceInfoController {
 
     @Autowired
