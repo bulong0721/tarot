@@ -78,55 +78,55 @@ function logListCtrl($scope, $resource, Constants, cTables, cfromly, NgTablePara
     var mgrData = {
         fields: [],
         api: {
-            read: 'selfCheckLog/paging',
+            read: 'admin/selfCheckLog/paging',
         }
     };
     cTables.initNgMgrCtrl(mgrData, $scope);
 
-    $scope.goEditorCustom = function (rowIndex) {
-        $scope.goEditor(rowIndex);
-        if (Constants.thisMerchantStore) {
-            $scope.formData.model.store = {name: Constants.thisMerchantStore.name};
-        }
-        $scope.showBindEditor = false;
-        $scope.showInfoEditor = true;
-    };
-
-    //formly提交
-    $scope.processSubmit = function () {
-        var formly = $scope.formData;
-        if (formly.form.$valid) {
-            //formly.options.updateInitialValue();//这句会报错
-            var xhr = $resource(mgrData.api.update);
-            xhr.save({
-                autoStart: formly.model.startNo ? formly.model.startNo : "",
-                autoEnd: formly.model.endNo ? formly.model.endNo : ""
-            }, formly.model).$promise.then(function saveSuccess(response) {
-                    if (0 != response.status) {
-                        return;
-                    }
-                    //批量添加的数据添加到ngtables
-                    angular.forEach(response.dataMap.updateResult, function (indexData, index, array) {
-                        var data = indexData;
-                        if ($scope.rowIndex < 0) {
-                            $scope.tableOpts.data.splice(0, 0, data);
-                        } else {
-                            $scope.tableOpts.data.splice($scope.rowIndex, 1, data);
-                        }
-                    })
-
-                    $scope.goDataTable();
-                }, function saveFailed(response) {
-                });
-        }
-    };
-
-    //formly返回
-    $scope.goDataTable = function () {
-        $scope.showDataTable = true;
-        $scope.showEditor = false;
-        $scope.showBindEditor = false;
-        $scope.showInfoEditor = false;
-    };
+    //$scope.goEditorCustom = function (rowIndex) {
+    //    $scope.goEditor(rowIndex);
+    //    if (Constants.thisMerchantStore) {
+    //        $scope.formData.model.store = {name: Constants.thisMerchantStore.name};
+    //    }
+    //    $scope.showBindEditor = false;
+    //    $scope.showInfoEditor = true;
+    //};
+    //
+    ////formly提交
+    //$scope.processSubmit = function () {
+    //    var formly = $scope.formData;
+    //    if (formly.form.$valid) {
+    //        //formly.options.updateInitialValue();//这句会报错
+    //        var xhr = $resource(mgrData.api.update);
+    //        xhr.save({
+    //            autoStart: formly.model.startNo ? formly.model.startNo : "",
+    //            autoEnd: formly.model.endNo ? formly.model.endNo : ""
+    //        }, formly.model).$promise.then(function saveSuccess(response) {
+    //                if (0 != response.status) {
+    //                    return;
+    //                }
+    //                //批量添加的数据添加到ngtables
+    //                angular.forEach(response.dataMap.updateResult, function (indexData, index, array) {
+    //                    var data = indexData;
+    //                    if ($scope.rowIndex < 0) {
+    //                        $scope.tableOpts.data.splice(0, 0, data);
+    //                    } else {
+    //                        $scope.tableOpts.data.splice($scope.rowIndex, 1, data);
+    //                    }
+    //                })
+    //
+    //                $scope.goDataTable();
+    //            }, function saveFailed(response) {
+    //            });
+    //    }
+    //};
+    //
+    ////formly返回
+    //$scope.goDataTable = function () {
+    //    $scope.showDataTable = true;
+    //    $scope.showEditor = false;
+    //    $scope.showBindEditor = false;
+    //    $scope.showInfoEditor = false;
+    //};
 }
 
