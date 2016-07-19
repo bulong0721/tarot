@@ -28,6 +28,7 @@ public class SelfCheckLogDaoImpl extends GenericEntityDaoImpl<Long, SelfCheckLog
 
     @Override
     public PageResult<SelfCheckLog> pageAll(PageRequest pageRequest) {
+
         PageResult<SelfCheckLog> pageList = new PageResult<SelfCheckLog>();
         QSelfCheckLog qSelfCheckLog = QSelfCheckLog.selfCheckLog;
         JPQLQuery<SelfCheckLog> query = new JPAQuery(getEntityManager());
