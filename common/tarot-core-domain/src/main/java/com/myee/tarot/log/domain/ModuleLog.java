@@ -5,6 +5,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by Enva on 2016/4/11.
@@ -21,7 +22,7 @@ public class ModuleLog extends GenericEntity<Long, ModuleLog> {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     private Long id;
 
-    @NotEmpty
+    @NotNull
     @Column(name = "MODULE_ID")
     private Integer moduleId;
 

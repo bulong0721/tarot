@@ -1,7 +1,6 @@
 package com.myee.tarot.weixin.domain;
 
 
-//import com.myee.djinn.dto.WaitToken;
 import com.myee.tarot.core.GenericEntity;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -13,7 +12,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "CA_WAIT_TOKEN")
-public class RWaitToken extends GenericEntity<Long, RWaitToken> {
+public class WxWaitToken extends GenericEntity<Long, WxWaitToken> {
     @Id
     @Column(name = "CA_WAIT_TOKEN_ID", unique = true, nullable = false)
     @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "CA_WAIT_TOKEN_SEQ_NEXT_VAL", allocationSize = 1)
@@ -56,11 +55,6 @@ public class RWaitToken extends GenericEntity<Long, RWaitToken> {
     private Date created;
     @Column(name = "CREATED_BY")
     private Long createdBy;
-
-    /*public WaitToken toDto() {
-        WaitToken waitToken = new WaitToken();
-        return waitToken;
-    }*/
 
     public Long getTableTypeId() {
         return tableTypeId;

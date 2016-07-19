@@ -237,6 +237,29 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 }
             }
         })
+        .state('selfLogCheck', {
+            abstract: true,
+            url: "/selfLogCheck",
+            template: "<div ui-view></div>",
+            resolve: {
+                loadPlugin: managerLoader
+            }
+        })
+        .state('selfLogCheck.logList', {
+            url: "/log",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'logListCtrl',
+            data: {
+                pageTitle: '日志管理',
+                subTitle: '日志列表',
+                datatable: 'assets/mvc/log/view/selfCheckLog_datatable.html',
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'log', 'logCtrl.js');
+                }
+            }
+        })
         .state('user', {
             abstract: true,
             url: "/user",

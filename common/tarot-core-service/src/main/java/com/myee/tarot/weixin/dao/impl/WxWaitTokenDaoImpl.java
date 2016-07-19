@@ -1,9 +1,10 @@
 package com.myee.tarot.weixin.dao.impl;
 
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
-import com.myee.tarot.weixin.dao.RWaitTokenDao;
-import com.myee.tarot.weixin.domain.QRWaitToken;
-import com.myee.tarot.weixin.domain.RWaitToken;
+import com.myee.tarot.weixin.dao.WxWaitTokenDao;
+import com.myee.tarot.weixin.dao.WxWaitTokenDao;
+import com.myee.tarot.weixin.domain.QWxWaitToken;
+import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.apache.commons.logging.Log;
@@ -17,18 +18,18 @@ import java.util.List;
  * Created by Ray.Fu on 2016/7/4.
  */
 @Repository
-public class RWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, RWaitToken> implements RWaitTokenDao {
+public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> implements WxWaitTokenDao {
 
-    public static Log log = LogFactory.getLog(RWaitTokenDaoImpl.class);
+    public static Log log = LogFactory.getLog(WxWaitTokenDaoImpl.class);
 
     @Override
     public Integer updateState(Integer state, Long orgId, Long clientId, String token, Long timeTook, Long updateTime) {
-        RWaitToken rWaitToken = new RWaitToken();
+        WxWaitToken rWaitToken = new WxWaitToken();
         rWaitToken.setOrgID(orgId);
         rWaitToken.setClientID(clientId);
         rWaitToken.setToken(token);
         rWaitToken.setTimeTook(new Date(timeTook));
-        rWaitToken = getRWaitTokenByProp(rWaitToken);
+        rWaitToken = getWaitTokenByProp(rWaitToken);
         rWaitToken.setState(state);
         rWaitToken.setUpdated(new Date(updateTime));
         rWaitToken = this.update(rWaitToken);
@@ -41,10 +42,10 @@ public class RWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, RWaitToken> im
 
     @Override
     public Integer updateWaitTokenOpenId(String openId, String identityCode, Long date) {
-        RWaitToken rWaitToken = new RWaitToken();
+        WxWaitToken rWaitToken = new WxWaitToken();
         rWaitToken.setIdentityCode(identityCode);
         rWaitToken.setTimeTook(new Date(date));
-        rWaitToken = getRWaitTokenByProp(rWaitToken);
+        rWaitToken = getWaitTokenByProp(rWaitToken);
         rWaitToken.setOpenId(openId);
         rWaitToken = this.update(rWaitToken);
         if(rWaitToken != null) {
@@ -56,10 +57,10 @@ public class RWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, RWaitToken> im
 
     @Override
     public Integer modifyWaitingInfo(Long waitedCount, String identityCode, Long date, Long predictWaitingTime) {
-        RWaitToken rWaitToken = new RWaitToken();
+        WxWaitToken rWaitToken = new WxWaitToken();
         rWaitToken.setIdentityCode(identityCode);
         rWaitToken.setTimeTook(new Date(date));
-        rWaitToken = getRWaitTokenByProp(rWaitToken);
+        rWaitToken = getWaitTokenByProp(rWaitToken);
         rWaitToken.setWaitedCount(waitedCount);
         rWaitToken.setPredictWaitingTime(predictWaitingTime);
         rWaitToken = this.update(rWaitToken);
@@ -71,9 +72,9 @@ public class RWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, RWaitToken> im
     }
 
     @Override
-    public RWaitToken selectTokenByIc(String identityCode, Long beginTime, Long endTime) {
-        QRWaitToken qrWaitToken = QRWaitToken.rWaitToken;
-        JPQLQuery<RWaitToken> query = new JPAQuery(getEntityManager());
+    public WxWaitToken selectTokenByIc(String identityCode, Long beginTime, Long endTime) {
+        QWxWaitToken qrWaitToken = QWxWaitToken.wxWaitToken;
+        JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
         query.from(qrWaitToken);
         if(identityCode != null){
             query.where(qrWaitToken.identityCode.eq(identityCode));
@@ -90,9 +91,9 @@ public class RWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, RWaitToken> im
     }
 
     @Override
-    public List<RWaitToken> selectAllTokenByInfo(Long clientId, Long orgId, Long tableTypeId, Integer state) {
-        QRWaitToken qrWaitToken = QRWaitToken.rWaitToken;
-        JPQLQuery<RWaitToken> query = new JPAQuery(getEntityManager());
+    public List<WxWaitToken> selectAllTokenByInfo(Long clientId, Long orgId, Long tableTypeId, Integer state) {
+        QWxWaitToken qrWaitToken = QWxWaitToken.wxWaitToken;
+        JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
         query.from(qrWaitToken);
         if (orgId != null) {
             query.where(qrWaitToken.orgID.eq(orgId));
@@ -111,9 +112,9 @@ public class RWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, RWaitToken> im
     }
 
     @Override
-    public List<RWaitToken> selectAllTokenOpenIdNotNull(Long clientId, Long orgId, Long tableTypeId, Integer state) {
-        QRWaitToken qrWaitToken = QRWaitToken.rWaitToken;
-        JPQLQuery<RWaitToken> query = new JPAQuery(getEntityManager());
+    public List<WxWaitToken> selectAllTokenOpenIdNotNull(Long clientId, Long orgId, Long tableTypeId, Integer state) {
+        QWxWaitToken qrWaitToken = QWxWaitToken.wxWaitToken;
+        JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
         query.from(qrWaitToken);
         if (orgId != null) {
             query.where(qrWaitToken.orgID.eq(orgId));
@@ -133,9 +134,9 @@ public class RWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, RWaitToken> im
     }
 
     @Override
-    public List<RWaitToken> selectAllTokenByOpenIdState(String openId, Integer state) {
-        QRWaitToken qrWaitToken = QRWaitToken.rWaitToken;
-        JPQLQuery<RWaitToken> query = new JPAQuery(getEntityManager());
+    public List<WxWaitToken> selectAllTokenByOpenIdState(String openId, Integer state) {
+        QWxWaitToken qrWaitToken = QWxWaitToken.wxWaitToken;
+        JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
         query.from(qrWaitToken);
         if (openId != null) {
             query.where(qrWaitToken.openId.eq(openId));
@@ -148,9 +149,9 @@ public class RWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, RWaitToken> im
     }
 
     @Override
-    public List<RWaitToken> selectWait(String openId, Long bTime, Long eTime) {
-        QRWaitToken qrWaitToken = QRWaitToken.rWaitToken;
-        JPQLQuery<RWaitToken> query = new JPAQuery(getEntityManager());
+    public List<WxWaitToken> selectWait(String openId, Long bTime, Long eTime) {
+        QWxWaitToken qrWaitToken = QWxWaitToken.wxWaitToken;
+        JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
         query.from(qrWaitToken);
         if (openId != null) {
             query.where(qrWaitToken.openId.eq(openId));
@@ -167,7 +168,7 @@ public class RWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, RWaitToken> im
 
     @Override
     public Integer modifyWaitingStatus(Integer state, Long waitQueueId) {
-        RWaitToken rWaitToken = new RWaitToken();
+        WxWaitToken rWaitToken = new WxWaitToken();
         rWaitToken.setId(waitQueueId);
         rWaitToken.setState(state);
         this.update(rWaitToken);
@@ -178,9 +179,9 @@ public class RWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, RWaitToken> im
         }
     }
 
-    private RWaitToken getRWaitTokenByProp(RWaitToken rWaitToken) {
-        QRWaitToken qrWaitToken = QRWaitToken.rWaitToken;
-        JPQLQuery<RWaitToken> query = new JPAQuery(getEntityManager());
+    private WxWaitToken getWaitTokenByProp(WxWaitToken rWaitToken) {
+        QWxWaitToken qrWaitToken = QWxWaitToken.wxWaitToken;
+        JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
         query.from(qrWaitToken);
         if(rWaitToken.getOrgID() != null){
             query.where(qrWaitToken.orgID.eq(rWaitToken.getOrgID()));

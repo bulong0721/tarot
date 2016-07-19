@@ -55,7 +55,7 @@
         <class>com.myee.tarot.weixin.domain.RDiner</class>
         <class>com.myee.tarot.weixin.domain.RDrawToken</class>
         <class>com.myee.tarot.weixin.domain.RInstructionLog</class>
-        <class>com.myee.tarot.weixin.domain.RWaitToken</class>
+        <class>com.myee.tarot.weixin.domain.WxWaitToken</class>
         <class>com.myee.tarot.weixin.domain.WFeedBack</class>
 
         <class>com.myee.tarot.pricedraw.domain.MerchantActivity</class>
