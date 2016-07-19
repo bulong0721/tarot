@@ -1,4 +1,4 @@
-package com.myee.tarot.web.log;
+package com.myee.tarot.web.util;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;

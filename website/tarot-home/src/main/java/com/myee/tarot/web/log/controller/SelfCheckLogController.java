@@ -1,11 +1,6 @@
-package com.myee.tarot.web.log;
+package com.myee.tarot.web.log.controller;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.myee.djinn.dto.ResponseData;
-import com.myee.tarot.catalog.domain.DeviceUsed;
-import com.myee.tarot.catalog.domain.DeviceUsedAttribute;
-import com.myee.tarot.catalog.domain.ProductUsed;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.PageRequest;
@@ -14,7 +9,11 @@ import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.log.domain.SelfCheckLog;
 import com.myee.tarot.log.service.SelfCheckLogService;
 import com.myee.tarot.merchant.domain.MerchantStore;
-import com.myee.tarot.web.admin.controller.product.AttributeDTO;
+import com.myee.tarot.web.log.vo.SelfCheckLogRequest;
+import com.myee.tarot.web.util.DateTime;
+import com.myee.tarot.web.util.ExcelData;
+import com.myee.tarot.web.util.ObjectExcelRead;
+import com.myee.tarot.web.util.TypeConverter;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +27,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,9 +37,9 @@ import java.util.Map;
  * Created by Ray.Fu on 2016/7/18.
  */
 @Controller
-public class ReportDataManager {
+public class SelfCheckLogController {
 
-    private Logger logger = LoggerFactory.getLogger(ReportDataManager.class);
+    private Logger logger = LoggerFactory.getLogger(SelfCheckLogController.class);
 
     @Value("${cleverm.push.dirs}")
     private String DOWNLOAD_HOME;
@@ -107,23 +104,22 @@ public class ReportDataManager {
         return FileUtils.getFile(downloadHome, Long.toString(orgID), absPath);
     }
 
-    @RequestMapping(value = "admin/selfCheckLog/paging", method = RequestMethod.GET)
+    @RequestMapping(value = "selfCheckLog/paging", method = RequestMethod.GET)
     @ResponseBody
-    public AjaxPageableResponse getSelfCheckLogList(Model model, HttpServletRequest request, PageRequest pageRequest) {
+    public AjaxPageableResponse getSelfCheckLogList(Model model, HttpServletRequest request, PageRequest selfCheckLogRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
             if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
-
-            /*PageResult<SelfCheckLog> pageResult = selfCheckLogService.pageByParams(merchantStore1.getId(), pageRequest);
+            MerchantStore merchantStore = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            PageResult<SelfCheckLog> pageResult = selfCheckLogService.pageAll(selfCheckLogRequest);
             List<SelfCheckLog> selfCheckLogList = pageResult.getList();
             for (SelfCheckLog deviceUsed : selfCheckLogList) {
                 resp.addDataEntry(objectToEntry(deviceUsed));
             }
-            resp.setRecordsTotal(pageResult.getRecordsTotal());*/
+            resp.setRecordsTotal(pageResult.getRecordsTotal());
         } catch (Exception e) {
             logger.error("Error while paging products", e);
         }

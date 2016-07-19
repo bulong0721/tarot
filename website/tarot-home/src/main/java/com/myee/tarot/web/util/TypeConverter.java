@@ -1,4 +1,4 @@
-package com.myee.tarot.web.log;
+package com.myee.tarot.web.util;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;

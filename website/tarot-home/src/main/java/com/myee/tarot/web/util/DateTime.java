@@ -1,4 +1,4 @@
-package com.myee.tarot.web.log;
+package com.myee.tarot.web.util;
 
 
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /***
