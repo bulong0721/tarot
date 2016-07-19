@@ -2,6 +2,8 @@ package com.myee.tarot.log.service.impl;
 
 import com.myee.tarot.core.dao.GenericEntityDao;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.log.dao.SelfCheckLogDao;
 import com.myee.tarot.log.domain.SelfCheckLog;
 import com.myee.tarot.log.service.SelfCheckLogService;
@@ -27,5 +29,10 @@ public class SelfCheckLogServiceImpl extends GenericEntityServiceImpl<Long, Self
     @Override
     public void uploadSelfCheckLog(SelfCheckLog selfCheckLog) {
         selfCheckLogDao.uploadSelfCheckLog(selfCheckLog);
+    }
+
+    @Override
+    public PageResult<SelfCheckLog> pageAll(PageRequest pageRequest) {
+        return selfCheckLogDao.pageAll(pageRequest);
     }
 }

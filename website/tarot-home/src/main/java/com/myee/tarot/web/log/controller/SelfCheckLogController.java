@@ -104,7 +104,7 @@ public class SelfCheckLogController {
         return FileUtils.getFile(downloadHome, Long.toString(orgID), absPath);
     }
 
-    @RequestMapping(value = "selfCheckLog/paging", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/selfCheckLog/paging", method = RequestMethod.GET)
     @ResponseBody
     public AjaxPageableResponse getSelfCheckLogList(Model model, HttpServletRequest request, PageRequest selfCheckLogRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
