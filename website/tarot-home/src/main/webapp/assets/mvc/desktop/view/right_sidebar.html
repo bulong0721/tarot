@@ -1,5 +1,50 @@
 <div id="right-sidebar" ng-show="rightSidebar" class="sidebar-open">
-    <div class="sidebar-container">
+    <div class="sidebar-container" style="width: 80%">
         <switch-Merchant></switch-Merchant>
+        <div class="ibox" style="margin-bottom: 20px">
+            <div class="ibox-title">
+                <h5>切换门店</h5>
+                <div class="ibox-tools">
+                    <a ng-click="$root.rightSidebar = !$root.rightSidebar"><i class="fa fa-times"></i></a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="form-group">
+                    <div class="input-group col-md-6">
+                        <input type="text" class="form-control" ng-model="where.queryName" placeholder="输入门店名搜索">
+                        <span class="input-group-btn"> <button type="button" class="btn btn-primary" ng-click="search()">搜索</button> </span>
+                    </div>
+                </div>
+                <table id="example" ng-table="tableOpts" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th width="15%" class="center">名称</th>
+                            <th width="12%" class="center">省份</th>
+                            <th width="15%" class="center">城市</th>
+                            <th width="20%" class="center">地址</th>
+                            <th width="15%" class="center">联系电话</th>
+                            <th width="15%" class="center">门店码</th>
+                            <th  class="center">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="10" class="center" ng-if="$data.length<=0">没有查找到数据</td>
+                        </tr>
+                        <tr ng-repeat="row in $data">
+                            <td>{{::row.name}}</td>
+                            <td>{{::row.address.province.name}}</td>
+                            <td>{{::row.address.city.name}}</td>
+                            <td>{{::row.address.address}}</td>
+                            <td>{{::row.phone}}</td>
+                            <td>{{::row.code}}</td>
+                            <td class="center">
+                            <a ng-click="switch($index)"><i class="btn-icon fa fa-exchange "></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>

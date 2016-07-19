@@ -62,5 +62,9 @@
         <class>com.myee.tarot.pricedraw.domain.MerchantPrice</class>
         <class>com.myee.tarot.pricedraw.domain.PriceInfo</class>
         <class>com.myee.tarot.pricedraw.domain.SaleCorpMerchant</class>
+
+        <class>com.myee.tarot.log.domain.SelfCheckLog</class>
+        <class>com.myee.tarot.log.domain.ModuleLog</class>
+        <class>com.myee.tarot.log.domain.EventLevelLog</class>
     </persistence-unit>
 </persistence>

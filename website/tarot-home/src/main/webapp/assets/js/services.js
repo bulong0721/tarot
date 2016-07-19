@@ -23,17 +23,6 @@ function constServiceCtor($resource, $q) {
         return deferred.promise;
     }
 
-    //从后台拿店铺列表
-    vm.merchantStores = [];
-    vm.getMerchantStores = function () {
-        var deferred = $q.defer();
-        $resource('../admin/merchantStore/list').get({}, function (resp) {
-            vm.merchantStores = resp.rows;
-            deferred.resolve(vm.merchantStores);
-        });
-        return deferred.promise;
-    };
-
     //切换门店
     vm.thisMerchantStore = {};
     vm.getSwitchMerchantStore = function () {

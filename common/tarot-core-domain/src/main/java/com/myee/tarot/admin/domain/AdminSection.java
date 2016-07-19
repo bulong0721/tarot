@@ -10,7 +10,6 @@ import java.util.List;
  * Created by Martin on 2016/4/11.
  */
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "C_ADMIN_SECTION")
 public class AdminSection extends GenericEntity<Long, AdminSection> {
 

@@ -9,7 +9,6 @@ import java.util.Date;
  * Created by Martin on 2016/4/14.
  */
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "C_CUSTOMER_PASSWORD_TOKEN")
 public class CustomerForgotPasswordSecurityToken extends GenericEntity<String, CustomerForgotPasswordSecurityToken> {
     @Id

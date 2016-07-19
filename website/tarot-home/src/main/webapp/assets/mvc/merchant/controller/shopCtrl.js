@@ -65,8 +65,8 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
             {key: 'code', type: 'c_input', templateOptions: {label: '门店码', required: true, placeholder: '门店码'}},
         ],
         api: {
-            read: '../admin/merchantStore/pagingByMerchant',
-            update: '../admin/merchantStore/save'
+            read: 'merchantStore/pagingByMerchant',
+            update: 'merchantStore/save'
         }
     };
     cTables.initNgMgrCtrl(mgrData, $scope);
@@ -74,7 +74,7 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
     $scope.goEditorCustom = function (rowIndex) {
         $scope.goEditor(rowIndex);
         if (Constants.thisMerchant) {
-            $scope.formData.model = {merchant: {name: Constants.thisMerchant.name}};
+            $scope.formData.model.merchant = {name: Constants.thisMerchant.name};
         }
         $scope.showBindEditor = false;
         $scope.showInfoEditor = true;
@@ -93,6 +93,7 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
             return deferred.promise;
         } else {//第一次需要从后台读取列表，且只返回前10个数据
             return $resource('/admin/merchantStore/getAllStoreExceptSelf').get().$promise.then(function (data) {
+                console.log(data.rows)
                 //初始化showCase.selected数组，给全选框用，让它知道应该全选哪些
                 angular.forEach(data.rows, function (indexData, index, array) {
                     //indexData等价于array[index]
@@ -149,8 +150,8 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
                     var data = $scope.tableOpts.data[rowIndex];
                     $scope.formBindData.model = data;
                     $scope.currentId = data.id;
-                    console.log(data)
-                    console.log(Constants.thisMerchantStore)
+                    //console.log(data)
+                    //console.log(Constants.thisMerchantStore)
                     $scope.formBindData.model.bindShowName = '门店名称:' + (data.name || "") + ' | 商户名称:' + (data.merchant.name || "") ;
 
                     //根据已关联的产品去勾选对应的checkbox

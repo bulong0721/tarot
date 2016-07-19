@@ -77,11 +77,15 @@ function minimalizaSidebar($timeout) {
  */
 function showThisMerchant(Constants,$rootScope) {
     return {
-        template: '<div class="showThisMerchant" ng-click="$root.rightSidebar = !$root.rightSidebar"><span>当前门店</span><span>{{storeInfo.name}}<i class="fa fa-chevron-down"></i></span></div>',
+        template: '<div class="showThisMerchant" ng-click="showRightSideBar()"><span>当前门店</span><span>{{storeInfo.name}}<i class="fa fa-chevron-down"></i></span></div>',
         link:function($scope){
+            $scope.showRightSideBar = function(){
+                $rootScope.storeInfo.firstSwitch = true;
+                $rootScope.rightSidebar = !$rootScope.rightSidebar;
+            }
+
             //获取门店列表，并切换到之前切换的门店
             Constants.getSwitchMerchantStore().then(function () {
-                //Constants.getSwitchMerchant();//切换门店
                 Constants.thisMerchant = Constants.thisMerchantStore.merchant;
                 if (Constants.thisMerchantStore){
                     $rootScope.storeInfo = Constants.thisMerchantStore
@@ -94,42 +98,64 @@ function showThisMerchant(Constants,$rootScope) {
 /**
  * switchMerchant
  */
-function switchMerchant(Constants,$resource,$state,$rootScope) {
+function switchMerchant(Constants,$resource,$state,$rootScope,NgTableParams) {
     return {
-        template: [
-            '<div class="ibox"><div class="ibox-title"><h5>切换门店</h5><div class="ibox-tools"> <a ng-click="$root.rightSidebar = !$root.rightSidebar"><i class="fa fa-times"></i></a></div></div><div class="ibox-content"><div class="form-group"><div class="input-group col-md-6"><input type="text" class="form-control" ng-model="nameFilter" placeholder="输入门店名或地址搜索"> </div></div>',
-            '<div class="sidebar-message" ng-repeat="merchantStore in merchantStores | filter : nameFilter">',
-            '<a ng-click="switchMerchantStore(merchantStore.id)" data-id="{{merchantStore.id}}"><div class="media-body">{{merchantStore.name}}<br>',
-            '<small class="text-muted">{{merchantStore.address.province.name}}{{merchantStore.address.city.name}}</small></div></a></div></div>',
-            '<pager page-count="pages.count" current-page="pages.page" on-page-change="pages.onPageChange()" page-first="false" page-last="false"></pager></div>',
-        ].join(' '),
         link:function($scope){
 
-            // 从后台获取所有门店列表
-            Constants.getMerchantStores().then(function(){
-                var pages = $scope.pages = {
-                    page:1,
-                    count:Math.ceil(Constants.merchantStores.length/10),
-                    data:function(start,end){
-                        return Constants.merchantStores.slice(start,end);
-                    },
-                    onPageChange:function(){
-                        $scope.merchantStores = this.data(pages.page*10-10,pages.page*10);
+            $scope.mgrData = {
+                api: {
+                    read: 'merchantStore/list',
+                }
+            };
+
+            //初始化搜索配置
+            $scope.where = {};
+
+            //点击切换
+            $scope.switch = function (rowIndex) {
+                if (rowIndex > -1) {
+                    var data = $scope.tableOpts.data[rowIndex];
+                    $resource('merchantStore/switch').save(data.id, function (resp) {
+                        //关闭侧边栏
+                        $rootScope.rightSidebar = !$rootScope.rightSidebar;
+                        //刷新当前页面的显示
+                        $rootScope.storeInfo = $scope.merchantStoreSelect = Constants.thisMerchantStore = resp.rows[0];
+                        $state.go($state.current, {}, {reload: true});
+                    });
+                }
+            };
+
+            //tables获取数据
+            $scope.tableOpts = new NgTableParams({}, {
+                counts: [],
+                getData: function (params) {
+                    if (!$scope.loadByInit) {
+                        return [];
                     }
-                };
+                    var xhr = $resource($scope.mgrData.api.read);
+                    var args = angular.extend(params.url(), $scope.where);
+
+                    return xhr.get(args).$promise.then(function (data) {
+                        params.total(data.recordsTotal);
+                        return data.rows;
+                    });
+                }
             });
 
-            //点击切换门店
-            $scope.switchMerchantStore = function (id) {
-                //console.log("id:"+id)
-                $resource('merchantStore/switch').save(id, function (resp) {
-                    //关闭侧边栏
-                    $rootScope.rightSidebar = !$rootScope.rightSidebar;
-                    //刷新当前页面的显示
-                    $rootScope.storeInfo = $scope.merchantStoreSelect = Constants.thisMerchantStore = resp.rows[0];
-                    $state.go($state.current, {}, {reload: true});
-                });
+            //搜索tables的数据
+            $scope.search = function () {
+                $scope.loadByInit = true;
+                $scope.tableOpts.reload();
             };
+
+            //监听第一次点击切换门店，执行初始化搜索一次，执行完销毁该函数
+            $scope.watchFistSwitch = $scope.$watch('storeInfo.firstSwitch',function(newValue,oldValue){
+                if(newValue){
+                    $scope.search();
+                    $scope.watchFistSwitch = null;
+                }
+            });
+
         }
     };
 }

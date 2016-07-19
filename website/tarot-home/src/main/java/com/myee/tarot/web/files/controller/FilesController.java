@@ -8,6 +8,8 @@ import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.djinn.dto.ResponseData;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.CryptoUtil;
+import com.myee.tarot.core.util.GZipUtil;
+import com.myee.tarot.core.util.ZipUtil;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.files.FileDTO;
@@ -42,6 +44,7 @@ public class FilesController {
     private String DOWNLOAD_HOME;
     @Value("${cleverm.push.http}")
     private String DOWNLOAD_HTTP;
+    private static final String GZIP_DIR   = "temp/";
 
     private static final String RESOURCE_TYPE_DIR   = "default";
     private static final String RESOURCE_TYPE_FILE  = "file";
@@ -126,6 +129,10 @@ public class FilesController {
         AjaxResponse resp = new AjaxResponse();
         List<JSTreeDTO> tree = Lists.newArrayList();
         String id = request.getParameter(RESOURCE_PARAM_ID);
+        if(id == null ){
+            return AjaxResponse.failed(-1);
+        }
+
         File dir = null;
         if (id.equals("#")) {
             dir = new File(DOWNLOAD_HOME + File.separator + ((MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE)).getId());
@@ -202,12 +209,22 @@ public class FilesController {
         if (operation.equals(RESOURCE_OPERATION_DELETE)) {
             try {
                 File file = new File(id);
-                boolean isDelete = delete(file);
-                if (isDelete) {
-                    JSTreeDTO tree = new JSTreeDTO();
-                    tree.setStatus("OK");
-                    return tree;
+                //目前不允许删除文件夹
+                if(file.isDirectory()){
+                    return null;
                 }
+
+                boolean isCopy = copyToRecycle(file);//复制文件到回收站
+                if(isCopy){ //复制成功后执行删除
+                    boolean isDelete = delete(file);
+
+                    if (isDelete) {
+                        JSTreeDTO tree = new JSTreeDTO();
+                        tree.setStatus("OK");
+                        return tree;
+                    }
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -296,6 +313,13 @@ public class FilesController {
         return resp;
     }
 
+    /**
+     * 用zip压缩文件，源文件的文件名不能包含空格
+     * @param pushRes
+     * @param compress
+     * @param request
+     * @return
+     */
     @RequestMapping("admin/files/packResource")
     @ResponseBody
     public HotfixSetVo packResource(String pushRes, boolean compress,HttpServletRequest request) {
@@ -304,14 +328,30 @@ public class FilesController {
         Set<HotfixVo> hotfixSet = Sets.newHashSet();
         hotfixSetVo.setPublisher(currentUser(request).getName());
         if (compress) {
-            String fileName = CryptoUtil.md5(pushRes) + ".gz";
-            File gzFile = new File(DOWNLOAD_HOME, fileName);
-            if (!gzFile.exists() && null != resList) {
+            String basePath = DOWNLOAD_HOME+ "/"+ GZIP_DIR;
+            String fileName = "";
+            /*File gzFile = new File(basePath);
+            gzFile.mkdirs(); //建立压缩文件根目录*/
+            File zipFile = new File(basePath);
+            zipFile.mkdirs(); //建立压缩文件根目录
+            if(null != resList){
                 for (JSTreeDTO jsTreeDTO : resList) {
-
+                    //用gz压缩文件:gz里面的文件名也会变成md5的名字，不太友好
+                    /*fileName = CryptoUtil.md5(jsTreeDTO.getText()) + ".gz";
+                    gzFile = FileUtils.getFile(basePath, fileName);
+                    File source = FileUtils.getFile(jsTreeDTO.getId());
+                    if(!gzFile.exists()){//如果压缩文件不存在，则执行压缩
+                        GZipUtil.doCompressFile(source,gzFile);
+                    }*/
+                    //用zip压缩文件，源文件的文件名不能包含空格
+                    fileName = CryptoUtil.md5(jsTreeDTO.getText()) + ".zip";
+                    zipFile = FileUtils.getFile(basePath, fileName);
+                    if(!zipFile.exists()){//如果压缩文件不存在，则执行压缩
+                        ZipUtil.compress(jsTreeDTO.getId(),jsTreeDTO.getText(), zipFile.getPath());
+                    }
+                    hotfixSet.add(new HotfixVo(fileName, getGzipUrl(zipFile), null, true));//将压缩文件信息写入接口返回信息中
                 }
             }
-            hotfixSet.add(new HotfixVo(fileName, getHttpUrl(gzFile), null, true));
         } else {
             if (resList != null && resList.size() > 0) {
                 for (JSTreeDTO jsTreeDTO : resList) {
@@ -330,8 +370,8 @@ public class FilesController {
         return (AdminUser) request.getSession().getAttribute(Constants.ADMIN_USER);
     }
 
-    String getHttpUrl(File zipFile) {
-        return DOWNLOAD_HTTP + "/temp/" + zipFile.getName();
+    String getGzipUrl(File zipFile) {
+        return DOWNLOAD_HTTP + GZIP_DIR + zipFile.getName();
     }
 
     private void listFiles(File parentFile, Map<String, FileDTO> resMap, HttpServletRequest request) {
@@ -344,6 +384,11 @@ public class FilesController {
         }
     }
 
+    /**
+     * 循环删除文件夹及文件
+     * @param file
+     * @return
+     */
     public static boolean delete(File file) {
         try {
             if (file.exists()) {
@@ -363,6 +408,44 @@ public class FilesController {
                 return false;
             }
         } catch (Exception e) {
+            System.out.print("unable to delete the folder!");
+        }
+        return false;
+    }
+
+    /**
+     * 复制文件至回收站
+     * @param file
+     * @return
+     */
+    public boolean copyToRecycle(File file) {
+        try {
+            if (file.exists()) {
+                String tempFilePath = file.getPath().replaceAll("\\\\", "/");//把路径中的反斜杠替换成斜杠
+                String tempDownloadPath = DOWNLOAD_HOME.replaceAll("\\\\","/")+"/";//准备用于替换成url的下载文件夹路径
+                String tempTargetPath = (DOWNLOAD_HOME + File.separator + "deleted" + File.separator).replaceAll("\\\\","/");
+                String targetPath = tempFilePath.replaceAll(tempDownloadPath, tempTargetPath);
+                targetPath = targetPath.replaceAll("/","\\\\");//把路径转回linux兼容
+                if (file.isFile()) {
+                    // Destination directory
+                    File dir = new File(targetPath);
+                    File parentPath = new File(dir.getParent());
+                    parentPath.mkdirs();
+                    // Move file to new directory
+                    boolean success = file.renameTo(dir);
+                } else if (file.isDirectory()) {
+                    File files[] = file.listFiles();
+                    for (int i = 0; i < files.length; i++) {
+                        copyToRecycle(files[i]);
+                    }
+                }
+                return true;
+            } else {
+                System.out.println("所删除的文件不存在！" + '\n');
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
             System.out.print("unable to delete the folder!");
         }
         return false;

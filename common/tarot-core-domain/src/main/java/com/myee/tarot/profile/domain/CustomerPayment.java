@@ -14,7 +14,6 @@ import java.util.Map;
  * Created by Martin on 2016/4/14.
  */
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "C_CUSTOMER_PAYMENT")
 public class CustomerPayment extends GenericEntity<Long, CustomerPayment> {
     @Id

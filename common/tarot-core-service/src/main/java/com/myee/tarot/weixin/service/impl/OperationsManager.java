@@ -11,7 +11,6 @@ import com.myee.djinn.server.operations.OperationsService;
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.device.service.DeviceUsedService;
 import com.myee.tarot.merchant.domain.MerchantStore;
-import com.myee.tarot.weixin.common.Constants;
 import com.myee.tarot.weixin.dao.RWaitTokenDao;
 import com.myee.tarot.weixin.domain.RWaitToken;
 import com.myee.tarot.weixin.util.TimeUtil;
@@ -27,6 +26,7 @@ import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -41,6 +41,9 @@ import java.util.*;
 @Service
 public class OperationsManager extends RedisOperation implements OperationsService {
     private static Logger logger = LoggerFactory.getLogger(OperationsManager.class);
+
+    @Value("${cleverm.push.dirs}")
+    private String DOWNLOAD_HOME;
 
     @Autowired
     @Lazy
@@ -379,7 +382,7 @@ public class OperationsManager extends RedisOperation implements OperationsServi
         StringBuilder sb = new StringBuilder();
         logger.info("================ request info  name:"+name+"  type:"+type+"   orgId:"+orgId);
         if ("app".equals(type)) {
-            sb.append(Constants.DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(type).append(File.separator).append(name).append(File.separator).append("VersionInfo.xml");
+            sb.append(DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(type).append(File.separator).append(name).append(File.separator).append("VersionInfo.xml");
         } else {
 
         }
@@ -401,11 +404,6 @@ public class OperationsManager extends RedisOperation implements OperationsServi
         return result;
     }
 
-    @Override
-    public ResponseData sendResourceToCloud(String resourceType, String filePath) {
-        return null;
-    }
-
     /**
      * 根据主板编号返回店铺信息
      * @param mainBoardCode
@@ -417,11 +415,16 @@ public class OperationsManager extends RedisOperation implements OperationsServi
         MerchantStore merchantStore = deviceUsed.getStore();
         ResponseData result = null;
         if (merchantStore != null) {
-            result = ResponseData.successData(merchantStore);
+            result = ResponseData.successData(JSON.toJSONString(merchantStore));
         } else {
             result = ResponseData.errorData("error");
         }
         return result;
+    }
+
+    @Override
+    public ResponseData sendResourceToCloud(boolean flag, String resourceType, String filePath) {
+        return null;
     }
 
     private String readfile(File file){
