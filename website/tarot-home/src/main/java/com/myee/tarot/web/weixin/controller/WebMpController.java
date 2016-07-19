@@ -2,7 +2,7 @@ package com.myee.tarot.web.weixin.controller;
 
 import com.myee.djinn.dto.WaitTokenState;
 import com.myee.tarot.weixin.domain.ClientAjaxResult;
-import com.myee.tarot.weixin.domain.RWaitToken;
+import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.myee.tarot.weixin.service.WeixinService;
 import com.myee.tarot.weixin.service.impl.OperationsManager;
 import com.myee.tarot.weixin.service.impl.RedisKeys;
@@ -187,11 +187,11 @@ public class WebMpController {
 
     private Map<String,Object> checkLatestDevelopments(String openId, Integer state) {
         //按openId和状态去数据库里查找
-        List<RWaitToken> myWt = wxService.selectTokensByOpenIdState(openId,state);
+        List<WxWaitToken> myWt = wxService.selectTokensByOpenIdState(openId,state);
         //如果找到了，说明是可以通过点击按钮方式直接查询
         Map<String,Object> msgMap = new HashMap<String,Object>();
         if (myWt != null && myWt.size() > 0) {
-            for (RWaitToken w : myWt) {
+            for (WxWaitToken w : myWt) {
                 msgMap = wxService.selectTokensByInfo(openId, w.getOrgID() ,w.getTableTypeId());
             }
         } else {

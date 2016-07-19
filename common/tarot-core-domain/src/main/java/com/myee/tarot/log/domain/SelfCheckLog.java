@@ -1,12 +1,14 @@
 package com.myee.tarot.log.domain;
 
 import com.myee.tarot.core.GenericEntity;
+import com.myee.tarot.merchant.domain.MerchantStore;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.xml.soap.Text;
 
 /**
@@ -27,11 +29,11 @@ public class SelfCheckLog extends GenericEntity<Long, SelfCheckLog> {
     @Column(name = "TIME")
     private Long time;
 
-    @NotEmpty
+    @NotNull
     @Column(name = "EVENT_LEVEL")
     private Integer eventLevel;
 
-    @NotEmpty
+    @NotNull
     @Column(name = "MODULE_ID")
     private Integer moduleId;
 
@@ -44,6 +46,16 @@ public class SelfCheckLog extends GenericEntity<Long, SelfCheckLog> {
     @Column(name = "DATA", length=20000)
     private String data;
 
+    @Column(name = "STORE_ID")
+    private Long storeId;
+
+    @Column(name = "BOARD_NO")
+    protected String boardNo;
+
+    @ManyToOne(targetEntity = MerchantStore.class)
+    @JoinColumn(name = "STORE_ID",referencedColumnName = "STORE_ID", nullable = true, insertable =false, updatable = false)
+    protected MerchantStore store;
+
     @ManyToOne(targetEntity = EventLevelLog.class)
     @JoinColumn(name = "EVENT_LEVEL",referencedColumnName = "EVENT", nullable = true, insertable =false, updatable = false)
     protected EventLevelLog eventLevelLog;
@@ -54,6 +66,17 @@ public class SelfCheckLog extends GenericEntity<Long, SelfCheckLog> {
             @JoinColumnOrFormula(column=@JoinColumn(name ="FUNCTION_ID", referencedColumnName ="FUNCTION_ID", nullable = true, insertable =false, updatable = false))
     })
     protected ModuleLog moduleLog;
+
+    public SelfCheckLog(){}
+
+    public SelfCheckLog(SelfCheckLogVO vo){
+        this.setTime(vo.getmTime());
+        this.setEventLevel(vo.getmEventLevel());
+        this.setFunctionId(vo.getmFunctionId());
+        this.setModuleId(vo.getmModuleId());
+        this.setData(vo.getmData().toString());
+        this.setLength(vo.getmLength());
+    }
 
     @Override
     public Long getId() {
@@ -111,6 +134,30 @@ public class SelfCheckLog extends GenericEntity<Long, SelfCheckLog> {
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    public Long getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(Long storeId) {
+        this.storeId = storeId;
+    }
+
+    public String getBoardNo() {
+        return boardNo;
+    }
+
+    public void setBoardNo(String boardNo) {
+        this.boardNo = boardNo;
+    }
+
+    public MerchantStore getStore() {
+        return store;
+    }
+
+    public void setStore(MerchantStore store) {
+        this.store = store;
     }
 
     public EventLevelLog getEventLevelLog() {
