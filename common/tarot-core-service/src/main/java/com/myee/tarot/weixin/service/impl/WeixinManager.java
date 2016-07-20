@@ -216,6 +216,7 @@ public class WeixinManager extends RedisOperation implements WeixinService {
         entity.setToken(waitToken.getToken());
         entity.setClientID(waitToken.getClientId());
         entity.setOrgID(waitToken.getShopId());
+        entity.setDinnerCount(waitToken.getDinnerCount());
         Date dt = new Date(date * 1000);
         entity.setTimeTook(dt);
         entity.setState(waitToken.getWaitStatus());
