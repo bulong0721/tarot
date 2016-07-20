@@ -6,9 +6,15 @@ import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
+import com.myee.tarot.log.dao.ModuleLogDao;
+import com.myee.tarot.log.domain.EventLevelLog;
+import com.myee.tarot.log.domain.ModuleLog;
 import com.myee.tarot.log.domain.SelfCheckLog;
+import com.myee.tarot.log.service.EventLevelLogService;
+import com.myee.tarot.log.service.ModuleLogService;
 import com.myee.tarot.log.service.SelfCheckLogService;
 import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.reference.domain.GeoZone;
 import com.myee.tarot.web.log.vo.SelfCheckLogRequest;
 import com.myee.tarot.web.util.DateTime;
 import com.myee.tarot.web.util.ExcelData;
@@ -29,6 +35,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +53,12 @@ public class SelfCheckLogController {
 
     @Autowired
     private SelfCheckLogService selfCheckLogService;
+
+    @Autowired
+    private EventLevelLogService eventLevelLogService;
+
+    @Autowired
+    private ModuleLogService moduleLogService;
 
     @RequestMapping(value = "services/uploadStructureData")
     @ResponseBody
@@ -135,9 +148,61 @@ public class SelfCheckLogController {
         entry.put("moduleName",selfCheckLog.getModuleLog().getModuleName());
         entry.put("functionName",selfCheckLog.getModuleLog().getFunctionName());
         entry.put("length",selfCheckLog.getLength());
-        entry.put("time",DateTime.toNormalDateTime(selfCheckLog.getTime()));
+        entry.put("time",selfCheckLog.getTime());
         return entry;
     }
 
+    @RequestMapping(value = "admin/selfCheckLog/listErrorLevel" , method = RequestMethod.GET)
+    @ResponseBody
+    public List getErrorLevelList() throws Exception {
+        List resp = new ArrayList();
+        try {
+            List<EventLevelLog> list = eventLevelLogService.getEventLevelList();
+            for (EventLevelLog eventLevelLog : list) {
+                Map entry = new HashMap();
+                entry.put("name",eventLevelLog.getLevel());
+                entry.put("value",eventLevelLog.getEvent());
+                resp.add(entry);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resp;
+    }
 
+    @RequestMapping(value = "admin/selfCheckLog/listModule" , method = RequestMethod.GET)
+    @ResponseBody
+    public List getListModule() throws Exception {
+        List resp = new ArrayList();
+        try {
+            List<ModuleLog> list = moduleLogService.getModuleList();
+            for (ModuleLog moduleLog : list) {
+                Map entry = new HashMap();
+                entry.put("name",moduleLog.getModuleName());
+                entry.put("value",moduleLog.getModuleId());
+                resp.add(entry);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "admin/selfCheckLog/listFunction" , method = RequestMethod.GET)
+    @ResponseBody
+    public List getListFuctionByModuleId(Integer moduleId) throws Exception {
+        List resp = new ArrayList();
+        try {
+            List<ModuleLog> list = moduleLogService.getFunctionListByModule(moduleId);
+            for (ModuleLog moduleLog : list) {
+                Map entry = new HashMap();
+                entry.put("name",moduleLog.getFunctionName());
+                entry.put("value",moduleLog.getFunctionId());
+                resp.add(entry);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resp;
+    }
 }

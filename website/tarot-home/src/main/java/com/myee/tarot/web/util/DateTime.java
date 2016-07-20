@@ -100,4 +100,10 @@ public class DateTime {
 		return null;
 	}
 
+	/*public static void main(String[] args) {
+		Long dateStr = new Date().getTime()*1000;
+		Date d = toDate(dateStr);
+		System.out.println(DateFormatUtils.format(d, PATTERN_DATETIME));
+	}*/
+
 }
