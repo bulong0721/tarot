@@ -11,7 +11,6 @@ import com.myee.tarot.log.domain.SelfCheckLog;
 import com.myee.tarot.log.service.EventLevelLogService;
 import com.myee.tarot.log.service.ModuleLogService;
 import com.myee.tarot.log.service.SelfCheckLogService;
-import com.myee.tarot.log.vo.SelfCheckLogRequest;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.web.util.DateTime;
