@@ -5,7 +5,7 @@ import com.myee.tarot.admin.service.AdminUserService;
 import com.myee.tarot.admin.service.RoleService;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
-import com.myee.tarot.reference.domain.Role;
+import com.myee.tarot.profile.domain.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

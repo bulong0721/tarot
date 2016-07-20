@@ -11,7 +11,7 @@
 
     <!-- JDBC CustomerService details -->
     <beans:bean id="customerDetailsService"
-                class="com.myee.tarot.profile.service.CustomerDetailsServiceImpl">
+                class="com.myee.tarot.customer.service.CustomerDetailsServiceImpl">
     </beans:bean>
 
     <!-- JDBC User details -->

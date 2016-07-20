@@ -3,7 +3,7 @@ package com.myee.tarot.admin.service.impl;
 import com.myee.tarot.admin.dao.RoleDao;
 import com.myee.tarot.admin.service.RoleService;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
-import com.myee.tarot.reference.domain.Role;
+import com.myee.tarot.profile.domain.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

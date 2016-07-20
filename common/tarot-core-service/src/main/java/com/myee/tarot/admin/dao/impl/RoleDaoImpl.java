@@ -2,7 +2,7 @@ package com.myee.tarot.admin.dao.impl;
 
 import com.myee.tarot.admin.dao.RoleDao;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
-import com.myee.tarot.reference.domain.Role;
+import com.myee.tarot.profile.domain.Role;
 import org.springframework.stereotype.Repository;
 
 /**

@@ -1,8 +1,8 @@
 package com.myee.tarot.web.admin.controller.address;
 
-import com.myee.tarot.address.service.GeoZoneService;
+import com.myee.tarot.profile.service.GeoZoneService;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
-import com.myee.tarot.reference.domain.GeoZone;
+import com.myee.tarot.profile.domain.GeoZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

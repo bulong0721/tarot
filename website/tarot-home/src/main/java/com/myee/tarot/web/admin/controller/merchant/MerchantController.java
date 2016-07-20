@@ -2,8 +2,7 @@ package com.myee.tarot.web.admin.controller.merchant;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
-import com.myee.tarot.address.service.GeoZoneService;
-import com.myee.tarot.admin.domain.AdminUser;
+import com.myee.tarot.profile.service.GeoZoneService;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
@@ -14,29 +13,19 @@ import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantService;
 import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.merchant.type.BusinessType;
-import com.myee.tarot.merchant.view.MerchantStoreView;
 import com.myee.tarot.pricedraw.domain.SaleCorpMerchant;
 import com.myee.tarot.pricedraw.service.SaleCorpMerchantService;
-import com.myee.tarot.reference.domain.Address;
-import com.myee.tarot.reference.domain.GeoZone;
-import com.myee.tarot.web.util.DateUtil;
+import com.myee.tarot.profile.domain.Address;
+import com.myee.tarot.profile.domain.GeoZone;
 import com.myee.tarot.web.util.StringUtil;
 import me.chanjar.weixin.common.util.StringUtils;
-import org.hibernate.criterion.Expression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.ParseException;
 import java.util.*;
 
 /**
