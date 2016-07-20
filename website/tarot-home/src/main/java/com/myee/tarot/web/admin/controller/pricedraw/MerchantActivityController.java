@@ -2,10 +2,11 @@ package com.myee.tarot.web.admin.controller.pricedraw;
 
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
+import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.pricedraw.domain.MerchantActivity;
 import com.myee.tarot.pricedraw.domain.MerchantPrice;
 import com.myee.tarot.pricedraw.service.MerchantActivityService;
-import com.myee.tarot.pricedraw.service.MerchantPriceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.util.List;
  * Created by Administrator on 2016/7/11.
  */
 @Controller
+@RequestMapping(value = "api")
 public class MerchantActivityController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MerchantActivity.class);
@@ -25,7 +27,7 @@ public class MerchantActivityController {
     @Autowired
     private MerchantActivityService merchantActivityService;
     @Autowired
-    private MerchantPriceService merchantPriceService;
+    private MerchantStoreService merchantStoreService;
 
     /**
      * 添加个新的奖券活动
@@ -37,9 +39,18 @@ public class MerchantActivityController {
     public AjaxResponse saveActivity(@RequestBody MerchantActivity merchantActivity){
         try {
             AjaxResponse resp = new AjaxResponse();
+            if(merchantActivity.getStore()==null|| merchantActivity.getStore().getId()==null){
+                resp.setErrorString("发起商户的ID不能为空");
+                resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                return resp;
+            }
+            List<MerchantPrice> activities = merchantActivity.getPrices();
+            for (MerchantPrice activity : activities) {
+                activity.setActivity(merchantActivity);
+            }
             MerchantActivity activity = merchantActivityService.update(merchantActivity);
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
-            resp.addEntry("result",activity);
+            resp.addEntry("result", activity);
             return resp;
         } catch (ServiceException e){
             e.printStackTrace();
@@ -80,6 +91,29 @@ public class MerchantActivityController {
             List<MerchantActivity> result = merchantActivityService.findStoreActivity(storeId);
             response.addEntry("result", result);
             return response;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResponse.failed(-1);
+    }
+
+    /**
+     * 修改商户激活的活动
+     * @param storeId
+     * @param activityId
+     * @return
+     */
+    @RequestMapping(value = "activity/openActivity",method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse openActivity(@RequestParam("storeId")Long storeId,@RequestParam("activityId")Long activityId){
+        try {
+            AjaxResponse resp = new AjaxResponse();
+            MerchantStore store = merchantStoreService.findById(storeId);
+            store.setActivityId(activityId);
+            MerchantStore activeStore = merchantStoreService.update(store);
+            resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
+            resp.addEntry("result",activeStore);
+            return resp;
         } catch (Exception e) {
             e.printStackTrace();
         }

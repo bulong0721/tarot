@@ -28,6 +28,7 @@ import java.util.List;
  * Created by Administrator on 2016/7/11.
  */
 @Controller
+@RequestMapping(value = "api")
 public class SaleCorpMerchantController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SaleCorpMerchant.class);

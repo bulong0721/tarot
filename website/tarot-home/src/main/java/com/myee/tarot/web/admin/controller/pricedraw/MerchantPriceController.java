@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * Created by Administrator on 2016/7/11.
  */
 @Controller
+@RequestMapping(value ="api")
 public class MerchantPriceController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MerchantPrice.class);
@@ -31,10 +32,15 @@ public class MerchantPriceController {
     private AjaxResponse priceSave(@RequestBody MerchantPrice merchantPrice){
         try {
             AjaxResponse resp = new AjaxResponse();
+            if(merchantPrice.getActivity()==null|| merchantPrice.getActivity().getId()==null){
+                resp.setErrorString("添加活动ID不能为空");
+                resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                return resp;
+            }
             MerchantPrice price = merchantPriceService.update(merchantPrice);
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
             resp.addEntry("result",price);
-            return AjaxResponse.success();
+            return resp;
         } catch (ServiceException e) {
             e.printStackTrace();
         }

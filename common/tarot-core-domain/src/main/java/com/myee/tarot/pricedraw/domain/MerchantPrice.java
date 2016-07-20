@@ -40,10 +40,21 @@ public class MerchantPrice extends GenericEntity<Long, MerchantPrice>{
     @Column(name= "END_DATE")
     private Date endDate; //奖券有效结束日期
 
+    @Column(name= "TOTAL")
+    private Integer total; //奖券数量
+
     @ManyToOne(targetEntity = MerchantActivity.class, optional = false, cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn(name= "ACTIVITY_ID")
     @JSONField(serialize = false)
     private MerchantActivity activity; //关联活动
+
+    public Integer getTotal() {
+        return total;
+    }
+
+    public void setTotal(Integer total) {
+        this.total = total;
+    }
 
     public String getName() {
         return name;

@@ -22,8 +22,6 @@ public class PriceInfo extends GenericEntity<Long, PriceInfo>{
     @Column(name = "STATUS")
     private Integer status; // 0.已使用 1.未使用 2.过期
 
-
-
     @ManyToOne(targetEntity = MerchantPrice.class, optional = false, cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn(name = "PRICE_ID")
     private MerchantPrice price;  //获取对应的奖项

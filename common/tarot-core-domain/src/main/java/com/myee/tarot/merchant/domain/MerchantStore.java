@@ -2,6 +2,7 @@ package com.myee.tarot.merchant.domain;
 
 import com.google.common.collect.Lists;
 import com.myee.tarot.core.GenericEntity;
+import com.myee.tarot.pricedraw.domain.MerchantActivity;
 import com.myee.tarot.reference.domain.Address;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -74,6 +75,20 @@ public class MerchantStore extends GenericEntity<Long, MerchantStore> {
     @ManyToOne(targetEntity = Merchant.class, optional = false, cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn(name = "MERCHANT_ID",referencedColumnName = "MERCHANT_ID")
     protected Merchant merchant;
+
+
+
+    //每个门店所激活的活动ID
+    @Column(name="ACTIVE_ACTIVITY_ID")
+    private Long activityId;
+
+    public Long getActivityId() {
+        return activityId;
+    }
+
+    public void setActivityId(Long activityId) {
+        this.activityId = activityId;
+    }
 
     @Override
     public Long getId() {
