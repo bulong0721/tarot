@@ -55,7 +55,7 @@ public class WxWaitToken extends GenericEntity<Long, WxWaitToken> {
     private Date created;
     @Column(name = "CREATED_BY")
     private Long createdBy;
-    @Column(name = "dinner_count")
+    @Column(name = "DINNER_COUNT")
     private int dinnerCount;
 
     public Long getTableTypeId() {
