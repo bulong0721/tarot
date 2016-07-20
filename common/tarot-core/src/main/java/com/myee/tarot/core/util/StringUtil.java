@@ -1,5 +1,7 @@
 package com.myee.tarot.core.util;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.ByteArrayInputStream;
@@ -7,6 +9,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedInputStream;
 
@@ -111,5 +116,16 @@ public class StringUtil {
      */
     public static boolean isBlank(String text) {
         return (null == text || text.length() == 0);
+    }
+
+    /**
+     * String转Map
+     * @param mapString
+     * @return
+     */
+    public static Map transStringToMap(String mapString){
+        JSONObject jasonObject = JSON.parseObject(mapString);
+        Map map = (Map)jasonObject;
+        return map;
     }
 }

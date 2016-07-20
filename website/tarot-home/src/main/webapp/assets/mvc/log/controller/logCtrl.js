@@ -11,8 +11,28 @@ angular.module('myee', [])
 logListCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables', 'cfromly', 'NgTableParams', '$q'];
 function logListCtrl($scope, $resource, Constants, cTables, cfromly, NgTableParams, $q) {
 
-    $scope.moduleChange = function(moduleName) {
-        $resource('../admin/selfCheckLog/listFunction').query({moduleId:moduleName.value},{},function success(resp){
+    //$scope.searchAdvanced = function(eventLevel,moduleObject,functionObject) {
+    //    var selfCheckLogRequest = {
+    //        functionId:functionObject.value,
+    //        moduleId:moduleObject.value,
+    //        eventLevel:eventLevel.value
+    //    }
+    //    $resource('../admin/selfCheckLog/paging').query(
+    //        {
+    //            selfCheckLogRequest: selfCheckLogRequest
+    //        },
+    //        {},
+    //        function success(resp){
+    //        var length = resp.length;
+    //        $scope.functionNames.splice(0, $scope.functionNames.length);
+    //        for (var j = 0; j < length; j++) {
+    //            $scope.functionNames.push({name: resp[j].name, value: resp[j].value});
+    //        }
+    //    });
+    //};
+
+    $scope.moduleChange = function($viewValue) {
+        $resource('../admin/selfCheckLog/listFunction').query({moduleId:$viewValue.value},{},function success(resp){
             var length = resp.length;
             $scope.functionNames.splice(0, $scope.functionNames.length);
             for (var j = 0; j < length; j++) {
@@ -21,8 +41,31 @@ function logListCtrl($scope, $resource, Constants, cTables, cfromly, NgTablePara
         });
     };
 
+    var vm = this;
     var mgrData = {
         fields: [
+            /*{
+                key: 'selfCheckLogRequest.eventLevel',
+                type: 'c_select',
+                className:'c_select',
+                templateOptions: {label: '等级:', options: $scope.errorLevels},
+            },
+            {
+                key: 'selfCheckLogRequest.moduleId',
+                type: 'c_select',
+                className:'c_select',
+                templateOptions: {label: '模块:', options: $scope.moduleNames},
+                expressionProperties: {
+                    value/!*这个名字配置没用，市和区变化仍然会触发*!/: function ($viewValue, $modelValue, scope) {
+                    }
+                }
+            },
+            {
+                key: 'selfCheckLogRequest.functionId',
+                type: 'c_select',
+                className:'c_select',
+                templateOptions: {label: '功能:', options: $scope.functionNames}
+            }*/
         ],
         api: {
             read: '../admin/selfCheckLog/paging',

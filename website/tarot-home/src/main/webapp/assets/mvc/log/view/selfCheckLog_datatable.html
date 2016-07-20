@@ -2,28 +2,27 @@
 <div class="alert alert-info">
     <div class="form-inline">
         <div class="form-group">
-            等级:&nbsp;&nbsp; <select ng-model="errorLevel" ng-options="c.name for c in errorLevels" class="form-control" style="width:200px;">
+            等级:&nbsp;&nbsp; <select ng-model="where.eventLevel" ng-options="c.name for c in errorLevels" class="form-control" style="width:200px;">
             <option value="" ng-show="errorLevels">全部</option>
         </select>
 
-            &nbsp;&nbsp;模块:&nbsp;&nbsp; <select ng-model="moduleName" ng-options="c.name for c in moduleNames" ng-change="moduleChange(moduleName)" class="form-control" style="width:200px;">
+            &nbsp;&nbsp;模块:&nbsp;&nbsp; <select ng-model="where.moduleObject" ng-options="c.name for c in moduleNames" ng-change="moduleChange(where.moduleObject)" class="form-control" style="width:200px;">
                 <option value="" ng-show="moduleNames">全部</option>
         </select>
 
             &nbsp;&nbsp;功能:&nbsp;&nbsp;
-            <select ng-model="functionName" ng-options="c.name for c in functionNames" class="form-control" style="width:200px;">
+            <select ng-model="where.functionObject" ng-options="c.name for c in functionNames" class="form-control" style="width:200px;">
                 <option value="" ng-show="functionNames">全部</option>
             </select>
 
-            <!-- formly的写法
-            <formly-form model="formData.model" fields="formData.fields" form="formData.form" options="formData.options">
+             <!--formly的写法-->
+            <!--<formly-form model="formData.model" fields="formData.fields" form="formData.form" options="formData.options">
                 <div class="text-center col-xs-8">
                 </div>
-            </formly-form>
-            -->
+            </formly-form>-->
+            <button class="btn btn-sm btn-danger m-l" type="button" ng-click="search()"><i
+                    class="fa fa-search"></i><span class="bold">搜索</span></button>
         </div>
-        <button class="btn btn-sm btn-danger m-l" type="button" ng-click="search()"><i
-                class="fa fa-search"></i><span class="bold">搜索</span></button>
     </div>
 </div>
 <div class="space-6"></div>

@@ -3,19 +3,17 @@ package com.myee.tarot.web.log.controller;
 import com.myee.djinn.dto.ResponseData;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
-import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
-import com.myee.tarot.log.dao.ModuleLogDao;
 import com.myee.tarot.log.domain.EventLevelLog;
 import com.myee.tarot.log.domain.ModuleLog;
 import com.myee.tarot.log.domain.SelfCheckLog;
 import com.myee.tarot.log.service.EventLevelLogService;
 import com.myee.tarot.log.service.ModuleLogService;
 import com.myee.tarot.log.service.SelfCheckLogService;
+import com.myee.tarot.log.vo.SelfCheckLogRequest;
 import com.myee.tarot.merchant.domain.MerchantStore;
-import com.myee.tarot.reference.domain.GeoZone;
-import com.myee.tarot.web.log.vo.SelfCheckLogRequest;
+import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.web.util.DateTime;
 import com.myee.tarot.web.util.ExcelData;
 import com.myee.tarot.web.util.ObjectExcelRead;
@@ -26,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -119,7 +116,7 @@ public class SelfCheckLogController {
 
     @RequestMapping(value = "admin/selfCheckLog/paging", method = RequestMethod.GET)
     @ResponseBody
-    public AjaxPageableResponse getSelfCheckLogList(Model model, HttpServletRequest request, PageRequest selfCheckLogRequest) {
+    public AjaxPageableResponse getSelfCheckLogList(HttpServletRequest request, WhereRequest whereRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
             if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
@@ -127,7 +124,7 @@ public class SelfCheckLogController {
                 return resp;
             }
             MerchantStore merchantStore = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
-            PageResult<SelfCheckLog> pageResult = selfCheckLogService.pageAll(selfCheckLogRequest);
+            PageResult<SelfCheckLog> pageResult = selfCheckLogService.pageAll(whereRequest);
             List<SelfCheckLog> selfCheckLogList = pageResult.getList();
             for (SelfCheckLog deviceUsed : selfCheckLogList) {
                 resp.addDataEntry(objectToEntry(deviceUsed));
