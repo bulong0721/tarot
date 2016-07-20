@@ -190,7 +190,7 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
             }
         });
 
-        $resource('/sale/corp/bindShop').save({
+        $resource('/api/sale/corp/bindShop').save({
             'bindString': JSON.stringify(result),
             'merchantId': $scope.formBindData.model.id
         }, {}, function (respSucc) {
