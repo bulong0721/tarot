@@ -9,6 +9,8 @@ import com.myee.djinn.dto.WaitToken;
 import com.myee.djinn.dto.WaitTokenState;
 import com.myee.djinn.server.operations.OperationsService;
 import com.myee.tarot.catalog.domain.DeviceUsed;
+import com.myee.tarot.catering.domain.TableType;
+import com.myee.tarot.catering.service.TableTypeService;
 import com.myee.tarot.device.service.DeviceUsedService;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.weixin.dao.WxWaitTokenDao;
@@ -61,6 +63,9 @@ public class OperationsManager extends RedisOperation implements OperationsServi
 
     @Autowired
     private DeviceUsedService deviceUsedService;
+
+    @Autowired
+    private TableTypeService tableTypeService;
 
     /*
      * 小女生取号
@@ -420,9 +425,16 @@ public class OperationsManager extends RedisOperation implements OperationsServi
     public ResponseData getShopInfo(String mainBoardCode) {
         DeviceUsed deviceUsed = deviceUsedService.getStoreInfoByMbCode(mainBoardCode);
         MerchantStore merchantStore = deviceUsed.getStore();
+        List<TableType> tableTypeList = tableTypeService.listByStore(merchantStore.getId());
+        for(TableType tableType:tableTypeList){
+            tableType.setStore(null);
+        }
         ResponseData result = null;
+        Map<String, Object> map = new HashMap<String,Object>();
         if (merchantStore != null) {
-            result = ResponseData.successData(JSON.toJSONString(merchantStore));
+            map.put("shopInfo",merchantStore);
+            map.put("tableType",tableTypeList);
+            result = ResponseData.successData(JSON.toJSONString(map));
         } else {
             result = ResponseData.errorData("error");
         }
