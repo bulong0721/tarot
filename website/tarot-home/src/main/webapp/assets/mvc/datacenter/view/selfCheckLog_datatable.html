@@ -1,0 +1,55 @@
+<div class="space-6"></div>
+<div></div>
+<div class="alert alert-info">
+    <div class="form-inline">
+        <div class="form-group">
+            等级:&nbsp;&nbsp; <select ng-model="where.eventLevel" ng-options="c.name for c in errorLevels" class="form-control" style="width:200px;">
+            <option value="" ng-show="errorLevels">全部</option>
+        </select>
+
+            &nbsp;&nbsp;模块:&nbsp;&nbsp; <select ng-model="where.moduleObject" ng-options="c.name for c in moduleNames" ng-change="moduleChange(where.moduleObject)" class="form-control" style="width:200px;">
+                <option value="" ng-show="moduleNames">全部</option>
+        </select>
+
+            &nbsp;&nbsp;功能:&nbsp;&nbsp;
+            <select ng-model="where.functionObject" ng-options="c.name for c in functionNames" class="form-control" style="width:200px;">
+                <option value="" ng-show="functionNames">全部</option>
+            </select>
+
+            <button class="btn btn-sm btn-danger m-l" type="button" ng-click="search()"><i
+                    class="fa fa-search"></i><span class="bold">搜索</span></button>
+        </div>
+    </div>
+</div>
+<div class="space-6"></div>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="ibox float-e-margins">
+            <table id="example" ng-table="tableOpts" class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th width="10%" class="center">事件模块名称</th>
+                    <th width="15%" class="center">事件功能名称</th>
+                    <th width="20%" class="center">事件数据</th>
+                    <th width="20%" class="center">事件数据长度</th>
+                    <th width="10%" class="center">事件发生的时间</th>
+                    <th width="15%" class="center">事件等级</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td colspan="7" class="center" ng-if="$data.length<=0">没有查找到数据</td>
+                </tr>
+                <tr ng-repeat="row in $data">
+                    <td>{{::row.moduleName}}</td>
+                    <td>{{::row.functionName}}</td>
+                    <td>{{::row.data}}</td>
+                    <td>{{::row.length}}</td>
+                    <td>{{::row.time}}</td>
+                    <td>{{::row.level}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
