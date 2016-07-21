@@ -95,13 +95,13 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
         JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
         query.from(qrWaitToken);
         if (orgId != null) {
-            query.where(qrWaitToken.orgID.eq(orgId));
+            query.where(qrWaitToken.merchantStoreId.eq(orgId));
         }
         if(tableTypeId != null) {
             query.where(qrWaitToken.tableTypeId.eq(tableTypeId));
         }
         if(clientId != null) {
-            query.where(qrWaitToken.clientID.eq(clientId));
+            query.where(qrWaitToken.merchantId.eq(clientId));
         }
         if(state != null) {
             query.where(qrWaitToken.state.eq(state));
@@ -116,13 +116,13 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
         JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
         query.from(qrWaitToken);
         if (orgId != null) {
-            query.where(qrWaitToken.orgID.eq(orgId));
+            query.where(qrWaitToken.merchantStoreId.eq(orgId));
         }
         if(tableTypeId != null) {
             query.where(qrWaitToken.tableTypeId.eq(tableTypeId));
         }
         if(clientId != null) {
-            query.where(qrWaitToken.clientID.eq(clientId));
+            query.where(qrWaitToken.merchantId.eq(clientId));
         }
         if(state != null) {
             query.where(qrWaitToken.state.eq(state));
@@ -183,10 +183,10 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
         JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
         query.from(qrWaitToken);
         if(rWaitToken.getMerchantStoreId() != null){
-            query.where(qrWaitToken.orgID.eq(rWaitToken.getMerchantStoreId()));
+            query.where(qrWaitToken.merchantStoreId.eq(rWaitToken.getMerchantStoreId()));
         }
         if(rWaitToken.getMerchantId() != null){
-            query.where(qrWaitToken.clientID.eq(rWaitToken.getMerchantId()));
+            query.where(qrWaitToken.merchantId.eq(rWaitToken.getMerchantId()));
         }
         if(rWaitToken.getToken() != null){
             query.where(qrWaitToken.token.eq(rWaitToken.getToken()));
