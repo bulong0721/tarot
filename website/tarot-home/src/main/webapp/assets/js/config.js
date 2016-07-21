@@ -250,8 +250,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'logListCtrl',
             data: {
-                pageTitle: '日志管理',
-                subTitle: '日志列表',
+                pageTitle: '数据中心',
+                subTitle: '自检日志',
                 datatable: 'assets/mvc/log/view/selfCheckLog_datatable.html',
             },
             resolve: {
