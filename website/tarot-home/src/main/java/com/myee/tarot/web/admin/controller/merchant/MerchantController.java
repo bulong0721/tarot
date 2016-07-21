@@ -2,7 +2,6 @@ package com.myee.tarot.web.admin.controller.merchant;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
-import com.myee.tarot.address.service.GeoZoneService;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
@@ -15,8 +14,9 @@ import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.merchant.type.BusinessType;
 import com.myee.tarot.campaign.domain.SaleCorpMerchant;
 import com.myee.tarot.campaign.service.SaleCorpMerchantService;
-import com.myee.tarot.reference.domain.Address;
-import com.myee.tarot.reference.domain.GeoZone;
+import com.myee.tarot.profile.domain.Address;
+import com.myee.tarot.profile.domain.GeoZone;
+import com.myee.tarot.profile.service.GeoZoneService;
 import com.myee.tarot.web.util.StringUtil;
 import me.chanjar.weixin.common.util.StringUtils;
 import org.slf4j.Logger;
@@ -36,11 +36,11 @@ public class MerchantController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MerchantController.class);
 
     @Autowired
-    private MerchantService merchantService;
+    private MerchantService         merchantService;
     @Autowired
-    private MerchantStoreService merchantStoreService;
+    private MerchantStoreService    merchantStoreService;
     @Autowired
-    private GeoZoneService geoZoneService;
+    private GeoZoneService          geoZoneService;
     @Autowired
     private SaleCorpMerchantService saleCorpMerchantService;
 
@@ -62,7 +62,7 @@ public class MerchantController {
             }
             Merchant merchant1 = merchantService.update(merchant);//新建或更新
 
-            Long counts = merchantStoreService.getCountById( merchant1.getId(),null);
+            Long counts = merchantStoreService.getCountById(merchant1.getId(), null);
             if (counts == 0) {
                 //新建商户后，如果商户下没有门店自动新建一个默认店铺
                 MerchantStore merchantStore = new MerchantStore();
