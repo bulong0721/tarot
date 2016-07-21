@@ -260,26 +260,26 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 }
             }
         })
-        .state('selfLogCheck', {
+        .state('dataCenter', {
             abstract: true,
-            url: "/selfLogCheck",
+            url: "/dataCenter",
             template: "<div ui-view></div>",
             resolve: {
                 loadPlugin: managerLoader
             }
         })
-        .state('selfLogCheck.logList', {
-            url: "/log",
+        .state('dataCenter.selfCheckLog', {
+            url: "/selfCheckLog",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'logListCtrl',
             data: {
                 pageTitle: '数据中心',
                 subTitle: '自检日志',
-                datatable: 'assets/mvc/log/view/selfCheckLog_datatable.html',
+                datatable: 'assets/mvc/datacenter/view/selfCheckLog_datatable.html',
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
-                    return ctrlManagerLoader($ocLazyLoad, 'log', 'logCtrl.js');
+                    return ctrlManagerLoader($ocLazyLoad, 'datacenter', 'logCtrl.js');
                 }
             }
         })
