@@ -1,11 +1,11 @@
 angular.module('myee', [])
-    .controller('merchantCtrl', merchantCtrl);
+    .controller('campaignCtrl', campaignCtrl);
 
 /**
  * merchantCtrl - controller
  */
-merchantCtrl.$inject = ['$scope', 'Constants','cTables','cfromly'];
-function merchantCtrl($scope, Constants,cTables,cfromly) {
+campaignCtrl.$inject = ['$scope', 'Constants','cTables','cfromly'];
+function campaignCtrl($scope, Constants,cTables,cfromly) {
     var mgrData = {
         fields: [
             {
@@ -43,9 +43,14 @@ function merchantCtrl($scope, Constants,cTables,cfromly) {
             }
         ],
         api: {
-            read: '../admin/merchant/paging',
-            update: '../admin/merchant/save'
+            read: '../api/info/findHistoryInfoByStoreToday',
+            //update: '../admin/merchant/save'
         }
     };
     cTables.initNgMgrCtrl(mgrData, $scope);
+
+    $scope.checkCode = function() {
+        $scope.loadByInit = true;
+        $scope.tableOpts.reload();
+    }
 }

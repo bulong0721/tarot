@@ -35,6 +35,9 @@ public class PriceInfoDaoImpl extends GenericEntityDaoImpl<Long, PriceInfo> impl
         PageResult<PriceInfo> pageList = new PageResult<PriceInfo>();
         QPriceInfo qPriceInfo = QPriceInfo.priceInfo;
         JPQLQuery<PriceInfo> query = new JPAQuery(getEntityManager());
+        if(StringUtils.isNotBlank(pageRequest.getQueryName())){
+            query.where(qPriceInfo.checkCode.like("%" + pageRequest.getQueryName() + "%"));
+        }
         query.from(qPriceInfo).where(qPriceInfo.status.eq(Constants.PRICEINFO_USED).and(qPriceInfo.price.store.id.eq(storeId))).orderBy(qPriceInfo.checkDate.desc());
         pageList.setRecordsTotal(query.fetchCount());
         if( pageRequest.getCount() > 0){

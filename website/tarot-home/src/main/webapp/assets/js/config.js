@@ -98,6 +98,29 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 }
             }
         })
+        .state('campaign', {
+            abstract: true,
+            url: "/campaign",
+            template: "<div ui-view></div>",
+            resolve: {
+                loadPlugin: managerLoader
+            }
+        })
+        .state('campaign.priceCheck', {
+            url: "/priceCheck",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'campaignCtrl',
+            data: {
+                pageTitle: '活动管理',
+                subTitle: '抽奖管理',
+                datatable: 'assets/mvc/campaign/view/priceCheck_datatable.html',
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'campaign', 'campaignCtrl.js');
+                }
+            }
+        })
         .state('device', {
             abstract: true,
             url: "/device",
@@ -245,7 +268,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 loadPlugin: managerLoader
             }
         })
-        .state('selfLogCheck.logList', {
+        .state('campaign.logList', {
             url: "/log",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'logListCtrl',
