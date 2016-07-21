@@ -14,14 +14,14 @@
     <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
 
     <!-- Bootstrap and Fonts -->
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/plugins/bootstrap/bootstrap.min.css" rel="stylesheet">
 
     <!-- ngTable css -->
-    <link href="assets/js/plugins/ng-table/ng-table.css" rel="stylesheet">
+    <link href="assets/plugins/ng-table/ng-table.css" rel="stylesheet">
 
     <!-- Main Inspinia CSS files -->
-    <link href="assets/css/animate.css" rel="stylesheet">
-    <link id="loadBefore" href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/plugins/animate.css" rel="stylesheet">
+    <link href="assets/plugins/style.css" rel="stylesheet">
 </head>
 
 <!-- ControllerAs syntax -->
@@ -41,38 +41,38 @@
 </div>
 
 <!-- jQuery and Bootstrap -->
-<script src="assets/js/jquery/jquery-2.1.1.min.js"></script>
-<script src="assets/js/plugins/jquery-ui/jquery-ui.js"></script>
-<script src="assets/js/bootstrap/bootstrap.min.js"></script>
+<script src="assets/plugins/jquery/jquery-2.1.1.min.js"></script>
+<script src="assets/plugins/jquery-ui/jquery-ui.js"></script>
+<script src="assets/plugins/bootstrap/bootstrap.min.js"></script>
 
 <!-- MetsiMenu -->
-<script src="assets/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="assets/plugins/metisMenu/jquery.metisMenu.js"></script>
 
 <!-- SlimScroll -->
-<script src="assets/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
 
 <!-- Peace JS -->
-<script src="assets/js/plugins/pace/pace.min.js"></script>
+<script src="assets/plugins/pace/pace.min.js"></script>
 
 <!-- Custom and plugin javascript -->
-<script src="assets/js/inspinia.js"></script>
+<script src="assets/mvc/inspinia.js"></script>
 
 <!-- Main Angular scripts-->
-<script src="assets/js/angular/angular.min.js"></script>
-<script src="assets/js/angular/angular-sanitize.js"></script>
-<script src="assets/js/plugins/oclazyload/dist/ocLazyLoad.min.js"></script>
-<script src="assets/js/ui-router/angular-ui-router.min.js"></script>
-<script src="assets/js/angular/angular-resource.min.js"></script>
-<script src="assets/js/bootstrap/ui-bootstrap-tpls-1.1.2.min.js"></script>
-<script src="assets/js/plugins/ng-table/ng-table.js"></script>
+<script src="assets/plugins/angular/angular.min.js"></script>
+<script src="assets/plugins/angular/angular-sanitize.min.js"></script>
+<script src="assets/plugins/angular/angular-resource.min.js"></script>
+<script src="assets/plugins/oclazyload/ocLazyLoad.min.js"></script>
+<script src="assets/plugins/ui-router/angular-ui-router.min.js"></script>
+<script src="assets/plugins/bootstrap/ui-bootstrap-tpls-2.0.0.min.js"></script>
+<script src="assets/plugins/ng-table/ng-table.js"></script>
 
 <!-- Anglar App Script -->
-<script src="assets/js/app.js"></script>
-<script src="assets/js/config.js"></script>
-<script src="assets/js/directives.js"></script>
-<script src="assets/js/services.js"></script>
-<script src="assets/js/controllers.js"></script>
-<script src="assets/js/filters.js"></script>
+<script src="assets/mvc/app.js"></script>
+<script src="assets/mvc/config.js"></script>
+<script src="assets/mvc/directives.js"></script>
+<script src="assets/mvc/services.js"></script>
+<script src="assets/mvc/controllers.js"></script>
+<script src="assets/mvc/filters.js"></script>
 
 </body>
 </html>

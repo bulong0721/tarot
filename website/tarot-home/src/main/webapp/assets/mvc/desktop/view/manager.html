@@ -1,8 +1,8 @@
-<uib-tabset type="bareheaded">
-    <uib-tab heading="table" active="showDataTable">
+<uib-tabset type="bareheaded" active="activeTab">
+    <uib-tab heading="table" index="0">
         <div ng-include="$state.current.data.datatable"/>
     </uib-tab>
-    <uib-tab heading="editor" active="showEditor">
+    <uib-tab heading="editor" index="1">
         <div ng-include="$state.current.data.editor || 'assets/mvc/desktop/view/basic_editor.html'"/>
     </uib-tab>
 </uib-tabset>
