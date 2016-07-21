@@ -16,7 +16,6 @@ import com.myee.tarot.weixin.dao.WFeedBackDao;
 import com.myee.tarot.weixin.dao.WxWaitTokenDao;
 import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.myee.tarot.weixin.domain.WFeedBack;
-import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.myee.tarot.weixin.service.WeixinService;
 import com.myee.tarot.weixin.util.TimeUtil;
 import org.apache.commons.codec.binary.Base64;
@@ -215,8 +214,8 @@ public class WeixinManager extends RedisOperation implements WeixinService {
         entity.setIdentityCode(waitToken.getIdentityCode());
         entity.setOpenId(waitToken.getOpenId());
         entity.setToken(waitToken.getToken());
-        entity.setClientID(waitToken.getClientId());
-        entity.setOrgID(waitToken.getShopId());
+        entity.setMerchantId(waitToken.getClientId());
+        entity.setMerchantStoreId(waitToken.getShopId());
         entity.setDinnerCount(waitToken.getDinnerCount());
         Date dt = new Date(date * 1000);
         entity.setTimeTook(dt);
@@ -363,7 +362,7 @@ public class WeixinManager extends RedisOperation implements WeixinService {
             WxWaitToken wtoken = waitTokenDao.selectTokenByIc(identityCode,bTimeLong,eTimeLong);
             if (wtoken != null) {
                 //根据clientId和orgId和tableId，找到该餐馆的某餐桌类型等待的token
-                List<WxWaitToken> tokenList = waitTokenDao.selectAllTokenByInfo(wtoken.getClientID(), wtoken.getOrgID(), wtoken.getTableId(), WaitTokenState.WAITING.getValue());
+                List<WxWaitToken> tokenList = waitTokenDao.selectAllTokenByInfo(wtoken.getMerchantId(), wtoken.getMerchantStoreId(), wtoken.getTableId(), WaitTokenState.WAITING.getValue());
                 List<WxWaitToken> sortedTokens = orderingByTook2.sortedCopy(tokenList);
                 for (WxWaitToken wt : sortedTokens) {
                     if (!wt.getIdentityCode().equals(identityCode)) {

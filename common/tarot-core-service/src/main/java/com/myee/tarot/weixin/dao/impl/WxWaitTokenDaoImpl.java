@@ -2,7 +2,6 @@ package com.myee.tarot.weixin.dao.impl;
 
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.weixin.dao.WxWaitTokenDao;
-import com.myee.tarot.weixin.dao.WxWaitTokenDao;
 import com.myee.tarot.weixin.domain.QWxWaitToken;
 import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.querydsl.jpa.JPQLQuery;
@@ -25,8 +24,8 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
     @Override
     public Integer updateState(Integer state, Long orgId, Long clientId, String token, Long timeTook, Long updateTime) {
         WxWaitToken rWaitToken = new WxWaitToken();
-        rWaitToken.setOrgID(orgId);
-        rWaitToken.setClientID(clientId);
+        rWaitToken.setMerchantStoreId(orgId);
+        rWaitToken.setMerchantId(clientId);
         rWaitToken.setToken(token);
         rWaitToken.setTimeTook(new Date(timeTook));
         rWaitToken = getWaitTokenByProp(rWaitToken);
@@ -183,11 +182,11 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
         QWxWaitToken qrWaitToken = QWxWaitToken.wxWaitToken;
         JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
         query.from(qrWaitToken);
-        if(rWaitToken.getOrgID() != null){
-            query.where(qrWaitToken.orgID.eq(rWaitToken.getOrgID()));
+        if(rWaitToken.getMerchantStoreId() != null){
+            query.where(qrWaitToken.orgID.eq(rWaitToken.getMerchantStoreId()));
         }
-        if(rWaitToken.getClientID() != null){
-            query.where(qrWaitToken.clientID.eq(rWaitToken.getClientID()));
+        if(rWaitToken.getMerchantId() != null){
+            query.where(qrWaitToken.clientID.eq(rWaitToken.getMerchantId()));
         }
         if(rWaitToken.getToken() != null){
             query.where(qrWaitToken.token.eq(rWaitToken.getToken()));

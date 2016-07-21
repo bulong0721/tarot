@@ -35,6 +35,7 @@
                     <th width="8%" class="center">人数</th>
                     <th width="8%" class="center">桌型</th>
                     <th width="10%" class="center">取号时间</th>
+                    <th width="5%" class="center">号码</th>
                     <th width="10%" class="center">叫号时间</th>
                 <!--    <th width="10%" class="center">等位时长</th>-->
                     <th width="10%" class="center">状态</th>
@@ -50,6 +51,7 @@
                     <td class="center">{{::row.dinnerCount}}</td>
                     <td class="center">{{::row.tableType}}</td>
                     <td class="center">{{::row.timeTook|date:'yyyy-MM-dd hh:MM:ss'}}</td>
+                    <td class="center">{{::row.token}}</td>
                     <td class="center">{{::row.updated |date:'yyyy-MM-dd hh:MM:ss'}}</td>
                     <!--<td class="center">{{::row.waitedCount}}</td>-->
                     <td class="center">{{::row.state}}</td>
