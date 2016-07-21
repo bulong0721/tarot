@@ -1,6 +1,7 @@
 package com.myee.tarot.weixin.domain;
 
 
+import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.core.GenericEntity;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -19,6 +20,8 @@ public class WxWaitToken extends GenericEntity<Long, WxWaitToken> {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     private Long   id;
     @Column(name = "CA_TABLE_ID")
+    private Long   tableId;
+    @Column(name = "TABLE_TYPE_ID")
     private Long   tableTypeId;
     @Column(name = "TOKEN")
     private String token;
@@ -58,12 +61,12 @@ public class WxWaitToken extends GenericEntity<Long, WxWaitToken> {
     @Column(name = "DINNER_COUNT")
     private int dinnerCount;
 
-    public Long getTableTypeId() {
-        return tableTypeId;
+    public Long getTableId() {
+        return tableId;
     }
 
-    public void setTableTypeId(Long tableTypeId) {
-        this.tableTypeId = tableTypeId;
+    public void setTableId(Long tableId) {
+        this.tableId = tableId;
     }
 
     public String getToken() {
@@ -208,6 +211,14 @@ public class WxWaitToken extends GenericEntity<Long, WxWaitToken> {
 
     public void setDinnerCount(int dinnerCount) {
         this.dinnerCount = dinnerCount;
+    }
+
+    public Long getTableTypeId() {
+        return tableTypeId;
+    }
+
+    public void setTableTypeId(Long tableTypeId) {
+        this.tableTypeId = tableTypeId;
     }
 
     @Override

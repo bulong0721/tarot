@@ -9,6 +9,7 @@ import com.myee.djinn.dto.WaitToken;
 import com.myee.djinn.dto.WaitTokenState;
 import com.myee.djinn.server.operations.OperationsService;
 import com.myee.tarot.catalog.domain.DeviceUsed;
+import com.myee.tarot.catering.dao.TableTypeDao;
 import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.catering.service.TableTypeService;
 import com.myee.tarot.device.service.DeviceUsedService;
@@ -169,7 +170,7 @@ public class OperationsManager extends RedisOperation implements OperationsServi
                 WaitToken w = new WaitToken();
                 w.setToken(sortedTokens.get(i).getToken());
                 w.setTimeTook(sortedTokens.get(i).getTimeTook().getTime());
-                w.setTableTypeId(sortedTokens.get(i).getTableTypeId());
+                w.setTableId(sortedTokens.get(i).getTableId());
                 w.setClientId(sortedTokens.get(i).getClientID());
                 w.setOpenId(sortedTokens.get(i).getOpenId());
                 w.setShopId(sortedTokens.get(i).getOrgID());
@@ -303,7 +304,7 @@ public class OperationsManager extends RedisOperation implements OperationsServi
             WxWaitToken wtoken = waitTokenDao.selectTokenByIc(identityCode, bTimeLong, eTimeLong);
             if (wtoken != null) {
                 //根据clientId和orgId和tableId，找到该餐馆的某餐桌类型等待的token
-                List<WxWaitToken> tokenList = waitTokenDao.selectAllTokenByInfo(wtoken.getClientID(), wtoken.getOrgID(), wtoken.getTableTypeId(), WaitTokenState.WAITING.getValue());
+                List<WxWaitToken> tokenList = waitTokenDao.selectAllTokenByInfo(wtoken.getClientID(), wtoken.getOrgID(), wtoken.getTableId(), WaitTokenState.WAITING.getValue());
                 for (WxWaitToken wt : tokenList) {
                     waitNumSet.add(Integer.parseInt(wt.getToken().substring(1, 3)));
                     if (identityCode.equals(wt.getIdentityCode())) {

@@ -207,6 +207,7 @@ public class WeixinManager extends RedisOperation implements WeixinService {
 
     static WxWaitToken convertTo(WaitToken waitToken, Long date) {
         WxWaitToken entity = new WxWaitToken();
+        entity.setTableId(waitToken.getTableId());
         entity.setTableTypeId(waitToken.getTableTypeId());
         entity.setComment(waitToken.getComment());
         entity.setChannelType("weixin");
@@ -362,7 +363,7 @@ public class WeixinManager extends RedisOperation implements WeixinService {
             WxWaitToken wtoken = waitTokenDao.selectTokenByIc(identityCode,bTimeLong,eTimeLong);
             if (wtoken != null) {
                 //根据clientId和orgId和tableId，找到该餐馆的某餐桌类型等待的token
-                List<WxWaitToken> tokenList = waitTokenDao.selectAllTokenByInfo(wtoken.getClientID(), wtoken.getOrgID(), wtoken.getTableTypeId(), WaitTokenState.WAITING.getValue());
+                List<WxWaitToken> tokenList = waitTokenDao.selectAllTokenByInfo(wtoken.getClientID(), wtoken.getOrgID(), wtoken.getTableId(), WaitTokenState.WAITING.getValue());
                 List<WxWaitToken> sortedTokens = orderingByTook2.sortedCopy(tokenList);
                 for (WxWaitToken wt : sortedTokens) {
                     if (!wt.getIdentityCode().equals(identityCode)) {
