@@ -268,7 +268,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 loadPlugin: managerLoader
             }
         })
-        .state('campaign.logList', {
+        .state('selfLogCheck.logList', {
             url: "/log",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'logListCtrl',
