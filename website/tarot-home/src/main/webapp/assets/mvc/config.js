@@ -98,6 +98,29 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 }
             }
         })
+        .state('campaign', {
+            abstract: true,
+            url: "/campaign",
+            template: "<div ui-view></div>",
+            resolve: {
+                loadPlugin: managerLoader
+            }
+        })
+        .state('campaign.priceCheck', {
+            url: "/priceCheck",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'campaignCtrl',
+            data: {
+                pageTitle: '活动管理',
+                subTitle: '抽奖管理',
+                datatable: 'assets/mvc/campaign/view/priceCheck_datatable.html',
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'campaign', 'campaignCtrl.js');
+                }
+            }
+        })
         .state('device', {
             abstract: true,
             url: "/device",
@@ -234,6 +257,29 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
                     return ctrlManagerLoader($ocLazyLoad, 'cater', 'tableCtrl.js')
+                }
+            }
+        })
+        .state('selfLogCheck', {
+            abstract: true,
+            url: "/selfLogCheck",
+            template: "<div ui-view></div>",
+            resolve: {
+                loadPlugin: managerLoader
+            }
+        })
+        .state('campaign.logList', {
+            url: "/log",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'logListCtrl',
+            data: {
+                pageTitle: '数据中心',
+                subTitle: '自检日志',
+                datatable: 'assets/mvc/log/view/selfCheckLog_datatable.html',
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'log', 'logCtrl.js');
                 }
             }
         })
