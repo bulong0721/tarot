@@ -12,10 +12,11 @@ import com.myee.tarot.catering.dao.TableTypeDao;
 import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.merchant.dao.MerchantStoreDao;
 import com.myee.tarot.merchant.domain.MerchantStore;
-import com.myee.tarot.weixin.dao.RWaitTokenDao;
 import com.myee.tarot.weixin.dao.WFeedBackDao;
-import com.myee.tarot.weixin.domain.RWaitToken;
+import com.myee.tarot.weixin.dao.WxWaitTokenDao;
+import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.myee.tarot.weixin.domain.WFeedBack;
+import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.myee.tarot.weixin.service.WeixinService;
 import com.myee.tarot.weixin.util.TimeUtil;
 import org.apache.commons.codec.binary.Base64;
@@ -42,7 +43,7 @@ public class WeixinManager extends RedisOperation implements WeixinService {
     @Autowired
     private MerchantStoreDao merchantStoreDao;
     @Autowired
-    private RWaitTokenDao waitTokenDao;
+    private WxWaitTokenDao waitTokenDao;
     @Autowired
     private WFeedBackDao wFeedBackDao;
 //    @Autowired
@@ -155,9 +156,9 @@ public class WeixinManager extends RedisOperation implements WeixinService {
         }
     });
 
-    private Ordering<RWaitToken> orderingByTook2 = Ordering.from(new Comparator<RWaitToken>() {
+    private Ordering<WxWaitToken> orderingByTook2 = Ordering.from(new Comparator<WxWaitToken>() {
         @Override
-        public int compare(RWaitToken o1, RWaitToken o2) {
+        public int compare(WxWaitToken o1, WxWaitToken o2) {
             Long o1TimeTook1 = new Long(o1.getTimeTook().getTime());
             Long o1TimeTook2 = new Long(o2.getTimeTook().getTime());
             return o1TimeTook1.compareTo(o1TimeTook2);
@@ -165,7 +166,7 @@ public class WeixinManager extends RedisOperation implements WeixinService {
     });
 
     @Override
-    public RWaitToken enqueue(long shopId, int dinerCount, String openId) {
+    public WxWaitToken enqueue(long shopId, int dinerCount, String openId) {
 
         //测试代码  OrchidService eptService = serverBootstrap.getClient(OrchidService.class, toClientUUID(shopId));
         OrchidService eptService = null;
@@ -180,7 +181,7 @@ public class WeixinManager extends RedisOperation implements WeixinService {
             //保存某品牌餐厅下某分店的对应餐桌类型ID的排号
             String redisKey = RedisKeys.waitOfTableType(shopId, waitToken.getTableTypeId());
             String redisKeyToOpenIdRef = RedisKeys.openIdToTableType(shopId, openId);
-            RWaitToken rwToken = convertTo(waitToken, date.getTime() / 1000);
+            WxWaitToken rwToken = convertTo(waitToken, date.getTime() / 1000);
             waitTokenDao.update(rwToken);
             Map<String,Date> map = TimeUtil.getAfterDate(date);
             hsetSimple(redisKeyToOpenIdRef, redisKey, map.get("eTime"));
@@ -204,8 +205,8 @@ public class WeixinManager extends RedisOperation implements WeixinService {
         return null;
     }
 
-    static RWaitToken convertTo(WaitToken waitToken, Long date) {
-        RWaitToken entity = new RWaitToken();
+    static WxWaitToken convertTo(WaitToken waitToken, Long date) {
+        WxWaitToken entity = new WxWaitToken();
         entity.setTableTypeId(waitToken.getTableTypeId());
         entity.setComment(waitToken.getComment());
         entity.setChannelType("weixin");
@@ -215,6 +216,7 @@ public class WeixinManager extends RedisOperation implements WeixinService {
         entity.setToken(waitToken.getToken());
         entity.setClientID(waitToken.getClientId());
         entity.setOrgID(waitToken.getShopId());
+        entity.setDinnerCount(waitToken.getDinnerCount());
         Date dt = new Date(date * 1000);
         entity.setTimeTook(dt);
         entity.setState(waitToken.getWaitStatus());
@@ -357,12 +359,12 @@ public class WeixinManager extends RedisOperation implements WeixinService {
             Long bTimeLong = map.get("bTime").getTime()/1000;
             Long eTimeLong = map.get("eTime").getTime()/1000;
             //再到MYSQL去找,用identityCode找到对应的clientId,orgId,和token，
-            RWaitToken wtoken = waitTokenDao.selectTokenByIc(identityCode,bTimeLong,eTimeLong);
+            WxWaitToken wtoken = waitTokenDao.selectTokenByIc(identityCode,bTimeLong,eTimeLong);
             if (wtoken != null) {
                 //根据clientId和orgId和tableId，找到该餐馆的某餐桌类型等待的token
-                List<RWaitToken> tokenList = waitTokenDao.selectAllTokenByInfo(wtoken.getClientID(), wtoken.getOrgID(), wtoken.getTableTypeId(), WaitTokenState.WAITING.getValue());
-                List<RWaitToken> sortedTokens = orderingByTook2.sortedCopy(tokenList);
-                for (RWaitToken wt : sortedTokens) {
+                List<WxWaitToken> tokenList = waitTokenDao.selectAllTokenByInfo(wtoken.getClientID(), wtoken.getOrgID(), wtoken.getTableTypeId(), WaitTokenState.WAITING.getValue());
+                List<WxWaitToken> sortedTokens = orderingByTook2.sortedCopy(tokenList);
+                for (WxWaitToken wt : sortedTokens) {
                     if (!wt.getIdentityCode().equals(identityCode)) {
                         index++;
                     } else {
@@ -414,8 +416,8 @@ public class WeixinManager extends RedisOperation implements WeixinService {
     }
 
     @Override
-    public List<RWaitToken> selectTokensByOpenIdState(String openId, Integer state) {
-        List<RWaitToken> waitTList = new ArrayList<RWaitToken>();
+    public List<WxWaitToken> selectTokensByOpenIdState(String openId, Integer state) {
+        List<WxWaitToken> waitTList = new ArrayList<WxWaitToken>();
         waitTList = waitTokenDao.selectAllTokenByOpenIdState(openId, state);
         return waitTList;
     }
@@ -500,7 +502,7 @@ public class WeixinManager extends RedisOperation implements WeixinService {
             Map<String,Date> map = TimeUtil.getAfterDate(new Date());
             Long bTimeLong = map.get("bTime").getTime()/1000;
             Long eTimeLong = map.get("eTime").getTime()/1000;
-            RWaitToken rw  = waitTokenDao.selectTokenByIc(identityCode, bTimeLong, eTimeLong);
+            WxWaitToken rw  = waitTokenDao.selectTokenByIc(identityCode, bTimeLong, eTimeLong);
             if(rw != null) {
                 rw.setOpenId(openId);
                 Long timeTookLong = rw.getTimeTook().getTime() / 1000;
@@ -513,8 +515,8 @@ public class WeixinManager extends RedisOperation implements WeixinService {
     }
 
     @Override
-    public List<RWaitToken> selectWaitList(String openId, Map<String,Date> map) {
-        List<RWaitToken> list = waitTokenDao.selectWait(openId, map.get("bTime").getTime() / 1000, map.get("eTime").getTime() / 1000);
+    public List<WxWaitToken> selectWaitList(String openId, Map<String,Date> map) {
+        List<WxWaitToken> list = waitTokenDao.selectWait(openId, map.get("bTime").getTime() / 1000, map.get("eTime").getTime() / 1000);
         return list;
     }
 

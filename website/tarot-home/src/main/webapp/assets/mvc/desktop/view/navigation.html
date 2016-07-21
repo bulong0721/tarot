@@ -29,6 +29,20 @@
                 </ul>
             </li>
 
+            <li ng-class="{active: $state.includes('selfLogCheck')}">
+                <a href=""><i class="fa fa-lg fa-bank"></i> <span class="nav-label">数据中心</span> <span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level" ng-class="{in: $state.includes('selfLogCheck')}">
+                    <li ng-class="{active: $state.includes('selfLogCheck.logList')}"><a ui-sref="selfLogCheck.logList">自检日志</a></li>
+                </ul>
+            </li>
+
+            <li ng-class="{active: $state.includes('campaign')}">
+                <a href=""><i class="fa fa-lg fa-bank"></i> <span class="nav-label">活动管理</span> <span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level" ng-class="{in: $state.includes('campaign')}">
+                    <li ng-class="{active: $state.includes('campaign.priceCheck')}"><a ui-sref="campaign.priceCheck">抽奖列表</a></li>
+                </ul>
+            </li>
+
             <li ng-class="{active: $state.includes('device')}">
                 <a href="device"><i class="fa fa-lg fa-camera-retro"></i> <span class="nav-label">设备管理</span> <span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level" ng-class="{in: $state.includes('device')}">

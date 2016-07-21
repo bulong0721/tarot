@@ -11,8 +11,8 @@ import com.myee.djinn.server.operations.OperationsService;
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.device.service.DeviceUsedService;
 import com.myee.tarot.merchant.domain.MerchantStore;
-import com.myee.tarot.weixin.dao.RWaitTokenDao;
-import com.myee.tarot.weixin.domain.RWaitToken;
+import com.myee.tarot.weixin.dao.WxWaitTokenDao;
+import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.myee.tarot.weixin.util.TimeUtil;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -47,7 +47,7 @@ public class OperationsManager extends RedisOperation implements OperationsServi
 
     @Autowired
     @Lazy
-    private RWaitTokenDao waitTokenDao;
+    private WxWaitTokenDao waitTokenDao;
 
     @Autowired
     public OperationsManager(RedisTemplate redisTemplate) {
@@ -78,8 +78,8 @@ public class OperationsManager extends RedisOperation implements OperationsServi
         waitToken.setIdentityCode(identityCode);
         Date date = new Date();
         waitToken.setTimeTook(date.getTime() / 1000);
-        RWaitToken rWaitToken = new RWaitToken();
-        rWaitToken = waitTokenDao.update(WeixinManager.convertTo(waitToken, date.getTime() / 1000));
+        WxWaitToken wxWaitToken = new WxWaitToken();
+        wxWaitToken = waitTokenDao.update(WeixinManager.convertTo(waitToken, date.getTime() / 1000));
         //然后二维码的数字码放Redis，跟identityCode唯一码绑定
         hsetSimple(redisKeyOfUcdScId, waitToken.getIdentityCode(), null);
         //然后identityCode放Redis，跟排号的key绑定
@@ -94,7 +94,7 @@ public class OperationsManager extends RedisOperation implements OperationsServi
             e.printStackTrace();
         }
 
-        if (rWaitToken.getId() != null) {
+        if (wxWaitToken.getId() != null) {
             return ResponseData.successData(myticket.getUrl()); //返回二维码图片的短连接
         } else {
             return ResponseData.errorData("fail");
@@ -118,9 +118,9 @@ public class OperationsManager extends RedisOperation implements OperationsServi
         }
     });
 
-    private Ordering<RWaitToken> orderingByTook2 = Ordering.from(new Comparator<RWaitToken>() {
+    private Ordering<WxWaitToken> orderingByTook2 = Ordering.from(new Comparator<WxWaitToken>() {
         @Override
-        public int compare(RWaitToken o1, RWaitToken o2) {
+        public int compare(WxWaitToken o1, WxWaitToken o2) {
             Long o1TimeTook1 = new Long(o1.getTimeTook().getTime());
             Long o1TimeTook2 = new Long(o2.getTimeTook().getTime());
             return o1TimeTook1.compareTo(o1TimeTook2);
@@ -157,8 +157,8 @@ public class OperationsManager extends RedisOperation implements OperationsServi
                 backStatus = waitTokenDao.updateState(stateValue, waitToken.getClientId(), waitToken.getShopId(), waitToken.getToken(), sortedTokens.get(0).getTimeTook(), new Date().getTime() / 1000);
             }
         } else { //如果redis里没有数据，从MySql里同步
-            List<RWaitToken> tokenList = waitTokenDao.selectAllTokenByInfo(waitToken.getClientId(), waitToken.getShopId(), waitToken.getTableTypeId(), WaitTokenState.WAITING.getValue());
-            List<RWaitToken> sortedTokens = orderingByTook2.sortedCopy(tokenList);
+            List<WxWaitToken> tokenList = waitTokenDao.selectAllTokenByInfo(waitToken.getClientId(), waitToken.getShopId(), waitToken.getTableTypeId(), WaitTokenState.WAITING.getValue());
+            List<WxWaitToken> sortedTokens = orderingByTook2.sortedCopy(tokenList);
             List<WaitToken> sortedTokensW = new ArrayList<WaitToken>();
             for (int i = 0; i < sortedTokens.size(); i++) {
                 WaitToken w = new WaitToken();
@@ -193,8 +193,8 @@ public class OperationsManager extends RedisOperation implements OperationsServi
                 }
             }
         } else {
-            List<RWaitToken> rwList = waitTokenDao.selectAllTokenOpenIdNotNull(waitToken.getClientId(), waitToken.getShopId(), waitToken.getTableTypeId(), WaitTokenState.WAITING.getValue());
-            for (RWaitToken rw : rwList) {
+            List<WxWaitToken> rwList = waitTokenDao.selectAllTokenOpenIdNotNull(waitToken.getClientId(), waitToken.getShopId(), waitToken.getTableTypeId(), WaitTokenState.WAITING.getValue());
+            for (WxWaitToken rw : rwList) {
                 if (rw.getOpenId() != null && rw.getOpenId().trim().length() > 0) {
                     //比较token查询进展
                     Map<String, Object> msgMap = selectLatestDevelopmentsByIc(rw.getIdentityCode());
@@ -295,11 +295,11 @@ public class OperationsManager extends RedisOperation implements OperationsServi
             Long bTimeLong = map.get("bTime").getTime() / 1000;
             Long eTimeLong = map.get("eTime").getTime() / 1000;
             //再到MYSQL去找,用identityCode找到对应的clientId,orgId,和token，
-            RWaitToken wtoken = waitTokenDao.selectTokenByIc(identityCode, bTimeLong, eTimeLong);
+            WxWaitToken wtoken = waitTokenDao.selectTokenByIc(identityCode, bTimeLong, eTimeLong);
             if (wtoken != null) {
                 //根据clientId和orgId和tableId，找到该餐馆的某餐桌类型等待的token
-                List<RWaitToken> tokenList = waitTokenDao.selectAllTokenByInfo(wtoken.getClientID(), wtoken.getOrgID(), wtoken.getTableTypeId(), WaitTokenState.WAITING.getValue());
-                for (RWaitToken wt : tokenList) {
+                List<WxWaitToken> tokenList = waitTokenDao.selectAllTokenByInfo(wtoken.getClientID(), wtoken.getOrgID(), wtoken.getTableTypeId(), WaitTokenState.WAITING.getValue());
+                for (WxWaitToken wt : tokenList) {
                     waitNumSet.add(Integer.parseInt(wt.getToken().substring(1, 3)));
                     if (identityCode.equals(wt.getIdentityCode())) {
                         userNum = Integer.parseInt(wt.getToken().substring(1, 3));
@@ -374,32 +374,39 @@ public class OperationsManager extends RedisOperation implements OperationsServi
 
 //    @Override
     public ResponseData getResourceInfo(String jsonArgs) {
+        System.out.println("jsonArgs: " + jsonArgs);
+        System.out.println("DOWNLOAD_HOME: " + DOWNLOAD_HOME);
         ResponseData result = null;
-        JSONObject object = JSON.parseObject(jsonArgs);
-        String name = object.getString("name");
-        String type = object.getString("type");
-        String orgId = object.getString("orgId");
-        StringBuilder sb = new StringBuilder();
-        logger.info("================ request info  name:"+name+"  type:"+type+"   orgId:"+orgId);
-        if ("app".equals(type)) {
-            sb.append(DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(type).append(File.separator).append(name).append(File.separator).append("VersionInfo.xml");
-        } else {
+        try{
+            JSONObject object = JSON.parseObject(jsonArgs);
+            String name = object.getString("name");
+            String type = object.getString("type");
+            String orgId = object.getString("orgId");
+            StringBuilder sb = new StringBuilder();
+            logger.info("================ request info  name:"+name+"  type:"+type+"   orgId:"+orgId);
+            if ("app".equals(type)) {
+                sb.append(DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(type).append(File.separator).append(name).append(File.separator).append("VersionInfo.xml");
+            } else {
 
-        }
-        logger.info("========File path :"+sb.toString());
-        File file = new File(sb.toString());
-        if (file.exists()) {
-            result = ResponseData.successData(readfile(file));
-        } else {
-            String filePath = sb.toString();
-            String cloudFilePath = filePath.replace("104", "100");
-            File cloudFile = new File(cloudFilePath);
-            if (cloudFile.exists()) {
-                logger.info("========Cloud File path :"+cloudFilePath);
-                result = ResponseData.successData(readfile(cloudFile));
-            }else{
-                result = ResponseData.errorData("error");
             }
+            logger.info("========File path :"+sb.toString());
+            File file = new File(sb.toString());
+            if (file.exists()) {
+                result = ResponseData.successData(readfile(file));
+            } else {
+                String filePath = sb.toString();
+                String cloudFilePath = filePath.replace(orgId, "100");
+                File cloudFile = new File(cloudFilePath);
+                if (cloudFile.exists()) {
+                    logger.info("========Cloud File path :"+cloudFilePath);
+                    result = ResponseData.successData(readfile(cloudFile));
+                }else{
+                    result = ResponseData.errorData("error");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error Message: "+ e.getMessage());
         }
         return result;
     }

@@ -180,12 +180,12 @@ function cTablesService($resource,NgTableParams,cAlerts){
                 if (!scope.loadByInit) {
                     return [];
                 }
-                var xhr = $resource(mgrOpts.api.read);
-                var args = angular.extend(params.url(), scope.where);
+                var xhr = $resource(mgrOpts.api.read),
+                    args = angular.extend(params.url(), scope.where);
 
                 return xhr.get(args).$promise.then(function (data) {
-                    params.total(data.recordsTotal);
-                    return data.rows;
+                        params.total(data.recordsTotal);
+                        return data.rows;
                 });
             }
         });
@@ -193,6 +193,7 @@ function cTablesService($resource,NgTableParams,cAlerts){
         //搜索tables的数据
         scope.search = function () {
             scope.loadByInit = true;
+            scope.tableOpts.page(1);
             scope.tableOpts.reload();
         };
     }
@@ -306,6 +307,7 @@ function cfromlyService(formlyConfig, $window) {
         wrapper: ['bootstrapLabel', 'bootstrapHasError'],
         defaultOptions: {
             ngModelAttrs: {},
+            className:'c_datepicker',
             templateOptions: {
                 datepickerOptions: {
                     format: 'yyyy.MM.dd',

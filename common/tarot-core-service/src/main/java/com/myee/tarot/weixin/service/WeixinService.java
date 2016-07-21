@@ -3,7 +3,7 @@ package com.myee.tarot.weixin.service;
 import com.myee.djinn.dto.DrawToken;
 import com.myee.djinn.dto.ShopDetail;
 import com.myee.djinn.dto.WaitToken;
-import com.myee.tarot.weixin.domain.RWaitToken;
+import com.myee.tarot.weixin.domain.WxWaitToken;
 
 import java.util.Collection;
 import java.util.Date;
@@ -23,7 +23,7 @@ public interface WeixinService {
 
     Collection<WaitToken> allWaitOfTableType(long tableTypeId, Long shopId);
 
-    RWaitToken enqueue(long shopId, int dinerCount, String openId);
+    WxWaitToken enqueue(long shopId, int dinerCount, String openId);
 
     void dequeue(long tableTypeId, String token, Long clientId, Long shopId);
 
@@ -50,11 +50,11 @@ public interface WeixinService {
      * @param state
      * @return
      */
-    List<RWaitToken> selectTokensByOpenIdState(String openId, Integer state);
+    List<WxWaitToken> selectTokensByOpenIdState(String openId, Integer state);
 
     boolean bondQrCodeByScan(String identityCode, String openId);
 
-    List<RWaitToken> selectWaitList(String openId, Map<String, Date> map);
+    List<WxWaitToken> selectWaitList(String openId, Map<String, Date> map);
 
     int modifyWaitingInfo(Long waitedCount, String identityCode, Long date, Long predictWaitingTime);
 

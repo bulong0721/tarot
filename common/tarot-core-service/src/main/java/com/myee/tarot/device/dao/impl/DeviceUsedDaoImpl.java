@@ -61,10 +61,12 @@ public class DeviceUsedDaoImpl extends GenericEntityDaoImpl<Long, DeviceUsed> im
         query.from(qDeviceUsed);
         query.where(qDeviceUsed.boardNo.eq(mainBoardCode));
         DeviceUsed deviceUsed = query.fetchFirst();
-        Hibernate.initialize(deviceUsed.getStore());
-        Hibernate.initialize(deviceUsed.getProductUsed());
-        Hibernate.initialize(deviceUsed.getAttributes());
-        Hibernate.initialize(deviceUsed.getStore().getMerchant());
+        if(deviceUsed != null){
+            Hibernate.initialize(deviceUsed.getStore());
+            Hibernate.initialize(deviceUsed.getProductUsed());
+            Hibernate.initialize(deviceUsed.getAttributes());
+            Hibernate.initialize(deviceUsed.getStore().getMerchant());
+        }
         return deviceUsed;
     }
 }

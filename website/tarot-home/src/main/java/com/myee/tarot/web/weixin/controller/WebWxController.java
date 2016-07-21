@@ -2,9 +2,8 @@ package com.myee.tarot.web.weixin.controller;
 
 import com.myee.djinn.dto.*;
 import com.myee.tarot.web.util.PageResult;
-import com.myee.tarot.weixin.domain.RWaitToken;
+import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.myee.tarot.weixin.domain.SingleResult;
-//import com.myee.tarot.weixin.service.WeixinService;
 import com.myee.tarot.weixin.service.WeixinService;
 import com.myee.tarot.weixin.util.TimeUtil;
 import me.chanjar.weixin.common.api.WxConsts;
@@ -70,9 +69,9 @@ public class WebWxController {
 
     @RequestMapping("enqueue")
     @ResponseBody
-    public SingleResult<RWaitToken> enqueueAccess(String secret, long shopId, int dinerCount, String openId, HttpServletRequest req, HttpServletResponse resp) {
+    public SingleResult<WaitToken> enqueueAccess(String secret, long shopId, int dinerCount, String openId, HttpServletRequest req, HttpServletResponse resp) {
         openId = (String)req.getSession().getAttribute("openId");
-        RWaitToken waitToken = weixinService.enqueue(shopId, dinerCount, openId);
+        WxWaitToken waitToken = weixinService.enqueue(shopId, dinerCount, openId);
         return new SingleResult(waitToken);
     }
 
@@ -103,9 +102,9 @@ public class WebWxController {
 
     @RequestMapping("wait_list")
     @ResponseBody
-    public PageResult<RWaitToken> waitList(String secret, String openId, String ifPaged, Integer pageNo, Integer pageSize) {
+    public PageResult<WaitToken> waitList(String secret, String openId, String ifPaged, Integer pageNo, Integer pageSize) {
         Map<String,Date> map = TimeUtil.getAfterDate(new Date());
-        List<RWaitToken> list = weixinService.selectWaitList(openId, map);
+        List<WxWaitToken> list = weixinService.selectWaitList(openId, map);
         return new PageResult(1L, list);
     }
 

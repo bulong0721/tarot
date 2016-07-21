@@ -46,6 +46,18 @@
             <version>5.1.38</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+
     </dependencies>
     <build>
         <finalName>tarot-home</finalName>
@@ -105,6 +117,12 @@
             <id>prd</id>
             <properties>
                 <env>prd</env>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <env>test</env>
             </properties>
         </profile>
     </profiles>
