@@ -33,6 +33,7 @@
                 <a href=""><i class="fa fa-lg fa-bank"></i> <span class="nav-label">数据中心</span> <span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level" ng-class="{in: $state.includes('dataCenter')}">
                     <li ng-class="{active: $state.includes('dataCenter.selfCheckLog')}"><a ui-sref="dataCenter.selfCheckLog">自检日志</a></li>
+                    <li ng-class="{active: $state.includes('dataCenter.waittoken')}"><a ui-sref="dataCenter.waittoken">排队数据</a></li>
                 </ul>
             </li>
 

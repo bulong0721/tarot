@@ -283,6 +283,22 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 }
             }
         })
+        .state('dataCenter.waittoken', {
+            url: "/waittoken",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'waitTokenCtrl',
+            data: {
+                pageTitle: '数据中心',
+                subTitle: '排队数据',
+                datatable: 'assets/mvc/datacenter/view/waitToken_datatable.html',
+                editor: ''
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'datacenter', 'waitTokenCtrl.js')
+                }
+            }
+        })
         .state('user', {
             abstract: true,
             url: "/user",
