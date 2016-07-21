@@ -1,5 +1,7 @@
 package com.myee.tarot.web.log.controller;
 
+import com.myee.tarot.catering.domain.TableType;
+import com.myee.tarot.catering.service.TableTypeService;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
@@ -31,6 +33,8 @@ public class WaitTokenController {
     @Autowired
     private WaitTokenService waitTokenService;
 
+    @Autowired
+    private TableTypeService tableTypeService;
     /**
      * 查询排队等位数据
      * @param model
@@ -57,9 +61,12 @@ public class WaitTokenController {
 
     //把类转换成entry返回给前端，解耦和
     private Map objectToEntry(WxWaitToken wxWaitToken) {
+        TableType tableType = tableTypeService.findById(wxWaitToken.getTableTypeId());
         Map entry = new HashMap();
         entry.put("id",wxWaitToken.getId());
-        entry.put("tableType",wxWaitToken.getTableTypeId());
+        if(tableType != null){
+            entry.put("tableType",tableType.getName());
+        }
         entry.put("token",wxWaitToken.getToken());
         entry.put("dinnerCount",wxWaitToken.getDinnerCount());
         entry.put("comment",wxWaitToken.getComment());
@@ -67,8 +74,8 @@ public class WaitTokenController {
         entry.put("state", new WxWaitTokenState().getWxWaitTokenState(wxWaitToken.getState()+""));
         entry.put("waitedCount", wxWaitToken.getWaitedCount());
         entry.put("predictWaitingTime",wxWaitToken.getPredictWaitingTime());
-        entry.put("clientID", wxWaitToken.getClientID());
-        entry.put("orgID",wxWaitToken.getOrgID());
+        entry.put("clientID", wxWaitToken.getMerchantId());
+        entry.put("orgID",wxWaitToken.getMerchantStoreId());
         entry.put("updated",wxWaitToken.getUpdated());
         return entry;
     }

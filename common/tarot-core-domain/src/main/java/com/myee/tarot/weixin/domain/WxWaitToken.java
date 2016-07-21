@@ -1,9 +1,7 @@
 package com.myee.tarot.weixin.domain;
 
 
-import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.core.GenericEntity;
-import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -43,11 +41,10 @@ public class WxWaitToken extends GenericEntity<Long, WxWaitToken> {
     private Long waitedCount;
     @Column(name = "PREDICT_WAITING_TIME")
     private Long predictWaitingTime;
-
-    @Column(name = "AD_CLIENT_ID")
-    private Long clientID;
-    @Column(name = "AD_ORG_ID")
-    private Long orgID;
+    @Column(name = "MERCHANT_ID") //clientId
+    private Long merchantId;
+    @Column(name = "MERCHANT_STORE_ID") //orgID
+    private Long merchantStoreId;
     @Column(name = "ACTIVE")
     private boolean active = true;
     @Column(name = "UPDATED")
@@ -149,20 +146,20 @@ public class WxWaitToken extends GenericEntity<Long, WxWaitToken> {
         this.predictWaitingTime = predictWaitingTime;
     }
 
-    public Long getClientID() {
-        return clientID;
+    public Long getMerchantId() {
+        return merchantId;
     }
 
-    public void setClientID(Long clientID) {
-        this.clientID = clientID;
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
     }
 
-    public Long getOrgID() {
-        return orgID;
+    public Long getMerchantStoreId() {
+        return merchantStoreId;
     }
 
-    public void setOrgID(Long orgID) {
-        this.orgID = orgID;
+    public void setMerchantStoreId(Long merchantStoreId) {
+        this.merchantStoreId = merchantStoreId;
     }
 
     public boolean isActive() {

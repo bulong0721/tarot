@@ -192,7 +192,7 @@ public class WebMpController {
         Map<String,Object> msgMap = new HashMap<String,Object>();
         if (myWt != null && myWt.size() > 0) {
             for (WxWaitToken w : myWt) {
-                msgMap = wxService.selectTokensByInfo(openId, w.getOrgID() ,w.getTableId());
+                msgMap = wxService.selectTokensByInfo(openId, w.getMerchantStoreId() ,w.getTableId());
             }
         } else {
             msgMap.put("valid","您尚未绑定二维码，请扫码绑定!");
