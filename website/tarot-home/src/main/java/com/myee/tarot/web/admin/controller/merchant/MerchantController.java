@@ -228,7 +228,8 @@ public class MerchantController {
                 return resp;
             }
             //code不能重复
-            if(merchantStoreService.getByCode(merchantStore.getCode()) != null){
+            MerchantStore merchantStoreTemp = merchantStoreService.getByCode(merchantStore.getCode());
+            if( merchantStoreTemp != null && merchantStoreTemp.getId() != merchantStore.getId()){
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("错误:重复的门店码，请修改后重新提交");
                 return resp;
