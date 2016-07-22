@@ -24,11 +24,11 @@ public class Table extends GenericEntity<Long, Table> {
     @Column(name = "DESCRIPTION")
     protected String description;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = TableType.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = TableType.class)
     @JoinColumn(name = "TABLE_TYPE", nullable = false)
     private TableType tableType;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = TableZone.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = TableZone.class)
     @JoinColumn(name = "TABLE_ZONE")
     private TableZone tableZone;
 

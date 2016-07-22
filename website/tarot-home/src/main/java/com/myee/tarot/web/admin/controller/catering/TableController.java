@@ -66,7 +66,7 @@ public class TableController {
 
             resp = AjaxResponse.success();
             resp.addEntry("updateResult", type);
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
@@ -95,7 +95,7 @@ public class TableController {
 
             typeService.delete(tableType);
             return AjaxResponse.success();
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
@@ -144,7 +144,7 @@ public class TableController {
 
             resp = AjaxResponse.success();
             resp.addEntry("updateResult", zone);
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
@@ -173,7 +173,7 @@ public class TableController {
 
             zoneService.delete(tableZone);
             return AjaxResponse.success();
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
@@ -186,25 +186,30 @@ public class TableController {
     @ResponseBody
     AjaxPageableResponse pageZones(Model model, HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
-        if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
-            resp.setErrorString("请先切换门店");
+        try {
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+
+            PageResult<TableZone> pageList = zoneService.pageByStore(merchantStore1.getId(), pageRequest);
+            List<TableZone> typeList = pageList.getList();
+            for (TableZone zone : typeList) {
+                Map entry = new HashMap();
+                entry.put("id", zone.getId());
+                entry.put("name", zone.getName());
+                entry.put("description", zone.getDescription());
+                resp.addDataEntry(entry);
+            }
+
+            resp.setRecordsTotal(pageList.getRecordsTotal());
+
+            return resp;
+        } catch (Exception e) {
+            e.printStackTrace();
             return resp;
         }
-        MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
-
-        PageResult<TableZone> pageList = zoneService.pageByStore(merchantStore1.getId(), pageRequest);
-        List<TableZone> typeList = pageList.getList();
-        for (TableZone zone : typeList) {
-            Map entry = new HashMap();
-            entry.put("id", zone.getId());
-            entry.put("name", zone.getName());
-            entry.put("description", zone.getDescription());
-            resp.addDataEntry(entry);
-        }
-
-        resp.setRecordsTotal(pageList.getRecordsTotal());
-
-        return resp;
     }
 
     @RequestMapping(value = "table/save", method = RequestMethod.POST)
@@ -223,7 +228,7 @@ public class TableController {
 
             resp = AjaxResponse.success();
             resp.addEntry("updateResult", table);
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
@@ -252,7 +257,7 @@ public class TableController {
 
             tableService.delete(table1);
             return AjaxResponse.success();
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
@@ -265,25 +270,30 @@ public class TableController {
     @ResponseBody
     AjaxPageableResponse pageTables(Model model, HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
-        if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
-            resp.setErrorString("请先切换门店");
+        try {
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            PageResult<Table> pageList = tableService.pageByStore(merchantStore1.getId(), pageRequest);
+
+            List<Table> typeList = pageList.getList();
+            for (Table table : typeList) {
+                Map entry = new HashMap();
+                entry.put("id", table.getId());
+                entry.put("name", table.getName());
+                entry.put("description", table.getDescription());
+                entry.put("tableType", new TypeDTO(table.getTableType()));
+                entry.put("tableZone", new ZoneDTO(table.getTableZone()));
+                resp.addDataEntry(entry);
+            }
+            resp.setRecordsTotal(pageList.getRecordsTotal());
+            return resp;
+        } catch (Exception e) {
+            e.printStackTrace();
             return resp;
         }
-        MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
-        PageResult<Table> pageList = tableService.pageByStore(merchantStore1.getId(), pageRequest);
-
-        List<Table> typeList = pageList.getList();
-        for (Table table : typeList) {
-            Map entry = new HashMap();
-            entry.put("id", table.getId());
-            entry.put("name", table.getName());
-            entry.put("description", table.getDescription());
-            entry.put("tableType", new TypeDTO(table.getTableType()));
-            entry.put("tableZone", new ZoneDTO(table.getTableZone()));
-            resp.addDataEntry(entry);
-        }
-        resp.setRecordsTotal(pageList.getRecordsTotal());
-        return resp;
     }
 
 
