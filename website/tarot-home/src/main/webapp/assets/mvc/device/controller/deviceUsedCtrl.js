@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * productUsedCtrl - controller
  */
-deviceUsedCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables', 'cfromly', 'NgTableParams', '$q'];
-function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableParams, $q) {
+deviceUsedCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables', 'cfromly', 'NgTableParams', '$q','cAlerts'];
+function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableParams, $q,cAlerts) {
 
     var iDatatable = 0, iEditor = 1;
     //绑定产品相关参数
@@ -267,15 +267,19 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
         var xhr = $resource(mgrData.api.updateAttr);
         xhr.save({id: product.id}, attr).$promise.then(function (result) {
             attr.editing = false;
-            $scope.tableOpts.data.splice($scope.rowIndex, 1, $scope.formData.model);//更新该列表单数据
         });
     };
 
     $scope.deleteAttr = function (product, attr) {
-        var xhr = $resource(mgrData.api.deleteAttr);
-        xhr.save({id: product.id}, attr).$promise.then(function (result) {
-            var index = product.attributes.indexOf(attr);
-            product.attributes.splice(index, 1);
+        cAlerts.confirm('确定删除?',function(){
+            //点击确定回调
+            var xhr = $resource(mgrData.api.deleteAttr);
+            xhr.save({id: product.id}, attr).$promise.then(function (result) {
+                var index = product.attributes.indexOf(attr);
+                product.attributes.splice(index, 1);
+            });
+        },function(){
+            //点击取消回调
         });
     };
 }

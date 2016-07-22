@@ -163,7 +163,8 @@ function cTablesService($resource,NgTableParams,cAlerts){
             var data = response.dataMap.updateResult;//scope.formData.model;//response.rows[0].updateResult;//
 
             if (scope.rowIndex < 0) {
-                scope.tableOpts.data.unshift(data);
+                //scope.tableOpts.data.unshift(data);
+                scope.tableOpts.data.splice(0, 0, data);
             } else {
                 scope.tableOpts.data.splice(scope.rowIndex, 1, data);
             }

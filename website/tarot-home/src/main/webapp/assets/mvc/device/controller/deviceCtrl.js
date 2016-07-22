@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * deviceCtrl - controller
  */
-deviceCtrl.$inject = ['$scope','$resource', 'Constants','cTables','cfromly'];
-function deviceCtrl($scope,$resource, Constants,cTables,cfromly) {
+deviceCtrl.$inject = ['$scope','$resource', 'Constants','cTables','cfromly','cAlerts'];
+function deviceCtrl($scope,$resource, Constants,cTables,cfromly,cAlerts) {
 
     var mgrData = {
         fields: [
@@ -34,17 +34,21 @@ function deviceCtrl($scope,$resource, Constants,cTables,cfromly) {
         var xhr = $resource(mgrData.api.updateAttr);
         xhr.save({id: product.id}, attr).$promise.then(function (result) {
             attr.editing = false;
-            console.log($scope.rowIndex)
-            $scope.tableOpts.data.splice($scope.rowIndex, 1, $scope.formData.model);//更新该列表单数据
         });
     };
 
     $scope.deleteAttr = function (product, attr) {
-        var xhr = $resource(mgrData.api.deleteAttr);
-        xhr.save({id: product.id}, attr).$promise.then(function (result) {
-            var index = product.attributes.indexOf(attr);
-            product.attributes.splice(index, 1);
+        cAlerts.confirm('确定删除?',function(){
+            //点击确定回调
+            var xhr = $resource(mgrData.api.deleteAttr);
+            xhr.save({id: product.id}, attr).$promise.then(function (result) {
+                var index = product.attributes.indexOf(attr);
+                product.attributes.splice(index, 1);
+            });
+        },function(){
+            //点击取消回调
         });
+
     };
 
 }
