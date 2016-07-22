@@ -9,11 +9,11 @@
 
     <title>Myee | Login</title>
 
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/plugins/bootstrap/bootstrap.min.css" rel="stylesheet">
     <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
 
-    <link href="assets/css/animate.css" rel="stylesheet">
-    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/plugins/animate.css" rel="stylesheet">
+    <link href="assets/plugins/style.css" rel="stylesheet">
 
 </head>
 
@@ -49,8 +49,8 @@
 </div>
 
 <!-- Mainly scripts -->
-<script src="assets/js/jquery/jquery-2.1.1.min.js"></script>
-<script src="assets/js/bootstrap/bootstrap.min.js"></script>
+<script src="assets/plugins/jquery/jquery-2.1.1.min.js"></script>
+<script src="assets/plugins/bootstrap/bootstrap.min.js"></script>
 
 </body>
 
