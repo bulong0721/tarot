@@ -36,7 +36,6 @@ import java.util.Map;
  * Created by Martin on 2016/4/21.
  */
 @Controller
-@RequestMapping("admin/catering")
 public class TableController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TableController.class);
 
@@ -49,7 +48,7 @@ public class TableController {
     @Autowired
     private TableService tableService;
 
-    @RequestMapping(value = "type/save", method = RequestMethod.POST)
+    @RequestMapping(value = "admin/catering/type/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse addTableType(@RequestBody TableType type, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -75,7 +74,7 @@ public class TableController {
         return resp;
     }
 
-    @RequestMapping(value = "type/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "admin/catering/type/delete", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse delTableType(@RequestBody TableType type, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -103,7 +102,7 @@ public class TableController {
         }
     }
 
-    @RequestMapping(value = "type/paging", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/catering/type/paging", method = RequestMethod.GET)
     public
     @ResponseBody
     AjaxPageableResponse pageTypes(Model model, HttpServletRequest request, PageRequest pageRequest) {
@@ -128,7 +127,7 @@ public class TableController {
         return resp;
     }
 
-    @RequestMapping(value = "zone/save", method = RequestMethod.POST)
+    @RequestMapping(value = "admin/catering/zone/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse addTableZone(@RequestBody TableZone zone, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -153,7 +152,7 @@ public class TableController {
         return resp;
     }
 
-    @RequestMapping(value = "zone/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "admin/catering/zone/delete", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse delTableZone(@RequestBody TableZone zone, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -181,7 +180,7 @@ public class TableController {
         }
     }
 
-    @RequestMapping(value = "zone/paging", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/catering/zone/paging", method = RequestMethod.GET)
     public
     @ResponseBody
     AjaxPageableResponse pageZones(Model model, HttpServletRequest request, PageRequest pageRequest) {
@@ -212,7 +211,7 @@ public class TableController {
         }
     }
 
-    @RequestMapping(value = "table/save", method = RequestMethod.POST)
+    @RequestMapping(value = "admin/catering/table/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse addTable(@RequestBody Table table, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -237,7 +236,7 @@ public class TableController {
         return resp;
     }
 
-    @RequestMapping(value = "table/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "admin/catering/table/delete", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse delTable(@RequestBody Table table, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -265,7 +264,7 @@ public class TableController {
         }
     }
 
-    @RequestMapping(value = "table/paging", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/catering/table/paging", method = RequestMethod.GET)
     public
     @ResponseBody
     AjaxPageableResponse pageTables(Model model, HttpServletRequest request, PageRequest pageRequest) {
@@ -297,7 +296,7 @@ public class TableController {
     }
 
 
-    @RequestMapping(value = "type/options", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/catering/type/options", method = RequestMethod.GET)
     public
     @ResponseBody
     List<TypeDTO> typeOptions(Model model, HttpServletRequest request) {
@@ -315,7 +314,7 @@ public class TableController {
         });
     }
 
-    @RequestMapping(value = "zone/options", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/catering/zone/options", method = RequestMethod.GET)
     public
     @ResponseBody
     List<ZoneDTO> zoneOptions(Model model, HttpServletRequest request) {

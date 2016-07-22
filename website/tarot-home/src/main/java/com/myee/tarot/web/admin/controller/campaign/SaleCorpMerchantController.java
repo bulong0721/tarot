@@ -24,7 +24,6 @@ import java.util.List;
  * Created by Administrator on 2016/7/11.
  */
 @Controller
-@RequestMapping(value = "api")
 public class SaleCorpMerchantController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SaleCorpMerchant.class);
@@ -41,7 +40,7 @@ public class SaleCorpMerchantController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "sale/corp/bindShop", method = RequestMethod.POST)
+    @RequestMapping(value = "api/sale/corp/bindShop", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saleCorpBindShop(@RequestParam(value = "bindString") String bindString,@RequestParam(value = "merchantId") Long merchantId, HttpServletRequest request) {
         try {
@@ -78,7 +77,7 @@ public class SaleCorpMerchantController {
      * @param shopId
      * @return
      */
-    @RequestMapping(value = "sale/corp/getBindShopsByShopId",method = RequestMethod.POST)
+    @RequestMapping(value = "api/sale/corp/getBindShopsByShopId",method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse getBindShopsByShopId(@RequestParam("shopId")Long shopId){
         try {

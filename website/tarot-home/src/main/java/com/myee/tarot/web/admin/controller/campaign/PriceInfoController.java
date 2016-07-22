@@ -22,7 +22,6 @@ import java.util.*;
  * Created by Administrator on 2016/7/11.
  */
 @Controller
-@RequestMapping(value = "api")
 public class PriceInfoController {
 
     @Autowired
@@ -33,7 +32,7 @@ public class PriceInfoController {
      * @param priceInfo
      * @return
      */
-    @RequestMapping(value = "info/savePriceInfo",method = RequestMethod.POST)
+    @RequestMapping(value = "api/info/savePriceInfo",method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveOrUpdatePriceInfo(@RequestBody PriceInfo priceInfo){
         try {
@@ -56,7 +55,7 @@ public class PriceInfoController {
      * @param status 0 已使用 1未使用 2过期
      * @return
      */
-    @RequestMapping(value = "info/getInfoByStatusAndKeyId")
+    @RequestMapping(value = "api/info/getInfoByStatusAndKeyId")
     @ResponseBody
     public AjaxResponse getPriceInfoByStatusAndKeyId(@RequestParam("keyId")Long keyId,@RequestParam("status")int status){
         try {
@@ -89,7 +88,7 @@ public class PriceInfoController {
      * 获取本商户下当天已使用的奖券
      * @return
      */
-    @RequestMapping(value = "info/findHistoryInfoByStoreToday",method = RequestMethod.GET )
+    @RequestMapping(value = "api/info/findHistoryInfoByStoreToday",method = RequestMethod.GET )
     @ResponseBody
     public AjaxPageableResponse getHistoryInfoByStoreToday(HttpServletRequest request, PageRequest pageRequest){
         try {
@@ -113,7 +112,7 @@ public class PriceInfoController {
     }
 
     //验证码验证
-    @RequestMapping(value = "info/checkCode")
+    @RequestMapping(value = "api/info/checkCode")
     @ResponseBody
     public AjaxResponse checkCodePrice(@RequestParam("checkCode")String checkCode,HttpServletRequest request){
         AjaxResponse resp = new AjaxResponse();

@@ -34,6 +34,7 @@ function deviceCtrl($scope,$resource, Constants,cTables,cfromly) {
         var xhr = $resource(mgrData.api.updateAttr);
         xhr.save({id: product.id}, attr).$promise.then(function (result) {
             attr.editing = false;
+            console.log($scope.rowIndex)
             $scope.tableOpts.data.splice($scope.rowIndex, 1, $scope.formData.model);//更新该列表单数据
         });
     };

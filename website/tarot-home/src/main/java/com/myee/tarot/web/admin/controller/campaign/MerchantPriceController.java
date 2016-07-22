@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
  * Created by Administrator on 2016/7/11.
  */
 @Controller
-@RequestMapping(value ="api")
 public class MerchantPriceController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MerchantPrice.class);
@@ -27,7 +26,7 @@ public class MerchantPriceController {
      * @param merchantPrice
      * @return
      */
-    @RequestMapping(value = "price/saveOrUpdate",method = RequestMethod.POST)
+    @RequestMapping(value = "api/price/saveOrUpdate",method = RequestMethod.POST)
     @ResponseBody
     private AjaxResponse priceSave(@RequestBody MerchantPrice merchantPrice){
         try {
@@ -52,7 +51,7 @@ public class MerchantPriceController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "price/deleteById",method = RequestMethod.POST)
+    @RequestMapping(value = "api/price/deleteById",method = RequestMethod.POST)
     @ResponseBody
     private AjaxResponse priceDelete(@RequestParam("id") Long id){
         try {

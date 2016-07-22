@@ -20,7 +20,6 @@ import java.util.List;
  * Created by Administrator on 2016/7/11.
  */
 @Controller
-@RequestMapping(value = "api")
 public class MerchantActivityController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MerchantActivity.class);
@@ -35,7 +34,7 @@ public class MerchantActivityController {
      * @param
      * @return
      */
-    @RequestMapping(value = "activity/saveOrUpdate",method = RequestMethod.POST)
+    @RequestMapping(value = "api/activity/saveOrUpdate",method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveActivity(@RequestParam("activityJson")String activityJson){
         try {
@@ -66,7 +65,7 @@ public class MerchantActivityController {
      * @param activityId
      * @return
      */
-    @RequestMapping(value = "activity/delete",method = RequestMethod.POST)
+    @RequestMapping(value = "api/activity/delete",method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse deleteActivity(@RequestParam("activityId")Long activityId){
         try {
@@ -86,7 +85,7 @@ public class MerchantActivityController {
      * @param storeId
      * @return
      */
-    @RequestMapping(value = "activity/findStoreActivity",method = RequestMethod.POST)
+    @RequestMapping(value = "api/activity/findStoreActivity",method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse findStoreActivity(@RequestParam("storeId")Long storeId){
         try {
@@ -106,7 +105,7 @@ public class MerchantActivityController {
      * @param activityId
      * @return
      */
-    @RequestMapping(value = "activity/openActivity",method = RequestMethod.POST)
+    @RequestMapping(value = "api/activity/openActivity",method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse openActivity(@RequestParam("storeId")Long storeId,@RequestParam("activityId")Long activityId){
         try {
@@ -128,7 +127,7 @@ public class MerchantActivityController {
      * @param activityId
      * @return
      */
-    @RequestMapping(value = "activity/findPriceByActivityId",method = RequestMethod.POST)
+    @RequestMapping(value = "api/activity/findPriceByActivityId",method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse findPriceByActivityId(@RequestParam("activityId")Long activityId){
         try {
