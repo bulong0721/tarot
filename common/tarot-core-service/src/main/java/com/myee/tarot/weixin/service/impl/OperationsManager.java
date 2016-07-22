@@ -446,6 +446,11 @@ public class OperationsManager extends RedisOperation implements OperationsServi
         return null;
     }
 
+    @Override
+    public ResponseData uploadData(String s, String s1) {
+        return null;
+    }
+
     private String readfile(File file){
         SAXReader saxReader = new SAXReader();
         JSONObject object = new JSONObject();
