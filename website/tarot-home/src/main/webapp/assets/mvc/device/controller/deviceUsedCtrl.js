@@ -6,6 +6,8 @@ angular.module('myee', [])
  */
 deviceUsedCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables', 'cfromly', 'NgTableParams', '$q'];
 function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableParams, $q) {
+
+    var iDatatable = 0, iEditor = 1;
     //绑定产品相关参数
     var vm = $scope.showCase = {};
     vm.selected = [];
@@ -92,8 +94,7 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
                 } else {
                     $scope.formBindData.model = {};
                 }
-                $scope.showDataTable = false;
-                $scope.showEditor = true;
+                $scope.activeTab = iEditor;
                 $scope.showInfoEditor = false;
                 $scope.showBindEditor = true;
             });
@@ -250,8 +251,7 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
 
     //formly返回
     $scope.goDataTable = function () {
-        $scope.showDataTable = true;
-        $scope.showEditor = false;
+        $scope.activeTab = iDatatable;
         $scope.showBindEditor = false;
         $scope.showInfoEditor = false;
     };
