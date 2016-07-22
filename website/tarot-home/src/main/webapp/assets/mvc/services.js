@@ -11,17 +11,17 @@ function constServiceCtor($resource, $q) {
     vm.merchantType = $resource('../admin/merchant/typeList4Select').query();
 
     //切换商户
-    vm.thisMerchant = {};
-    vm.getSwitchMerchant = function () {
-        var deferred = $q.defer();
-        $resource('../admin/merchant/getSwitch').get({}, function (resp) {
-            if (resp.rows.length > 0) {
-                vm.thisMerchant = resp.rows[0];
-            }
-            deferred.resolve(vm.thisMerchant);
-        });
-        return deferred.promise;
-    }
+    //vm.thisMerchant = {};
+    //vm.getSwitchMerchant = function () {
+    //    var deferred = $q.defer();
+    //    $resource('../admin/merchant/getSwitch').get({}, function (resp) {
+    //        if (resp.rows.length > 0) {
+    //            vm.thisMerchant = resp.rows[0];
+    //        }
+    //        deferred.resolve(vm.thisMerchant);
+    //    });
+    //    return deferred.promise;
+    //}
 
     //切换门店
     vm.thisMerchantStore = {};
@@ -161,12 +161,12 @@ function cTablesService($resource,NgTableParams,cAlerts){
                 return;
             }
             var data = response.dataMap.updateResult;//scope.formData.model;//response.rows[0].updateResult;//
+
             if (scope.rowIndex < 0) {
-                scope.tableOpts.data.splice(0, 0, data);
+                scope.tableOpts.data.unshift(data);
             } else {
                 scope.tableOpts.data.splice(scope.rowIndex, 1, data);
             }
-            scope.tableOpts.reload();
             scope.goDataTable();
         }
 
