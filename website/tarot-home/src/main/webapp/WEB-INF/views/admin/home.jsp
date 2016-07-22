@@ -18,7 +18,8 @@
 
     <!-- ngTable css -->
     <link href="assets/plugins/ng-table/ng-table.css" rel="stylesheet">
-
+    <!-- toastr css -->
+    <link href="assets/plugins/toastr/toastr.min.css" rel="stylesheet">
     <!-- Main Inspinia CSS files -->
     <link href="assets/plugins/animate.css" rel="stylesheet">
     <link href="assets/plugins/style.css" rel="stylesheet">
@@ -32,6 +33,7 @@
 <div id="wrapper">
     <div ng-include="'assets/mvc/desktop/view/navigation.html'"></div>
     <div id="page-wrapper" class="white-bg {{$state.current.name}}">
+        <toaster-container></toaster-container>
         <div ng-include="'assets/mvc/desktop/view/topnavbar.html'"></div>
         <breadcrumb></breadcrumb>
         <div class="wrapper wrapper-content animated fadeIn"><div ui-view></div></div>
@@ -65,6 +67,7 @@
 <script src="assets/plugins/ui-router/angular-ui-router.min.js"></script>
 <script src="assets/plugins/bootstrap/ui-bootstrap-tpls-2.0.0.min.js"></script>
 <script src="assets/plugins/ng-table/ng-table.js"></script>
+<script src="assets/plugins/toastr/toastr.min.js"></script>
 
 <!-- Anglar App Script -->
 <script src="assets/mvc/app.js"></script>

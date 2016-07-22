@@ -103,16 +103,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             url: "/campaign",
             template: "<div ui-view></div>",
             resolve: {
-                loadPlugin: managerLoader,
-                loadToaster: function($ocLazyLoad) {
-                    return $ocLazyLoad.load([
-                        {
-                            insertBefore: '#loadBefore',
-                            name: 'toaster',
-                            files: ['assets/plugins/toastr/toastr.min.js', 'assets/plugins/toastr/toastr.min.css']
-                        }
-                    ]);
-                }
+                loadPlugin: managerLoader
             }
         })
         .state('campaign.priceCheck', {
@@ -191,16 +182,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             url: "/explorer",
             template: "<div ui-view></div>",
             resolve: {
-                loadPlugin: treeLoader,
-                loadToaster:  function($ocLazyLoad) {
-                    return $ocLazyLoad.load([
-                        {
-                            insertBefore: '#loadBefore',
-                            name: 'toaster',
-                            files: ['assets/plugins/toastr/toastr.min.js', 'assets/plugins/toastr/toastr.min.css']
-                        }
-                    ]);
-                }
+                loadPlugin: treeLoader
             }
         })
         .state('explorer.explorer', {

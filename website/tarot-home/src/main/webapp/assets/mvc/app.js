@@ -9,7 +9,8 @@
         'oc.lazyLoad',                  // ocLazyLoad
         'ui.bootstrap',                 // Ui Bootstrap
         'ngSanitize',                    // ngSanitize
-        'ngTable'                    // ngTable
+        'ngTable',                    // ngTable
+        'toaster',//toaster
     ])
 })();
 

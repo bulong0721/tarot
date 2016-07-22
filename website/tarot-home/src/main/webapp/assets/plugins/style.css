@@ -10035,6 +10035,7 @@ th.center, td.center {
 
 /*/!*====================================new style====================================*!/*/
 /*.wrapper-content {padding: 15px 0px 20px;}*/
+.navbar { position: inherit;}
 .textAlign {text-align: center; background: #fff;}
 #right-sidebar {background: rgba(0,0,0,.1);  border: none;  top: 0;  width: 100% !important;  z-index: 9999;  bottom: 0;  position: fixed;  right:0;  }
 #right-sidebar .sidebar-container {width: 650px; margin: 100px auto 0; background: #fff;border: rgba(0,0,0,.2) 8px solid;}
