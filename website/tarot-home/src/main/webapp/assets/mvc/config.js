@@ -103,7 +103,16 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             url: "/campaign",
             template: "<div ui-view></div>",
             resolve: {
-                loadPlugin: managerLoader
+                loadPlugin: managerLoader,
+                loadToaster: function($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        {
+                            insertBefore: '#loadBefore',
+                            name: 'toaster',
+                            files: ['assets/plugins/toastr/toastr.min.js', 'assets/plugins/toastr/toastr.min.css']
+                        }
+                    ]);
+                }
             }
         })
         .state('campaign.priceCheck', {
@@ -113,11 +122,11 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             data: {
                 pageTitle: '活动管理',
                 subTitle: '抽奖管理',
-                datatable: 'assets/mvc/campaign/view/priceCheck_datatable.html',
+                datatable: 'assets/mvc/campaign/view/priceCheck_datatable.html'
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
-                    return ctrlManagerLoader($ocLazyLoad, 'campaign', 'campaignCtrl.js');
+                    return ctrlManagerLoader($ocLazyLoad, 'campaign', 'campaignCtrl.js')
                 }
             }
         })
@@ -291,7 +300,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 pageTitle: '数据中心',
                 subTitle: '排队数据',
                 datatable: 'assets/mvc/datacenter/view/waitToken_datatable.html',
-                editor: ''
+                //editor: ''
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {

@@ -15,4 +15,6 @@ public interface PriceInfoService extends GenericEntityService<Long ,PriceInfo>{
     List<PriceInfo> findByStatusAndKeyId(Long keyId,int status);
 
     PageResult<PriceInfo> pageList(Long storeId,PageRequest pageRequest);
+
+    PriceInfo priceCheckCode(Long storeId,String checkCode);
 }

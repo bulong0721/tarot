@@ -36,5 +36,10 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
         return priceInfoDao.pageList(storeId,pageRequest);
     }
 
+    @Override
+    public PriceInfo priceCheckCode(Long storeId, String checkCode) {
+        return priceInfoDao.priceCheckCode(storeId,checkCode);
+    }
+
 
 }

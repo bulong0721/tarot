@@ -20,7 +20,7 @@ public class MerchantPrice extends GenericEntity<Long, MerchantPrice>{
     protected Long id;
 
     @Column(name= "LEVEL")
-    private Integer level; //奖券等级
+    private String level; //奖券等级
 
     @Column(name= "NAME")
     private String name; //奖券名称
@@ -70,11 +70,11 @@ public class MerchantPrice extends GenericEntity<Long, MerchantPrice>{
         this.description = description;
     }
 
-    public Integer getLevel() {
+    public String getLevel() {
         return level;
     }
 
-    public void setLevel(Integer level) {
+    public void setLevel(String level) {
         this.level = level;
     }
 

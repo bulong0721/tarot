@@ -7,7 +7,7 @@
         </div>
         <button class="btn btn-sm btn-danger m-l" type="button" ng-click="search()"><i
                 class="fa fa-search"></i><span class="bold">搜索</span></button>
-        <div class="form-group">
+        <div class="form-group m-l">
             <input placeholder="验证码" ng-model="where.checkCode" type="text" class="form-control" style="width:200px;"/>
         </div>
         <button class="btn btn-sm btn-danger m-l" type="button" ng-click="checkCode()"><i
@@ -27,24 +27,23 @@
                     <th width="15%" class="center">类型</th>
                     <th width="15%" class="center">奖券名</th>
                     <th width="20%" class="center">描述</th>
-                    <th class="center">操作</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td colspan="6" class="center" ng-if="$data.length<=0">没有查找到数据</td>
+                    <td colspan="5" class="center" ng-if="$data.length<=0">没有查找到数据</td>
                 </tr>
                 <tr ng-repeat="row in $data">
                     <td>{{::row.checkCode}}</td>
                     <td>{{::row.keyId}}</td>
-                    <td>{{::row.price.level}}等奖</td>
+                    <td>{{::row.price.level}}</td>
                     <td>{{::row.price.name}}</td>
                     <td>{{::row.price.description}}</td>
-                    <td class="center">
-                        <!--<a ng-click="goEditor($index)"><i class="btn-icon fa fa-pencil"></i></a>
-                        <span class="divider"></span>-->
+                   <!-- <td class="center">
+                        &lt;!&ndash;<a ng-click="goEditor($index)"><i class="btn-icon fa fa-pencil"></i></a>
+                        <span class="divider"></span>&ndash;&gt;
                         <a ng-click="doDelete($index)"><i class="btn-icon fa fa-trash-o"></i></a>
-                    </td>
+                    </td>-->
                 </tr>
                 </tbody>
             </table>

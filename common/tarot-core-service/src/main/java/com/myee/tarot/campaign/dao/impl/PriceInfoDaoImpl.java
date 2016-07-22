@@ -47,5 +47,17 @@ public class PriceInfoDaoImpl extends GenericEntityDaoImpl<Long, PriceInfo> impl
         return pageList;
     }
 
+    @Override
+    public PriceInfo priceCheckCode(Long storeId, String checkCode) {
+        QPriceInfo qPriceInfo = QPriceInfo.priceInfo;
+        JPQLQuery<PriceInfo> query = new JPAQuery(getEntityManager());
+        List<PriceInfo> result = query.from(qPriceInfo).where(qPriceInfo.checkCode.eq(checkCode).and(qPriceInfo.price.store.id.eq(storeId))).fetch();
+        if(result!=null&&result.size()>0){
+            return result.get(0);
+        }else{
+            return null;
+        }
+    }
+
 
 }
