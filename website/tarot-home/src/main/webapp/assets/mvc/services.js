@@ -182,7 +182,7 @@ function cTablesService($resource,NgTableParams,cAlerts){
 
                 return xhr.get(args).$promise.then(function (data) {
                     params.total(data.recordsTotal);
-                    return data.rows;
+                    return data.rows?data.rows:[];
                 });
             }
         });
