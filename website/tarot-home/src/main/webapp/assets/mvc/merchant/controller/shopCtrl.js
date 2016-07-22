@@ -66,8 +66,8 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
             {key: 'code', type: 'c_input', templateOptions: {label: '门店码', required: true, placeholder: '门店码'}},
         ],
         api: {
-            read: 'merchantStore/pagingByMerchant',
-            update: 'merchantStore/save'
+            read: '../admin/merchantStore/pagingByMerchant',
+            update: '../admin/merchantStore/save'
         }
     };
     cTables.initNgMgrCtrl(mgrData, $scope);
@@ -94,7 +94,7 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
             deferred.resolve($scope.initalBindProductList);
             return deferred.promise;
         } else {//第一次需要从后台读取列表，且只返回前10个数据
-            return $resource('admin/merchantStore/getAllStoreExceptSelf').get().$promise.then(function (data) {
+            return $resource('../admin/merchantStore/getAllStoreExceptSelf').get().$promise.then(function (data) {
                 console.log(data.rows)
                 //初始化showCase.selected数组，给全选框用，让它知道应该全选哪些
                 angular.forEach(data.rows, function (indexData, index, array) {
@@ -189,7 +189,7 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
             }
         });
 
-        $resource('api/sale/corp/bindShop').save({
+        $resource('../api/sale/corp/bindShop').save({
             'bindString': JSON.stringify(result),
             'merchantId': $scope.formBindData.model.id
         }, {}, function (respSucc) {
