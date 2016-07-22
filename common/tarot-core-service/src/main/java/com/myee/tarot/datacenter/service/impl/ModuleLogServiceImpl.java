@@ -1,10 +1,9 @@
-package com.myee.tarot.log.service.impl;
+package com.myee.tarot.datacenter.service.impl;
 
-import com.myee.tarot.core.dao.GenericEntityDao;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
-import com.myee.tarot.log.dao.ModuleLogDao;
-import com.myee.tarot.log.service.ModuleLogService;
-import com.myee.tarot.log.domain.ModuleLog;
+import com.myee.tarot.datacenter.dao.ModuleLogDao;
+import com.myee.tarot.datacenter.service.ModuleLogService;
+import com.myee.tarot.datacenter.domain.ModuleLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

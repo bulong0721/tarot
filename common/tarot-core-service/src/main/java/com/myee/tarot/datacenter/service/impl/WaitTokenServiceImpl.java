@@ -1,10 +1,10 @@
-package com.myee.tarot.log.service.impl;
+package com.myee.tarot.datacenter.service.impl;
 
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.WhereRequest;
-import com.myee.tarot.log.dao.WaitTokenDao;
-import com.myee.tarot.log.service.WaitTokenService;
+import com.myee.tarot.datacenter.dao.WaitTokenDao;
+import com.myee.tarot.datacenter.service.WaitTokenService;
 import com.myee.tarot.weixin.domain.WxWaitToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,9 +1,9 @@
-package com.myee.tarot.log.dao.impl;
+package com.myee.tarot.datacenter.dao.impl;
 
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.WhereRequest;
-import com.myee.tarot.log.dao.WaitTokenDao;
+import com.myee.tarot.datacenter.dao.WaitTokenDao;
 import com.myee.tarot.weixin.domain.QWxWaitToken;
 import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.querydsl.jpa.JPQLQuery;

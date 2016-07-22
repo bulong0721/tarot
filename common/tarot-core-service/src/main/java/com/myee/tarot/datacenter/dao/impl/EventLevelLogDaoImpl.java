@@ -1,13 +1,9 @@
-package com.myee.tarot.log.dao.impl;
+package com.myee.tarot.datacenter.dao.impl;
 
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
-import com.myee.tarot.log.dao.EventLevelLogDao;
-import com.myee.tarot.log.dao.SelfCheckLogDao;
-import com.myee.tarot.log.domain.EventLevelLog;
-import com.myee.tarot.log.domain.ModuleLog;
-import com.myee.tarot.log.domain.QEventLevelLog;
-import com.myee.tarot.log.domain.SelfCheckLog;
-import com.myee.tarot.profile.domain.GeoZone;
+import com.myee.tarot.datacenter.dao.EventLevelLogDao;
+import com.myee.tarot.datacenter.domain.EventLevelLog;
+import com.myee.tarot.datacenter.domain.QEventLevelLog;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;

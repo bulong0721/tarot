@@ -52,8 +52,8 @@
         <class>com.myee.tarot.campaign.domain.PriceInfo</class>
         <class>com.myee.tarot.campaign.domain.SaleCorpMerchant</class>
 
-        <class>com.myee.tarot.log.domain.SelfCheckLog</class>
-        <class>com.myee.tarot.log.domain.ModuleLog</class>
-        <class>com.myee.tarot.log.domain.EventLevelLog</class>
+        <class>com.myee.tarot.datacenter.domain.SelfCheckLog</class>
+        <class>com.myee.tarot.datacenter.domain.ModuleLog</class>
+        <class>com.myee.tarot.datacenter.domain.EventLevelLog</class>
     </persistence-unit>
 </persistence>

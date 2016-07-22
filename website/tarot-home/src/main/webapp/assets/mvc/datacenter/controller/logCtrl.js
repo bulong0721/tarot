@@ -12,7 +12,7 @@ logListCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables', 'cfromly',
 function logListCtrl($scope, $resource, Constants, cTables, cfromly, NgTableParams, $q) {
 
     $scope.moduleChange = function($viewValue) {
-        $resource('../admin/selfCheckLog/listFunction').query({moduleId:$viewValue.value},{},function success(resp){
+        $resource('../admin/selfCheckLog/listFunction').query({moduleId:$viewValue== null ? '':$viewValue.value},{},function success(resp){
             var length = resp.length;
             console.log(1111)
             $scope.functionNames.splice(0, $scope.functionNames.length);

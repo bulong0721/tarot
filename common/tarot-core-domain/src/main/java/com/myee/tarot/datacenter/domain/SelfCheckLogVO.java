@@ -1,4 +1,4 @@
-package com.myee.tarot.log.domain;
+package com.myee.tarot.datacenter.domain;
 
 /**
  * Created by Ray.Fu on 2016/7/15.

@@ -1,4 +1,4 @@
-package com.myee.tarot.log.domain;
+package com.myee.tarot.datacenter.domain;
 
 import com.myee.tarot.core.GenericEntity;
 import org.hibernate.annotations.DynamicUpdate;

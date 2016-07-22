@@ -1,8 +1,7 @@
-package com.myee.tarot.log.dao;
+package com.myee.tarot.datacenter.dao;
 
 import com.myee.tarot.core.dao.GenericEntityDao;
-import com.myee.tarot.log.domain.EventLevelLog;
-import com.myee.tarot.log.domain.SelfCheckLog;
+import com.myee.tarot.datacenter.domain.EventLevelLog;
 
 import java.util.List;
 

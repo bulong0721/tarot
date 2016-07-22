@@ -1,19 +1,16 @@
-package com.myee.tarot.log.dao.impl;
+package com.myee.tarot.datacenter.dao.impl;
 
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
-import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.core.util.WhereRequest;
-import com.myee.tarot.log.dao.SelfCheckLogDao;
-import com.myee.tarot.log.domain.QSelfCheckLog;
-import com.myee.tarot.log.domain.SelfCheckLog;
+import com.myee.tarot.datacenter.dao.SelfCheckLogDao;
+import com.myee.tarot.datacenter.domain.QSelfCheckLog;
+import com.myee.tarot.datacenter.domain.SelfCheckLog;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
-import java.util.List;
 import java.util.Map;
 
 /**

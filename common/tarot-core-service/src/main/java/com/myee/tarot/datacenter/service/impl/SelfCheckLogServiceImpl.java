@@ -1,16 +1,13 @@
-package com.myee.tarot.log.service.impl;
+package com.myee.tarot.datacenter.service.impl;
 
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
-import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.WhereRequest;
-import com.myee.tarot.log.dao.SelfCheckLogDao;
-import com.myee.tarot.log.domain.SelfCheckLog;
-import com.myee.tarot.log.service.SelfCheckLogService;
+import com.myee.tarot.datacenter.dao.SelfCheckLogDao;
+import com.myee.tarot.datacenter.domain.SelfCheckLog;
+import com.myee.tarot.datacenter.service.SelfCheckLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * Created by Ray.Fu on 2016/7/18.

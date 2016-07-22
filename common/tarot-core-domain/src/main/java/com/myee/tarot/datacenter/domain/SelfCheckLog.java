@@ -1,15 +1,13 @@
-package com.myee.tarot.log.domain;
+package com.myee.tarot.datacenter.domain;
 
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.xml.soap.Text;
 
 /**
  * Created by Enva on 2016/4/11.

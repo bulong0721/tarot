@@ -1,11 +1,11 @@
-package com.myee.tarot.web.log.controller;
+package com.myee.tarot.web.datacenter.controller;
 
 import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.catering.service.TableTypeService;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
-import com.myee.tarot.log.service.WaitTokenService;
+import com.myee.tarot.datacenter.service.WaitTokenService;
 import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.myee.tarot.weixin.domain.WxWaitTokenState;
 import org.slf4j.Logger;
