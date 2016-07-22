@@ -13,4 +13,6 @@ import java.util.List;
  */
 public interface DeviceAttributeDao extends GenericEntityDao<Long, DeviceAttribute> {
     List<DeviceAttribute> listByDeviceId(Long id);
+
+    void deleteByDeviceId(Long id);
 }

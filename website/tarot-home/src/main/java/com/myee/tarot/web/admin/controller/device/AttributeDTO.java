@@ -1,4 +1,4 @@
-package com.myee.tarot.web.admin.controller.product;
+package com.myee.tarot.web.admin.controller.device;
 
 import com.myee.tarot.catalog.domain.Device;
 import com.myee.tarot.catalog.domain.DeviceAttribute;

@@ -7,25 +7,30 @@ angular.module('myee', [])
 /**
  * roleCtrl - controller
  */
-tableMgrCtrl.$inject = ['$scope', '$resource', 'cTables','cfromly'];
+tableMgrCtrl.$inject = ['$scope', '$resource', 'cTables', 'cfromly'];
 
-function tableMgrCtrl($scope, $resource,cTables,cfromly) {
+function tableMgrCtrl($scope, $resource, cTables, cfromly) {
     var typeOpts = $resource('../admin/catering/type/options').query();
     var zoneOpts = $resource('../admin/catering/zone/options').query();
 
     var mgrData = {
         fields: [
-            {key: 'name', type: 'c_input',className:'c_formly_line', templateOptions: {label: '名称', required: true, placeholder: '名称'}},
+            {
+                key: 'name',
+                type: 'c_input',
+                className: 'c_formly_line',
+                templateOptions: {label: '名称', required: true, placeholder: '名称'}
+            },
             {
                 key: 'description',
                 type: 'c_input',
-                className:'c_formly_line',
+                className: 'c_formly_line',
                 templateOptions: {label: '描述', required: true, placeholder: '描述'}
             },
             {
                 key: 'tableType.id',
                 type: 'c_select',
-                className:'c_formly_line c_select',
+                className: 'c_formly_line c_select',
                 templateOptions: {
                     label: '桌型',
                     valueProp: 'id',
@@ -37,13 +42,14 @@ function tableMgrCtrl($scope, $resource,cTables,cfromly) {
             {
                 key: 'tableZone.id',
                 type: 'c_select',
-                className:'c_formly_line c_select',
-                templateOptions: {label: '区域', valueProp: 'id', options: zoneOpts, placeholder: '区域'}
+                className: 'c_formly_line c_select',
+                templateOptions: {label: '区域', valueProp: 'id', options: zoneOpts, required: true, placeholder: '区域'}
             },
         ],
         api: {
             read: '../admin/catering/table/paging',
-            update: '../admin/catering/table/save'
+            update: '../admin/catering/table/save',
+            delete: '../admin/catering/table/delete'
         }
     };
 

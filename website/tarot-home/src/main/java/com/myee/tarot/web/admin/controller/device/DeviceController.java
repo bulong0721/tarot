@@ -4,8 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.myee.tarot.catalog.domain.Device;
 import com.myee.tarot.catalog.domain.DeviceAttribute;
-import com.myee.tarot.catalog.domain.ProductUsedAttribute;
-import com.myee.tarot.catalog.view.ProductUsedAttributeView;
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
@@ -13,8 +12,6 @@ import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.device.service.DeviceAttributeService;
 import com.myee.tarot.device.service.DeviceService;
-import com.myee.tarot.web.admin.controller.product.AttributeDTO;
-import com.myee.tarot.web.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,6 +107,28 @@ public class DeviceController {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @RequestMapping(value = "device/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse deleteDevice(@Valid @RequestBody Device device, HttpServletRequest request) {
+        try {
+            AjaxResponse resp = new AjaxResponse();
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            //先手动删除所有该对象关联的属性，再删除该对象。因为关联关系是属性多对一该对象，关联字段放在属性表里，不能通过删对象级联删除属性。
+            deviceAttributeService.deleteByDeviceId(device.getId());
+
+            Device deviceUsed1 = deviceService.findById(device.getId());
+            deviceService.delete(deviceUsed1);
+            return AjaxResponse.success();
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+        return AjaxResponse.failed(-1);
     }
 
     @RequestMapping(value = "device/attribute/save", method = RequestMethod.POST)

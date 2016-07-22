@@ -6,7 +6,9 @@ import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.device.dao.DeviceAttributeDao;
 import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.JPQLQueryFactory;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,5 +32,15 @@ public class DeviceAttributeDaoImpl extends GenericEntityDaoImpl<Long, DeviceAtt
         log.info(query.fetchCount());
 
         return query.fetch();
+    }
+
+    @Override
+    public void deleteByDeviceId(Long id){
+        QDeviceAttribute qDeviceAttribute = QDeviceAttribute.deviceAttribute;
+        JPQLQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
+
+        queryFactory.delete(qDeviceAttribute)
+                .where(qDeviceAttribute.device.id.eq(id))
+                .execute();
     }
 }

@@ -26,6 +26,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.*;
 
 /**
@@ -68,7 +69,7 @@ public class MerchantController {
                 MerchantStore merchantStore = new MerchantStore();
                 merchantStore.setMerchant(merchant1);
                 merchantStore.setName(merchant1.getName() + "默认门店");
-                merchantStore.setCode("defaultCode0000");
+                merchantStore.setCode("defaultCode0000"+merchant1.getId());
                 merchantStoreService.update(merchantStore);
             }
 
@@ -121,10 +122,23 @@ public class MerchantController {
 
     @RequestMapping(value = "admin/merchant/delete", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse deleteMerchant(@RequestParam Long id, HttpServletRequest request) throws Exception {
+    public AjaxResponse deleteMerchant(@Valid @RequestBody Merchant merchantDelete, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
-            Merchant merchant = merchantService.findById(id);
+            Merchant thisSwitchMerchant = (Merchant)request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
+            if(thisSwitchMerchant == null ){
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            if(thisSwitchMerchant.getId() == merchantDelete.getId()){
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("要删除的商户是当前切换的门店商户，不能删除");
+                return resp;
+            }
+
+
+            Merchant merchant = merchantService.findById(merchantDelete.getId());
             if (merchant != null) merchantService.delete(merchant);
         } catch (Exception e) {
             e.printStackTrace();
@@ -300,15 +314,27 @@ public class MerchantController {
 
     @RequestMapping(value = "admin/merchantStore/delete", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse deleteMerchantStore(@RequestParam Long id, HttpServletRequest request) throws Exception {
+    public AjaxResponse deleteMerchantStore(@Valid @RequestBody MerchantStore merchantStoreDelete, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
-            if (id == null || StringUtil.isNullOrEmpty(id.toString())) {
+            MerchantStore thisSwitchMerchantStore = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if(thisSwitchMerchantStore == null ){
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            if(thisSwitchMerchantStore.getId() == merchantStoreDelete.getId()){
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("要删除的门店是当前切换的门店，不能删除");
+                return resp;
+            }
+
+            if (merchantStoreDelete.getId() == null || StringUtil.isNullOrEmpty(merchantStoreDelete.getId().toString())) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("参数错误");
                 return resp;
             }
-            MerchantStore merchantStore = merchantStoreService.findById(id);
+            MerchantStore merchantStore = merchantStoreService.findById(merchantStoreDelete.getId());
             if (merchantStore != null) merchantStoreService.delete(merchantStore);
         } catch (Exception e) {
             e.printStackTrace();

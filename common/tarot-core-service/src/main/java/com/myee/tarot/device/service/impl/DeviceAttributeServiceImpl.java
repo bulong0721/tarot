@@ -31,4 +31,9 @@ public class DeviceAttributeServiceImpl extends GenericEntityServiceImpl<Long, D
     public List<DeviceAttribute> listByDeviceId(Long id){
         return deviceAttributeDao.listByDeviceId(id);
     }
+
+    @Override
+    public void deleteByDeviceId(Long id){
+        deviceAttributeDao.deleteByDeviceId(id);
+    }
 }

@@ -16,6 +16,7 @@ function deviceCtrl($scope,$resource, Constants,cTables,cfromly) {
         api: {
             read: '../device/paging',
             update: '../device/update',
+            delete: '../device/delete',
             updateAttr: '../device/attribute/save',
             deleteAttr: '../device/attribute/delete',
         }

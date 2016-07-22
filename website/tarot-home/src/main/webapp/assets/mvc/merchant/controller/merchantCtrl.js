@@ -44,8 +44,11 @@ function merchantCtrl($scope, Constants,cTables,cfromly) {
         ],
         api: {
             read: '../admin/merchant/paging',
-            update: '../admin/merchant/save'
+            update: '../admin/merchant/save',
+            delete: '../admin/merchant/delete'
         }
     };
     cTables.initNgMgrCtrl(mgrData, $scope);
+
+    $scope.thisMerchantId = Constants.thisMerchantStore.merchant.id;
 }

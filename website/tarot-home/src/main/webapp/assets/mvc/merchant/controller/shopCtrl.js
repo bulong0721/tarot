@@ -67,7 +67,8 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
         ],
         api: {
             read: '../admin/merchantStore/pagingByMerchant',
-            update: '../admin/merchantStore/save'
+            update: '../admin/merchantStore/save',
+            delete: '../admin/merchantStore/delete'
         }
     };
     cTables.initNgMgrCtrl(mgrData, $scope);
@@ -95,7 +96,7 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
             return deferred.promise;
         } else {//第一次需要从后台读取列表，且只返回前10个数据
             return $resource('../admin/merchantStore/getAllStoreExceptSelf').get().$promise.then(function (data) {
-                console.log(data.rows)
+                //console.log(data.rows)
                 //初始化showCase.selected数组，给全选框用，让它知道应该全选哪些
                 angular.forEach(data.rows, function (indexData, index, array) {
                     //indexData等价于array[index]
@@ -133,6 +134,7 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
     $scope.showBindEditor = false;
     $scope.activeTab = iDatatable;
     $scope.showCase.currentRowIndex = 0;
+    $scope.thisStoreId = Constants.thisMerchantStore.id;
 
     $scope.goShopBindEditor = function (rowIndex) {
 
@@ -205,10 +207,12 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
                     var length = $scope.initalBindProductList.length;
                     for (i = 0; i < length; i++) {
                         var data2 = $scope.initalBindProductList[i];
+                        console.log(data2)
                         if (data2.id == index) {
                             $scope.tableOpts.data[$scope.showCase.currentRowIndex].bindStores.push({
                                 id: index,
                                 name: data2.name,
+                                merchant: data2.merchant,
                             });
                             break;
                         }

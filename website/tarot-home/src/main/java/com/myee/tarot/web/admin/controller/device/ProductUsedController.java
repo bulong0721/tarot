@@ -1,4 +1,4 @@
-package com.myee.tarot.web.admin.controller.product;
+package com.myee.tarot.web.admin.controller.device;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Function;
@@ -7,8 +7,6 @@ import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catalog.domain.ProductUsed;
 import com.myee.tarot.catalog.domain.ProductUsedAttribute;
 import com.myee.tarot.catalog.type.ProductType;
-import com.myee.tarot.catalog.view.ProductUsedAttributeView;
-import com.myee.tarot.catalog.view.ProductUsedView;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.PageRequest;
@@ -17,10 +15,8 @@ import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.device.service.DeviceUsedService;
 import com.myee.tarot.merchant.domain.MerchantStore;
-import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.product.service.ProductUsedAttributeService;
 import com.myee.tarot.product.service.ProductUsedService;
-import com.myee.tarot.web.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

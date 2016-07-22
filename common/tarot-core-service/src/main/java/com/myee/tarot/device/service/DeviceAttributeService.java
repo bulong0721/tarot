@@ -13,4 +13,6 @@ import java.util.List;
  */
 public interface DeviceAttributeService extends GenericEntityService<Long, DeviceAttribute> {
     List<DeviceAttribute> listByDeviceId(Long id);
+
+    void deleteByDeviceId(Long id);
 }
