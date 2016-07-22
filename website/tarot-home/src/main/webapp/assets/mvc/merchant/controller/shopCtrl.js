@@ -7,6 +7,7 @@ angular.module('myee', [])
 merchantShopCtrl.$inject = ['$scope',  'Constants','cTables','cfromly','$resource','NgTableParams', '$q'];
 function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTableParams, $q) {
 
+    var iDatatable = 0, iEditor = 1;
     var mgrData = {
         fields: [
             {
@@ -65,8 +66,8 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
             {key: 'code', type: 'c_input', templateOptions: {label: '门店码', required: true, placeholder: '门店码'}},
         ],
         api: {
-            read: 'merchantStore/pagingByMerchant',
-            update: 'merchantStore/save'
+            read: '../admin/merchantStore/pagingByMerchant',
+            update: '../admin/merchantStore/save'
         }
     };
     cTables.initNgMgrCtrl(mgrData, $scope);
@@ -86,13 +87,14 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
     vm.toggleAll = toggleAll;
     vm.toggleOne = toggleOne;
 
+
     function initalBindProduct() {
         if ($scope.initalBindProductList) {//如果已经从后台读取过数据了，则不再访问后台获取列表
             var deferred = $q.defer();
             deferred.resolve($scope.initalBindProductList);
             return deferred.promise;
         } else {//第一次需要从后台读取列表，且只返回前10个数据
-            return $resource('/admin/merchantStore/getAllStoreExceptSelf').get().$promise.then(function (data) {
+            return $resource('../admin/merchantStore/getAllStoreExceptSelf').get().$promise.then(function (data) {
                 console.log(data.rows)
                 //初始化showCase.selected数组，给全选框用，让它知道应该全选哪些
                 angular.forEach(data.rows, function (indexData, index, array) {
@@ -129,7 +131,7 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
     $scope.formBindData = {};
     $scope.showInfoEditor = false;
     $scope.showBindEditor = false;
-
+    $scope.activeTab = iDatatable;
     $scope.showCase.currentRowIndex = 0;
 
     $scope.goShopBindEditor = function (rowIndex) {
@@ -143,10 +145,8 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
 
             $scope.tableBindOpts.reload().then(function () {
                 $scope.addNew = true;
-
                 if ($scope.tableOpts && rowIndex > -1) {
                     $scope.showCase.currentRowIndex = rowIndex;//记录当前选择的行，以备后续更新该行数据
-
                     var data = $scope.tableOpts.data[rowIndex];
                     $scope.formBindData.model = data;
                     $scope.currentId = data.id;
@@ -169,8 +169,7 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
                 } else {
                     $scope.formBindData.model = {};
                 }
-                $scope.showDataTable = false;
-                $scope.showEditor = true;
+                $scope.activeTab = iEditor;
                 $scope.showInfoEditor = false;
                 $scope.showBindEditor = true;
             });
@@ -190,7 +189,7 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
             }
         });
 
-        $resource('/api/sale/corp/bindShop').save({
+        $resource('../api/sale/corp/bindShop').save({
             'bindString': JSON.stringify(result),
             'merchantId': $scope.formBindData.model.id
         }, {}, function (respSucc) {

@@ -145,6 +145,7 @@ function switchMerchant(Constants,$resource,$state,$rootScope,NgTableParams) {
             //搜索tables的数据
             $scope.search = function () {
                 $scope.loadByInit = true;
+                $scope.tableOpts.page(1);
                 $scope.tableOpts.reload();
             };
 

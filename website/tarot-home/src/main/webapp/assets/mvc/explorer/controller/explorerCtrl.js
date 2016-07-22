@@ -55,7 +55,7 @@ function explorerCtrl($scope, $resource, $uibModal,toaster) {
             fd.append("resFile",path.files[0]);
             fd.append("path",vm.filePath);
             //fd.append("type",'flie');
-            $resource('files/create').save({type:'file'}, fd,function deleteSuccess(res){
+            $resource('../files/create').save({type:'file'}, fd,function deleteSuccess(res){
                 console.log(res)
             });
         },

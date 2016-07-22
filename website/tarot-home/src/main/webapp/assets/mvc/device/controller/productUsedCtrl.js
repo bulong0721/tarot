@@ -7,6 +7,7 @@ angular.module('myee', [])
 productUsedCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables', 'cfromly', 'NgTableParams', '$q'];
 function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableParams, $q) {
 
+    var iDatatable = 0, iEditor = 1;
     //绑定产品相关参数
     var vm = $scope.showCase = {};
     vm.selected = [];
@@ -20,7 +21,7 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
             deferred.resolve($scope.initalBindProductList);
             return deferred.promise;
         } else {//第一次需要从后台读取列表，且只返回前10个数据
-            return $resource('/device/used/listByStoreId').get().$promise.then(function (data) {
+            return $resource('../device/used/listByStoreId').get().$promise.then(function (data) {
                 //初始化showCase.selected数组，给全选框用，让它知道应该全选哪些
                 angular.forEach(data.rows, function (indexData, index, array) {
                     //indexData等价于array[index]
@@ -95,8 +96,7 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
                 } else {
                     $scope.formBindData.model = {};
                 }
-                $scope.showDataTable = false;
-                $scope.showEditor = true;
+                $scope.activeTab = iEditor;
                 $scope.showInfoEditor = false;
                 $scope.showBindEditor = true;
             });
@@ -113,7 +113,7 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
             }
         });
 
-        $resource('/product/used/bindDeviceUsed').save({
+        $resource('../product/used/bindDeviceUsed').save({
             'bindString': JSON.stringify(result),
             'productUsedId': $scope.formBindData.model.id
         }, {}, function (respSucc) {
@@ -263,8 +263,7 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
 
     //formly返回
     $scope.goDataTable = function () {
-        $scope.showDataTable = true;
-        $scope.showEditor = false;
+        $scope.activeTab = iDatatable;
         $scope.showBindEditor = false;
         $scope.showInfoEditor = false;
     };
