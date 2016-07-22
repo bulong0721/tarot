@@ -47,7 +47,7 @@ public class WaitTokenController {
     public AjaxPageableResponse pageWaitToken(Model model, HttpServletRequest request, WhereRequest whereRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
-            PageResult<WxWaitToken> pageList = waitTokenService.pageList(whereRequest);
+            PageResult<WxWaitToken> pageList = waitTokenService.pageWaitToken(whereRequest);
             List<WxWaitToken> wxWaitTokenList = pageList.getList();
             for (WxWaitToken wxWaitToken : wxWaitTokenList) {
                 resp.addDataEntry(objectToEntry(wxWaitToken));

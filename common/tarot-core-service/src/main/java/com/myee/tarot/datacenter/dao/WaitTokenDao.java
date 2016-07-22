@@ -13,6 +13,6 @@ import java.util.List;
  */
 public interface WaitTokenDao  extends GenericEntityDao<Long, WxWaitToken> {
 
-     PageResult<WxWaitToken> pageList(WhereRequest whereRequest);
+     PageResult<WxWaitToken> pageWaitToken(WhereRequest whereRequest);
 
 }
