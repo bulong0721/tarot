@@ -120,9 +120,9 @@
             </properties>
         </profile>
         <profile>
-            <id>test</id>
+            <id>prdtest</id>
             <properties>
-                <env>test</env>
+                <env>prdtest</env>
             </properties>
         </profile>
     </profiles>
