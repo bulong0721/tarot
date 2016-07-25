@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2016/7/11.
@@ -74,6 +76,7 @@ public class SaleCorpMerchantController {
 
     /**
      * 根据商户id 获取其关联的引流商户
+     * 优化只传id和name
      * @param shopId
      * @return
      */
@@ -83,21 +86,26 @@ public class SaleCorpMerchantController {
         try {
             AjaxResponse resp = new AjaxResponse();
             SaleCorpMerchant saleCorpMerchant = saleCorpMerchantService.findByMerchantId(shopId);
-            List<MerchantStore> stores = Lists.newArrayList();
             if(saleCorpMerchant!=null && StringUtils.isNotBlank(saleCorpMerchant.getRelatedMerchants())){
                 List<Long> bindStoreIds = JSON.parseArray(saleCorpMerchant.getRelatedMerchants(), Long.class);
                 for (Long bindStoreId : bindStoreIds) {
                     MerchantStore store = merchantStoreService.findById(bindStoreId);
-                    stores.add(store);
+                    resp.addDataEntry(objectToEntry(store));
                 }
                 resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
-                resp.addEntry("result",stores);
             }
             return resp;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return AjaxResponse.failed(-1);
+    }
+
+    private Map objectToEntry(MerchantStore merchantStore) {
+        Map entry = new HashMap();
+        entry.put("id", merchantStore.getId());
+        entry.put("name", merchantStore.getName());
+        return entry;
     }
 
 

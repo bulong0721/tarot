@@ -50,7 +50,6 @@ function campaignCtrl($scope, Constants,cTables,cfromly,toaster) {
     cTables.initNgMgrCtrl(mgrData, $scope);
 
     $scope.checkCode = function() {
-        toaster.warning({ body:"hehehehe"})
         var data= $scope.where;
         if(data.checkCode==null){
             toaster.warning({ body:"请输入验证码！"});

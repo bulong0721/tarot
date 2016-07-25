@@ -73,19 +73,6 @@ public class MerchantStore extends GenericEntity<Long, MerchantStore> {
     protected Merchant merchant;
 
 
-
-    //每个门店所激活的活动ID
-    @Column(name="ACTIVE_ACTIVITY_ID")
-    private Long activityId;
-
-    public Long getActivityId() {
-        return activityId;
-    }
-
-    public void setActivityId(Long activityId) {
-        this.activityId = activityId;
-    }
-
     @Override
     public Long getId() {
         return id;

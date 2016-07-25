@@ -1,6 +1,7 @@
 package com.myee.tarot.campaign.dao.impl;
 
 import com.myee.tarot.campaign.dao.MerchantActivityDao;
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.campaign.domain.MerchantActivity;
 import com.myee.tarot.campaign.domain.QMerchantActivity;
@@ -19,7 +20,7 @@ public class MerchantActivityDaoImpl extends GenericEntityDaoImpl<Long, Merchant
     public List<MerchantActivity> findStoreActivity(Long storeId) {
         QMerchantActivity qMerchantActivity = QMerchantActivity.merchantActivity;
         JPQLQuery<MerchantActivity> query = new JPAQuery(getEntityManager());
-        List<MerchantActivity> result = query.from(qMerchantActivity).where(qMerchantActivity.store.id.eq(storeId)).fetch();
+        List<MerchantActivity> result = query.from(qMerchantActivity).where(qMerchantActivity.store.id.eq(storeId).and(qMerchantActivity.deleteStatus.eq(Constants.DELETE_NO))).fetch();
         return result;
     }
 }

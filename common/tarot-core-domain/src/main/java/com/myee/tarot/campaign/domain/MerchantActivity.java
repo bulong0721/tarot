@@ -3,6 +3,7 @@ package com.myee.tarot.campaign.domain;
 import com.google.common.collect.Lists;
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.List;
@@ -29,8 +30,31 @@ public class MerchantActivity extends GenericEntity<Long, MerchantActivity>{
     @JoinColumn(name = "STORE_ID")
     private MerchantStore store; //发起活动商店
 
+    @Column(name="activeStatus")
+    private int activeStatus; //是否启用   0为启用 1为未启用
+
     @OneToMany(targetEntity = MerchantPrice.class, mappedBy = "activity",cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
+    @Where(clause="deleteStatus=0")
     private List<MerchantPrice> prices = Lists.newArrayList();
+
+    @Column(name = "deleteStatus")
+    private int deleteStatus; //是否被删除   0为启用，1为删除
+
+    public int getDeleteStatus() {
+        return deleteStatus;
+    }
+
+    public void setDeleteStatus(int deleteStatus) {
+        this.deleteStatus = deleteStatus;
+    }
+
+    public int getActiveStatus() {
+        return activeStatus;
+    }
+
+    public void setActiveStatus(int activeStatus) {
+        this.activeStatus = activeStatus;
+    }
 
     public List<MerchantPrice> getPrices() {
         return prices;
