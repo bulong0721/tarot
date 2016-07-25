@@ -1,19 +1,20 @@
 package com.myee.tarot.web.admin.controller.campaign;
 
 import com.alibaba.fastjson.JSON;
-import com.myee.tarot.core.Constants;
-import com.myee.tarot.core.exception.ServiceException;
-import com.myee.tarot.core.util.ajax.AjaxResponse;
-import com.myee.tarot.merchant.domain.MerchantStore;
-import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.campaign.domain.MerchantActivity;
 import com.myee.tarot.campaign.domain.MerchantPrice;
 import com.myee.tarot.campaign.service.MerchantActivityService;
+import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.exception.ServiceException;
+import com.myee.tarot.core.util.ajax.AjaxResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -27,8 +28,6 @@ public class MerchantActivityController {
 
     @Autowired
     private MerchantActivityService merchantActivityService;
-    @Autowired
-    private MerchantStoreService merchantStoreService;
 
     /**
      * 添加个新的奖券活动
@@ -73,7 +72,11 @@ public class MerchantActivityController {
         try {
             MerchantActivity activity = merchantActivityService.findById(activityId);
             if(activity!=null){
-                merchantActivityService.delete(activity);
+                activity.setDeleteStatus(Constants.DELETE_YES);
+                for (MerchantPrice merchantPrice : activity.getPrices()) {
+                    merchantPrice.setDeleteStatus(Constants.DELETE_YES);
+                }
+                merchantActivityService.update(activity);
                 return AjaxResponse.success();
             }
         } catch (Exception e){
@@ -93,6 +96,7 @@ public class MerchantActivityController {
         try {
             AjaxResponse response = new AjaxResponse();
             List<MerchantActivity> result = merchantActivityService.findStoreActivity(storeId);
+
             response.addEntry("result", result);
             return response;
         } catch (Exception e) {

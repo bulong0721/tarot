@@ -49,4 +49,8 @@ public class Constants {
 	public final static int ACTIVITY_START = 0; //启用
  	public final static int ACTIVITY_END = 1; //未启用
 
+	//活动或奖券逻辑删除
+	public final static int DELETE_NO = 0; //启用
+	public final static int DELETE_YES = 1; //删除
+
 }

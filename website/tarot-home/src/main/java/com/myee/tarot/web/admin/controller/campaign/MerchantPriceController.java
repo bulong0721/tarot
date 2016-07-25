@@ -1,5 +1,6 @@
 package com.myee.tarot.web.admin.controller.campaign;
 
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.campaign.domain.MerchantPrice;
@@ -57,7 +58,8 @@ public class MerchantPriceController {
         try {
             MerchantPrice price = merchantPriceService.findById(id);
             if(price!=null){
-                merchantPriceService.delete(price);
+                price.setDeleteStatus(Constants.DELETE_YES);
+                merchantPriceService.update(price);
                 return AjaxResponse.success();
             }
         } catch (ServiceException e) {

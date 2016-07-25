@@ -49,6 +49,17 @@ public class MerchantPrice extends GenericEntity<Long, MerchantPrice>{
     @JSONField(serialize = false)
     private MerchantActivity activity; //关联活动
 
+    @Column(name = "deleteStatus")
+    private int deleteStatus; //是否被删除   0为启用，1为删除
+
+    public int getDeleteStatus() {
+        return deleteStatus;
+    }
+
+    public void setDeleteStatus(int deleteStatus) {
+        this.deleteStatus = deleteStatus;
+    }
+
     public Integer getTotal() {
         return total;
     }
