@@ -8,6 +8,7 @@ import com.google.common.collect.Ordering;
 import com.myee.djinn.dto.*;
 import com.myee.djinn.endpoint.OrchidService;
 //import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
+import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
 import com.myee.tarot.catering.dao.TableTypeDao;
 import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.merchant.dao.MerchantStoreDao;
@@ -45,8 +46,8 @@ public class WeixinManager extends RedisOperation implements WeixinService {
     private WxWaitTokenDao waitTokenDao;
     @Autowired
     private WFeedBackDao wFeedBackDao;
-//    @Autowired
-//    private ServerBootstrap serverBootstrap;
+    @Autowired
+    private ServerBootstrap serverBootstrap;
 
     static Integer iCount = 0;
 
@@ -167,8 +168,9 @@ public class WeixinManager extends RedisOperation implements WeixinService {
     @Override
     public WxWaitToken enqueue(long shopId, int dinerCount, String openId) {
 
-        //测试代码  OrchidService eptService = serverBootstrap.getClient(OrchidService.class, toClientUUID(shopId));
-        OrchidService eptService = null;
+        //测试代码
+        OrchidService eptService = serverBootstrap.getClient(OrchidService.class, toClientUUID(shopId));
+//        OrchidService eptService = null;
         Diner diner = new Diner();
         try {
             ResponseData responseData = eptService.take(dinerCount, diner);
