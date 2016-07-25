@@ -451,6 +451,12 @@ public class OperationsManager extends RedisOperation implements OperationsServi
         return null;
     }
 
+    @Override
+    public ResponseData getAgentVersionCode() {
+        //TODO 云端不用实现
+        return null;
+    }
+
     private String readfile(File file){
         SAXReader saxReader = new SAXReader();
         JSONObject object = new JSONObject();
