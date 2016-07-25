@@ -33,13 +33,16 @@ public class MerchantPrice extends GenericEntity<Long, MerchantPrice>{
     private MerchantStore store; //奖券使用门店
 
     @Column(name= "START_DATE")
+    @JSONField(format = "yyyy-MM-dd")
     private Date startDate; //奖券有效开始时间
 
     @Column(name= "END_DATE")
+    @JSONField(format = "yyyy-MM-dd")
     private Date endDate; //奖券有效结束日期
 
     @Column(name= "TOTAL")
     private Integer total; //奖券数量
+
 
     @ManyToOne(targetEntity = MerchantActivity.class, optional = false, cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn(name= "ACTIVITY_ID")

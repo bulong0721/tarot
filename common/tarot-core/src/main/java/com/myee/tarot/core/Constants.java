@@ -45,4 +45,8 @@ public class Constants {
 	public final static int PRICEINFO_UNUSED = 1; //未使用
 	public final static int PRICEINFO_EXPIRE= 2; //EXPIRE过期
 
+	//启用活动状态
+	public final static int ACTIVITY_START = 0; //启用
+ 	public final static int ACTIVITY_END = 1; //未启用
+
 }

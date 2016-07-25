@@ -1,6 +1,7 @@
 package com.myee.tarot.web.admin.controller.campaign;
 
 import com.alibaba.fastjson.JSON;
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
@@ -50,6 +51,7 @@ public class MerchantActivityController {
             for (MerchantPrice activity : activities) {
                 activity.setActivity(merchantActivity);
             }
+            merchantActivity.setActiveStatus(Constants.ACTIVITY_END); //先默认关闭
             MerchantActivity activity = merchantActivityService.update(merchantActivity);
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
             resp.addEntry("result", activity);
@@ -110,11 +112,18 @@ public class MerchantActivityController {
     public AjaxResponse openActivity(@RequestParam("storeId")Long storeId,@RequestParam("activityId")Long activityId){
         try {
             AjaxResponse resp = new AjaxResponse();
-            MerchantStore store = merchantStoreService.findById(storeId);
-            store.setActivityId(activityId);
-            MerchantStore activeStore = merchantStoreService.update(store);
+            List<MerchantActivity> activities = merchantActivityService.findStoreActivity(storeId);
+            //先设定所有活动关闭
+            for (MerchantActivity activity : activities) {
+                if(activity.getId()==activityId){
+                    activity.setActiveStatus(Constants.ACTIVITY_START);
+                    resp.setErrorString("修改成功");
+                }else {
+                    activity.setActiveStatus(Constants.ACTIVITY_END);
+                }
+                merchantActivityService.update(activity);
+            }
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
-            resp.addEntry("result",activeStore);
             return resp;
         } catch (Exception e) {
             e.printStackTrace();

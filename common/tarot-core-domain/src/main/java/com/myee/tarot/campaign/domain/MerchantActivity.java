@@ -29,8 +29,19 @@ public class MerchantActivity extends GenericEntity<Long, MerchantActivity>{
     @JoinColumn(name = "STORE_ID")
     private MerchantStore store; //发起活动商店
 
+    @Column(name="activeStatus")
+    private int activeStatus; //是否启用   0为未启用 1为启用
+
     @OneToMany(targetEntity = MerchantPrice.class, mappedBy = "activity",cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
     private List<MerchantPrice> prices = Lists.newArrayList();
+
+    public int getActiveStatus() {
+        return activeStatus;
+    }
+
+    public void setActiveStatus(int activeStatus) {
+        this.activeStatus = activeStatus;
+    }
 
     public List<MerchantPrice> getPrices() {
         return prices;
