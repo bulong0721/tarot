@@ -30,19 +30,19 @@
             </li>
 
             <li ng-class="{active: $state.includes('dataCenter')}">
-                <a href=""><i class="fa fa-lg fa-bank"></i> <span class="nav-label">数据中心</span> <span class="fa arrow"></span></a>
+                <a href=""><i class="fa fa-lg fa-calendar"></i> <span class="nav-label">数据中心</span> <span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level" ng-class="{in: $state.includes('dataCenter')}">
                     <li ng-class="{active: $state.includes('dataCenter.selfCheckLog')}"><a ui-sref="dataCenter.selfCheckLog">自检日志</a></li>
                     <li ng-class="{active: $state.includes('dataCenter.waittoken')}"><a ui-sref="dataCenter.waittoken">排队数据</a></li>
                 </ul>
             </li>
 
-            <li ng-class="{active: $state.includes('campaign')}">
-                <a href="campaign"><i class="fa fa-lg fa-building-o"></i> <span class="nav-label">活动管理</span> <span class="fa arrow"></span></a>
+            <!--<li ng-class="{active: $state.includes('campaign')}">
+                <a href=""><i class="fa fa-lg fa-group"></i> <span class="nav-label">活动管理</span> <span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level" ng-class="{in: $state.includes('campaign')}">
                     <li ng-class="{active: $state.includes('campaign.priceCheck')}"><a ui-sref="campaign.priceCheck">抽奖列表</a></li>
                 </ul>
-            </li>
+            </li>-->
 
             <li ng-class="{active: $state.includes('device')}">
                 <a href="device"><i class="fa fa-lg fa-camera-retro"></i> <span class="nav-label">设备管理</span> <span class="fa arrow"></span></a>
@@ -53,7 +53,7 @@
                 </ul>
             </li>
 
-            <li ng-class="{active: $state.includes('cater')}">
+            <!--<li ng-class="{active: $state.includes('cater')}">
                 <a href="cater"><i class="fa fa-lg fa-cutlery"></i> <span class="nav-label">餐厅设置</span> <span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level" ng-class="{in: $state.includes('cater')}">
                     <li ui-sref-active="active"><a ui-sref="cater.type">餐桌类型</a></li>
@@ -76,7 +76,7 @@
                     <li ui-sref-active="active"><a ui-sref="user.user">用户管理</a></li>
                     <li ui-sref-active="active"><a ui-sref="user.role">角色管理</a></li>
                 </ul>
-            </li>
+            </li>-->
         </ul>
 
     </div>

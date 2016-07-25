@@ -58,7 +58,7 @@ public class SelfCheckLogController {
 
     @RequestMapping(value = "services/uploadStructureData")
     @ResponseBody
-    public ResponseData reportData(@RequestParam("resFile") CommonsMultipartFile file, Long storeId,HttpServletRequest request) {
+    public ResponseData reportData(@RequestParam("resFile") CommonsMultipartFile file, String uploadType, Long storeId,HttpServletRequest request) {
         logger.info("导入excel数据到数据库(app端点击数据的收集),storeId:" + storeId);
         try {
             /*String type = FileType.getFileType(file);

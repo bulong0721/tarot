@@ -71,15 +71,25 @@ public class WebMpController {
         // 默认返回的文本消息内容
         String respContent = "请求处理异常，请稍候尝试！";
 
+        WxMpXmlMessage inMessage1 = WxMpXmlMessage.fromXml(req.getInputStream());
+        System.out.println(inMessage1.toString());
+
+//        try {
+//            String shortUrl = wxMpService.shortUrl("https://mp.weixin.qq.com/misc/getqrcode?fakeid=3012749102%26token=367458522%26style=1");
+//            System.out.println("shortUrl->" + shortUrl);
+//        } catch (WxErrorException e) {
+//            e.printStackTrace();
+//        }
         try {
             if (!wxMpService.checkSignature(timestamp, nonce, signature)) {
                 out.print("非法请求");
             } else if (StringUtils.isNotBlank(echostr)) {
                 out.write(echostr);
             }
-
             String encryptType = StringUtils.isBlank(req.getParameter("encrypt_type")) ? "raw" : req.getParameter("encrypt_type");
             if ("raw".equals(encryptType)) {
+                System.out.println("req.getInputStream()->" + req.getInputStream());
+                System.out.println("WxMpXmlMessage.fromXml(req.getInputStream())->" + WxMpXmlMessage.fromXml(req.getInputStream()));
                 WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(req.getInputStream());
                 String sceneId = inMessage.getEventKey();
                 String redisKeyOfUcdScId = RedisKeys.getIdentityCode(Long.valueOf(sceneId));
@@ -89,20 +99,24 @@ public class WebMpController {
                     //将该二维码绑定扫码的微信OpenId
                     Map<String,Object> msgMap = new HashMap<String,Object>();
                     if(wxService.bondQrCodeByScan(identityCode, inMessage.getFromUserName())) {
+                        System.out.println("coding-here->2");
                         msgMap = checkLatestDevelopments(identityCode);
                         int i = wxService.modifyWaitingInfo(Long.parseLong(msgMap.get("waitedTableCount").toString()),identityCode,Long.valueOf(msgMap.get("timeTook").toString()), Long.parseLong(msgMap.get("predictWaitingTime").toString()));
                         if(i != 1) {
                             logger.error("修改排号信息失败!");
                         }
                     } else {
+                        System.out.println("coding-here->3");
                         msgMap.put("valid", "该唯一码已过期或无效，查询进度失败!");
                     }
-//                    inMessage.setMap(msgMap);
+                    System.out.println("coding-here->4");
+                    inMessage.setMap(msgMap);
+                    System.out.println("coding-here->5");
                 }
                 //点击事件
                 if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent()!= null && inMessage.getEvent().equals(WxConsts.EVT_CLICK)) {
                     Map<String,Object> msgMap = checkLatestDevelopments(inMessage.getFromUserName(), WaitTokenState.WAITING.getValue());
-//                    inMessage.setMap(msgMap);
+                    inMessage.setMap(msgMap);
                 }
                 //微信自带的扫二维码，未关注
                 if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent() != null && inMessage.getEvent().equals(WxConsts.EVT_SUBSCRIBE) && inMessage.getTicket() != null) {
@@ -117,17 +131,21 @@ public class WebMpController {
                     } else {
                         msgMap.put("vaild","该唯一码已过期或无效，查询进度失败!");
                     }
-//                    inMessage.setMap(msgMap);
+                    inMessage.setMap(msgMap);
                 }
             //正则表达式判断是否包含字母数字(6位)
             String pattern = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6}$";
+
             //直接输唯一码
             if(inMessage.getMsgType() != null && inMessage.getMsgType().equals("text") && inMessage.getContent() != null && inMessage.getContent().matches(pattern)) {
                 Map<String,Object> msgMap = checkLatestDevelopments(inMessage.getContent());
-//                inMessage.setMap(msgMap);
+                inMessage.setMap(msgMap);
             }
+                System.out.println("coding-here->6");
                 WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage);
+                System.out.println("coding-here->7");
                 String str = outMessage.toXml();
+                System.out.println("coding-here->8");
                 out.print(str);
             } else if ("aes".equals(encryptType)) {
                 String msgSignature = req.getParameter("msg_signature");
@@ -138,9 +156,12 @@ public class WebMpController {
                 logger.error("不可识别的加密类型");
                 out.write("不可识别的加密类型");
             }
+            System.out.println("coding-here->9");
         } catch (Exception e) {
-            logger.error(e.toString());
+            System.out.println("coding-here->10");
+            System.out.println(e.getMessage());
         } finally {
+            System.out.println("coding-here->11");
             out.close();
         }
     }
@@ -217,46 +238,23 @@ public class WebMpController {
         try {
             WxMenu menu = new WxMenu();
             WxMenu.WxMenuButton button1 = new WxMenu.WxMenuButton();
-            button1.setType(WxConsts.BUTTON_CLICK);
-            button1.setName("查看进展");
-            button1.setKey("V1001_QUERY_INPUT");
+            button1.setType(WxConsts.BUTTON_SCANCODE_WAITMSG);
+            button1.setName("扫码查询");
+            button1.setKey("QUERY_SCAN_LOTTERY");
 
             WxMenu.WxMenuButton button2 = new WxMenu.WxMenuButton();
-            button2.setType(WxConsts.BUTTON_SCANCODE_WAITMSG);
-            button2.setName("扫码查询");
+            button2.setType(WxConsts.BUTTON_CLICK);
+            button2.setName("菜单2");
             button2.setKey("V1001_QUERY_CODE");
 
             WxMenu.WxMenuButton button3 = new WxMenu.WxMenuButton();
-            button3.setName("我的");
+            button3.setType(WxConsts.BUTTON_VIEW);
+            button3.setName("我的奖券");
+            button3.setUrl("http://www.baidu.com");
 
             menu.getButtons().add(button1);
             menu.getButtons().add(button2);
             menu.getButtons().add(button3);
-
-            WxMenu.WxMenuButton button31 = new WxMenu.WxMenuButton();
-            button31.setType(WxConsts.BUTTON_VIEW);
-            button31.setName("立即取号");
-            button31.setUrl(buildAuthorizationUrl("shop_list", "104"));
-
-            WxMenu.WxMenuButton button32 = new WxMenu.WxMenuButton();
-            button32.setType(WxConsts.BUTTON_VIEW);
-            button32.setName("个人中心");
-            button32.setUrl(buildAuthorizationUrl("account", ""));
-
-            WxMenu.WxMenuButton button33 = new WxMenu.WxMenuButton();
-            button33.setType(WxConsts.BUTTON_VIEW);
-            button33.setName("意见反馈");
-            button33.setUrl(buildAuthorizationUrl("contact", ""));
-
-            WxMenu.WxMenuButton button34 = new WxMenu.WxMenuButton();
-            button34.setType(WxConsts.BUTTON_VIEW);
-            button34.setName("关于木爷");
-            button34.setUrl(wpSite + "/weixin.html#/cleverinfo");
-
-            button3.getSubButtons().add(button31);
-            button3.getSubButtons().add(button32);
-            button3.getSubButtons().add(button33);
-            button3.getSubButtons().add(button34);
 
             wxMpService.menuCreate(menu);
 

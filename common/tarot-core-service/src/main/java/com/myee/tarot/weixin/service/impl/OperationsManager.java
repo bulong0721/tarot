@@ -11,6 +11,10 @@ import com.myee.djinn.server.operations.OperationsService;
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.catering.service.TableTypeService;
+import com.myee.tarot.core.exception.ServiceException;
+import com.myee.tarot.datacenter.domain.SelfCheckLog;
+import com.myee.tarot.datacenter.domain.SelfCheckLogVO;
+import com.myee.tarot.datacenter.service.SelfCheckLogService;
 import com.myee.tarot.device.service.DeviceUsedService;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.weixin.dao.WxWaitTokenDao;
@@ -33,7 +37,11 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -67,6 +75,9 @@ public class OperationsManager extends RedisOperation implements OperationsServi
     @Autowired
     private TableTypeService tableTypeService;
 
+    @Autowired
+    private SelfCheckLogService selfCheckLogService;
+
     /*
      * 小女生取号
      *
@@ -83,8 +94,6 @@ public class OperationsManager extends RedisOperation implements OperationsServi
         waitToken.setIdentityCode(identityCode);
         Date date = new Date();
         waitToken.setTimeTook(date.getTime() / 1000);
-        WxWaitToken wxWaitToken = new WxWaitToken();
-        wxWaitToken = waitTokenDao.update(WeixinManager.convertTo(waitToken, date.getTime() / 1000));
         //然后二维码的数字码放Redis，跟identityCode唯一码绑定
         hsetSimple(redisKeyOfUcdScId, waitToken.getIdentityCode(), null);
         //然后identityCode放Redis，跟排号的key绑定
@@ -93,13 +102,14 @@ public class OperationsManager extends RedisOperation implements OperationsServi
         append(waitToken.getIdentityCode(), redisKeyOfShopTb, map1.get("eTime"));
         hset(redisKeyOfShopTb, waitToken.getToken(), waitToken, map1.get("eTime"));
         WxMpQrCodeTicket myticket = null;
+        WxWaitToken wxWaitToken = null;
         try {
             myticket = wxMpService.qrCodeCreateTmpTicket(Integer.parseInt(waitToken.getSceneId()), 2592000);
+            wxWaitToken = waitTokenDao.update(WeixinManager.convertTo(waitToken, date.getTime() / 1000));
         } catch (WxErrorException e) {
             e.printStackTrace();
         }
-
-        if (wxWaitToken.getId() != null) {
+        if (wxWaitToken != null && wxWaitToken.getId() != null) {
             return ResponseData.successData(myticket.getUrl()); //返回二维码图片的短连接
         } else {
             return ResponseData.errorData("fail");
@@ -447,8 +457,19 @@ public class OperationsManager extends RedisOperation implements OperationsServi
     }
 
     @Override
-    public ResponseData uploadData(String s, String s1) {
-        return null;
+    public ResponseData uploadData(String type, String data) {
+        if (type != null && "selfCheckLog".equals(type)) {
+            SelfCheckLogVO selfCheckLogVO = JSON.parseObject(data, SelfCheckLogVO.class);
+            try {
+                SelfCheckLog scl = selfCheckLogService.update(new SelfCheckLog(selfCheckLogVO));
+                if(scl != null) {
+                    return ResponseData.success();
+                }
+            } catch (ServiceException e) {
+                System.out.println("error: " + e.toString());
+            }
+        }
+        return ResponseData.error();
     }
 
     private String readfile(File file){

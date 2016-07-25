@@ -12,7 +12,7 @@ public class SelfCheckLogVO {
 
     private Integer mFunctionId;
 
-    private byte[] mData;
+    private String mData;
 
     private Integer mLength;
 
@@ -48,11 +48,11 @@ public class SelfCheckLogVO {
         this.mFunctionId = mFunctionId;
     }
 
-    public byte[] getmData() {
+    public String getmData() {
         return mData;
     }
 
-    public void setmData(byte[] mData) {
+    public void setmData(String mData) {
         this.mData = mData;
     }
 

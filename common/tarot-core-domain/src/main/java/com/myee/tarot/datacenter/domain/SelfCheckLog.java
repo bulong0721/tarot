@@ -1,5 +1,8 @@
 package com.myee.tarot.datacenter.domain;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.parser.Feature;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import org.hibernate.annotations.DynamicUpdate;
@@ -8,6 +11,8 @@ import org.hibernate.annotations.JoinColumnsOrFormulas;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 /**
  * Created by Enva on 2016/4/11.
@@ -72,7 +77,7 @@ public class SelfCheckLog extends GenericEntity<Long, SelfCheckLog> {
         this.setEventLevel(vo.getmEventLevel());
         this.setFunctionId(vo.getmFunctionId());
         this.setModuleId(vo.getmModuleId());
-        this.setData(vo.getmData().toString());
+        this.setData(vo.getmData());
         this.setLength(vo.getmLength());
     }
 
