@@ -56,11 +56,14 @@ h5 {
 
 .nav > li.active > a {
     color: #ffffff;
+    text-shadow:rgba(0,0,0,0.25) 0 -1px 0;background:linear-gradient(#334556, #2C4257),#2A3F54;box-shadow:rgba(0,0,0,0.25) 0 1px 0,inset rgba(255,255,255,0.16) 0 1px 0
 }
+.nav > li.active ul a {text-shadow: inherit; box-shadow: inherit;}
+.nav > li.active ul > li.active > a {background: rgba(255,255,255,0.05);}
 
 .navbar-default .nav > li > a:hover,
 .navbar-default .nav > li > a:focus {
-    background-color: #293846;
+    background: rgba(255,255,255,0.05);
     color: white;
 }
 
@@ -196,7 +199,7 @@ h5 {
 
 .nav-header {
     padding: 33px 25px;
-    background: url("patterns/header-profile.png") no-repeat;
+    /*background: url("patterns/header-profile.png") no-repeat;*/
 }
 
 .pace-done .nav-header {
@@ -204,14 +207,34 @@ h5 {
 }
 
 .nav > li.active {
-    border-left: 4px solid #19aa8d;
-    background: #293846;
+    border-right: 4px solid #19aa8d;
+    background: #2A3F54;
 }
 
 .nav.nav-second-level > li.active {
     border: none;
 }
-
+.nav.nav-second-level > li:before {
+    background: #425668;
+    bottom: auto;
+    content: "";
+    height: 8px;
+    left: 23px;
+    margin-top: 15px;
+    position: absolute;
+    right: auto;
+    width: 8px;
+    z-index: 1;
+    border-radius: 50%;
+}
+.nav.nav-second-level > li:after {
+    border-left: 1px solid #425668;
+    bottom: 0;
+    content: "";
+    left: 27px;
+    position: absolute;
+    top: 0;
+}
 .nav.nav-second-level.collapse[style] {
     height: auto !important;
 }
@@ -3948,7 +3971,7 @@ body.tour-open .animated {
 
 body {
     font-family: "open sans", "Helvetica Neue", 微软雅黑, Helvetica, Arial, sans-serif;
-    background-color: #2f4050;
+    background-color: #2A3F54;
     font-size: 13px;
     color: #676a6c;
     overflow-x: hidden;
