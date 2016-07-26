@@ -73,12 +73,12 @@ public class SelfCheckLog extends GenericEntity<Long, SelfCheckLog> {
     public SelfCheckLog(){}
 
     public SelfCheckLog(SelfCheckLogVO vo){
-        this.setTime(vo.getmTime());
-        this.setEventLevel(vo.getmEventLevel());
-        this.setFunctionId(vo.getmFunctionId());
-        this.setModuleId(vo.getmModuleId());
-        this.setData(vo.getmData());
-        this.setLength(vo.getmLength());
+        this.setTime(vo.getTime());
+        this.setEventLevel(vo.getEventLevel());
+        this.setFunctionId(vo.getFunctionId());
+        this.setModuleId(vo.getModuleId());
+        this.setData(vo.getData());
+        this.setLength(vo.getLength());
     }
 
     @Override
