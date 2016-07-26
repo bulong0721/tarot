@@ -45,6 +45,12 @@
         <beans:property name="aesKey" value="DKigNihAx9rcVHKJvc9D6xBnXCFHTUe4MnTBw01bLM7"></beans:property>
     </beans:bean>
 
+    <beans:bean id="serverBootstrap" class="com.myee.djinn.rpc.bootstrap.ServerBootstrap">
+        <beans:constructor-arg name="config" ref="config"></beans:constructor-arg>
+    </beans:bean>
+
+    <beans:bean id="config" class="com.myee.djinn.remoting.netty.NettyServerConfig"></beans:bean>
+
     <!-- updates last user logon timestamp -->
     <beans:bean id="userAuthenticationSuccessHandler" class="com.myee.tarot.admin.web.handler.AdminAuthenticationSuccessHandler">
     </beans:bean>
