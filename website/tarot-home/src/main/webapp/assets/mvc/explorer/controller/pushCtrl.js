@@ -1,54 +1,42 @@
 angular.module('myee', [])
-    .controller('deviceCtrl', deviceCtrl);
+    .controller('pushCtrl', pushCtrl);
 
 /**
  * deviceCtrl - controller
  */
-deviceCtrl.$inject = ['$scope','$resource', 'Constants','cTables','cfromly','cAlerts'];
-function deviceCtrl($scope,$resource, Constants,cTables,cfromly,cAlerts) {
+pushCtrl.$inject = ['$scope', '$resource'];
+function pushCtrl($scope, $resource) {
+    $scope.treeData = [
+        {
+            path: "USA", size: 9826675, time: 318212000, type: "UTC -5 to -10",
+            children: [
+                {
+                    path: "California", size: 423970, time: 38340000, type: "Pacific Time",
+                    children: [
+                        {path: "San Francisco", size: 231, time: 837442, type: "PST"},
+                        {path: "Los Angeles", size: 503, time: 3904657, type: "PST"}
+                    ]
+                },
+                {
+                    path: "Illinois", size: 57914, time: 12882135, type: "Central Time Zone",
+                    children: [
+                        {path: "Chicago", size: 234, time: 2695598, type: "CST"}
+                    ]
+                }
+            ]
+        },
+        {path: "Texas", size: 268581, time: 26448193, type: "Mountain"}
+    ];
 
-    var mgrData = {
-        fields: [
-            {key: 'name', type: 'c_input', templateOptions: {label: '名称', required: true, placeholder: '名称'}},
-            {key: 'versionNum', type: 'c_input', templateOptions: {label: '版本号', placeholder: '版本号'}},
-            {key: 'description', type: 'c_input',templateOptions: {label: '描述', placeholder: '描述'}}
-        ],
-        api: {
-            read: '../device/paging',
-            update: '../device/update',
-            delete: '../device/delete',
-            updateAttr: '../device/attribute/save',
-            deleteAttr: '../device/attribute/delete',
-        }
+    $scope.treeColumns = [
+        {field: 'name', cellTemplate: ''},
+        {field: 'time', displayName: '修改时间'},
+        {field: 'type', displayName: '类型'},
+        {field: 'size', displayName: '大小'}
+    ];
+
+    $scope.handleSelect = function(data) {
+        data.children.push({path: "111", size: 111, time: 111, type: "111"});
+      console.log(data);
     };
-    cTables.initNgMgrCtrl(mgrData, $scope);
-
-    $scope.insertAttr = function (product) {
-        if (!product.attributes) {
-            product.attributes = [];
-        }
-        product.attributes.push({name: '', value: '', editing: true});
-    };
-
-    $scope.updateAttr = function (product, attr) {
-        var xhr = $resource(mgrData.api.updateAttr);
-        xhr.save({id: product.id}, attr).$promise.then(function (result) {
-            attr.editing = false;
-        });
-    };
-
-    $scope.deleteAttr = function (product, attr) {
-        cAlerts.confirm('确定删除?',function(){
-            //点击确定回调
-            var xhr = $resource(mgrData.api.deleteAttr);
-            xhr.save({id: product.id}, attr).$promise.then(function (result) {
-                var index = product.attributes.indexOf(attr);
-                product.attributes.splice(index, 1);
-            });
-        },function(){
-            //点击取消回调
-        });
-
-    };
-
 }

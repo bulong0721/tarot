@@ -9987,6 +9987,12 @@ body.md-skin {
     font-weight: 500;
 }
 
+.tree-icon {
+    color: #1c84c6;
+    font-size: 14px;
+    font-weight: 500;
+}
+
 th.center, td.center {
     text-align: center !important;
 }
