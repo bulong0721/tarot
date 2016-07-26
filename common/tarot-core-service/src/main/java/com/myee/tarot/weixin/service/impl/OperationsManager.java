@@ -399,7 +399,7 @@ public class OperationsManager extends RedisOperation implements OperationsServi
             String orgId = object.getString("orgId");
             StringBuilder sb = new StringBuilder();
             logger.info("================ request info  name:"+name+"  type:"+type+"   orgId:"+orgId);
-            if ("app".equals(type)) {
+            if ("app".equals(type) || "ipc".equals(type)) {
                 sb.append(DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(type).append(File.separator).append(name).append(File.separator).append("VersionInfo.xml");
             } else {
 
