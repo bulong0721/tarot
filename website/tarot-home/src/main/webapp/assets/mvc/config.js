@@ -10,7 +10,20 @@ function treeLoader($ocLazyLoad) {
     return $ocLazyLoad.load([
         {
             files: ['assets/plugins/jstree/style.min.css', 'assets/plugins/jstree/jstree.min.js']
-        }
+        },
+        {
+            files: ['assets/plugins/ui-tree/angular-ui-tree.min.css', 'assets/plugins/ui-tree/angular-ui-tree.min.js']
+        },
+        {
+            serie: true,
+            name: 'formly',
+            files: ['assets/plugins/formly/formly.min.js']
+        },
+        {
+            serie: true,
+            name: 'formlyBootstrap',
+            files: ['assets/plugins/formly/angular-formly-templates-bootstrap.js']
+        },
     ]);
 }
 
@@ -197,8 +210,18 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
         })
         .state('explorer.push', {
             url: "/push",
-            templateUrl: "assets/mvc/explorer/view/explorer.html",
-            data: {pageTitle: '推送日志'}
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            data: {
+                pageTitle: '资源管理',
+                subTitle: '推送日志',
+                datatable: 'assets/mvc/explorer/view/push_datatable.html',
+                editor: 'assets/mvc/explorer/view/push_editor.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'push', 'pushCtrl.js')
+                }
+            }
         })
         .state('cater', {
             abstract: true,
