@@ -16,7 +16,7 @@
                     "   <tbody>\n" +
                     "     <tr ng-repeat=\"row in tree_rows | searchFor:$parent.filterString:expandingProperty:colDefinitions track by row.branch.uid\"\n" +
                     "       ng-class=\"'level-' + {{ row.level }} + (row.branch.selected ? ' active':'')\" class=\"tree-grid-row\">\n" +
-                    "       <td><input type='checkbox' ng-model=\"row.branch.checked\" ng-change=\"user_changes_branch(row.branch)\" class=\"indented tree-checkbox\" />" +
+                    "       <td><label class=\"tree-checkbox indented\"><input type='checkbox' ng-model=\"row.branch.checked\" ng-change=\"user_changes_branch(row.branch)\" class=\"indented\" /><span></span></label>" +
                     "              <a ng-click=\"user_clicks_branch(row.branch)\"><i ng-class=\"row.tree_icon\"\n" +
                     "              ng-click=\"row.branch.expanded = !row.branch.expanded\"\n" +
                     "              class=\"indented tree-icon\"></i></a><span ng-if=\"expandingProperty.cellTemplate\" class=\"indented tree-label\" " +
