@@ -1,27 +1,28 @@
-package com.myee.tarot.web.weixin.config;
+package com.myee.tarot.weixin.service;
 
 import com.myee.djinn.remoting.netty.NettyServerConfig;
 import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
 import com.myee.djinn.server.operations.OperationsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 /**
  * Created by Ray.Fu on 2016/6/30.
  */
-public class BootStrapConfig {
+public class BootStrapFacatoryBean extends AbstractFactoryBean<ServerBootstrap> {
     @Value("${djinn.port}")
     private int djinnPort;
     @Autowired
     private OperationsService operationsService;
 
-    void serverBootstrapInit() {
+    @Override
+    public Class<?> getObjectType() {
+        return null;
+    }
+
+    @Override
+    protected ServerBootstrap createInstance() throws Exception {
         final NettyServerConfig nettyServerConfig = new NettyServerConfig();
         nettyServerConfig.setListenPort(djinnPort);
         ServerBootstrap bootstrap = new ServerBootstrap(nettyServerConfig);
@@ -34,6 +35,6 @@ public class BootStrapConfig {
 
         bootstrap.start();
         System.out.println("here");
-//        return bootstrap;
+        return bootstrap;
     }
 }

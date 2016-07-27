@@ -28,7 +28,7 @@
         <beans:property name="accessDeniedUrl" value="/admin/denied.html"/>
     </beans:bean>
 
-    <beans:bean scope="singleton" class="com.myee.tarot.web.weixin.config.BootStrapConfig" init-method="serverBootstrapInit"></beans:bean>
+    <beans:bean scope="singleton" class="com.myee.tarot.weixin.service.BootStrapFacatoryBean" id="bootStrapFacatoryBean"></beans:bean>
 
     <beans:bean id="wxMpMessageRouter" class="me.chanjar.weixin.mp.api.WxMpMessageRouter">
         <beans:constructor-arg name="wxMpService" ref="wxMpService"></beans:constructor-arg>
@@ -45,11 +45,11 @@
         <beans:property name="aesKey" value="DKigNihAx9rcVHKJvc9D6xBnXCFHTUe4MnTBw01bLM7"></beans:property>
     </beans:bean>
 
-    <beans:bean id="serverBootstrap" class="com.myee.djinn.rpc.bootstrap.ServerBootstrap">
-        <beans:constructor-arg name="config" ref="config"></beans:constructor-arg>
-    </beans:bean>
+    <!--<beans:bean id="serverBootstrap" class="com.myee.djinn.rpc.bootstrap.ServerBootstrap" init-method="initialize" scope="singleton" >-->
+        <!--<beans:constructor-arg name="config" ref="config"></beans:constructor-arg>-->
+    <!--</beans:bean>-->
 
-    <beans:bean id="config" class="com.myee.djinn.remoting.netty.NettyServerConfig"></beans:bean>
+    <!--<beans:bean id="config" class="com.myee.djinn.remoting.netty.NettyServerConfig"></beans:bean>-->
 
     <!-- updates last user logon timestamp -->
     <beans:bean id="userAuthenticationSuccessHandler" class="com.myee.tarot.admin.web.handler.AdminAuthenticationSuccessHandler">

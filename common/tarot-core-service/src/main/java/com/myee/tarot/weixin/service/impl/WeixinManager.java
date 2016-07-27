@@ -17,6 +17,7 @@ import com.myee.tarot.weixin.dao.WFeedBackDao;
 import com.myee.tarot.weixin.dao.WxWaitTokenDao;
 import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.myee.tarot.weixin.domain.WFeedBack;
+import com.myee.tarot.weixin.service.BootStrapFacatoryBean;
 import com.myee.tarot.weixin.service.WeixinService;
 import com.myee.tarot.weixin.util.TimeUtil;
 import org.apache.commons.codec.binary.Base64;
@@ -47,7 +48,7 @@ public class WeixinManager extends RedisOperation implements WeixinService {
     @Autowired
     private WFeedBackDao wFeedBackDao;
     @Autowired
-    private ServerBootstrap serverBootstrap;
+    private BootStrapFacatoryBean bootStrapFacatoryBean;
 
     static Integer iCount = 0;
 
@@ -166,10 +167,15 @@ public class WeixinManager extends RedisOperation implements WeixinService {
     });
 
     @Override
-    public WxWaitToken enqueue(long shopId, int dinerCount, String openId) {
+    public WxWaitToken enqueue(long shopId, int dinerCount, String openId)  {
 
         //测试代码
-        OrchidService eptService = serverBootstrap.getClient(OrchidService.class, toClientUUID(shopId));
+        OrchidService eptService = null;
+        try {
+            eptService = bootStrapFacatoryBean.getObject().getClient(OrchidService.class, toClientUUID(shopId));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 //        OrchidService eptService = null;
         Diner diner = new Diner();
         try {
@@ -182,8 +188,8 @@ public class WeixinManager extends RedisOperation implements WeixinService {
             //保存某品牌餐厅下某分店的对应餐桌类型ID的排号
             String redisKey = RedisKeys.waitOfTableType(shopId, waitToken.getTableTypeId());
             String redisKeyToOpenIdRef = RedisKeys.openIdToTableType(shopId, openId);
-            WxWaitToken rwToken = convertTo(waitToken, date.getTime() / 1000);
-            waitTokenDao.update(rwToken);
+            WxWaitToken wxWaitToken = convertTo(waitToken, date.getTime() / 1000);
+            WxWaitToken rwToken = waitTokenDao.update(wxWaitToken);
             Map<String,Date> map = TimeUtil.getAfterDate(date);
             hsetSimple(redisKeyToOpenIdRef, redisKey, map.get("eTime"));
             //将identityCode和查询餐桌类型的排号放入Redis
