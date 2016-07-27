@@ -45,8 +45,9 @@ h5 {
 }
 
 .nav > li > a {
-    color: #a7b1c2;
-    font-weight: 600;
+    /*color: #a7b1c2;*/
+    color: rgba(255,255,255,0.75);
+    /*font-weight: 600;*/
     padding: 14px 20px 14px 25px;
 }
 
@@ -10107,3 +10108,10 @@ th.center, td.center {
 .fileInput button {}
 .file {position: relative}
 .file i {font-size: 60px; position: absolute; left: 0; top: 30px; width: 100%; text-align: center;}.ngtables .pagination {margin: 0;}
+
+/*input checkbox*/
+.tree-checkbox {margin: 0;}
+.tree-checkbox input[type=checkbox] {opacity: 0;  z-index: -100 !important; width: 0 !important; height: 0 !important; position: fixed;}
+.tree-checkbox input[type=checkbox] + span{position: relative;  display: inline-block;  margin: 0;  line-height: 20px;  min-height: 18px;  min-width: 18px;  font-weight: normal;  cursor: pointer;  }
+.tree-checkbox input[type=checkbox] + span::before {cursor: pointer;  font-family: fontAwesome;  font-weight: normal;  font-size: 12px;  color: #32a3ce;  content: "\a0";  background-color: #FAFAFA;  border: 1px solid #c8c8c8;  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);  border-radius: 0;  display: inline-block;  text-align: center;  height: 16px;  line-height: 14px;  min-width: 16px;   position: relative;  top: -1px;  }
+.tree-checkbox input[type=checkbox]:checked + span::before{  display: inline-block;  content: '\f00c';  background-color: #F5F8FC;  border-color: #adb8c0;  }
