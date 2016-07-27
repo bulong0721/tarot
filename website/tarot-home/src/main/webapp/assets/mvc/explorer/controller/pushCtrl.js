@@ -29,14 +29,40 @@ function pushCtrl($scope, $resource) {
     ];
 
     $scope.treeColumns = [
-        {field: 'name', cellTemplate: ''},
-        {field: 'time', displayName: '修改时间'},
-        {field: 'type', displayName: '类型'},
-        {field: 'size', displayName: '大小'}
+        {
+            displayName: '操作',
+            columnWidth: '15%',
+            cellTemplate: '<a><i class="btn-icon fa fa-plus" ng-click="cellTemplateScope.add(row.branch)"></i></a>' +
+                          '<span class="divider"></span>' +
+                          '<a><i class="btn-icon fa fa-pencil" ng-click="cellTemplateScope.edit(row.branch)"></i></a>' +
+                          '<span class="divider"></span>' +
+                          '<a><i class="btn-icon fa fa-trash-o" ng-click="cellTemplateScope.delete(row.branch)"></i></a>' +
+                          '<span class="divider"></span>' +
+                          '<a><i class="btn-icon fa fa-download" ng-click="cellTemplateScope.download(row.branch)"></i></a>',
+            cellTemplateScope: {
+                add: function(data) {
+                    alert('add:' + data);
+                },
+                edit: function(data) {
+                    alert('edit:' + data);
+                },
+                delete: function(data) {
+                    alert('delete:' + data);
+                },
+                download: function(data) {
+                    alert('download:' + data);
+                }
+            }
+        },
+        {field: 'time', displayName: '修改时间', columnWidth: '20%'},
+        {field: 'type', displayName: '类型', columnWidth: '10%'},
+        {field: 'size', displayName: '大小', columnWidth: '10%'}
     ];
 
     $scope.handleSelect = function(data) {
-        data.children.push({path: "111", size: 111, time: 111, type: "111"});
-      console.log(data);
+        alert('数据懒加载');
+        //$resource('...').query({}).then(function (result) {
+        //    data.push({})
+        //});
     };
 }
