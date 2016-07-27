@@ -61,6 +61,23 @@ public class DateTime {
 		return DateFormatUtils.format(d, PATTERN_DATETIME);
 	}
 
+	/**	返回yyyyMMddHHmmss格式的长整型	,可以输入毫秒格式时间*/
+	public static Long toShortDateTimeL(Long millis) {
+		if(millis == null){
+			return null;
+		}
+		return toShortDateTimeL(new Date(millis));
+	}
+
+	/**	返回yyyyMMddHHmmss格式的长整型	*/
+	public static Long toShortDateTimeL(Date dateTime) {
+		String dateStr = toShortDateTime(dateTime);
+		if(dateTime == null){
+			return null;
+		}
+		return Long.valueOf(dateStr);
+	}
+
 	/**	返回Date对象,可以输入yyyyMMdd格式和yyyyMMddHHmmss格式*/
 	public static Date toDate(Long dateTime) {
 		if(dateTime == null){

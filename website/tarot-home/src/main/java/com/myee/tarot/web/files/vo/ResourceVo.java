@@ -12,6 +12,7 @@ public class ResourceVo {
     private String           name;
     private String           content;
     private String           modified;
+    private String           resTypeName;
     private int              resType;
     private Long             size;
     private Date             created;
@@ -92,6 +93,14 @@ public class ResourceVo {
         this.children = children;
     }
 
+    public String getResTypeName() {
+        return resTypeName;
+    }
+
+    public void setResTypeName(String resTypeName) {
+        this.resTypeName = resTypeName;
+    }
+
     public boolean isLeaf() {
         return resType != 1;
     }
@@ -105,9 +114,9 @@ public class ResourceVo {
         resVo.setSalt(Long.toString(salt));
         resVo.setPath(file.getAbsolutePath());
         resVo.setName(file.getName());
-        resVo.setModified(DateTime.toNormalDateTime(file.lastModified()));
-        resVo.setName(file.getName());
+        resVo.setModified(DateTime.toNormalDateTime(DateTime.toShortDateTimeL(file.lastModified())));
         resVo.setResType(file.isDirectory() ? 1 : 2);
+        resVo.setResTypeName(resVo.getResType() == 2 ? "文件" : "目录");
         resVo.setSize(file.length());
         return resVo;
     }

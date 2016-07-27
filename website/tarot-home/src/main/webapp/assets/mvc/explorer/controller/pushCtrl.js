@@ -6,27 +6,31 @@ angular.module('myee', [])
  */
 pushCtrl.$inject = ['$scope', '$resource'];
 function pushCtrl($scope, $resource) {
-    $scope.treeData = [
-        {
-            path: "USA", size: 9826675, time: 318212000, type: "UTC -5 to -10",
-            children: [
-                {
-                    path: "California", size: 423970, time: 38340000, type: "Pacific Time",
-                    children: [
-                        {path: "San Francisco", size: 231, time: 837442, type: "PST"},
-                        {path: "Los Angeles", size: 503, time: 3904657, type: "PST"}
-                    ]
-                },
-                {
-                    path: "Illinois", size: 57914, time: 12882135, type: "Central Time Zone",
-                    children: [
-                        {path: "Chicago", size: 234, time: 2695598, type: "CST"}
-                    ]
-                }
-            ]
-        },
-        {path: "Texas", size: 268581, time: 26448193, type: "Mountain"}
-    ];
+
+     $resource('../file/search').get({orgID: 100, node: "root"},{},function success(resp){
+         $scope.treeData = resp.rows;
+    });
+    //$scope.treeData = [
+    //    {
+    //        path: "USA", size: 9826675, time: 318212000, type: "UTC -5 to -10",
+    //        children: [
+    //            {
+    //                path: "California", size: 423970, time: 38340000, type: "Pacific Time",
+    //                children: [
+    //                    {path: "San Francisco", size: 231, time: 837442, type: "PST"},
+    //                    {path: "Los Angeles", size: 503, time: 3904657, type: "PST"}
+    //                ]
+    //            },
+    //            {
+    //                path: "Illinois", size: 57914, time: 12882135, type: "Central Time Zone",
+    //                children: [
+    //                    {path: "Chicago", size: 234, time: 2695598, type: "CST"}
+    //                ]
+    //            }
+    //        ]
+    //    },
+    //    {path: "Texas", size: 268581, time: 26448193, type: "Mountain"}
+    //];
 
     $scope.treeColumns = [
         {
@@ -54,15 +58,20 @@ function pushCtrl($scope, $resource) {
                 }
             }
         },
-        {field: 'time', displayName: '修改时间', columnWidth: '20%'},
-        {field: 'type', displayName: '类型', columnWidth: '10%'},
+        {field: 'modified', displayName: '修改时间', columnWidth: '20%'},
+        {field: 'resTypeName', displayName: '类型', columnWidth: '10%'},
         {field: 'size', displayName: '大小', columnWidth: '10%'}
     ];
 
     $scope.handleSelect = function(data) {
-        alert('数据懒加载');
-        //$resource('...').query({}).then(function (result) {
-        //    data.push({})
-        //});
+        if(data.resType == 2){
+            alert("已是文件");
+            return;
+        }
+        $resource('../file/search').get({orgID: 100, node: data.path},{},function success(resp){
+            angular.forEach(resp.rows, function(d){
+                data.children.push({name: d.name, path: d.path, modified: d.modified, resType: d.resType, resTypeName: d.resTypeName, size: d.size});
+            });
+        });
     };
 }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.PageResult;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.apiold.BusinessException;
@@ -38,13 +39,17 @@ public class PushController {
 
     @RequestMapping("file/search")
     @ResponseBody
-    public PageResult<?> searchResource(Long orgID, @RequestParam("node") String parentNode) {
+    public AjaxPageableResponse searchResource(Long orgID, @RequestParam("node") String parentNode, HttpServletRequest request) {
         if ("root".equals(parentNode)) {
             ResourceVo root = new ResourceVo();
             root.setName("/");
             root.setPath("/");
             root.setResType(1);
-            return new PageResult<ResourceVo>(Arrays.asList(root));
+            return new AjaxPageableResponse(Arrays.<Object>asList(root));
+        }
+        MerchantStore store = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
+        if(store != null && store.getId() != null){
+            System.out.println("SSSSSSSSSSSSSSSSSSS"+store.getId());
         }
         File template = getResFile(100L, parentNode);
         Map<String, ResourceVo> resMap = Maps.newLinkedHashMap();
@@ -53,7 +58,7 @@ public class PushController {
             File dir = getResFile(orgID, parentNode);
             listFiles(dir, resMap, orgID);
         }
-        return new PageResult<ResourceVo>(Lists.newArrayList(resMap.values()));
+        return new AjaxPageableResponse(Lists.<Object>newArrayList(resMap.values()));
     }
 
     @RequestMapping("file/create")
