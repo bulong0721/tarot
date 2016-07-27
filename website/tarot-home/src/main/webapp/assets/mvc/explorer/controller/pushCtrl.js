@@ -2,7 +2,7 @@ angular.module('myee', [])
     .controller('pushCtrl', pushCtrl);
 
 /**
- * deviceCtrl - controller
+ * pushCtrl - controller
  */
 pushCtrl.$inject = ['$scope', '$resource'];
 function pushCtrl($scope, $resource) {
