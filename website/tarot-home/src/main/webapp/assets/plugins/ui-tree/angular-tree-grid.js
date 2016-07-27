@@ -16,11 +16,12 @@
                     "   <tbody>\n" +
                     "     <tr ng-repeat=\"row in tree_rows | searchFor:$parent.filterString:expandingProperty:colDefinitions track by row.branch.uid\"\n" +
                     "       ng-class=\"'level-' + {{ row.level }} + (row.branch.selected ? ' active':'')\" class=\"tree-grid-row\">\n" +
-                    "       <td><a ng-click=\"user_clicks_branch(row.branch)\"><i ng-class=\"row.tree_icon\"\n" +
+                    "       <td><input type='checkbox' ng-model=\"row.branch.checked\" ng-change=\"user_changes_branch(row.branch)\" class=\"indented tree-checkbox\" />" +
+                    "              <a ng-click=\"user_clicks_branch(row.branch)\"><i ng-class=\"row.tree_icon\"\n" +
                     "              ng-click=\"row.branch.expanded = !row.branch.expanded\"\n" +
                     "              class=\"indented tree-icon\"></i></a><span ng-if=\"expandingProperty.cellTemplate\" class=\"indented tree-label\" " +
                     "              ng-click=\"on_user_click(row.branch)\" compile=\"expandingProperty.cellTemplate\"></span>" +
-                    "              <span  ng-if=\"!expandingProperty.cellTemplate\" class=\"indented tree-label\" ng-click=\"on_user_click(row.branch)\">\n" +
+                    "              <span ng-if=\"!expandingProperty.cellTemplate\" class=\"indented tree-label\" ng-click=\"on_user_click(row.branch)\">\n" +
                     "             {{row.branch[expandingProperty.field] || row.branch[expandingProperty]}}</span>\n" +
                     "       </td>\n" +
                     "       <td ng-repeat=\"col in colDefinitions\">\n" +
@@ -216,6 +217,15 @@
                         scope.user_clicks_branch = function (branch) {
                             if (branch !== selected_branch) {
                                 return select_branch(branch);
+                            }
+                        };
+
+                        scope.user_changes_branch = function (branch) {
+                            if (branch && branch.children) {
+                                for(var index = 0, len = branch.children.length; index < len; index++) {
+                                    var child = branch.children[index];
+                                    child.checked = branch.checked;
+                                }
                             }
                         };
 

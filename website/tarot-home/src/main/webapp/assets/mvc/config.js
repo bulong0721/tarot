@@ -186,6 +186,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             abstract: true,
             url: "/explorer",
             template: "<div ui-view></div>",
+            data: {pageTitle: '资源管理'},
             resolve: {
                 loadPlugin: treeLoader
             }
