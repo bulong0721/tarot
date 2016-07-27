@@ -24,7 +24,8 @@ public class MerchantActivityServiceImpl extends GenericEntityServiceImpl<Long, 
     }
 
     @Override
-    public List<MerchantActivity> findStoreActivity(Long storeId) {
+    public MerchantActivity findStoreActivity(Long storeId) {
         return merchantActivityDao.findStoreActivity(storeId);
     }
+
 }

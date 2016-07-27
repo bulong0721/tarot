@@ -27,14 +27,11 @@ public class MerchantActivity extends GenericEntity<Long, MerchantActivity>{
     private String content; //活动内容
 
     @ManyToOne(targetEntity = MerchantStore.class, optional = false)
-    @JoinColumn(name = "STORE_ID")
-    private MerchantStore store; //发起活动商店
-
-    @Column(name="activeStatus")
-    private int activeStatus; //是否启用   0为启用 1为未启用
+    @JoinColumn(name = "STORE_ID",unique = true)
+    private MerchantStore store; //发起活动商店 只能存在一个活动
 
     @OneToMany(targetEntity = MerchantPrice.class, mappedBy = "activity",cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
-    @Where(clause="deleteStatus=0")
+    @Where(clause="DELETE_STATUS=0")
     private List<MerchantPrice> prices = Lists.newArrayList();
 
     @Column(name = "deleteStatus")
@@ -48,13 +45,6 @@ public class MerchantActivity extends GenericEntity<Long, MerchantActivity>{
         this.deleteStatus = deleteStatus;
     }
 
-    public int getActiveStatus() {
-        return activeStatus;
-    }
-
-    public void setActiveStatus(int activeStatus) {
-        this.activeStatus = activeStatus;
-    }
 
     public List<MerchantPrice> getPrices() {
         return prices;

@@ -28,9 +28,9 @@ public class MerchantPrice extends GenericEntity<Long, MerchantPrice>{
     @Column(name= "DESCRIPTION")
     private String description; //奖券描述
 
-    @ManyToOne(targetEntity = MerchantStore.class)
+    /*@ManyToOne(targetEntity = MerchantStore.class)
     @JoinColumn(name = "STORE_ID")
-    private MerchantStore store; //奖券使用门店
+    private MerchantStore store; //奖券使用门店*/
 
     @Column(name= "START_DATE")
     @JSONField(format = "yyyy-MM-dd")
@@ -43,14 +43,35 @@ public class MerchantPrice extends GenericEntity<Long, MerchantPrice>{
     @Column(name= "TOTAL")
     private Integer total; //奖券数量
 
-
     @ManyToOne(targetEntity = MerchantActivity.class, optional = false, cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn(name= "ACTIVITY_ID")
     @JSONField(serialize = false)
     private MerchantActivity activity; //关联活动
 
-    @Column(name = "deleteStatus")
+    @Column(name = "STORE_ID")
+    private Long storeId; //使用的门店id
+
+    @Column(name = "ACTIVE_STATUS")
+    private int activeStatus; //是否启用   0为启用，1为不启用
+
+    @Column(name = "DELETE_STATUS")
     private int deleteStatus; //是否被删除   0为启用，1为删除
+
+    public Long getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(Long storeId) {
+        this.storeId = storeId;
+    }
+
+    public int getActiveStatus() {
+        return activeStatus;
+    }
+
+    public void setActiveStatus(int activeStatus) {
+        this.activeStatus = activeStatus;
+    }
 
     public int getDeleteStatus() {
         return deleteStatus;
@@ -90,14 +111,6 @@ public class MerchantPrice extends GenericEntity<Long, MerchantPrice>{
 
     public void setLevel(String level) {
         this.level = level;
-    }
-
-    public MerchantStore getStore() {
-        return store;
-    }
-
-    public void setStore(MerchantStore store) {
-        this.store = store;
     }
 
     public Date getStartDate() {

@@ -23,7 +23,7 @@ import java.util.List;
 @Repository
 public class PriceInfoDaoImpl extends GenericEntityDaoImpl<Long, PriceInfo> implements PriceInfoDao {
     @Override
-    public List<PriceInfo> findByStatusAndKeyId(Long keyId, int status) {
+    public List<PriceInfo> findByStatusAndKeyId(String keyId, int status) {
         QPriceInfo qPriceInfo = QPriceInfo.priceInfo;
         JPQLQuery<PriceInfo> query = new JPAQuery(getEntityManager());
         List<PriceInfo> result = query.from(qPriceInfo).where(qPriceInfo.status.eq(status).and(qPriceInfo.keyId.eq(keyId))).fetch();
@@ -38,7 +38,7 @@ public class PriceInfoDaoImpl extends GenericEntityDaoImpl<Long, PriceInfo> impl
         if(StringUtils.isNotBlank(pageRequest.getQueryName())){
             query.where(qPriceInfo.checkCode.like("%" + pageRequest.getQueryName() + "%"));
         }
-        query.from(qPriceInfo).where(qPriceInfo.status.eq(Constants.PRICEINFO_USED).and(qPriceInfo.price.store.id.eq(storeId))).orderBy(qPriceInfo.checkDate.desc());
+        query.from(qPriceInfo).where(qPriceInfo.status.eq(Constants.PRICEINFO_USED).and(qPriceInfo.price.storeId.eq(storeId))).orderBy(qPriceInfo.checkDate.desc());
         pageList.setRecordsTotal(query.fetchCount());
         if( pageRequest.getCount() > 0){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
@@ -51,12 +51,20 @@ public class PriceInfoDaoImpl extends GenericEntityDaoImpl<Long, PriceInfo> impl
     public PriceInfo priceCheckCode(Long storeId, String checkCode) {
         QPriceInfo qPriceInfo = QPriceInfo.priceInfo;
         JPQLQuery<PriceInfo> query = new JPAQuery(getEntityManager());
-        List<PriceInfo> result = query.from(qPriceInfo).where(qPriceInfo.checkCode.eq(checkCode).and(qPriceInfo.price.store.id.eq(storeId))).fetch();
+        List<PriceInfo> result = query.from(qPriceInfo).where(qPriceInfo.checkCode.eq(checkCode).and(qPriceInfo.price.storeId.eq(storeId))).fetch();
         if(result!=null&&result.size()>0){
             return result.get(0);
         }else{
             return null;
         }
+    }
+
+    @Override
+    public List<PriceInfo> findByStoreIdAndKeyId(Long storeId, String keyId) {
+        QPriceInfo qPriceInfo = QPriceInfo.priceInfo;
+        JPQLQuery<PriceInfo> query = new JPAQuery(getEntityManager());
+        List<PriceInfo> result = query.from(qPriceInfo).where(qPriceInfo.keyId.eq(keyId).and(qPriceInfo.price.storeId.eq(storeId))).fetch();
+        return result;
     }
 
 

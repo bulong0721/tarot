@@ -17,10 +17,12 @@ import java.util.List;
 @Repository
 public class MerchantActivityDaoImpl extends GenericEntityDaoImpl<Long, MerchantActivity> implements MerchantActivityDao {
     @Override
-    public List<MerchantActivity> findStoreActivity(Long storeId) {
+    public MerchantActivity findStoreActivity(Long storeId) {
         QMerchantActivity qMerchantActivity = QMerchantActivity.merchantActivity;
         JPQLQuery<MerchantActivity> query = new JPAQuery(getEntityManager());
         List<MerchantActivity> result = query.from(qMerchantActivity).where(qMerchantActivity.store.id.eq(storeId).and(qMerchantActivity.deleteStatus.eq(Constants.DELETE_NO))).fetch();
-        return result;
+        return result!=null&&result.size()>0 ? result.get(0):null;
     }
+
+
 }

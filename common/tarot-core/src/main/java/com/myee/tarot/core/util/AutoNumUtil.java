@@ -2,6 +2,7 @@ package com.myee.tarot.core.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 
 /**
  * Created by Administrator on 2016/7/19.
@@ -33,7 +34,9 @@ public class AutoNumUtil {
         }
 
         public static void main(String[] args) {
-            System.out.println(createRandomVcode());
+            Random random = new Random();
+            int a = random.nextInt(2);
+            System.out.println(a);
         }
 
 

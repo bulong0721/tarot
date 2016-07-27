@@ -1,5 +1,6 @@
 package com.myee.tarot.campaign.domain;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.myee.tarot.core.GenericEntity;
 
 import javax.persistence.*;
@@ -18,7 +19,7 @@ public class PriceInfo extends GenericEntity<Long, PriceInfo>{
     protected Long id;
 
     @Column(name = "KEY_ID")
-    private Long keyId; //微信关联ID
+    private String keyId; //微信关联ID
 
     @Column(name = "STATUS")
     private Integer status; // 0.已使用 1.未使用 2.过期
@@ -31,7 +32,20 @@ public class PriceInfo extends GenericEntity<Long, PriceInfo>{
     private MerchantPrice price;  //获取对应的奖项
 
     @Column(name = "CHECK_DATE")
+    @JSONField(format = "yyyy-MM-dd")
     private Date checkDate; //扫描使用时间
+
+    @Column(name = "GET_DATE")
+    @JSONField(format = "yyyy-MM-dd")
+    private Date getDate; //获取该奖券的时间
+
+    public Date getGetDate() {
+        return getDate;
+    }
+
+    public void setGetDate(Date getDate) {
+        this.getDate = getDate;
+    }
 
     public Date getCheckDate() {
         return checkDate;
@@ -49,11 +63,11 @@ public class PriceInfo extends GenericEntity<Long, PriceInfo>{
         this.checkCode = checkCode;
     }
 
-    public Long getKeyId() {
+    public String getKeyId() {
         return keyId;
     }
 
-    public void setKeyId(Long keyId) {
+    public void setKeyId(String keyId) {
         this.keyId = keyId;
     }
 

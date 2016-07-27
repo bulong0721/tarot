@@ -46,8 +46,8 @@ public class Constants {
 	public final static int PRICEINFO_EXPIRE= 2; //EXPIRE过期
 
 	//启用活动状态
-	public final static int ACTIVITY_START = 0; //启用
- 	public final static int ACTIVITY_END = 1; //未启用
+	public final static int PRICE_START = 1; //启用
+ 	public final static int PRICE_END = 0; //未启用
 
 	//活动或奖券逻辑删除
 	public final static int DELETE_NO = 0; //启用

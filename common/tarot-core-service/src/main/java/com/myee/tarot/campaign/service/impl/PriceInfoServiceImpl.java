@@ -1,14 +1,17 @@
 package com.myee.tarot.campaign.service.impl;
 
+import com.google.common.collect.Lists;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
 import com.myee.tarot.campaign.dao.PriceInfoDao;
 import com.myee.tarot.campaign.domain.PriceInfo;
 import com.myee.tarot.campaign.service.PriceInfoService;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,7 +30,7 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
     }
 
     @Override
-    public List<PriceInfo> findByStatusAndKeyId(Long keyId, int status) {
+    public List<PriceInfo> findByStatusAndKeyId(String keyId, int status) {
         return priceInfoDao.findByStatusAndKeyId(keyId, status);
     }
 
@@ -39,6 +42,20 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
     @Override
     public PriceInfo priceCheckCode(Long storeId, String checkCode) {
         return priceInfoDao.priceCheckCode(storeId,checkCode);
+    }
+
+    @Override
+    public boolean findByStoreIdAndKeyIdToday(Long storeId, String keyId) {
+        List<PriceInfo> priceInfo = priceInfoDao.findByStoreIdAndKeyId(storeId,keyId);
+        List<PriceInfo> onlyInfo = Lists.newArrayList();
+        for (PriceInfo info : priceInfo) {
+            Date getDate = info.getGetDate();
+            boolean flag = TimeUtil.whetherToday(getDate);
+            if(flag){
+                onlyInfo.add(info);
+            }
+        }
+        return onlyInfo!=null&&onlyInfo.size()==1 ? false : true;
     }
 
 

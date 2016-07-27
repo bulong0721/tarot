@@ -1,7 +1,10 @@
 package com.myee.tarot.web.admin.controller.campaign;
 
+import com.google.common.collect.Lists;
+import com.myee.tarot.campaign.domain.MerchantActivity;
 import com.myee.tarot.campaign.domain.MerchantPrice;
 import com.myee.tarot.campaign.domain.PriceInfo;
+import com.myee.tarot.campaign.service.MerchantActivityService;
 import com.myee.tarot.campaign.service.PriceInfoService;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -26,21 +30,43 @@ public class PriceInfoController {
 
     @Autowired
     private PriceInfoService priceInfoService;
+    @Autowired
+    private MerchantActivityService merchantActivityService;
 
     /**
      * 保存一个用户的奖项记录
-     * @param priceInfo
+     * @param
      * @return
      */
     @RequestMapping(value = "api/info/savePriceInfo",method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse saveOrUpdatePriceInfo(@RequestBody PriceInfo priceInfo){
+    public AjaxResponse saveOrUpdatePriceInfo(@RequestParam("storeId")Long storeId,
+                                              @RequestParam("keyId")String keyId){
         try {
             AjaxResponse resp = new AjaxResponse();
-            priceInfo.setCheckCode(AutoNumUtil.createRandomVcode());
-            PriceInfo result = priceInfoService.update(priceInfo);
+            //通过keyId和storeId查看此人是否今天已经抽取过奖券
+            boolean canDraw = priceInfoService.findByStoreIdAndKeyIdToday(storeId,keyId);
+           if(!canDraw){
+                resp.setErrorString("你今天已抽取过，请明天再来抽取");
+                resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                return resp;
+            }
+            PriceInfo priceInfo = new PriceInfo();
+            priceInfo.setKeyId(keyId);
+            priceInfo.setCheckCode(AutoNumUtil.createRandomVcode()); //设置6位随机数
+            priceInfo.setStatus(Constants.PRICEINFO_UNUSED);
+            priceInfo.setGetDate(new Date());
+            MerchantActivity activity = merchantActivityService.findStoreActivity(storeId);
+            //todo 从redis中获取抽奖规则list,判定list是否为空，为空后直接修改活动状态，直接为结束
+            List<Integer> priceList = new ArrayList<>();
+            for (int i = 1; i <= 50 ; i++) {
+                priceList.add(i);
+            }
+            PriceInfo info = getRandomPrice(priceInfo,priceList,activity.getPrices());
+            //todo 更新redis的list
+            priceInfoService.save(info);
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
-            resp.addEntry("result", result);
+            resp.addEntry("result", "添加成功");
             return resp;
         } catch (ServiceException e) {
             e.printStackTrace();
@@ -57,7 +83,7 @@ public class PriceInfoController {
      */
     @RequestMapping(value = "api/info/getInfoByStatusAndKeyId")
     @ResponseBody
-    public AjaxResponse getPriceInfoByStatusAndKeyId(@RequestParam("keyId")Long keyId,@RequestParam("status")int status){
+    public AjaxResponse getPriceInfoByStatusAndKeyId(@RequestParam("keyId")String keyId,@RequestParam("status")int status){
         try {
             AjaxResponse resp = new AjaxResponse();
             List<PriceInfo> infos = priceInfoService.findByStatusAndKeyId(keyId, status);
@@ -174,6 +200,29 @@ public class PriceInfoController {
         }
     }
 
+
+    public PriceInfo getRandomPrice(PriceInfo basePriceInfo,List<Integer> priceList,List<MerchantPrice> prices){
+        Random random = new Random();
+        int index = random.nextInt(priceList.size());
+        int priceInt = priceList.get(index);
+        List<MerchantPrice> activePrices = Lists.newArrayList();
+        for (MerchantPrice price : prices) {
+            if(price.getActiveStatus()==Constants.PRICE_START){
+                activePrices.add(price);
+            }
+        }
+        int compare = 0;
+        for (MerchantPrice activePrice : activePrices) {
+            compare+=activePrice.getTotal();
+            if(priceInt<= compare){
+                MerchantPrice getPrice = activePrice;
+                basePriceInfo.setPrice(getPrice);
+                break;
+            }
+        }
+        priceList.remove(index);
+        return basePriceInfo;
+    }
 
 
 }
