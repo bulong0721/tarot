@@ -6,21 +6,9 @@
  * Initial there are written state for all view in theme.
  *
  */
-function treeLoader($ocLazyLoad) {
-    return $ocLazyLoad.load([
-        {
-            files: ['assets/plugins/jstree/style.min.css', 'assets/plugins/jstree/jstree.min.js']
-        },
-        {
-            serie: true,
-            name: 'treeGrid',
-            files: ['assets/plugins/ui-tree/angular-tree-grid.css', 'assets/plugins/ui-tree/angular-tree-grid.js']
-        }
-    ]);
-}
-
-function managerLoader($ocLazyLoad) {
-    return $ocLazyLoad.load([
+//动态加载controller
+function ctrlManagerLoader(oclazyload, dir, ctrl) {
+    return oclazyload.load([
         {
             serie: true,
             files: ['assets/plugins/formly/api-check.min.js']
@@ -40,12 +28,11 @@ function managerLoader($ocLazyLoad) {
             name: 'ngTable',
             files: ['assets/plugins/ng-table/ng-table.js', 'assets/plugins/ng-table/ng-table.css']
         },
-    ]);
-}
-
-//动态加载controller
-function ctrlManagerLoader(oclazyload, dir, ctrl) {
-    return oclazyload.load([
+        {
+            serie: true,
+            name: 'treeGrid',
+            files: ['assets/plugins/ui-tree/angular-tree-grid.css', 'assets/plugins/ui-tree/angular-tree-grid.js']
+        },
         {
             name: 'myee',//属于哪个模块
             files: ['assets/mvc/' + dir + '/controller/' + ctrl]
@@ -67,10 +54,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
         .state('merchant', {
             abstract: true,
             url: "/merchant",
-            template: "<div ui-view></div>",
-            resolve: {
-                loadPlugin: managerLoader
-            }
+            template: "<div ui-view></div>"
         })
         .state('merchant.shop', {
             url: "/shop",
@@ -106,10 +90,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
         .state('campaign', {
             abstract: true,
             url: "/campaign",
-            template: "<div ui-view></div>",
-            resolve: {
-                loadPlugin: managerLoader
-            }
+            template: "<div ui-view></div>"
         })
         .state('campaign.priceCheck', {
             url: "/priceCheck",
@@ -129,10 +110,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
         .state('device', {
             abstract: true,
             url: "/device",
-            template: "<div ui-view></div>",
-            resolve: {
-                loadPlugin: managerLoader
-            }
+            template: "<div ui-view></div>"
         })
         .state('device.type', {
             url: "/type",
@@ -186,10 +164,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             abstract: true,
             url: "/explorer",
             template: "<div ui-view></div>",
-            data: {pageTitle: '资源推送'},
-            resolve: {
-                loadPlugin: treeLoader
-            }
+            data: {pageTitle: '资源推送'}
         })
         .state('explorer.explorer', {
             url: "/explorer",
@@ -202,21 +177,21 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
-                    return ctrlManagerLoader($ocLazyLoad, 'explorer', 'explorerCtrl.js')
+                    return ctrlManagerLoader($ocLazyLoad, 'explorer', 'explorerCtrl.js');
                 }
             }
         })
         .state('explorer.logging', {
             url: "/logging",
             templateUrl: "assets/mvc/desktop/view/manager.html",
-            controller: 'roleMgrCtrl',
+            controller: 'loggingCtrl',
             data: {
                 subTitle: '推送日志',
-                datatable: 'assets/mvc/user/view/role_datatable.html'
+                datatable: 'assets/mvc/explorer/view/logging_datatable.html'
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
-                    return ctrlManagerLoader($ocLazyLoad, 'user', 'roleCtrl.js')
+                    return ctrlManagerLoader($ocLazyLoad, 'explorer', 'loggingCtrl.js')
                 }
             }
         })
@@ -224,10 +199,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             abstract: true,
             url: "/cater",
             template: "<div ui-view></div>",
-            data: {pageTitle: '餐厅设置'},
-            resolve: {
-                loadPlugin: managerLoader
-            }
+            data: {pageTitle: '餐厅设置'}
         })
         .state('cater.type', {
             url: "/type",
@@ -274,10 +246,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
         .state('dataCenter', {
             abstract: true,
             url: "/dataCenter",
-            template: "<div ui-view></div>",
-            resolve: {
-                loadPlugin: managerLoader
-            }
+            template: "<div ui-view></div>"
         })
         .state('dataCenter.selfCheckLog', {
             url: "/selfCheckLog",
@@ -313,10 +282,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
         .state('user', {
             abstract: true,
             url: "/user",
-            template: "<div ui-view></div>",
-            resolve: {
-                loadPlugin: managerLoader
-            }
+            template: "<div ui-view></div>"
         })
         .state('user.user', {
             url: "/user",

@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.myee.tarot.campaign.domain.MerchantActivity;
 import com.myee.tarot.campaign.domain.MerchantPrice;
 import com.myee.tarot.campaign.service.MerchantActivityService;
-import com.myee.tarot.campaign.service.redis.RedisUtil;
+import com.myee.tarot.campaign.service.impl.redis.RedisUtil;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
@@ -19,7 +19,6 @@ import com.myee.tarot.core.util.ajax.AjaxResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -118,7 +117,7 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
     }
 
     @Override
-    public void updateRedisDrawList() {
+    public void updateRedisDrawList() throws ServiceException {
         List<MerchantActivity> activeActivities = merchantActivityService.findActiveActivity();
         for (MerchantActivity activeActivity : activeActivities) {
             List<MerchantPrice> activePrices = Lists.newArrayList();
@@ -129,6 +128,8 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
                 }
             }
             List<Integer> priceList = getPriceCountList(activePrices);
+            activeActivity.setActivityStatus(Constants.ACTIVITY_ACTIVE);
+            merchantActivityService.update(activeActivity);
             if(priceList.size()==0){
                 redisUtil.delete(Constants.PRICEDRAW + "_" + activeActivity.getStore().getId());
             }else {

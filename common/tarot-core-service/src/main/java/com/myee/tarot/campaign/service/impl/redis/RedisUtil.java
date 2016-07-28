@@ -1,4 +1,4 @@
-package com.myee.tarot.campaign.service.redis;
+package com.myee.tarot.campaign.service.impl.redis;
 
 import com.alibaba.fastjson.JSON;
 import com.myee.tarot.campaign.domain.bean.Pager;
@@ -8,11 +8,13 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.stereotype.Component;
 
 
 import java.util.*;
@@ -25,8 +27,10 @@ import java.util.concurrent.TimeUnit;
  * redisCommons.hsetNoExpire(RedisKeyConstants.getRedisKey(RedisKeyConstants.PRODUCT_INFO,id), RedisKeyConstants.CINEMA_INFO_BASE, cinemaRedis);
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
+@Component
 public class RedisUtil {
 
+    @Autowired
     private RedisTemplate redisTemplate;
     /**
      * 缓存是否开启，默认开启,true开启，false不开启
