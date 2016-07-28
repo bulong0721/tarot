@@ -39,24 +39,22 @@ public class PushController {
 
     @RequestMapping("file/search")
     @ResponseBody
-    public AjaxPageableResponse searchResource(Long orgID, @RequestParam("node") String parentNode, HttpServletRequest request) {
+    public AjaxPageableResponse searchResource(@RequestParam("node") String parentNode, HttpServletRequest request) {
         if ("root".equals(parentNode)) {
             ResourceVo root = new ResourceVo();
             root.setName("/");
             root.setPath("/");
+//            root.setResTypeName("目录");
             root.setResType(1);
             return new AjaxPageableResponse(Arrays.<Object>asList(root));
         }
         MerchantStore store = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
-        if(store != null && store.getId() != null){
-            System.out.println("SSSSSSSSSSSSSSSSSSS"+store.getId());
-        }
         File template = getResFile(100L, parentNode);
         Map<String, ResourceVo> resMap = Maps.newLinkedHashMap();
         listFiles(template, resMap, 100L);
-        if (100L != orgID) {
-            File dir = getResFile(orgID, parentNode);
-            listFiles(dir, resMap, orgID);
+        if (100L != store.getId()) {
+            File dir = getResFile(store.getId(), parentNode);
+            listFiles(dir, resMap, store.getId());
         }
         return new AjaxPageableResponse(Lists.<Object>newArrayList(resMap.values()));
     }

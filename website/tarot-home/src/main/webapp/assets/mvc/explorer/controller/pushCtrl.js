@@ -6,8 +6,9 @@ angular.module('myee', [])
  */
 pushCtrl.$inject = ['$scope', '$resource'];
 function pushCtrl($scope, $resource) {
-
-     $resource('../file/search').get({orgID: 100, node: "root"},{},function success(resp){
+    $scope.treeData = [];
+     $resource('../file/search').get({node: "root"},{},function success(resp){
+         console.log(resp.rows)
          $scope.treeData = resp.rows;
     });
     //$scope.treeData = [
@@ -68,9 +69,9 @@ function pushCtrl($scope, $resource) {
             alert("已是文件");
             return;
         }
-        $resource('../file/search').get({orgID: 100, node: data.path},{},function success(resp){
+        $resource('../file/search').get({node: data.path},{},function success(resp){
             angular.forEach(resp.rows, function(d){
-                data.children.push({name: d.name, path: d.path, modified: d.modified, resType: d.resType, resTypeName: d.resTypeName, size: d.size});
+                data.children.push({salt: d.salt, name: d.name, path: d.path, modified: d.modified, resType: d.resType, resTypeName: d.resTypeName, size: d.size});
             });
         });
     };

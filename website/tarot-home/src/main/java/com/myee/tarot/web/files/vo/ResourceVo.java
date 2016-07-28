@@ -85,20 +85,20 @@ public class ResourceVo {
         this.size = size;
     }
 
-    public List<ResourceVo> getChildren() {
-        return children;
-    }
-
-    public void setChildren(List<ResourceVo> children) {
-        this.children = children;
-    }
-
     public String getResTypeName() {
         return resTypeName;
     }
 
     public void setResTypeName(String resTypeName) {
         this.resTypeName = resTypeName;
+    }
+
+    public List<ResourceVo> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<ResourceVo> children) {
+        this.children = children;
     }
 
     public boolean isLeaf() {
