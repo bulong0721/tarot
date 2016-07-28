@@ -186,33 +186,37 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             abstract: true,
             url: "/explorer",
             template: "<div ui-view></div>",
-            data: {pageTitle: '资源管理'},
+            data: {pageTitle: '资源推送'},
             resolve: {
                 loadPlugin: treeLoader
             }
         })
         .state('explorer.explorer', {
             url: "/explorer",
-            templateUrl: "assets/mvc/explorer/view/explorer.html",
-            data: {pageTitle: '资源管理'},
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'explorerCtrl',
+            data: {
+                subTitle: '资源管理',
+                datatable: 'assets/mvc/explorer/view/explorer_datatable.html',
+                editor: 'assets/mvc/explorer/view/explorer_editor.html'
+            },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
                     return ctrlManagerLoader($ocLazyLoad, 'explorer', 'explorerCtrl.js')
                 }
             }
         })
-        .state('explorer.push', {
-            url: "/push",
+        .state('explorer.logging', {
+            url: "/logging",
             templateUrl: "assets/mvc/desktop/view/manager.html",
-            controller: 'pushCtrl',
+            controller: 'roleMgrCtrl',
             data: {
                 subTitle: '推送日志',
-                datatable: 'assets/mvc/explorer/view/push_datatable.html',
-                editor: 'assets/mvc/explorer/view/push_editor.html'
+                datatable: 'assets/mvc/user/view/role_datatable.html'
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
-                    return ctrlManagerLoader($ocLazyLoad, 'explorer', 'pushCtrl.js')
+                    return ctrlManagerLoader($ocLazyLoad, 'user', 'roleCtrl.js')
                 }
             }
         })

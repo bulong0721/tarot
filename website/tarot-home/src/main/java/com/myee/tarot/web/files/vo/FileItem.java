@@ -11,6 +11,7 @@ public class FileItem {
     private static final int DIR  = 0;
     private static final int FILE = 1;
 
+    private String name;
     private String path;
     private String salt;
     private String content;
@@ -80,10 +81,19 @@ public class FileItem {
         this.children = children;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public static FileItem toResourceModel(File file, Long salt) {
         FileItem resVo = new FileItem();
         resVo.setSalt(Long.toString(salt));
-        resVo.setPath(file.getName());
+        resVo.setName(file.getName());
+        resVo.setPath(file.getAbsolutePath());
         resVo.setModified(file.lastModified());
         resVo.type = file.isDirectory() ? DIR : FILE;
         resVo.setSize(file.length());
