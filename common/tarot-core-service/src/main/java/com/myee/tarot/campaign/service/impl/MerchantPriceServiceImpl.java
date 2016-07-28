@@ -28,4 +28,5 @@ public class MerchantPriceServiceImpl extends GenericEntityServiceImpl<Long , Me
     public List<MerchantPrice> findPriceByActivityId(Long activityId) {
         return merchantPriceDao.findPriceByActivityId(activityId);
     }
+
 }

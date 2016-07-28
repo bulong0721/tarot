@@ -24,5 +24,13 @@ public class MerchantActivityDaoImpl extends GenericEntityDaoImpl<Long, Merchant
         return result!=null&&result.size()>0 ? result.get(0):null;
     }
 
+    @Override
+    public List<MerchantActivity> findActiveActivity() {
+        QMerchantActivity qMerchantActivity = QMerchantActivity.merchantActivity;
+        JPQLQuery<MerchantActivity> query = new JPAQuery(getEntityManager());
+        List<MerchantActivity> result = query.from(qMerchantActivity).where(qMerchantActivity.deleteStatus.eq(Constants.DELETE_NO).and(qMerchantActivity.activityStatus.ne(Constants.ACITIVITY_START))).fetch();
+        return result;
+    }
+
 
 }

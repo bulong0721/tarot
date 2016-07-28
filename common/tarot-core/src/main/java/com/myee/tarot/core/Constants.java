@@ -50,8 +50,9 @@ public class Constants {
  	public final static int PRICE_END = 0; //未启用
 
 	//启用活动状态
-	public final static int ACITIVITY_START = 0; //启用
-	public final static int ACITIVITY_END = 1; //未启用
+	public final static int ACITIVITY_START = 0; //活动存在，但未激活
+	public final static int ACITIVITY_END = 1; //活动激活，但已结束
+	public final static int ACTIVITY_ACTIVE =2; //活动激活
 
 	//活动或奖券逻辑删除
 	public final static int DELETE_NO = 0; //启用

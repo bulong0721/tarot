@@ -87,6 +87,12 @@
             <artifactId>spring-session-data-redis</artifactId>
             <version>1.2.1.RELEASE</version>
         </dependency>
+        <!-- 定时器 -->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>2.2.1</version>
+        </dependency>
     </dependencies>
 
 

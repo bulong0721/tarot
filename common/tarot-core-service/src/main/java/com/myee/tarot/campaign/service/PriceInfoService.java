@@ -23,4 +23,6 @@ public interface PriceInfoService extends GenericEntityService<Long ,PriceInfo>{
     boolean findByStoreIdAndKeyIdToday(Long storeId,String keyId);
 
     AjaxResponse savePriceInfo(String keyId,Long storeId) throws ServiceException;
+
+    void updateRedisDrawList();
 }

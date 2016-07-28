@@ -1,6 +1,7 @@
 package com.myee.tarot.campaign.service.impl;
 
 import com.myee.tarot.campaign.dao.MerchantActivityDao;
+import com.myee.tarot.campaign.domain.MerchantPrice;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
 import com.myee.tarot.campaign.domain.MerchantActivity;
 import com.myee.tarot.campaign.service.MerchantActivityService;
@@ -26,6 +27,11 @@ public class MerchantActivityServiceImpl extends GenericEntityServiceImpl<Long, 
     @Override
     public MerchantActivity findStoreActivity(Long storeId) {
         return merchantActivityDao.findStoreActivity(storeId);
+    }
+
+    @Override
+    public List<MerchantActivity> findActiveActivity() {
+        return merchantActivityDao.findActiveActivity();
     }
 
 }

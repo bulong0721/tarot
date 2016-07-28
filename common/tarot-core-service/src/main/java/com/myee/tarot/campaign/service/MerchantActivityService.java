@@ -1,7 +1,7 @@
 package com.myee.tarot.campaign.service;
 
-import com.myee.tarot.core.service.GenericEntityService;
 import com.myee.tarot.campaign.domain.MerchantActivity;
+import com.myee.tarot.core.service.GenericEntityService;
 
 import java.util.List;
 
@@ -10,4 +10,5 @@ import java.util.List;
  */
 public interface MerchantActivityService extends GenericEntityService<Long, MerchantActivity>{
     MerchantActivity findStoreActivity(Long storeId);
+    List<MerchantActivity> findActiveActivity();
 }
