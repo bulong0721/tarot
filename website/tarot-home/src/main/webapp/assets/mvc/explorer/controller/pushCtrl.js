@@ -60,7 +60,7 @@ function pushCtrl($scope, $resource, $filter) {
         },
         {
             displayName: '操作',
-            columnWidth: '15%',
+            columnWidth: '12%',
             cellTemplate: '<a><i class="btn-icon fa fa-plus" ng-click="cellTemplateScope.add(row.branch)"></i></a>' +
             '<span class="divider"></span>' +
             '<a><i class="btn-icon fa fa-pencil" ng-click="cellTemplateScope.edit(row.branch)"></i></a>' +
