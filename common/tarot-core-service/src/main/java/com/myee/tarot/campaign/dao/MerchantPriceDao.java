@@ -10,4 +10,5 @@ import java.util.List;
  */
 public interface MerchantPriceDao extends GenericEntityDao<Long , MerchantPrice>{
     List<MerchantPrice> findPriceByActivityId(Long activityId);
+
 }

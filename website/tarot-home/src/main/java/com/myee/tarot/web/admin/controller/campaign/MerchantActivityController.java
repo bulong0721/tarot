@@ -67,10 +67,11 @@ public class MerchantActivityController {
             }
             List<MerchantPrice> prices = merchantActivity.getPrices();
             for (MerchantPrice price : prices) {
-                price.setStoreId(existActivity.getStore().getId());
                 if(exist){
+                    price.setStoreId(existActivity.getStore().getId());
                     price.setActivity(existActivity);
                 }else{
+                    price.setStoreId(merchantActivity.getStore().getId());
                     price.setActivity(merchantActivity);
                 }
             }
@@ -172,22 +173,31 @@ public class MerchantActivityController {
             MerchantActivity activity = merchantActivityService.findStoreActivity(storeId);
             //先开放活动
             activity.setActivityStatus(Constants.ACITIVITY_START);
-            merchantActivityService.update(activity);
             List<MerchantPrice> activePrice = Lists.newArrayList();
             //修改状态
+            boolean active = false;
             for (MerchantPrice merchantPrice : activity.getPrices()) {
                 if(Arrays.asList(priceIds).contains(merchantPrice.getId())){
                     merchantPrice.setActiveStatus(Constants.PRICE_START);
                     activePrice.add(merchantPrice);
+                    active = true;
                 }else{
                     merchantPrice.setActiveStatus(Constants.PRICE_END);
                 }
                 merchantPriceService.update(merchantPrice);
             }
+            if(active){
+                activity.setActivityStatus(Constants.ACTIVITY_ACTIVE);
+            }
+            merchantActivityService.update(activity);
             //生成抽奖的List
             List<Integer> drawList = getPriceCountList(activePrice);
             //放置于redis中
-            redisUtil.set(Constants.PRICEDRAW + "_" + storeId, drawList, 365, TimeUnit.DAYS);
+            if(drawList==null||drawList.size()==0){
+                redisUtil.delete(Constants.PRICEDRAW + "_" + storeId);
+            }else{
+                redisUtil.set(Constants.PRICEDRAW + "_" + storeId, drawList, 365, TimeUnit.DAYS);
+            }
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
             return resp;
         } catch (Exception e) {

@@ -87,7 +87,7 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
         }
         PriceInfo priceInfo = new PriceInfo();
         priceInfo.setKeyId(keyId);
-        priceInfo.setCheckCode(AutoNumUtil.createRandomVcode()); //设置6位随机数
+        priceInfo.setCheckCode(AutoNumUtil.getCode( 6, 3)); //设置6位随机数
         priceInfo.setStatus(Constants.PRICEINFO_UNUSED);
         priceInfo.setGetDate(new Date());
         MerchantActivity activity = merchantActivityService.findStoreActivity(storeId);
@@ -95,8 +95,10 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
         List<Integer> priceList = redisUtil.getList(Constants.PRICEDRAW + "_"+ storeId,Integer.class);
         if(priceList==null||priceList.size()==0){
             MerchantActivity merchantActivity = merchantActivityService.findStoreActivity(storeId);
-            merchantActivity.setActivityStatus(Constants.ACITIVITY_END);
-            merchantActivityService.update(merchantActivity);
+            if(merchantActivity.getActivityStatus() != Constants.ACITIVITY_END){
+                merchantActivity.setActivityStatus(Constants.ACITIVITY_END);
+                merchantActivityService.update(merchantActivity);
+            }
             resp.setErrorString("活动已结束");
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
             return resp;
@@ -113,6 +115,26 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
         resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
         resp.addEntry("result", result);
         return resp;
+    }
+
+    @Override
+    public void updateRedisDrawList() {
+        List<MerchantActivity> activeActivities = merchantActivityService.findActiveActivity();
+        for (MerchantActivity activeActivity : activeActivities) {
+            List<MerchantPrice> activePrices = Lists.newArrayList();
+            List<MerchantPrice> prices = activeActivity.getPrices();
+            for (MerchantPrice price : prices) {
+                if(price.getActiveStatus() == Constants.PRICE_START){
+                    activePrices.add(price);
+                }
+            }
+            List<Integer> priceList = getPriceCountList(activePrices);
+            if(priceList.size()==0){
+                redisUtil.delete(Constants.PRICEDRAW + "_" + activeActivity.getStore().getId());
+            }else {
+                redisUtil.set(Constants.PRICEDRAW + "_" + activeActivity.getStore().getId(),priceList,365,TimeUnit.DAYS);
+            }
+        }
     }
 
     public PriceInfo getRandomPrice(PriceInfo basePriceInfo,List<Integer> priceList,List<MerchantPrice> prices){
@@ -136,6 +158,20 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
         }
         priceList.remove(index);
         return basePriceInfo;
+    }
+
+    //重新分配奖券list
+    public List<Integer> getPriceCountList(List<MerchantPrice> prices){;
+        List<Integer> priceList = Lists.newArrayList();
+        int totalAll = 0;
+        for (MerchantPrice price : prices) {
+            int total = price.getTotal();
+            totalAll += total;
+        }
+        for (int i = 1; i <= totalAll; i++) {
+            priceList.add(i);
+        }
+        return priceList;
     }
 
 
