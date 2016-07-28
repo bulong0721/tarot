@@ -416,7 +416,7 @@ public class OperationsManager extends RedisOperation implements OperationsServi
                     logger.info("========Cloud File path :"+cloudFilePath);
                     result = ResponseData.successData(readfile(cloudFile));
                 }else{
-                    result = ResponseData.errorData("error");
+                    result = ResponseData.errorData("resource not exist ");
                 }
             }
         } catch (Exception e) {
