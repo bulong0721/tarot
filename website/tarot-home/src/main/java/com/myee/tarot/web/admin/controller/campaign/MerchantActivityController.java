@@ -6,10 +6,9 @@ import com.myee.tarot.campaign.domain.MerchantActivity;
 import com.myee.tarot.campaign.domain.MerchantPrice;
 import com.myee.tarot.campaign.service.MerchantActivityService;
 import com.myee.tarot.campaign.service.MerchantPriceService;
-import com.myee.tarot.campaign.service.redis.RedisUtil;
+import com.myee.tarot.campaign.service.impl.redis.RedisUtil;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
-import com.myee.tarot.core.util.TimeUtil;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -118,15 +115,16 @@ public class MerchantActivityController {
     }
 
     /**
-     * 删除个奖券活动  暂时可不用 暂存
-     * @param activityId
+     * 修改奖券活动状态  暂时可不用 暂存
+     * @param storeId
+     * @param status  0为不
      * @return
      */
     @RequestMapping(value = "api/activity/delete",method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse deleteActivity(@RequestParam("activityId")Long activityId){
+    public AjaxResponse deleteActivity(@RequestParam("storeId")Long storeId,@RequestParam("status")int status){
         try {
-            MerchantActivity activity = merchantActivityService.findById(activityId);
+            MerchantActivity activity = merchantActivityService.findStoreActivity(storeId);
             if(activity!=null){
                 activity.setDeleteStatus(Constants.DELETE_YES);
                 for (MerchantPrice merchantPrice : activity.getPrices()) {
