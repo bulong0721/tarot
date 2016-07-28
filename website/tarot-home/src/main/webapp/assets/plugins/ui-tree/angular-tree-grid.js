@@ -380,7 +380,7 @@
                                 if (branch.expanded == null) {
                                     branch.expanded = false;
                                 }
-                                if (!branch.children || branch.children.length === 0) {
+                                if (branch.type === 1) {
                                     tree_icon = branch.icons && branch.icons.iconLeaf || attrs.iconLeaf;
                                 } else {
                                     if (branch.expanded) {

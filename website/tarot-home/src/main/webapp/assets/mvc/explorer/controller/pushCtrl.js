@@ -20,7 +20,7 @@ function pushCtrl($scope, $resource) {
             displayName: '操作',
             columnWidth: '15%',
             cellTemplate: '<a><i class="btn-icon fa fa-plus" ng-click="cellTemplateScope.add(row.branch)"></i></a>' +
-            '<span class="divider"></span>' +
+            '<span class="divider" ng-if="row.branch.type==0"></span>' +
             '<a><i class="btn-icon fa fa-pencil" ng-click="cellTemplateScope.edit(row.branch)"></i></a>' +
             '<span class="divider"></span>' +
             '<a><i class="btn-icon fa fa-trash-o" ng-click="cellTemplateScope.delete(row.branch)"></i></a>' +
@@ -46,9 +46,7 @@ function pushCtrl($scope, $resource) {
     $scope.handleSelect = function (data) {
         if (data.type == 0) {
             $resource('../file/search').get({node: data.path}, {}, function success(resp) {
-                angular.forEach(resp.rows, function (d) {
-                    data.children.push({path: d.path, type: d.type, modified: d.modified, size: d.size});
-                });
+                angular.merge(data.children, resp.rows);
             });
         }
     };
