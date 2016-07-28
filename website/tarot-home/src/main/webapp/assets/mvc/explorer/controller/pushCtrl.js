@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * pushCtrl - controller
  */
-pushCtrl.$inject = ['$scope', '$resource'];
-function pushCtrl($scope, $resource) {
+pushCtrl.$inject = ['$scope', '$resource', '$filter'];
+function pushCtrl($scope, $resource, $filter) {
     $scope.treeData = [{path: '/', type: 0}];
     // $resource('../file/search').get({node: "root"},{},function success(resp){
     //     console.log(resp.rows)
@@ -13,9 +13,51 @@ function pushCtrl($scope, $resource) {
     //});
 
     $scope.treeColumns = [
-        {field: 'modified', displayName: '修改时间', columnWidth: '20%'},
-        {displayName: '类型', columnWidth: '10%'},
-        {field: 'size', displayName: '大小', columnWidth: '10%'},
+        {
+            displayName: '修改时间',
+            columnWidth: '15%',
+            cellTemplate: '<span>{{cellTemplateScope.format(row.branch)}}</span>',
+            cellTemplateScope: {
+                format: function (data) {
+                    if (!data.modified) return "-";
+                    return $filter('date')(new Date(data.modified), 'yyyy-MM-dd HH:mm:ss');
+                }
+            }
+        },
+        {
+            displayName: '类型',
+            columnWidth: '10%',
+            cellTemplate: '<span>{{cellTemplateScope.text(row.branch)}}</span>',
+            cellTemplateScope: {
+                text: function (data) {
+                    return data.type==0 ? '目录' : '文件';
+                },
+                style: function(data) {
+                    return data.type==0 ? 'label label-primary' : 'label label-danger';
+                }
+            }
+        },
+        {
+            displayName: '大小',
+            columnWidth: '10%',
+            cellTemplate: '<span>{{cellTemplateScope.format(row.branch)}}</span>',
+            cellTemplateScope: {
+                format: function (data) {
+                    if (!data.size) return '-';
+                    var value = data.size;
+                    if (value > 1024 * 1024 * 1024) {
+                        return Math.ceil(value / (1024 * 1024 * 1024)) + 'G';
+                    }
+                    if (value > 1024 * 1024) {
+                        return Math.ceil(value / (1024 * 1024)) + 'M';
+                    }
+                    if (value > 1024) {
+                        return Math.ceil(value / 1024) + 'K';
+                    }
+                    return value + 'B';
+                }
+            }
+        },
         {
             displayName: '操作',
             columnWidth: '15%',
