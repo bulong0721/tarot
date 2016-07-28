@@ -13,8 +13,8 @@ import javax.inject.Singleton;
 /**
  * Created by Ray.Fu on 2016/6/30.
  */
-@Service
-@Singleton
+//@Service
+//@Singleton
 public class BootStrapFacatoryBean extends AbstractFactoryBean<ServerBootstrap> {
     @Value("${djinn.port}")
     private int djinnPort;

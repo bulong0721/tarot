@@ -5,10 +5,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
-import com.myee.tarot.core.util.ajax.PageResult;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.apiold.BusinessException;
-import com.myee.tarot.web.files.vo.ResourceVo;
+import com.myee.tarot.web.files.vo.FileItem;
 import com.myee.tarot.web.util.StringUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -40,17 +39,15 @@ public class PushController {
     @RequestMapping("file/search")
     @ResponseBody
     public AjaxPageableResponse searchResource(@RequestParam("node") String parentNode, HttpServletRequest request) {
-        if ("root".equals(parentNode)) {
-            ResourceVo root = new ResourceVo();
-            root.setName("/");
-            root.setPath("/");
-//            root.setResTypeName("目录");
-            root.setResType(1);
-            return new AjaxPageableResponse(Arrays.<Object>asList(root));
-        }
+//        if ("/".equals(parentNode)) {
+//            FileItem root = new FileItem();
+//            root.setPath("/");
+////            root.setResTypeName("目录");
+//            return new AjaxPageableResponse(Arrays.<Object>asList(root));
+//        }
         MerchantStore store = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
         File template = getResFile(100L, parentNode);
-        Map<String, ResourceVo> resMap = Maps.newLinkedHashMap();
+        Map<String, FileItem> resMap = Maps.newLinkedHashMap();
         listFiles(template, resMap, 100L);
         if (100L != store.getId()) {
             File dir = getResFile(store.getId(), parentNode);
@@ -61,13 +58,14 @@ public class PushController {
 
     @RequestMapping("file/create")
     @ResponseBody
-    public ResourceVo createResource(long orgID, @RequestParam("resFile") CommonsMultipartFile file, String entityText) throws IllegalStateException, IOException {
-        ResourceVo vo = JSON.parseObject(entityText, ResourceVo.class);
+    public FileItem createResource(long orgID, @RequestParam("resFile") CommonsMultipartFile file, String entityText) throws IllegalStateException, IOException {
+        FileItem vo = JSON.parseObject(entityText, FileItem.class);
         File dest = getResFile(orgID, vo.getPath());
         vo.setSalt(Long.toString(orgID));
-        if (1 == vo.getResType()) {
-            dest.mkdirs();
-        } else if (!file.isEmpty()) {
+//        if (1 == vo.getResType()) {
+//            dest.mkdirs();
+//        } else
+        if (!file.isEmpty()) {
             dest.mkdirs();
             file.transferTo(dest);
         } else if (!StringUtil.isNullOrEmpty(vo.getContent(), true)) {
@@ -112,15 +110,15 @@ public class PushController {
         return true;
     }
 
-    private void listFiles(File parentFile, Map<String, ResourceVo> resMap, Long orgID) {
+    private void listFiles(File parentFile, Map<String, FileItem> resMap, Long orgID) {
         if (!parentFile.exists() || !parentFile.isDirectory() || null == parentFile.listFiles()) {
             return;
         }
         String prefix = FilenameUtils.concat(DOWNLOAD_HOME, Long.toString(orgID));
         for (File file : parentFile.listFiles()) {
-            ResourceVo resourceVo = ResourceVo.toResourceModel(file, orgID);
-            resourceVo.setPath(trimStart(resourceVo.getPath(), prefix));
-            resMap.put(file.getName(), resourceVo);
+            FileItem fileItem = FileItem.toResourceModel(file, orgID);
+            fileItem.setPath(trimStart(fileItem.getPath(), prefix));
+            resMap.put(file.getName(), fileItem);
         }
     }
 
