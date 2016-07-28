@@ -1,4 +1,4 @@
-package com.myee.tarot.campaign.service.redis;
+package com.myee.tarot.campaign.service.impl.redis;
 
 
 import org.apache.commons.lang3.time.DateFormatUtils;
