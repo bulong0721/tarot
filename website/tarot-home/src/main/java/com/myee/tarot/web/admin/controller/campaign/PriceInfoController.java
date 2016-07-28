@@ -6,6 +6,7 @@ import com.myee.tarot.campaign.domain.MerchantPrice;
 import com.myee.tarot.campaign.domain.PriceInfo;
 import com.myee.tarot.campaign.service.MerchantActivityService;
 import com.myee.tarot.campaign.service.PriceInfoService;
+import com.myee.tarot.campaign.service.redis.RedisUtil;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.AutoNumUtil;
@@ -32,6 +33,8 @@ public class PriceInfoController {
     private PriceInfoService priceInfoService;
     @Autowired
     private MerchantActivityService merchantActivityService;
+    @Autowired
+    private RedisUtil redisUtil;
 
     /**
      * 保存一个用户的奖项记录
@@ -43,31 +46,7 @@ public class PriceInfoController {
     public AjaxResponse saveOrUpdatePriceInfo(@RequestParam("storeId")Long storeId,
                                               @RequestParam("keyId")String keyId){
         try {
-            AjaxResponse resp = new AjaxResponse();
-            //通过keyId和storeId查看此人是否今天已经抽取过奖券
-            boolean canDraw = priceInfoService.findByStoreIdAndKeyIdToday(storeId,keyId);
-           if(!canDraw){
-                resp.setErrorString("你今天已抽取过，请明天再来抽取");
-                resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
-                return resp;
-            }
-            PriceInfo priceInfo = new PriceInfo();
-            priceInfo.setKeyId(keyId);
-            priceInfo.setCheckCode(AutoNumUtil.createRandomVcode()); //设置6位随机数
-            priceInfo.setStatus(Constants.PRICEINFO_UNUSED);
-            priceInfo.setGetDate(new Date());
-            MerchantActivity activity = merchantActivityService.findStoreActivity(storeId);
-            //todo 从redis中获取抽奖规则list,判定list是否为空，为空后直接修改活动状态，直接为结束
-            List<Integer> priceList = new ArrayList<>();
-            for (int i = 1; i <= 50 ; i++) {
-                priceList.add(i);
-            }
-            PriceInfo info = getRandomPrice(priceInfo,priceList,activity.getPrices());
-            //todo 更新redis的list
-            priceInfoService.save(info);
-            resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
-            resp.addEntry("result", "添加成功");
-            return resp;
+           return priceInfoService.savePriceInfo(keyId,storeId);
         } catch (ServiceException e) {
             e.printStackTrace();
         }
@@ -198,30 +177,6 @@ public class PriceInfoController {
         }else{
             return false;
         }
-    }
-
-
-    public PriceInfo getRandomPrice(PriceInfo basePriceInfo,List<Integer> priceList,List<MerchantPrice> prices){
-        Random random = new Random();
-        int index = random.nextInt(priceList.size());
-        int priceInt = priceList.get(index);
-        List<MerchantPrice> activePrices = Lists.newArrayList();
-        for (MerchantPrice price : prices) {
-            if(price.getActiveStatus()==Constants.PRICE_START){
-                activePrices.add(price);
-            }
-        }
-        int compare = 0;
-        for (MerchantPrice activePrice : activePrices) {
-            compare+=activePrice.getTotal();
-            if(priceInt<= compare){
-                MerchantPrice getPrice = activePrice;
-                basePriceInfo.setPrice(getPrice);
-                break;
-            }
-        }
-        priceList.remove(index);
-        return basePriceInfo;
     }
 
 

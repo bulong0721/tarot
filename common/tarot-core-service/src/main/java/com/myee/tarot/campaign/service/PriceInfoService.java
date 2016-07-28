@@ -1,9 +1,11 @@
 package com.myee.tarot.campaign.service;
 
+import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.service.GenericEntityService;
 import com.myee.tarot.campaign.domain.PriceInfo;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.ajax.AjaxResponse;
 
 import java.util.List;
 
@@ -19,4 +21,6 @@ public interface PriceInfoService extends GenericEntityService<Long ,PriceInfo>{
     PriceInfo priceCheckCode(Long storeId,String checkCode);
 
     boolean findByStoreIdAndKeyIdToday(Long storeId,String keyId);
+
+    AjaxResponse savePriceInfo(String keyId,Long storeId) throws ServiceException;
 }

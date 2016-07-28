@@ -37,6 +37,17 @@ public class MerchantActivity extends GenericEntity<Long, MerchantActivity>{
     @Column(name = "deleteStatus")
     private int deleteStatus; //是否被删除   0为启用，1为删除
 
+    @Column(name = "ACTIVITY_STATUS")
+    private int activityStatus; //是否启用  0为启用 1为停止
+
+    public int getActivityStatus() {
+        return activityStatus;
+    }
+
+    public void setActivityStatus(int activityStatus) {
+        this.activityStatus = activityStatus;
+    }
+
     public int getDeleteStatus() {
         return deleteStatus;
     }

@@ -45,12 +45,18 @@ public class Constants {
 	public final static int PRICEINFO_UNUSED = 1; //未使用
 	public final static int PRICEINFO_EXPIRE= 2; //EXPIRE过期
 
-	//启用活动状态
+	//启用奖券状态
 	public final static int PRICE_START = 1; //启用
  	public final static int PRICE_END = 0; //未启用
+
+	//启用活动状态
+	public final static int ACITIVITY_START = 0; //启用
+	public final static int ACITIVITY_END = 1; //未启用
 
 	//活动或奖券逻辑删除
 	public final static int DELETE_NO = 0; //启用
 	public final static int DELETE_YES = 1; //删除
+
+	public final static String PRICEDRAW = "PRICEDRAW";
 
 }

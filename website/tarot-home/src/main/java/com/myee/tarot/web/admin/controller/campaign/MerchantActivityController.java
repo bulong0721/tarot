@@ -6,8 +6,10 @@ import com.myee.tarot.campaign.domain.MerchantActivity;
 import com.myee.tarot.campaign.domain.MerchantPrice;
 import com.myee.tarot.campaign.service.MerchantActivityService;
 import com.myee.tarot.campaign.service.MerchantPriceService;
+import com.myee.tarot.campaign.service.redis.RedisUtil;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
+import com.myee.tarot.core.util.TimeUtil;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,7 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Administrator on 2016/7/11.
@@ -36,6 +39,9 @@ public class MerchantActivityController {
 
     @Autowired
     private MerchantPriceService merchantPriceService;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     /**
      * 添加个新的奖券活动 传过来
@@ -164,6 +170,9 @@ public class MerchantActivityController {
         try {
             AjaxResponse resp = new AjaxResponse();
             MerchantActivity activity = merchantActivityService.findStoreActivity(storeId);
+            //先开放活动
+            activity.setActivityStatus(Constants.ACITIVITY_START);
+            merchantActivityService.update(activity);
             List<MerchantPrice> activePrice = Lists.newArrayList();
             //修改状态
             for (MerchantPrice merchantPrice : activity.getPrices()) {
@@ -177,7 +186,8 @@ public class MerchantActivityController {
             }
             //生成抽奖的List
             List<Integer> drawList = getPriceCountList(activePrice);
-            //TODO 放置于redis中
+            //放置于redis中
+            redisUtil.set(Constants.PRICEDRAW + "_" + storeId, drawList, 365, TimeUnit.DAYS);
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
             return resp;
         } catch (Exception e) {
