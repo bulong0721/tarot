@@ -8,6 +8,7 @@ import com.google.common.collect.Ordering;
 import com.myee.djinn.dto.*;
 import com.myee.djinn.endpoint.OrchidService;
 //import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
+import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
 import com.myee.tarot.catering.dao.TableTypeDao;
 import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.merchant.dao.MerchantStoreDao;
@@ -38,15 +39,15 @@ public class WeixinManager extends RedisOperation implements WeixinService {
     private static final Logger logger = LoggerFactory.getLogger(WeixinManager.class);
 
     @Autowired
-    private TableTypeDao tableTypeDao;
+    private TableTypeDao     tableTypeDao;
     @Autowired
     private MerchantStoreDao merchantStoreDao;
     @Autowired
-    private WxWaitTokenDao waitTokenDao;
+    private WxWaitTokenDao   waitTokenDao;
     @Autowired
-    private WFeedBackDao wFeedBackDao;
+    private WFeedBackDao     wFeedBackDao;
     @Autowired
-    private BootStrapFacatoryBean bootStrapFacatoryBean;
+    private ServerBootstrap  serverBootstrap;
 
     static Integer iCount = 0;
 
@@ -170,7 +171,7 @@ public class WeixinManager extends RedisOperation implements WeixinService {
         //测试代码
         OrchidService eptService = null;
         try {
-            eptService = bootStrapFacatoryBean.getObject().getClient(OrchidService.class, toClientUUID(shopId));
+            eptService = serverBootstrap.getClient(OrchidService.class, toClientUUID(shopId));
         } catch (Exception e) {
             e.printStackTrace();
         }
