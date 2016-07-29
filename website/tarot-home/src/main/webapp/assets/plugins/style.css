@@ -10319,3 +10319,28 @@ th.center, td.center {
     background-color: #F5F8FC;
     border-color: #adb8c0;
 }
+
+.sidebar-footer {
+    bottom: 0px;
+    clear: both;
+    display: block;
+    padding: 5px 0 0 0;
+    position: fixed;
+    width: 220px;
+    background: #2A3F54
+}
+
+.sidebar-footer a {
+    padding: 7px 0 3px;
+    text-align: center;
+    width: 25%;
+    font-size: 17px;
+    display: block;
+    float: left;
+    color: #5A738E;
+    background: #172D44
+}
+
+.sidebar-footer a:hover {
+    background: #425567
+}
