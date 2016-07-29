@@ -12,9 +12,9 @@ import javax.validation.constraints.NotNull;
  */
 
 @Entity
-@Table(name = "C_MODULE_LOG")
+@Table(name = "LOG_MODULE")
 @DynamicUpdate //hibernate部分更新
-public class ModuleLog extends GenericEntity<Long, ModuleLog> {
+public class EventModule extends GenericEntity<Long, EventModule> {
 
     @Id
     @Column(name = "MODULE_LOG_ID", unique = true, nullable = false)
