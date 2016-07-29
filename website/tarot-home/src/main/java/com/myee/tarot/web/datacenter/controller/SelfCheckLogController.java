@@ -4,15 +4,14 @@ import com.myee.djinn.dto.ResponseData;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.datacenter.domain.EventLevel;
 import com.myee.tarot.datacenter.domain.EventModule;
 import com.myee.tarot.datacenter.domain.SelfCheckLog;
-import com.myee.tarot.datacenter.service.EventLevelLogService;
 import com.myee.tarot.datacenter.service.ModuleLogService;
 import com.myee.tarot.datacenter.service.SelfCheckLogService;
 import com.myee.tarot.merchant.domain.MerchantStore;
-import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.web.util.DateTime;
 import com.myee.tarot.web.util.ExcelData;
 import com.myee.tarot.web.util.ObjectExcelRead;
@@ -50,8 +49,8 @@ public class SelfCheckLogController {
     @Autowired
     private SelfCheckLogService selfCheckLogService;
 
-    @Autowired
-    private EventLevelLogService eventLevelLogService;
+//    @Autowired
+//    private EventLevelLogService eventLevelLogService;
 
     @Autowired
     private ModuleLogService moduleLogService;
@@ -140,7 +139,7 @@ public class SelfCheckLogController {
         Map entry = new HashMap();
         entry.put("id",selfCheckLog.getId());
         entry.put("data",selfCheckLog.getData());
-        entry.put("level",selfCheckLog.getEventLevel().getLevel());
+        entry.put("level", new EventLevel().getEventLevel(selfCheckLog.getEventLevel()+""));
         entry.put("moduleName",selfCheckLog.getEventModule().getModuleName());
         entry.put("functionName",selfCheckLog.getEventModule().getFunctionName());
         entry.put("length",selfCheckLog.getLength());
@@ -148,23 +147,23 @@ public class SelfCheckLogController {
         return entry;
     }
 
-    @RequestMapping(value = "admin/selfCheckLog/listErrorLevel" , method = RequestMethod.GET)
-    @ResponseBody
-    public List getErrorLevelList() throws Exception {
-        List resp = new ArrayList();
-        try {
-            List<EventLevel> list = eventLevelLogService.getEventLevelList();
-            for (EventLevel eventLevel : list) {
-                Map entry = new HashMap();
-                entry.put("name", eventLevel.getLevel());
-                entry.put("value", eventLevel.getEvent());
-                resp.add(entry);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return resp;
-    }
+//    @RequestMapping(value = "admin/selfCheckLog/listErrorLevel" , method = RequestMethod.GET)
+//    @ResponseBody
+//    public List getErrorLevelList() throws Exception {
+//        List resp = new ArrayList();
+//        try {
+//            List<EventLevel> list = eventLevelLogService.getEventLevelList();
+//            for (EventLevel eventLevel : list) {
+//                Map entry = new HashMap();
+//                entry.put("name", eventLevel.getLevel());
+//                entry.put("value", eventLevel.getEvent());
+//                resp.add(entry);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return resp;
+//    }
 
     @RequestMapping(value = "admin/selfCheckLog/listModule" , method = RequestMethod.GET)
     @ResponseBody
