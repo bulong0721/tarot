@@ -53,7 +53,7 @@ public class SelfCheckLog extends GenericEntity<Long, SelfCheckLog> {
 //    @ManyToOne(targetEntity = EventLevel.class, fetch = FetchType.LAZY)
 //    @JoinColumn(name = "EVENT_LEVEL", referencedColumnName = "EVENT")
     @Column(name = "EVENT_LEVEL")
-    protected int eventLevel;
+    protected String eventLevel;
 
     @ManyToOne(targetEntity = EventModule.class)
     @JoinColumnsOrFormulas({
@@ -147,11 +147,11 @@ public class SelfCheckLog extends GenericEntity<Long, SelfCheckLog> {
         this.store = store;
     }
 
-    public int getEventLevel() {
+    public String getEventLevel() {
         return eventLevel;
     }
 
-    public void setEventLevel(int eventLevel) {
+    public void setEventLevel(String eventLevel) {
         this.eventLevel = eventLevel;
     }
 

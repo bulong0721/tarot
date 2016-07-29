@@ -6,10 +6,10 @@
             </select>-->
             <select ng-model="where.eventLevel"  class="form-control" style="width:110px;">
                 <option value="" >事件等级</option>
-                <option value="0" >ERROR</option>
-                <option value="1" >WARN</option>
-                <option value="2" >INFO</option>
-                <option value="3" >DEBUG</option>
+                <option value="error" >ERROR</option>
+                <option value="warn" >WARN</option>
+                <option value="info" >INFO</option>
+                <option value="debug" >DEBUG</option>
             </select>
             <select ng-model="where.moduleObject" ng-options="c.name for c in moduleNames" ng-change="moduleChange(where.moduleObject)"
                     class="form-control m-l-sm" style="width:140px;">

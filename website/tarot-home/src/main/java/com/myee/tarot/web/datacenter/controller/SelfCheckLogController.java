@@ -89,7 +89,7 @@ public class SelfCheckLogController {
                                 selfCheckLog.setFunctionId(excelData.getString("var2") == null ? null : TypeConverter.toInteger(excelData.getString("var2")));
                                 selfCheckLog.setData(excelData.getString("var3") == null ? null : TypeConverter.toString(excelData.getString("var3")));
                                 selfCheckLog.setTime(excelData.getString("var4") == null ? null : TypeConverter.toLong(excelData.getString("var4")));
-//                                selfCheckLog.setEventLevel(excelData.getString("var5") == null ? null : TypeConverter.toInteger(excelData.getString("var5")));
+//                                selfCheckLog.setEventLevel(excelData.getString("var5") == null ? null : new EventLevel().getEventLevel(TypeConverter.toInteger(excelData.getString("var5"))+""));
                                 try {
                                     selfCheckLogService.update(selfCheckLog);
                                 } catch (ServiceException e) {
@@ -139,7 +139,7 @@ public class SelfCheckLogController {
         Map entry = new HashMap();
         entry.put("id",selfCheckLog.getId());
         entry.put("data",selfCheckLog.getData());
-        entry.put("level", new EventLevel().getEventLevel(selfCheckLog.getEventLevel()+""));
+        entry.put("level", selfCheckLog.getEventLevel());
         entry.put("moduleName",selfCheckLog.getEventModule().getModuleName());
         entry.put("functionName",selfCheckLog.getEventModule().getFunctionName());
         entry.put("length",selfCheckLog.getLength());
