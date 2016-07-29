@@ -2,6 +2,7 @@ package com.myee.tarot.web.files.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.myee.djinn.dto.ResponseData;
@@ -126,9 +127,11 @@ public class PushController {
             return;
         }
         String prefix = FilenameUtils.concat(DOWNLOAD_HOME, Long.toString(orgID));
+        String prefixHttp = FilenameUtils.concat(DOWNLOAD_HTTP, Long.toString(orgID));
         for (File file : parentFile.listFiles()) {
-            FileItem fileItem = FileItem.toResourceModel(file, prefix);
+            FileItem fileItem = FileItem.toResourceModel(file);
             fileItem.setPath(trimStart(fileItem.getPath(), prefix));
+            fileItem.setSalt(FilenameUtils.concat(prefixHttp, fileItem.getPath()));
             resMap.put(file.getName(), fileItem);
         }
     }
@@ -150,14 +153,14 @@ public class PushController {
     public AjaxResponse pushResource(@Valid @RequestBody PushDTO pushDTO) {
         OrchidService eptService = null;
         try {
-//            eptService = serverBootstrap.getClient(OrchidService.class, pushDTO.getUniqueNo());
+            eptService = serverBootstrap.getClient(OrchidService.class, pushDTO.getUniqueNo());
         } catch (Exception e) {
             e.printStackTrace();
         }
         AjaxResponse resp = new AjaxResponse();
         String pushStr = JSONObject.toJSONString(pushDTO);
         ResponseData rd = eptService.sendNotification(pushStr);
-        if(rd != null) {
+        if(rd != null && rd.isSuccess()) {
             resp = AjaxResponse.success();
         } else {
             resp = AjaxResponse.failed(-1);

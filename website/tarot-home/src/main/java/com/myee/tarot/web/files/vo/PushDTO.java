@@ -1,12 +1,13 @@
 package com.myee.tarot.web.files.vo;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class PushDTO implements Serializable{
 
     private String uniqueNo;
     private Integer appId;
-    private String timeout;
+    private Date timeout;
     private String context;
 
     public String getUniqueNo() {
@@ -25,11 +26,11 @@ public class PushDTO implements Serializable{
         this.appId = appId;
     }
 
-    public String getTimeout() {
+    public Date getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(String timeout) {
+    public void setTimeout(Date timeout) {
         this.timeout = timeout;
     }
 

@@ -91,9 +91,8 @@ public class FileItem implements Serializable{
         this.name = name;
     }
 
-    public static FileItem toResourceModel(File file, String salt) {
+    public static FileItem toResourceModel(File file) {
         FileItem resVo = new FileItem();
-        resVo.setSalt(FilenameUtils.concat(salt,file.getAbsolutePath()));
         resVo.setName(file.getName());
         resVo.setPath(file.getAbsolutePath());
         resVo.setModified(file.lastModified());
