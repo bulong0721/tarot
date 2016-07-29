@@ -2,12 +2,14 @@ package com.myee.tarot.web.files.vo;
 
 import com.google.common.collect.Lists;
 import com.myee.tarot.web.util.DateTime;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class FileItem {
+public class FileItem implements Serializable{
     private static final int DIR  = 0;
     private static final int FILE = 1;
 
@@ -89,9 +91,9 @@ public class FileItem {
         this.name = name;
     }
 
-    public static FileItem toResourceModel(File file, Long salt) {
+    public static FileItem toResourceModel(File file, String salt) {
         FileItem resVo = new FileItem();
-        resVo.setSalt(Long.toString(salt));
+        resVo.setSalt(FilenameUtils.concat(salt,file.getAbsolutePath()));
         resVo.setName(file.getName());
         resVo.setPath(file.getAbsolutePath());
         resVo.setModified(file.lastModified());

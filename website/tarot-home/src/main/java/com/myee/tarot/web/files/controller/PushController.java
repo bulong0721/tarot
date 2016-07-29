@@ -14,6 +14,7 @@ import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.apiold.BusinessException;
 import com.myee.tarot.web.files.vo.FileItem;
+import com.myee.tarot.web.files.vo.PushDTO;
 import com.myee.tarot.web.util.StringUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
@@ -22,13 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -48,7 +47,7 @@ public class PushController {
     @Autowired
     private ServerBootstrap serverBootstrap;
 
-    @RequestMapping("file/search")
+    @RequestMapping("admin/file/search")
     @ResponseBody
     public AjaxPageableResponse searchResource(@RequestParam("node") String parentNode, HttpServletRequest request) {
 //        if ("/".equals(parentNode)) {
@@ -68,7 +67,7 @@ public class PushController {
         return new AjaxPageableResponse(Lists.<Object>newArrayList(resMap.values()));
     }
 
-    @RequestMapping("file/create")
+    @RequestMapping("admin/file/create")
     @ResponseBody
     public FileItem createResource(long orgID, @RequestParam("resFile") CommonsMultipartFile file, String entityText) throws IllegalStateException, IOException {
         FileItem vo = JSON.parseObject(entityText, FileItem.class);
@@ -86,7 +85,7 @@ public class PushController {
         return vo;
     }
 
-    @RequestMapping("content/get")
+    @RequestMapping("admin/content/get")
     @ResponseBody
     public String getContentText(Long orgID, String absPath) {
         File resFile = getResFile(orgID, absPath);
@@ -104,7 +103,7 @@ public class PushController {
         }
     }
 
-    @RequestMapping("file/delete")
+    @RequestMapping("admin/file/delete")
     @ResponseBody
     @Transactional
     public boolean deleteResource(@RequestParam("salt") Long orgID, String path, HttpServletRequest request) {
@@ -128,7 +127,7 @@ public class PushController {
         }
         String prefix = FilenameUtils.concat(DOWNLOAD_HOME, Long.toString(orgID));
         for (File file : parentFile.listFiles()) {
-            FileItem fileItem = FileItem.toResourceModel(file, orgID);
+            FileItem fileItem = FileItem.toResourceModel(file, prefix);
             fileItem.setPath(trimStart(fileItem.getPath(), prefix));
             resMap.put(file.getName(), fileItem);
         }
@@ -148,16 +147,15 @@ public class PushController {
 
     @RequestMapping(value = "admin/file/push", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse pushResource(Notification notification, String mbNum) {
+    public AjaxResponse pushResource(@Valid @RequestBody PushDTO pushDTO) {
         OrchidService eptService = null;
         try {
-            eptService = serverBootstrap.getClient(OrchidService.class, mbNum);
-//            eptService.sendNotification()
+//            eptService = serverBootstrap.getClient(OrchidService.class, pushDTO.getUniqueNo());
         } catch (Exception e) {
             e.printStackTrace();
         }
         AjaxResponse resp = new AjaxResponse();
-        String pushStr = JSONObject.toJSONString(notification);
+        String pushStr = JSONObject.toJSONString(pushDTO);
         ResponseData rd = eptService.sendNotification(pushStr);
         if(rd != null) {
             resp = AjaxResponse.success();

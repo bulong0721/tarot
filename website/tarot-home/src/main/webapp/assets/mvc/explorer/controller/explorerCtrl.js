@@ -86,7 +86,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
 
     $scope.handleSelect = function (data) {
         if (data.type == 0) {
-            $resource('../file/search').get({node: data.path}, {}, function success(resp) {
+            $resource('../admin/file/search').get({node: data.path}, {}, function success(resp) {
                 angular.merge(data.children, resp.rows);
             });
         }
@@ -102,15 +102,17 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
         $scope.activeTab = iEditor;
         $scope.showInfoPush = true;
         $scope.formData.model.store = {name: Constants.thisMerchantStore.name};
-        $scope.formData.model.description = JSON.stringify(arraySelected);
+        //var objectStr = {hotfixSet:arraySelected, publisher: '', transactional: false};
+        $scope.formData.model.context = JSON.stringify(arraySelected);
     };
 
     //递归出所有选中的文件
     function recursionTree(data, arraySelected){
+
         angular.forEach(data, function(d){
             //console.log(d)
             if(d.checked == true && d.type == 1){
-                arraySelected.push({url: d.path, name: d.name, salt: d.salt});
+                arraySelected.push({url: d.salt, name: d.name});
             }
             if(d.children.length > 0){
                 recursionTree(d.children, arraySelected);
@@ -118,19 +120,16 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
         });
     }
 
-    //成功后调用
-    function saveSuccess(response) {
-
-    }
-
-    //失败调用
-    function saveFailed(response) {
-    }
-
-    //查询推送下拉框内容
-    function getDeviceList() {
-        var data = $resource("../device/list").query();
+    //查询推送设备下拉框内容
+    function getDeviceUsedList() {
+        var data = $resource("../deviceUsed/list").query();
+        console.log(data)
         return data;
+    }
+
+    //查询推送应用下拉框内容
+    function getAppList() {
+        return [{name: 'gaea', value: 1},{name: 'gaea1', value: 2}];
     }
 
     var mgrData = {
@@ -141,29 +140,31 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
                 type: 'c_input',
                 templateOptions: {disabled: true, label: '推送门店', placeholder: '推送门店'}
             },
-            {key: 'name', type: 'c_input', templateOptions: {label: '推送设备', required: true, placeholder: '推送设备'}},
-            {key: 'heartbeat', type: 'c_input', templateOptions: {label: '推动应用', placeholder: '推动应用'}},
+            {
+                key: 'uniqueNo',
+                type: 'c_select',
+                className: 'c_select',
+                templateOptions: {label: '选择推送设备', required: true, options: getDeviceUsedList()}
+            },
+            {
+                key: 'appId',
+                type: 'c_select',
+                className: 'c_select',
+                templateOptions: {label: '选择推动应用', required: true, options: getAppList()}
+            },
             {key: 'boardNo', type: 'datepicker', templateOptions: {label: '过期时间', placeholder: '过期时间',type: 'text', datepickerPopup: 'yyyy-MM-dd', datepickerOptions: {format: 'yyyy-MM-dd'}}},
             {
-                key: 'description',
+                key: 'context',
                 type: 'c_textarea',
                 ngModelAttrs: {
                     style: {attribute: 'style'}
                 },
-                templateOptions: {label: '推动内容', placeholder: '推动内容', rows: 10,style: 'max-width:450px'}
+                templateOptions: {label: '推动内容', required: true, placeholder: '推动内容', rows: 10,style: 'max-width:450px'}
             }
-            //,
-            //{
-            //    key: 'device.id',
-            //    type: 'c_select',
-            //    className: 'c_select',
-            //    templateOptions: {label: '选择设备类型', required: true, options: getDeviceList()}
-            //}
-
         ],
         api: {
             //read: '../device/used/paging',
-            //update: '../device/used/update',
+            push: '../admin/file/push',
             //delete: '../device/used/delete',
             //updateAttr: '../device/used/attribute/save',
             //deleteAttr: '../device/used/attribute/delete',
@@ -175,9 +176,28 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
         fields: mgrData.fields
     };
 
+    //formly提交
+    $scope.pushSubmit = function () {
+        var formly = $scope.formData;
+        console.log(formly)
+        if (formly.form.$valid) {
+            formly.options.updateInitialValue();
+            $resource(mgrData.api.push).save({}, formly.model).$promise.then(saveSuccess, saveFailed);
+        }
+    };
+
     //formly返回
-    $scope.goDataTable = function () {
+    $scope.goPushDataTable = function () {
         $scope.activeTab = iDatatable;
         $scope.showInfoPush = false;
     };
+
+    //成功后调用
+    function saveSuccess(response) {
+
+    }
+
+    //失败调用
+    function saveFailed(response) {
+    }
 }

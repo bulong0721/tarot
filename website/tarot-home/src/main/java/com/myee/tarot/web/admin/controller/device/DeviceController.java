@@ -125,6 +125,25 @@ public class DeviceController {
         return null;
     }
 
+    @RequestMapping(value = "deviceUsed/list", method = RequestMethod.GET)
+    @ResponseBody
+    public List deviceUsedList(HttpServletRequest request) {
+        AjaxResponse resp = new AjaxResponse();
+        try {
+            List<DeviceUsed> deviceUsedList = deviceUsedService.list();
+            for (DeviceUsed deviceUsed : deviceUsedList) {
+                Map entry = new HashMap();
+                entry.put("name",deviceUsed.getName());
+                entry.put("value",deviceUsed.getBoardNo());
+                resp.addDataEntry(entry);
+            }
+            return resp.getRows();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @RequestMapping(value = "device/delete", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse deleteDevice(@Valid @RequestBody Device device, HttpServletRequest request) {
