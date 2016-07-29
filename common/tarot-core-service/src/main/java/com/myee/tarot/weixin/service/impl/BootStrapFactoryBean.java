@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  * Created by Ray.Fu on 2016/6/30.
  */
 @Service
-public class BootStrapFacatoryBean extends AbstractFactoryBean<ServerBootstrap> {
+public class BootStrapFactoryBean extends AbstractFactoryBean<ServerBootstrap> {
     @Value("${djinn.port}")
     private int               djinnPort;
     @Autowired
