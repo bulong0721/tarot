@@ -30,7 +30,11 @@ public class SelfCheckLogDaoImpl extends GenericEntityDaoImpl<Long, SelfCheckLog
         PageResult<SelfCheckLog> pageList = new PageResult<SelfCheckLog>();
         QSelfCheckLog qSelfCheckLog = QSelfCheckLog.selfCheckLog;
         JPQLQuery<SelfCheckLog> query = new JPAQuery(getEntityManager());
-        query.from(qSelfCheckLog);
+        query.from(qSelfCheckLog)
+                .leftJoin(qSelfCheckLog.eventLevel)
+                .fetchJoin()
+                .leftJoin(qSelfCheckLog.eventModule)
+                .fetchJoin();
         Map eventLevelMap = StringUtil.transStringToMap(whereRequest.getEventLevel());
         if(eventLevelMap != null) {
             Integer eventLevel = (Integer)eventLevelMap.get("value");

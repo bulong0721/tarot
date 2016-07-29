@@ -4262,7 +4262,7 @@ body.body-small .footer.fixed {
 /* PANELS */
 .page-heading {
     border-top: 0;
-    padding: 0 10px 20px 10px;
+    padding: 0 10px 10px 10px;
 }
 
 .panel-heading h1,
@@ -10123,6 +10123,7 @@ th.center, td.center {
 }
 
 .showThisMerchant {
+    cursor: pointer;
     padding: 10px;
 }
 

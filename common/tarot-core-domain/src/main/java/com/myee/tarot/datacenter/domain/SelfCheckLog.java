@@ -2,11 +2,11 @@ package com.myee.tarot.datacenter.domain;
 
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
-import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinColumnsOrFormulas;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -50,8 +50,8 @@ public class SelfCheckLog extends GenericEntity<Long, SelfCheckLog> {
     @JoinColumn(name = "STORE_ID", referencedColumnName = "STORE_ID", nullable = true, insertable = false, updatable = false)
     protected MerchantStore store;
 
-    @ManyToOne(targetEntity = EventLevel.class)
-    @JoinColumn(name = "EVENT_LEVEL", referencedColumnName = "EVENT", nullable = true, insertable = false, updatable = false)
+    @ManyToOne(targetEntity = EventLevel.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "EVENT_LEVEL", referencedColumnName = "EVENT")
     protected EventLevel eventLevel;
 
     @ManyToOne(targetEntity = EventModule.class)
