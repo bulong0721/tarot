@@ -102,6 +102,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
         $scope.activeTab = iEditor;
         $scope.showInfoPush = true;
         $scope.formData.model.store = {name: Constants.thisMerchantStore.name};
+        $scope.formData.model.description = JSON.stringify(arraySelected);
     };
 
     //递归出所有选中的文件
@@ -151,7 +152,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
                 },
                 templateOptions: {label: '推动内容', placeholder: '推动内容', rows: 10,style: 'max-width:450px'}
             }
-            ,
+            //,
             //{
             //    key: 'device.id',
             //    type: 'c_select',
