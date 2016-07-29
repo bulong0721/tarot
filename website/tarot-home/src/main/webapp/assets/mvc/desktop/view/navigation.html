@@ -22,18 +22,11 @@
             </li>
 
             <li ng-class="{active: $state.includes('merchant')}">
-                <a href="merchant.shop_list"><i class="fa fa-lg fa-bank"></i> <span class="nav-label">门店管理</span> <span class="fa arrow"></span></a>
+                <a href="merchant.shop_list"><i class="fa fa-lg fa-bank"></i> <span class="nav-label">门店管理</span> <span
+                        class="fa arrow"></span></a>
                 <ul class="nav nav-second-level" ng-class="{in: $state.includes('merchant')}">
                     <li ng-class="{active: $state.includes('merchant.shop')}"><a ui-sref="merchant.shop">门店列表</a></li>
                     <li ng-class="{active: $state.includes('merchant.merchant')}"><a ui-sref="merchant.merchant">编辑商户</a></li>
-                </ul>
-            </li>
-
-            <li ng-class="{active: $state.includes('dataCenter')}">
-                <a href=""><i class="fa fa-lg fa-database"></i> <span class="nav-label">数据中心</span> <span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level" ng-class="{in: $state.includes('dataCenter')}">
-                    <li ng-class="{active: $state.includes('dataCenter.selfCheckLog')}"><a ui-sref="dataCenter.selfCheckLog">自检日志</a></li>
-                    <li ng-class="{active: $state.includes('dataCenter.waittoken')}"><a ui-sref="dataCenter.waittoken">排队数据</a></li>
                 </ul>
             </li>
 
@@ -41,15 +34,6 @@
                 <a href="campaign"><i class="fa fa-lg fa-building-o"></i> <span class="nav-label">活动管理</span> <span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level" ng-class="{in: $state.includes('campaign')}">
                     <li ng-class="{active: $state.includes('campaign.priceCheck')}"><a ui-sref="campaign.priceCheck">抽奖列表</a></li>
-                </ul>
-            </li>
-
-            <li ng-class="{active: $state.includes('device')}">
-                <a href="device"><i class="fa fa-lg fa-camera-retro"></i> <span class="nav-label">设备管理</span> <span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level" ng-class="{in: $state.includes('device')}">
-                    <li ui-sref-active="active"><a ui-sref="device.type">设备类型</a></li>
-                    <li ui-sref-active="active"><a ui-sref="device.list">设备列表</a></li>
-                    <li ui-sref-active="active"><a ui-sref="device.product">设备组列表</a></li>
                 </ul>
             </li>
 
@@ -62,6 +46,15 @@
                 </ul>
             </li>
 
+            <li ng-class="{active: $state.includes('device')}">
+                <a href="device"><i class="fa fa-lg fa-camera-retro"></i> <span class="nav-label">设备管理</span> <span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level" ng-class="{in: $state.includes('device')}">
+                    <li ui-sref-active="active"><a ui-sref="device.type">设备类型</a></li>
+                    <li ui-sref-active="active"><a ui-sref="device.list">设备列表</a></li>
+                    <li ui-sref-active="active"><a ui-sref="device.product">设备组列表</a></li>
+                </ul>
+            </li>
+
             <li ng-class="{active: $state.includes('explorer')}">
                 <a href="explorer"><i class="fa fa-lg fa-share-alt"></i> <span class="nav-label">资源管理</span> <span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level" ng-class="{in: $state.includes('explorer')}">
@@ -70,14 +63,36 @@
                 </ul>
             </li>
 
+            <li ng-class="{active: $state.includes('dataCenter')}">
+                <a href=""><i class="fa fa-lg fa-database"></i> <span class="nav-label">数据&报表</span> <span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level" ng-class="{in: $state.includes('dataCenter')}">
+                    <li ng-class="{active: $state.includes('dataCenter.selfCheckLog')}"><a ui-sref="dataCenter.selfCheckLog">自检日志</a></li>
+                    <li ng-class="{active: $state.includes('dataCenter.waittoken')}"><a ui-sref="dataCenter.waittoken">排队数据</a></li>
+                </ul>
+            </li>
+
             <li ng-class="{active: $state.includes('user')}">
-                <a href="user.user_list"><i class="fa fa-lg fa-group"></i> <span class="nav-label">账号管理</span> <span class="fa arrow"></span></a>
+                <a href="user.user_list"><i class="fa fa-lg fa-group"></i> <span class="nav-label">账号管理</span> <span
+                        class="fa arrow"></span></a>
                 <ul class="nav nav-second-level" ng-class="{in: $state.includes('user')}">
                     <li ui-sref-active="active"><a ui-sref="user.user">用户管理</a></li>
                     <li ui-sref-active="active"><a ui-sref="user.role">角色管理</a></li>
                 </ul>
             </li>
         </ul>
-
+    </div>
+    <div class="sidebar-footer hidden-small">
+        <a data-toggle="tooltip" data-placement="top" title="" data-original-title="Settings">
+            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+        </a>
+        <a data-toggle="tooltip" data-placement="top" title="" data-original-title="FullScreen">
+            <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+        </a>
+        <a data-toggle="tooltip" data-placement="top" title="" data-original-title="Lock">
+            <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+        </a>
+        <a data-toggle="tooltip" data-placement="top" title="" data-original-title="Logout">
+            <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+        </a>
     </div>
 </nav>

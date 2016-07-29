@@ -88,4 +88,34 @@ function explorerCtrl($scope, $resource, $filter) {
             });
         }
     };
+
+    //点击推送按钮时调用
+    $scope.goSend = function () {
+        var arraySelected = [];
+        var data = $scope.treeData;
+        $scope.recursionTree(data, arraySelected);
+        $resource('../file/search').save({}, JSON.stringify(arraySelected)).$promise.then(saveSuccess, saveFailed);
+    };
+
+    //递归出所有选中的文件
+    $scope.recursionTree = function(data, arraySelected){
+        angular.forEach(data, function(d){
+            //console.log(d)
+            if(d.checked == true && d.type == 1){
+                arraySelected.push(d);
+            }
+            if(d.children.length > 0){
+                $scope.recursionTree(d.children, arraySelected);
+            }
+        });
+    }
+
+    //成功后调用
+    function saveSuccess(response) {
+
+    }
+
+    //失败调用
+    function saveFailed(response) {
+    }
 }

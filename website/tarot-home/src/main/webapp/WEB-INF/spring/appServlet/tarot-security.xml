@@ -28,7 +28,7 @@
         <beans:property name="accessDeniedUrl" value="/admin/denied.html"/>
     </beans:bean>
 
-    <beans:bean scope="singleton" class="com.myee.tarot.weixin.service.impl.BootStrapFacatoryBean" id="bootStrapFacatoryBean"></beans:bean>
+    <!--<beans:bean scope="singleton" class="com.myee.tarot.weixin.service.impl.BootStrapFacatoryBean" id="bootStrapFacatoryBean"></beans:bean>-->
 
     <beans:bean id="wxMpMessageRouter" class="me.chanjar.weixin.mp.api.WxMpMessageRouter">
         <beans:constructor-arg name="wxMpService" ref="wxMpService"></beans:constructor-arg>

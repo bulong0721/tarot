@@ -34,7 +34,7 @@ public class SelfCheckLogDaoImpl extends GenericEntityDaoImpl<Long, SelfCheckLog
         Map eventLevelMap = StringUtil.transStringToMap(whereRequest.getEventLevel());
         if(eventLevelMap != null) {
             Integer eventLevel = (Integer)eventLevelMap.get("value");
-            query.where(qSelfCheckLog.eventLevel.eq(eventLevel));
+            query.where(qSelfCheckLog.eventLevel.event.eq(eventLevel));
         }
         Map moduleObjectMap = StringUtil.transStringToMap(whereRequest.getModuleObject());
         if(moduleObjectMap != null) {

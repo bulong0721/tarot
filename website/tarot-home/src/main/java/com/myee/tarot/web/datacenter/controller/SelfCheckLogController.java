@@ -5,8 +5,8 @@ import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
-import com.myee.tarot.datacenter.domain.EventLevelLog;
-import com.myee.tarot.datacenter.domain.ModuleLog;
+import com.myee.tarot.datacenter.domain.EventLevel;
+import com.myee.tarot.datacenter.domain.EventModule;
 import com.myee.tarot.datacenter.domain.SelfCheckLog;
 import com.myee.tarot.datacenter.service.EventLevelLogService;
 import com.myee.tarot.datacenter.service.ModuleLogService;
@@ -90,7 +90,7 @@ public class SelfCheckLogController {
                                 selfCheckLog.setFunctionId(excelData.getString("var2") == null ? null : TypeConverter.toInteger(excelData.getString("var2")));
                                 selfCheckLog.setData(excelData.getString("var3") == null ? null : TypeConverter.toString(excelData.getString("var3")));
                                 selfCheckLog.setTime(excelData.getString("var4") == null ? null : TypeConverter.toLong(excelData.getString("var4")));
-                                selfCheckLog.setEventLevel(excelData.getString("var5") == null ? null : TypeConverter.toInteger(excelData.getString("var5")));
+//                                selfCheckLog.setEventLevel(excelData.getString("var5") == null ? null : TypeConverter.toInteger(excelData.getString("var5")));
                                 try {
                                     selfCheckLogService.update(selfCheckLog);
                                 } catch (ServiceException e) {
@@ -140,9 +140,9 @@ public class SelfCheckLogController {
         Map entry = new HashMap();
         entry.put("id",selfCheckLog.getId());
         entry.put("data",selfCheckLog.getData());
-        entry.put("level",selfCheckLog.getEventLevelLog().getLevel());
-        entry.put("moduleName",selfCheckLog.getModuleLog().getModuleName());
-        entry.put("functionName",selfCheckLog.getModuleLog().getFunctionName());
+        entry.put("level",selfCheckLog.getEventLevel().getLevel());
+        entry.put("moduleName",selfCheckLog.getEventModule().getModuleName());
+        entry.put("functionName",selfCheckLog.getEventModule().getFunctionName());
         entry.put("length",selfCheckLog.getLength());
         entry.put("time",selfCheckLog.getTime());
         return entry;
@@ -153,11 +153,11 @@ public class SelfCheckLogController {
     public List getErrorLevelList() throws Exception {
         List resp = new ArrayList();
         try {
-            List<EventLevelLog> list = eventLevelLogService.getEventLevelList();
-            for (EventLevelLog eventLevelLog : list) {
+            List<EventLevel> list = eventLevelLogService.getEventLevelList();
+            for (EventLevel eventLevel : list) {
                 Map entry = new HashMap();
-                entry.put("name",eventLevelLog.getLevel());
-                entry.put("value",eventLevelLog.getEvent());
+                entry.put("name", eventLevel.getLevel());
+                entry.put("value", eventLevel.getEvent());
                 resp.add(entry);
             }
         } catch (Exception e) {
@@ -171,11 +171,11 @@ public class SelfCheckLogController {
     public List getListModule() throws Exception {
         List resp = new ArrayList();
         try {
-            List<ModuleLog> list = moduleLogService.getModuleList();
-            for (ModuleLog moduleLog : list) {
+            List<EventModule> list = moduleLogService.getModuleList();
+            for (EventModule eventModule : list) {
                 Map entry = new HashMap();
-                entry.put("name",moduleLog.getModuleName());
-                entry.put("value",moduleLog.getModuleId());
+                entry.put("name", eventModule.getModuleName());
+                entry.put("value", eventModule.getModuleId());
                 resp.add(entry);
             }
         } catch (Exception e) {
@@ -189,11 +189,11 @@ public class SelfCheckLogController {
     public List getListFuctionByModuleId(Integer moduleId) throws Exception {
         List resp = new ArrayList();
         try {
-            List<ModuleLog> list = moduleLogService.getFunctionListByModule(moduleId);
-            for (ModuleLog moduleLog : list) {
+            List<EventModule> list = moduleLogService.getFunctionListByModule(moduleId);
+            for (EventModule eventModule : list) {
                 Map entry = new HashMap();
-                entry.put("name",moduleLog.getFunctionName());
-                entry.put("value",moduleLog.getFunctionId());
+                entry.put("name", eventModule.getFunctionName());
+                entry.put("value", eventModule.getFunctionId());
                 resp.add(entry);
             }
         } catch (Exception e) {

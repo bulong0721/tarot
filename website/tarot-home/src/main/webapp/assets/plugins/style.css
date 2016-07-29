@@ -46,7 +46,7 @@ h5 {
 
 .nav > li > a {
     /*color: #a7b1c2;*/
-    color: rgba(255,255,255,0.75);
+    color: rgba(255, 255, 255, 0.75);
     /*font-weight: 600;*/
     padding: 14px 20px 14px 25px;
 }
@@ -57,14 +57,23 @@ h5 {
 
 .nav > li.active > a {
     color: #ffffff;
-    text-shadow:rgba(0,0,0,0.25) 0 -1px 0;background:linear-gradient(#334556, #2C4257),#2A3F54;box-shadow:rgba(0,0,0,0.25) 0 1px 0,inset rgba(255,255,255,0.16) 0 1px 0
+    text-shadow: rgba(0, 0, 0, 0.25) 0 -1px 0;
+    background: linear-gradient(#334556, #2C4257), #2A3F54;
+    box-shadow: rgba(0, 0, 0, 0.25) 0 1px 0, inset rgba(255, 255, 255, 0.16) 0 1px 0
 }
-.nav > li.active ul a {text-shadow: inherit; box-shadow: inherit;}
-.nav > li.active ul > li.active > a {background: rgba(255,255,255,0.05);}
+
+.nav > li.active ul a {
+    text-shadow: inherit;
+    box-shadow: inherit;
+}
+
+.nav > li.active ul > li.active > a {
+    background: rgba(255, 255, 255, 0.05);
+}
 
 .navbar-default .nav > li > a:hover,
 .navbar-default .nav > li > a:focus {
-    background: rgba(255,255,255,0.05);
+    background: rgba(255, 255, 255, 0.05);
     color: white;
 }
 
@@ -215,6 +224,7 @@ h5 {
 .nav.nav-second-level > li.active {
     border: none;
 }
+
 .nav.nav-second-level > li:before {
     background: #425668;
     bottom: auto;
@@ -228,6 +238,7 @@ h5 {
     z-index: 1;
     border-radius: 50%;
 }
+
 .nav.nav-second-level > li:after {
     border-left: 1px solid #425668;
     bottom: 0;
@@ -236,6 +247,7 @@ h5 {
     position: absolute;
     top: 0;
 }
+
 .nav.nav-second-level.collapse[style] {
     height: auto !important;
 }
@@ -4145,11 +4157,11 @@ video {
 }
 
 .wrapper {
-    padding: 0 20px;
+    padding: 0 0px;
 }
 
 .wrapper-content {
-    padding: 20px 10px 40px;
+    padding: 15px 0px 40px;
 }
 
 #page-wrapper {
@@ -10060,58 +10072,275 @@ th.center, td.center {
 .table {
     width: 100%;
     max-width: 100%;
+    margin-bottom: 10px !important;
 }
-
 
 /*/!*====================================new style====================================*!/*/
 /*.wrapper-content {padding: 15px 0px 20px;}*/
-.navbar { position: inherit;}
-.textAlign {text-align: center; background: #fff;}
-#right-sidebar {background: rgba(0,0,0,.1);  border: none;  top: 0;  width: 100% !important;  z-index: 9999;  bottom: 0;  position: fixed;  right:0;  }
-#right-sidebar .sidebar-container {width: 650px; margin: 100px auto 0; background: #fff;border: rgba(0,0,0,.2) 8px solid;}
-#right-sidebar .sidebar-container .ibox {margin: 0; text-align: center;}
-#right-sidebar .sidebar-container .ibox-content {text-align: left}
-#right-sidebar .sidebar-container ul {margin: 0 0 20px 0; cursor: pointer}
-.sidebar-container .sidebar-message {padding: 8px 10px;}
-.showThisMerchant {padding: 10px;}
-.showThisMerchant span {display: block}
-.showThisMerchant span:first-child{color: #1ab394;}
-.showThisMerchant i{color: #ccc; font-size: 12px; margin-left: 5px;}
+.navbar {
+    position: inherit;
+}
 
-.formly {}
-.formly .formly-field {margin: 10px 0;}
-.formly .formly-field .form-group {overflow: hidden;}
-.formly .formly-field label {margin: 0; text-align: right; padding: 6px 0;}
-.formly .formly-field input ,.c_formly_line select {max-width: 450px}
-.formly .formly-field .radio-group .radio {display: inline-block;margin: 0 10px 10px 20px;}
-.formly .formly-field .radio-group input,.formly .formly-field .checkbox input {width: auto;}
-.formly .formly-field .checkbox {margin: 0 0 0 20px;}
+.textAlign {
+    text-align: center;
+    background: #fff;
+}
 
-.file-box {float: none; display: inline-block;}
-.search-input {margin: 0em 1em;display: block;padding: 4px;border-radius: 5px;border: 1px solid silver;}
-.nav-bareheaded {display: none;}
-.ngtables {overflow: hidden;}
-.ngtables .pagination {margin: 0;}
+#right-sidebar {
+    background: rgba(0, 0, 0, .1);
+    border: none;
+    top: 0;
+    width: 100% !important;
+    z-index: 9999;
+    bottom: 0;
+    position: fixed;
+    right: 0;
+}
 
-.c_select select {max-width:260px;}
-.formly-min-checkbox input {width: auto; height: auto;margin-top: 9px;}.filies {}
+#right-sidebar .sidebar-container {
+    width: 650px;
+    margin: 100px auto 0;
+    background: #fff;
+    border: rgba(0, 0, 0, .2) 8px solid;
+}
 
+#right-sidebar .sidebar-container .ibox {
+    margin: 0;
+    text-align: center;
+}
 
-.filies .ibox-content {border:1px solid #e7eaec;}
-.filies .file-but {}
-.filieConfirm {}
-.filieConfirm .modal-header {padding: 15px 0;}
-.filieConfirm .modal-title {font-size: 17px;}
-.filieConfirm .modal-body {padding: 15px 30px 10px 30px;}
-.fileInput {position: relative;}
-.fileInput input { position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 999; top: 0; left: 0;}
-.fileInput button {}
-.file {position: relative}
-.file i {font-size: 60px; position: absolute; left: 0; top: 30px; width: 100%; text-align: center;}.ngtables .pagination {margin: 0;}
+#right-sidebar .sidebar-container .ibox-content {
+    text-align: left
+}
+
+#right-sidebar .sidebar-container ul {
+    margin: 0 0 20px 0;
+    cursor: pointer
+}
+
+.sidebar-container .sidebar-message {
+    padding: 8px 10px;
+}
+
+.showThisMerchant {
+    padding: 10px;
+}
+
+.showThisMerchant span {
+    display: block
+}
+
+.showThisMerchant span:first-child {
+    color: #1ab394;
+}
+
+.showThisMerchant i {
+    color: #ccc;
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+.formly {
+}
+
+.formly .formly-field {
+    margin: 10px 0;
+}
+
+.formly .formly-field .form-group {
+    overflow: hidden;
+}
+
+.formly .formly-field label {
+    margin: 0;
+    text-align: right;
+    padding: 6px 0;
+}
+
+.formly .formly-field input, .c_formly_line select {
+    max-width: 450px
+}
+
+.formly .formly-field .radio-group .radio {
+    display: inline-block;
+    margin: 0 10px 10px 20px;
+}
+
+.formly .formly-field .radio-group input, .formly .formly-field .checkbox input {
+    width: auto;
+}
+
+.formly .formly-field .checkbox {
+    margin: 0 0 0 20px;
+}
+
+.file-box {
+    float: none;
+    display: inline-block;
+}
+
+.search-input {
+    margin: 0em 1em;
+    display: block;
+    padding: 4px;
+    border-radius: 5px;
+    border: 1px solid silver;
+}
+
+.nav-bareheaded {
+    display: none;
+}
+
+.ngtables {
+    overflow: hidden;
+}
+
+.ngtables .pagination {
+    margin: 0;
+}
+
+.c_select select {
+    max-width: 260px;
+}
+
+.formly-min-checkbox input {
+    width: auto;
+    height: auto;
+    margin-top: 9px;
+}
+
+.filies {
+}
+
+.filies .ibox-content {
+    border: 1px solid #e7eaec;
+}
+
+.filies .file-but {
+}
+
+.filieConfirm {
+}
+
+.filieConfirm .modal-header {
+    padding: 15px 0;
+}
+
+.filieConfirm .modal-title {
+    font-size: 17px;
+}
+
+.filieConfirm .modal-body {
+    padding: 15px 30px 10px 30px;
+}
+
+.fileInput {
+    position: relative;
+}
+
+.fileInput input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 999;
+    top: 0;
+    left: 0;
+}
+
+.fileInput button {
+}
+
+.file {
+    position: relative
+}
+
+.file i {
+    font-size: 60px;
+    position: absolute;
+    left: 0;
+    top: 30px;
+    width: 100%;
+    text-align: center;
+}
+
+.ngtables .pagination {
+    margin: 0;
+}
 
 /*input checkbox*/
-.tree-checkbox {margin: 0;}
-.tree-checkbox input[type=checkbox] {opacity: 0;  z-index: -100 !important; width: 0 !important; height: 0 !important; position: fixed;}
-.tree-checkbox input[type=checkbox] + span{position: relative;  display: inline-block;  margin: 0;  line-height: 20px;  min-height: 18px;  min-width: 18px;  font-weight: normal;  cursor: pointer;  }
-.tree-checkbox input[type=checkbox] + span::before {cursor: pointer;  font-family: fontAwesome;  font-weight: normal;  font-size: 12px;  color: #32a3ce;  content: "\a0";  background-color: #FAFAFA;  border: 1px solid #c8c8c8;  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);  border-radius: 0;  display: inline-block;  text-align: center;  height: 16px;  line-height: 14px;  min-width: 16px;   position: relative;  top: -1px;  }
-.tree-checkbox input[type=checkbox]:checked + span::before{  display: inline-block;  content: '\f00c';  background-color: #F5F8FC;  border-color: #adb8c0;  }
+.tree-checkbox {
+    margin: 0;
+}
+
+.tree-checkbox input[type=checkbox] {
+    opacity: 0;
+    z-index: -100 !important;
+    width: 0 !important;
+    height: 0 !important;
+    position: fixed;
+}
+
+.tree-checkbox input[type=checkbox] + span {
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    line-height: 20px;
+    min-height: 18px;
+    min-width: 18px;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.tree-checkbox input[type=checkbox] + span::before {
+    cursor: pointer;
+    font-family: fontAwesome;
+    font-weight: normal;
+    font-size: 12px;
+    color: #32a3ce;
+    content: "\a0";
+    background-color: #FAFAFA;
+    border: 1px solid #c8c8c8;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border-radius: 0;
+    display: inline-block;
+    text-align: center;
+    height: 16px;
+    line-height: 14px;
+    min-width: 16px;
+    position: relative;
+    top: -1px;
+}
+
+.tree-checkbox input[type=checkbox]:checked + span::before {
+    display: inline-block;
+    content: '\f00c';
+    background-color: #F5F8FC;
+    border-color: #adb8c0;
+}
+
+.sidebar-footer {
+    bottom: 0px;
+    clear: both;
+    display: block;
+    padding: 5px 0 0 0;
+    position: fixed;
+    width: 220px;
+    background: #2A3F54
+}
+
+.sidebar-footer a {
+    padding: 7px 0 3px;
+    text-align: center;
+    width: 25%;
+    font-size: 17px;
+    display: block;
+    float: left;
+    color: #5A738E;
+    background: #172D44
+}
+
+.sidebar-footer a:hover {
+    background: #425567
+}
