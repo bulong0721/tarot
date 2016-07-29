@@ -296,11 +296,11 @@ function cfromlyService(formlyConfig, $window) {
     formlyConfig.setType({
         name: 'datepicker',
         template: [
-            '<p class="input-group">',
+            '<div class="col-sm-8"><p class="input-group">',
             '<input  type="text" id="{{::id}}" name="{{::id}}" ng-model="model[options.key]" class="form-control" ng-click="datepicker.open($event)" uib-datepicker-popup="{{to.datepickerOptions.format}}" is-open="datepicker.opened" datepicker-options="to.datepickerOptions" />',
             '<span class="input-group-btn">',
             '<button type="button" class="btn btn-default" ng-click="datepicker.open($event)" ng-disabled="to.disabled"><i class="fa fa-calendar"></i></button>',
-            '</span></p>'
+            '</span></p></div>'
         ].join(' '),
         wrapper: ['bootstrapLabel', 'bootstrapHasError'],
         defaultOptions: {

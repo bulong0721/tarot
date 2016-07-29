@@ -132,6 +132,7 @@ h5 {
     text-shadow: none;
     top: 100%;
     z-index: 1000;
+    padding: 5px;
 }
 
 .dropdown-menu > li > a {
@@ -10174,6 +10175,10 @@ th.center, td.center {
 .formly .formly-field .checkbox {
     margin: 0 0 0 20px;
 }
+
+.formly-field-datepicker .form-group  {overflow: inherit !important;  width: 100%;   display: inline-block; margin: 0;}
+.formly-field-datepicker .form-group label {width: 16.66666667%; float: left}
+.formly-field-datepicker p {margin: 0; max-width: 450px;}
 
 .file-box {
     float: none;
