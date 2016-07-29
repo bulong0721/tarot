@@ -1,8 +1,5 @@
 package com.myee.tarot.datacenter.domain;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.parser.Feature;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import org.hibernate.annotations.DynamicUpdate;
@@ -11,30 +8,24 @@ import org.hibernate.annotations.JoinColumnsOrFormulas;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
 
 /**
  * Created by Enva on 2016/4/11.
  */
 
 @Entity
-@Table(name = "C_SELF_CHECK_LOG")
+@Table(name = "LOG_SELF_CHECK")
 @DynamicUpdate //hibernate部分更新
 public class SelfCheckLog extends GenericEntity<Long, SelfCheckLog> {
 
     @Id
     @Column(name = "SELF_CHECK_LOG_ID", unique = true, nullable = false)
-    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "SELF_CHECK_LOG_SEQ_NEXT_VAL",allocationSize=1)
+    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "SELF_CHECK_LOG_SEQ_NEXT_VAL", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     private Long id;
 
     @Column(name = "TIME")
     private Long time;
-
-    @NotNull
-    @Column(name = "EVENT_LEVEL")
-    private Integer eventLevel;
 
     @NotNull
     @Column(name = "MODULE_ID")
@@ -46,7 +37,7 @@ public class SelfCheckLog extends GenericEntity<Long, SelfCheckLog> {
     @Column(name = "LENGTH")
     private Integer length;
 
-    @Column(name = "DATA", length=20000)
+    @Column(name = "DATA", length = 20000)
     private String data;
 
     @Column(name = "STORE_ID")
@@ -56,25 +47,25 @@ public class SelfCheckLog extends GenericEntity<Long, SelfCheckLog> {
     protected String boardNo;
 
     @ManyToOne(targetEntity = MerchantStore.class)
-    @JoinColumn(name = "STORE_ID",referencedColumnName = "STORE_ID", nullable = true, insertable =false, updatable = false)
+    @JoinColumn(name = "STORE_ID", referencedColumnName = "STORE_ID", nullable = true, insertable = false, updatable = false)
     protected MerchantStore store;
 
-    @ManyToOne(targetEntity = EventLevelLog.class)
-    @JoinColumn(name = "EVENT_LEVEL",referencedColumnName = "EVENT", nullable = true, insertable =false, updatable = false)
-    protected EventLevelLog eventLevelLog;
+    @ManyToOne(targetEntity = EventLevel.class)
+    @JoinColumn(name = "EVENT_LEVEL", referencedColumnName = "EVENT", nullable = true, insertable = false, updatable = false)
+    protected EventLevel eventLevel;
 
-    @ManyToOne(targetEntity = ModuleLog.class)
+    @ManyToOne(targetEntity = EventModule.class)
     @JoinColumnsOrFormulas({
-            @JoinColumnOrFormula(column=@JoinColumn(name ="MODULE_ID", referencedColumnName ="MODULE_ID", nullable = true, insertable =false, updatable = false)),
-            @JoinColumnOrFormula(column=@JoinColumn(name ="FUNCTION_ID", referencedColumnName ="FUNCTION_ID", nullable = true, insertable =false, updatable = false))
+            @JoinColumnOrFormula(column = @JoinColumn(name = "MODULE_ID", referencedColumnName = "MODULE_ID", nullable = true, insertable = false, updatable = false)),
+            @JoinColumnOrFormula(column = @JoinColumn(name = "FUNCTION_ID", referencedColumnName = "FUNCTION_ID", nullable = true, insertable = false, updatable = false))
     })
-    protected ModuleLog moduleLog;
+    protected EventModule eventModule;
 
-    public SelfCheckLog(){}
+    public SelfCheckLog() {
+    }
 
-    public SelfCheckLog(SelfCheckLogVO vo){
+    public SelfCheckLog(SelfCheckLogVO vo) {
         this.setTime(vo.getTime());
-        this.setEventLevel(vo.getEventLevel());
         this.setFunctionId(vo.getFunctionId());
         this.setModuleId(vo.getModuleId());
         this.setData(vo.getData());
@@ -97,14 +88,6 @@ public class SelfCheckLog extends GenericEntity<Long, SelfCheckLog> {
 
     public void setTime(Long time) {
         this.time = time;
-    }
-
-    public Integer getEventLevel() {
-        return eventLevel;
-    }
-
-    public void setEventLevel(Integer eventLevel) {
-        this.eventLevel = eventLevel;
     }
 
     public Integer getModuleId() {
@@ -163,19 +146,19 @@ public class SelfCheckLog extends GenericEntity<Long, SelfCheckLog> {
         this.store = store;
     }
 
-    public EventLevelLog getEventLevelLog() {
-        return eventLevelLog;
+    public EventLevel getEventLevel() {
+        return eventLevel;
     }
 
-    public void setEventLevelLog(EventLevelLog eventLevelLog) {
-        this.eventLevelLog = eventLevelLog;
+    public void setEventLevel(EventLevel eventLevel) {
+        this.eventLevel = eventLevel;
     }
 
-    public ModuleLog getModuleLog() {
-        return moduleLog;
+    public EventModule getEventModule() {
+        return eventModule;
     }
 
-    public void setModuleLog(ModuleLog moduleLog) {
-        this.moduleLog = moduleLog;
+    public void setEventModule(EventModule eventModule) {
+        this.eventModule = eventModule;
     }
 }

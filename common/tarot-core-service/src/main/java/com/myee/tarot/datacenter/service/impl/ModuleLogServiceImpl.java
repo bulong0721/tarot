@@ -3,7 +3,7 @@ package com.myee.tarot.datacenter.service.impl;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
 import com.myee.tarot.datacenter.dao.ModuleLogDao;
 import com.myee.tarot.datacenter.service.ModuleLogService;
-import com.myee.tarot.datacenter.domain.ModuleLog;
+import com.myee.tarot.datacenter.domain.EventModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ import java.util.List;
  * Created by Ray.Fu on 2016/7/19.
  */
 @Service
-public class ModuleLogServiceImpl extends GenericEntityServiceImpl<Long, ModuleLog> implements ModuleLogService {
+public class ModuleLogServiceImpl extends GenericEntityServiceImpl<Long, EventModule> implements ModuleLogService {
 
     private ModuleLogDao moduleLogDao;
 
