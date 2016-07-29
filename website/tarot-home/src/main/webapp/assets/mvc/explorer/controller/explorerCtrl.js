@@ -143,7 +143,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
             },
             {key: 'name', type: 'c_input', templateOptions: {label: '推送设备', required: true, placeholder: '推送设备'}},
             {key: 'heartbeat', type: 'c_input', templateOptions: {label: '推动应用', placeholder: '推动应用'}},
-            {key: 'boardNo', type: 'c_input', templateOptions: {label: '过期时间', placeholder: '过期时间'}},
+            {key: 'boardNo', type: 'datepicker', templateOptions: {label: '过期时间', placeholder: '过期时间',type: 'text', datepickerPopup: 'yyyy-MM-dd', datepickerOptions: {format: 'yyyy-MM-dd'}}},
             {
                 key: 'description',
                 type: 'c_textarea',
