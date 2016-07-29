@@ -14,6 +14,8 @@
     <mvc:resources mapping="/assets/**" location="/assets/"/>
     <mvc:resources mapping="/admin/assets/**" location="/assets/"/>
     <mvc:resources mapping="/weixin/**" location="/assetswx/"/>
+    <mvc:resources mapping="/businessClient/**" location="/businessClient/"/>
+    <mvc:resources mapping="/customerClient/**" location="/customerClient/"/>
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/views/"/>
