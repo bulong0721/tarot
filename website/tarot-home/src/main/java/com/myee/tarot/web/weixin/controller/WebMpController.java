@@ -1,6 +1,13 @@
 package com.myee.tarot.web.weixin.controller;
 
 import com.myee.djinn.dto.WaitTokenState;
+import com.myee.tarot.campaign.domain.PriceInfo;
+import com.myee.tarot.campaign.service.PriceInfoService;
+import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
+import com.myee.tarot.core.util.TimeUtil;
+import com.myee.tarot.core.util.ajax.AjaxResponse;
+import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.weixin.domain.ClientAjaxResult;
 import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.myee.tarot.weixin.service.WeixinService;
@@ -18,9 +25,12 @@ import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
+import org.apache.commons.io.FileUtils;
+import org.aspectj.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,8 +38,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,10 +62,18 @@ public class WebMpController {
     private   WxMpMessageRouter wxMpMessageRouter;
     @Autowired
     private OperationsManager manager;
+    @Autowired
+    private PriceInfoService priceInfoService;
+    @Autowired
+    private MerchantStoreService merchantStoreService;
+
+    @Value("${cleverm.push.dirs}")
+    private String DOWNLOAD_HOME;
 
     @RequestMapping(value = "service")
     @ResponseBody
     public void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
         logger.info("微信公众号请求信息");
         req.setCharacterEncoding("utf-8");
         resp.setCharacterEncoding("utf-8");
@@ -71,15 +89,13 @@ public class WebMpController {
         // 默认返回的文本消息内容
         String respContent = "请求处理异常，请稍候尝试！";
 
-        WxMpXmlMessage inMessage1 = WxMpXmlMessage.fromXml(req.getInputStream());
-        System.out.println(inMessage1.toString());
-
 //        try {
 //            String shortUrl = wxMpService.shortUrl("https://mp.weixin.qq.com/misc/getqrcode?fakeid=3012749102%26token=367458522%26style=1");
 //            System.out.println("shortUrl->" + shortUrl);
 //        } catch (WxErrorException e) {
 //            e.printStackTrace();
 //        }
+
         try {
             if (!wxMpService.checkSignature(timestamp, nonce, signature)) {
                 out.print("非法请求");
@@ -88,38 +104,72 @@ public class WebMpController {
             }
             String encryptType = StringUtils.isBlank(req.getParameter("encrypt_type")) ? "raw" : req.getParameter("encrypt_type");
             if ("raw".equals(encryptType)) {
-                System.out.println("req.getInputStream()->" + req.getInputStream());
-                System.out.println("WxMpXmlMessage.fromXml(req.getInputStream())->" + WxMpXmlMessage.fromXml(req.getInputStream()));
                 WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(req.getInputStream());
-                String sceneId = inMessage.getEventKey();
-                String redisKeyOfUcdScId = RedisKeys.getIdentityCode(Long.valueOf(sceneId));
-                String identityCode = manager.getIdentityCode(redisKeyOfUcdScId);
-                //微信自带的扫二维码，已关注
-                if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent() != null && inMessage.getEvent().equals(WxConsts.EVT_SCAN)) {
+                System.out.println("inMessage:" + inMessage.toString());
+                //微信自带的扫二维码，已关注(查询进展用-代号1)
+                if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent() != null && inMessage.getEvent().equals(WxConsts.EVT_SCAN) && inMessage.getEventKey().substring(0,1).equals("1")) {
+                    String merchantStoreId = inMessage.getEventKey();
+                    System.out.println("merchantStoreId:" + merchantStoreId);
+                    String redisKeyOfUcdScId = RedisKeys.getIdentityCode(Long.valueOf(merchantStoreId));
+                    String identityCode = manager.getIdentityCode(redisKeyOfUcdScId);
                     //将该二维码绑定扫码的微信OpenId
                     Map<String,Object> msgMap = new HashMap<String,Object>();
                     if(wxService.bondQrCodeByScan(identityCode, inMessage.getFromUserName())) {
-                        System.out.println("coding-here->2");
                         msgMap = checkLatestDevelopments(identityCode);
                         int i = wxService.modifyWaitingInfo(Long.parseLong(msgMap.get("waitedTableCount").toString()),identityCode,Long.valueOf(msgMap.get("timeTook").toString()), Long.parseLong(msgMap.get("predictWaitingTime").toString()));
                         if(i != 1) {
                             logger.error("修改排号信息失败!");
                         }
                     } else {
-                        System.out.println("coding-here->3");
                         msgMap.put("valid", "该唯一码已过期或无效，查询进度失败!");
                     }
-                    System.out.println("coding-here->4");
                     inMessage.setMap(msgMap);
-                    System.out.println("coding-here->5");
                 }
+                //微信自带的扫二维码，已关注(获取绑定抽奖信息-代号2)
+                if (inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent() != null && inMessage.getEvent().equals(WxConsts.EVT_SCAN) && inMessage.getEventKey().substring(0,1).equals("2")) {
+                    Long storeId = Long.valueOf(inMessage.getEventKey().substring(1, inMessage.getEventKey().length()));
+                    AjaxResponse aResp = priceInfoService.savePriceInfo(inMessage.getFromUserName(), storeId);
+                    PriceInfo priceInfo = (PriceInfo) aResp.getDataMap().get("result");
+                    Date startDate = priceInfo.getPrice().getStartDate();
+                    Date endDate = priceInfo.getPrice().getEndDate();
+                    //根据店铺ID查店铺名称
+                    MerchantStore merchantStore = merchantStoreService.findById(storeId);
+                    Map map = new HashMap();
+                    map.put("storeName",merchantStore.getName());
+                    map.put("prizeStartDate", DateTimeUtils.getDateString(startDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
+                    map.put("prizeEndDate", DateTimeUtils.getDateString(endDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
+                    inMessage.setMap(map);
+                }
+
+                //进公众号里面的扫码(获取绑定抽奖信息-代号3)
+                if (inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent() != null && inMessage.getEvent().equals(WxConsts.BUTTON_SCANCODE_PUSH) && inMessage.getEventKey().substring(0,1).equals("3")) {
+                    Long storeId = Long.valueOf(inMessage.getEventKey().substring(1, inMessage.getEventKey().length()));
+                    priceInfoService.savePriceInfo(inMessage.getFromUserName(),storeId);
+                    AjaxResponse aResp = priceInfoService.savePriceInfo(inMessage.getFromUserName(), storeId);
+                    PriceInfo priceInfo = (PriceInfo) aResp.getDataMap().get("result");
+                    Date startDate = priceInfo.getPrice().getStartDate();
+                    Date endDate = priceInfo.getPrice().getEndDate();
+                    //根据店铺ID查店铺名称
+                    MerchantStore merchantStore = merchantStoreService.findById(storeId);
+                    Map map = new HashMap();
+                    map.put("storeName",merchantStore.getName());
+                    map.put("prizeStartDate", DateTimeUtils.getDateString(startDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
+                    map.put("prizeEndDate", DateTimeUtils.getDateString(endDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
+                    inMessage.setMap(map);
+                }
+
                 //点击事件
                 if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent()!= null && inMessage.getEvent().equals(WxConsts.EVT_CLICK)) {
                     Map<String,Object> msgMap = checkLatestDevelopments(inMessage.getFromUserName(), WaitTokenState.WAITING.getValue());
                     inMessage.setMap(msgMap);
                 }
+
                 //微信自带的扫二维码，未关注
                 if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent() != null && inMessage.getEvent().equals(WxConsts.EVT_SUBSCRIBE) && inMessage.getTicket() != null) {
+                    String merchantStoreId = inMessage.getEventKey();
+                    System.out.println("merchantStoreId:" + merchantStoreId);
+                    String redisKeyOfUcdScId = RedisKeys.getIdentityCode(Long.valueOf(merchantStoreId));
+                    String identityCode = manager.getIdentityCode(redisKeyOfUcdScId);
                     //将该二维码绑定扫码的微信OpenId
                     Map<String,Object> msgMap = new HashMap<String,Object>();
                     if(wxService.bondQrCodeByScan(identityCode, inMessage.getFromUserName())) {
@@ -141,11 +191,8 @@ public class WebMpController {
                 Map<String,Object> msgMap = checkLatestDevelopments(inMessage.getContent());
                 inMessage.setMap(msgMap);
             }
-                System.out.println("coding-here->6");
                 WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage);
-                System.out.println("coding-here->7");
                 String str = outMessage.toXml();
-                System.out.println("coding-here->8");
                 out.print(str);
             } else if ("aes".equals(encryptType)) {
                 String msgSignature = req.getParameter("msg_signature");
@@ -156,12 +203,10 @@ public class WebMpController {
                 logger.error("不可识别的加密类型");
                 out.write("不可识别的加密类型");
             }
-            System.out.println("coding-here->9");
         } catch (Exception e) {
-            System.out.println("coding-here->10");
-            System.out.println(e.getMessage());
+            System.out.println(e.toString());
+            e.printStackTrace();
         } finally {
-            System.out.println("coding-here->11");
             out.close();
         }
     }
@@ -232,13 +277,25 @@ public class WebMpController {
         return latestDevInfo;
     }
 
+    /**
+     * 获取用户兑奖
+     * @param merchantStoreId
+     * @param openId
+     * @return
+     */
+    private Map<String,Object> getUserLotteryInfo(String merchantStoreId, String openId) {
+//        Map<String,Object> userLotteryInfo = wxService.getUserLotteryInfo(merchantStoreId,openId);
+        Map<String,Object> userLotteryInfo = new HashMap<String,Object>();
+        return userLotteryInfo;
+    }
+
     @RequestMapping(value = "create")
     @ResponseBody
     public ClientAjaxResult menuCreate() {
         try {
             WxMenu menu = new WxMenu();
             WxMenu.WxMenuButton button1 = new WxMenu.WxMenuButton();
-            button1.setType(WxConsts.BUTTON_SCANCODE_WAITMSG);
+            button1.setType(WxConsts.BUTTON_SCANCODE_PUSH);
             button1.setName("扫码查询");
             button1.setKey("QUERY_SCAN_LOTTERY");
 
@@ -264,16 +321,23 @@ public class WebMpController {
         return ClientAjaxResult.success("菜单创建成功！");
     }
 
-    @RequestMapping(value = "generate_qrPic", method = {RequestMethod.POST})
+    @RequestMapping(value = "generate_qrTmpPic", method = {RequestMethod.POST})
     @ResponseBody
     public WxMpQrCodeTicket generateQrCodePic(Long shopId) {
         WxMpQrCodeTicket ticket = null;
         try {
             Long startTime = System.currentTimeMillis();
-            ticket = wxMpService.qrCodeCreateTmpTicket(shopId.intValue(),null);
+            ticket = wxMpService.qrCodeCreateTmpTicket(shopId.intValue(), 604800);
             Long endTime = System.currentTimeMillis();
             Long time = endTime - startTime;
             System.out.println("生成二维码接口时间消耗:" + time + "毫秒");
+            File file = wxMpService.qrCodePicture(ticket);
+            File directory = new File(DOWNLOAD_HOME + File.separator + "qrcode");
+            try {
+                FileUtils.copyFileToDirectory(file, directory);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } catch (WxErrorException e) {
             e.printStackTrace();
         }

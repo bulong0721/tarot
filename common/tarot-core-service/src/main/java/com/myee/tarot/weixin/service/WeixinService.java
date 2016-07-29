@@ -23,7 +23,7 @@ public interface WeixinService {
 
     Collection<WaitToken> allWaitOfTableType(long tableTypeId, Long shopId);
 
-    WxWaitToken enqueue(long shopId, int dinerCount, String openId);
+    WxWaitToken enqueue(long shopId, String mbNum, int dinerCount, String openId);
 
     void dequeue(long tableTypeId, String token, Long clientId, Long shopId);
 

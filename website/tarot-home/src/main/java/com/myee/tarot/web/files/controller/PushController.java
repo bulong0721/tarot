@@ -1,20 +1,29 @@
 package com.myee.tarot.web.files.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.myee.djinn.dto.ResponseData;
+import com.myee.djinn.endpoint.OrchidService;
+import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
+import com.myee.tarot.catalog.domain.Notification;
 import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.apiold.BusinessException;
 import com.myee.tarot.web.files.vo.FileItem;
 import com.myee.tarot.web.util.StringUtil;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -22,6 +31,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.*;
 
 /**
@@ -35,6 +45,8 @@ public class PushController {
     @Value("${cleverm.push.http}")
     private String DOWNLOAD_HTTP;
 
+    @Autowired
+    private ServerBootstrap serverBootstrap;
 
     @RequestMapping("file/search")
     @ResponseBody
@@ -134,6 +146,56 @@ public class PushController {
         return result;
     }
 
+    @RequestMapping(value = "admin/file/push", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse pushResource(Notification notification, String mbNum) {
+        OrchidService eptService = null;
+        try {
+            eptService = serverBootstrap.getClient(OrchidService.class, mbNum);
+//            eptService.sendNotification()
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        AjaxResponse resp = new AjaxResponse();
+        String pushStr = JSONObject.toJSONString(notification);
+        ResponseData rd = eptService.sendNotification(pushStr);
+        if(rd != null) {
+            resp = AjaxResponse.success();
+        } else {
+            resp = AjaxResponse.failed(-1);
+        }
+        return resp;
+    }
 
+    @RequestMapping(value = "admin/table/push", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse pushTable(String tableStr, String mbNum) {
+        String tableStrTest = "{\"id\":1,\"tableZone\":{\"id\":1,\"name\":\"A区\"},\"description\":\"测试2\",\"name\":\"测试1\",\"tableType\":{\"id\":2,\"name\":\"大桌1\"}}";
+        String mbNumStr = "Gaea-23#";
+        mbNum = mbNumStr;
+        OrchidService eptService = null;
+        ResponseData rd = null;
+        AjaxResponse resp = new AjaxResponse();
+        try {
+            eptService = serverBootstrap.getClient(OrchidService.class, mbNum);
+            String pushTableStr = JSONObject.toJSONString(tableStrTest);
+            rd = eptService.sendNotification(pushTableStr);
+            if(rd != null) {
+                resp = AjaxResponse.success();
+            } else {
+                resp = AjaxResponse.failed(-1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resp;
+    }
+
+    final static Charset charset = Charset.forName("UTF8");
+
+    static String toClientUUID(long shopId) {
+        String rawId = String.format("shopId:%08d", shopId);
+        return Base64.encodeBase64String(rawId.getBytes(charset));
+    }
 
 }

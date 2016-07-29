@@ -257,6 +257,13 @@ public class DeviceController {
 
             List<Object> updateResult = new ArrayList<Object>();
             deviceUsed.setStore(merchantStore1);
+            //校验主板编号
+            DeviceUsed dU = deviceUsedService.getStoreInfoByMbCode(deviceUsed.getBoardNo());
+            if (dU != null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("已存在的主板编号");
+                return resp;
+            }
             if(autoEnd != null && autoStart !=null &&  autoEnd >= 0 && autoStart >= 0 ){//批量新增
                 String commonName = deviceUsed.getName();
                 for(Long i=autoStart;i < autoEnd+1;i++){
