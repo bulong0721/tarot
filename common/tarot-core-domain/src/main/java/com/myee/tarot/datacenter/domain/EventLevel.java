@@ -1,58 +1,90 @@
 package com.myee.tarot.datacenter.domain;
 
-import com.myee.tarot.core.GenericEntity;
-import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import com.myee.tarot.core.GenericEnumType;
+
+import java.io.Serializable;
+import java.util.*;
 
 /**
- * Created by Enva on 2016/4/11.
+ * Created by Martin on 2016/1/18.
  */
+public class EventLevel implements GenericEnumType, Comparable<EventLevel>, Serializable {
+    private static final Map<String, EventLevel> TYPES = new LinkedHashMap<String, EventLevel>();
 
-@Entity
-@Table(name = "LOG_EVENT_LEVEL")
-@DynamicUpdate //hibernate部分更新
-public class EventLevel extends GenericEntity<Long, EventLevel> {
+    private static final EventLevel ERROR = new EventLevel("0", "error");
+    private static final EventLevel WARN= new EventLevel("1", "warn");
+    private static final EventLevel INFO= new EventLevel("2", "info");
+    private static final EventLevel DEBUG = new EventLevel("3", "debug");
 
-    @Id
-    @Column(name = "EVENT_LEVEL_LOG_ID", unique = true, nullable = false)
-    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "EVENT_LEVEL_LOG_SEQ_NEXT_VAL",allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
-    private Long id;
+    private String type;
+    private String friendlyType;
 
-    @NotNull
-    @Column(name = "EVENT")
-    private Integer event;
+    public EventLevel() {
+    }
 
-    @NotEmpty
-    @Column(name = "LEVEL", length=100)
-    private String level;
-
-    @Override
-    public Long getId() {
-        return id;
+    public EventLevel(String type, String friendlyType) {
+        this.friendlyType = friendlyType;
+        setType(type);
     }
 
     @Override
-    public void setId(Long id) {
-        this.id = id;
+    public int compareTo(EventLevel o) {
+        return 0;
     }
 
-    public Integer getEvent() {
-        return event;
+    public void setType(final String type) {
+        this.type = type;
+        if (!TYPES.containsKey(type)) {
+            TYPES.put(type, this);
+        }
     }
 
-    public void setEvent(Integer event) {
-        this.event = event;
+    @Override
+    public String getType() {
+        return type;
     }
 
-    public String getLevel() {
-        return level;
+    @Override
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
-    public void setLevel(String level) {
-        this.level = level;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EventLevel that = (EventLevel) o;
+
+        return !(type != null ? !type.equals(that.type) : that.type != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return type != null ? type.hashCode() : 0;
+    }
+
+    public List getEventLevel4Select() {
+        List resp = new ArrayList();
+        Set keySet = TYPES.keySet();
+        for (Object keyName : keySet) {
+            Map entry = new HashMap();
+            entry.put("name", ((EventLevel)TYPES.get(keyName)).getFriendlyType());
+            entry.put("value", keyName);
+            resp.add(entry);
+        }
+        return resp;
+    }
+
+    public String getEventLevel(String businessType) {
+        try {
+            String key = String.valueOf(((EventLevel) TYPES.get(businessType)).getFriendlyType());
+            return key == null || key.equals("null") ? "" : key;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 }

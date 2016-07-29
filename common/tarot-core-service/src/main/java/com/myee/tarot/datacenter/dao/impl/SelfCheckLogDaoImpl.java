@@ -5,10 +5,12 @@ import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.datacenter.dao.SelfCheckLogDao;
+import com.myee.tarot.datacenter.domain.EventLevel;
 import com.myee.tarot.datacenter.domain.QSelfCheckLog;
 import com.myee.tarot.datacenter.domain.SelfCheckLog;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
@@ -31,14 +33,11 @@ public class SelfCheckLogDaoImpl extends GenericEntityDaoImpl<Long, SelfCheckLog
         QSelfCheckLog qSelfCheckLog = QSelfCheckLog.selfCheckLog;
         JPQLQuery<SelfCheckLog> query = new JPAQuery(getEntityManager());
         query.from(qSelfCheckLog)
-                .leftJoin(qSelfCheckLog.eventLevel)
-                .fetchJoin()
                 .leftJoin(qSelfCheckLog.eventModule)
                 .fetchJoin();
-        Map eventLevelMap = StringUtil.transStringToMap(whereRequest.getEventLevel());
-        if(eventLevelMap != null) {
-            Integer eventLevel = (Integer)eventLevelMap.get("value");
-            query.where(qSelfCheckLog.eventLevel.event.eq(eventLevel));
+        String eventLevel = whereRequest.getEventLevel();
+        if(StringUtils.isNotBlank(eventLevel)) {
+            query.where(qSelfCheckLog.eventLevel.eq(Integer.parseInt(eventLevel)));
         }
         Map moduleObjectMap = StringUtil.transStringToMap(whereRequest.getModuleObject());
         if(moduleObjectMap != null) {

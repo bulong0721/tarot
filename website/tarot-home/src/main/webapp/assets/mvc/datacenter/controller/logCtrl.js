@@ -31,17 +31,17 @@ function logListCtrl($scope, $resource, Constants, cTables, cfromly, NgTablePara
         }
     };
 
-    $scope.errorLevels = [];
-    /**
-     * 下拉列表查询错误等级
-     * **/
-    $resource('../admin/selfCheckLog/listErrorLevel').query({},{},function success(resp){
-        var length = resp.length;
-        $scope.errorLevels.splice(0, $scope.errorLevels.length);
-        for (var j = 0; j < length; j++) {
-            $scope.errorLevels.push({name: resp[j].name, value: resp[j].value});
-        }
-    });
+    //$scope.errorLevels = [];
+    ///**
+    // * 下拉列表查询错误等级
+    // * **/
+    //$resource('../admin/selfCheckLog/listErrorLevel').query({},{},function success(resp){
+    //    var length = resp.length;
+    //    $scope.errorLevels.splice(0, $scope.errorLevels.length);
+    //    for (var j = 0; j < length; j++) {
+    //        $scope.errorLevels.push({name: resp[j].name, value: resp[j].value});
+    //    }
+    //});
 
     $scope.moduleNames = [];
     /**
