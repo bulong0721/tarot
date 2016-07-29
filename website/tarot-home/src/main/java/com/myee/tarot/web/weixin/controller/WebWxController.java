@@ -69,9 +69,11 @@ public class WebWxController {
 
     @RequestMapping("enqueue")
     @ResponseBody
-    public SingleResult<WaitToken> enqueueAccess(String secret, long shopId, int dinerCount, String openId, HttpServletRequest req, HttpServletResponse resp) {
-        openId = (String)req.getSession().getAttribute("openId");
-        WxWaitToken waitToken = weixinService.enqueue(shopId, dinerCount, openId);
+    public SingleResult<WaitToken> enqueueAccess(String mbNum, String secret, long shopId, int dinerCount, String openId, HttpServletRequest req, HttpServletResponse resp) {
+//        openId = (String)req.getSession().getAttribute("openId");
+        mbNum = "Gaea-23#";
+        openId = "oLueSs13h4ZCSQ5jlxMG07LfKex4";
+        WxWaitToken waitToken = weixinService.enqueue(shopId, mbNum, dinerCount, openId);
         return new SingleResult(waitToken);
     }
 

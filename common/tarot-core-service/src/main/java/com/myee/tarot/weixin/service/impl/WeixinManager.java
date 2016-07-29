@@ -149,25 +149,8 @@ public class WeixinManager extends RedisOperation implements WeixinService {
         return waitTokenMap.values();
     }
 
-    private Ordering<WaitToken> orderingByTook = Ordering.from(new Comparator<WaitToken>() {
-        @Override
-        public int compare(WaitToken o1, WaitToken o2) {
-            return o1.getTimeTook().compareTo(o2.getTimeTook());
-        }
-    });
-
-    private Ordering<WxWaitToken> orderingByTook2 = Ordering.from(new Comparator<WxWaitToken>() {
-        @Override
-        public int compare(WxWaitToken o1, WxWaitToken o2) {
-            Long o1TimeTook1 = new Long(o1.getTimeTook().getTime());
-            Long o1TimeTook2 = new Long(o2.getTimeTook().getTime());
-            return o1TimeTook1.compareTo(o1TimeTook2);
-        }
-    });
-
     @Override
-    public WxWaitToken enqueue(long shopId, int dinerCount, String openId)  {
-
+    public WxWaitToken enqueue(long shopId, String mbNum, int dinerCount, String openId) {
         //测试代码
         OrchidService eptService = null;
         try {
@@ -210,6 +193,22 @@ public class WeixinManager extends RedisOperation implements WeixinService {
 
         return null;
     }
+
+    private Ordering<WaitToken> orderingByTook = Ordering.from(new Comparator<WaitToken>() {
+        @Override
+        public int compare(WaitToken o1, WaitToken o2) {
+            return o1.getTimeTook().compareTo(o2.getTimeTook());
+        }
+    });
+
+    private Ordering<WxWaitToken> orderingByTook2 = Ordering.from(new Comparator<WxWaitToken>() {
+        @Override
+        public int compare(WxWaitToken o1, WxWaitToken o2) {
+            Long o1TimeTook1 = new Long(o1.getTimeTook().getTime());
+            Long o1TimeTook2 = new Long(o2.getTimeTook().getTime());
+            return o1TimeTook1.compareTo(o1TimeTook2);
+        }
+    });
 
     static WxWaitToken convertTo(WaitToken waitToken, Long date) {
         WxWaitToken entity = new WxWaitToken();
