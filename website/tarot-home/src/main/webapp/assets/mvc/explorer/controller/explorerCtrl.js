@@ -152,7 +152,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
                 className: 'c_select',
                 templateOptions: {label: '选择推动应用', required: true, options: getAppList()}
             },
-            {key: 'boardNo', type: 'datepicker', templateOptions: {label: '过期时间', placeholder: '过期时间',type: 'text', datepickerPopup: 'yyyy-MM-dd', datepickerOptions: {format: 'yyyy-MM-dd'}}},
+            {key: 'timeout', type: 'datepicker', templateOptions: {label: '过期时间', placeholder: '过期时间',type: 'text', datepickerPopup: 'yyyy-MM-dd', datepickerOptions: {format: 'yyyy-MM-dd'}}},
             {
                 key: 'context',
                 type: 'c_textarea',
