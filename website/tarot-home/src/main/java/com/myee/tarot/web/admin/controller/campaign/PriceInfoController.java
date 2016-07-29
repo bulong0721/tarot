@@ -12,9 +12,14 @@ import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -31,6 +36,8 @@ public class PriceInfoController {
     private MerchantActivityService merchantActivityService;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private WxMpService wxMpService;
 
     /**
      * 保存一个用户的奖项记录
@@ -52,16 +59,17 @@ public class PriceInfoController {
 
     /**
      * 根据keyId
-     * @param keyId
+     * @param code
      * @param status 0 已使用 1未使用 2过期
      * @return
      */
     @RequestMapping(value = "api/info/getInfoByStatusAndKeyId")
     @ResponseBody
-    public AjaxResponse getPriceInfoByStatusAndKeyId(@RequestParam("keyId")String keyId,@RequestParam("status")int status){
+    public AjaxResponse getPriceInfoByStatusAndKeyId(@RequestParam("code")String code,@RequestParam("status")int status){
         try {
             AjaxResponse resp = new AjaxResponse();
-            List<PriceInfo> infos = priceInfoService.findByStatusAndKeyId(keyId, status);
+            WxMpOAuth2AccessToken wxMpOAuth2AccessToken = wxMpService.oauth2getAccessToken(code);
+            List<PriceInfo> infos = priceInfoService.findByStatusAndKeyId(wxMpOAuth2AccessToken.getOpenId(), status);
             //每次请求未使用获取信息对后进行过期判定
             if(status == Constants.PRICEINFO_UNUSED){
                 Iterator<PriceInfo> iter = infos.iterator();
@@ -84,6 +92,7 @@ public class PriceInfoController {
         }
         return AjaxResponse.failed(-1);
     }
+
 
     /**
      * 获取本商户下当天已使用的奖券
