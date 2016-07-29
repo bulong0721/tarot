@@ -10,9 +10,9 @@ import com.myee.tarot.campaign.domain.QMerchantPrice;
 import com.myee.tarot.campaign.domain.QPriceInfo;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.StringUtil;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -35,7 +35,7 @@ public class PriceInfoDaoImpl extends GenericEntityDaoImpl<Long, PriceInfo> impl
         PageResult<PriceInfo> pageList = new PageResult<PriceInfo>();
         QPriceInfo qPriceInfo = QPriceInfo.priceInfo;
         JPQLQuery<PriceInfo> query = new JPAQuery(getEntityManager());
-        if(StringUtils.isNotBlank(pageRequest.getQueryName())){
+        if(!StringUtil.isBlank(pageRequest.getQueryName())){
             query.where(qPriceInfo.checkCode.like("%" + pageRequest.getQueryName() + "%"));
         }
         query.from(qPriceInfo).where(qPriceInfo.status.eq(Constants.PRICEINFO_USED).and(qPriceInfo.price.storeId.eq(storeId))).orderBy(qPriceInfo.checkDate.desc());

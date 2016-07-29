@@ -1,9 +1,5 @@
 package com.myee.tarot.web.files.vo;
 
-import com.google.common.collect.Lists;
-import com.myee.tarot.web.util.DateTime;
-import org.apache.commons.io.FilenameUtils;
-
 import java.io.File;
 import java.io.Serializable;
 import java.util.Date;

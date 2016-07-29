@@ -5,10 +5,10 @@ import com.myee.tarot.catalog.domain.QDevice;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.device.dao.DeviceDao;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -22,7 +22,7 @@ public class DeviceDaoImpl extends GenericEntityDaoImpl<Long, Device> implements
         QDevice qDevice = QDevice.device;
         JPQLQuery<Device> query = new JPAQuery(getEntityManager());
 
-        if(StringUtils.isNotBlank(pageRequest.getQueryName())){
+        if(!StringUtil.isBlank(pageRequest.getQueryName())){
             query.where(qDevice.name.like("%" + pageRequest.getQueryName() + "%"));
         }
         pageList.setRecordsTotal(query.from(qDevice).fetchCount());

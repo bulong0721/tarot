@@ -2,7 +2,6 @@ package com.myee.tarot.core.util;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -31,33 +30,6 @@ public class StringUtil {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * Checks if a string is included in the beginning of another string, but only in dot-separated segment leaps.
-     * Examples:
-     * <ul>
-     * <li>"sku.date" into "sku.dateExtra" should return false</li>
-     * <li>"sku.date" into "sku.date.extra" should return true</li>
-     * <li>"sku" into "sku" should return true</li>
-     * </ul>
-     * <p/>
-     * This function avoids "collision" between similarly named, multi-leveled property fields.
-     *
-     * @param bigger   the bigger (haystack) String
-     * @param included the string to be sought (needle)
-     * @return
-     */
-    public static boolean segmentInclusion(String bigger, String included) {
-        if (StringUtils.isEmpty(bigger) || StringUtils.isEmpty(included)) {
-            return false;
-        }
-        String[] biggerSegments = bigger.split("\\.");
-        String[] includedSetments = included.split("\\.");
-
-        String[] biggerSubset = Arrays.copyOfRange(biggerSegments, 0, includedSetments.length);
-
-        return Arrays.equals(biggerSubset, includedSetments);
     }
 
     public static double determineSimilarity(String test1, String test2) {
@@ -120,12 +92,77 @@ public class StringUtil {
 
     /**
      * String转Map
+     *
      * @param mapString
      * @return
      */
-    public static Map transStringToMap(String mapString){
+    public static Map transStringToMap(String mapString) {
         JSONObject jasonObject = JSON.parseObject(mapString);
-        Map map = (Map)jasonObject;
+        Map map = (Map) jasonObject;
         return map;
+    }
+
+    private static final int    PAD_LIMIT = 8192;
+    public static final  String SPACE     = " ";
+
+    public static boolean isEmpty(final CharSequence cs) {
+        return cs == null || cs.length() == 0;
+    }
+
+    public static String repeat(final char ch, final int repeat) {
+        final char[] buf = new char[repeat];
+        for (int i = repeat - 1; i >= 0; i--) {
+            buf[i] = ch;
+        }
+        return new String(buf);
+    }
+
+    public static String leftPad(final String str, final int size) {
+        return leftPad(str, size, ' ');
+    }
+
+    public static String leftPad(final String str, final int size, final char padChar) {
+        if (str == null) {
+            return null;
+        }
+        final int pads = size - str.length();
+        if (pads <= 0) {
+            return str; // returns original String when possible
+        }
+        if (pads > PAD_LIMIT) {
+            return leftPad(str, size, String.valueOf(padChar));
+        }
+        return repeat(padChar, pads).concat(str);
+    }
+
+    public static String leftPad(final String str, final int size, String padStr) {
+        if (str == null) {
+            return null;
+        }
+        if (isEmpty(padStr)) {
+            padStr = SPACE;
+        }
+        final int padLen = padStr.length();
+        final int strLen = str.length();
+        final int pads = size - strLen;
+        if (pads <= 0) {
+            return str; // returns original String when possible
+        }
+        if (padLen == 1 && pads <= PAD_LIMIT) {
+            return leftPad(str, size, padStr.charAt(0));
+        }
+
+        if (pads == padLen) {
+            return padStr.concat(str);
+        } else if (pads < padLen) {
+            return padStr.substring(0, pads).concat(str);
+        } else {
+            final char[] padding = new char[pads];
+            final char[] padChars = padStr.toCharArray();
+            for (int i = 0; i < pads; i++) {
+                padding[i] = padChars[i % padLen];
+            }
+            return new String(padding).concat(str);
+        }
     }
 }

@@ -38,6 +38,7 @@ public class ProductUsedAttributeDaoImpl extends GenericEntityDaoImpl<Long, Prod
     @Override
     public void deleteByProductUsedId(Long id){
         QProductUsedAttribute qProductUsedAttribute = QProductUsedAttribute.productUsedAttribute;
+
         JPQLQueryFactory queryFactory = new JPAQueryFactory(getEntityManager());
 
         queryFactory.delete(qProductUsedAttribute)

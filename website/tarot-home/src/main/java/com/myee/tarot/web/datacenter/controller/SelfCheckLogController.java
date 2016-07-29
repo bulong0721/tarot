@@ -4,7 +4,6 @@ import com.myee.djinn.dto.ResponseData;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.PageResult;
-import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.datacenter.domain.EventLevel;
 import com.myee.tarot.datacenter.domain.EventModule;
@@ -12,10 +11,7 @@ import com.myee.tarot.datacenter.domain.SelfCheckLog;
 import com.myee.tarot.datacenter.service.ModuleLogService;
 import com.myee.tarot.datacenter.service.SelfCheckLogService;
 import com.myee.tarot.merchant.domain.MerchantStore;
-import com.myee.tarot.web.util.DateTime;
-import com.myee.tarot.web.util.ExcelData;
-import com.myee.tarot.web.util.ObjectExcelRead;
-import com.myee.tarot.web.util.TypeConverter;
+import com.myee.tarot.core.util.WhereRequest;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,58 +51,58 @@ public class SelfCheckLogController {
     @Autowired
     private ModuleLogService moduleLogService;
 
-    @RequestMapping(value = "services/uploadStructureData")
-    @ResponseBody
-    public ResponseData reportData(@RequestParam("resFile") CommonsMultipartFile file, String uploadType, Long storeId,HttpServletRequest request) {
-        logger.info("导入excel数据到数据库(app端点击数据的收集),storeId:" + storeId);
-        try {
-            /*String type = FileType.getFileType(file);
-            if(!type.matches(OFF_ALLOW_EXCEL)){
-                return ResponseData.errorData("格式不正确,只能为xls格式");
-            }*/
-            String downloadHome = DOWNLOAD_HOME;
-            final File dest = getResFile(storeId, "SelfCheckLog" + "/" + DateTime.getShortDateTime() + "/" + file.getOriginalFilename(),downloadHome);
-            if (!file.isEmpty()) {
-                dest.mkdirs();
-                file.transferTo(dest);
-                //异步插入数据库
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        List<ExcelData> dataList = null;
-                        try {
-                            dataList = (List) ObjectExcelRead.readExcel(dest.getAbsolutePath(), 1, 0, 0);//执行读EXCEL操作,读出的数据导入List 2:从第3行开始；0:从第A列开始；0:第0个sheet
-                        } catch (Exception e) {
-                            logger.error("读取readExcel失败!", e);
-                        }
-                        int totalSize = dataList.size();
-                        if(dataList != null && totalSize > 0){
-                            for(int i = 0; i < totalSize; i++){
-                                SelfCheckLog selfCheckLog = new SelfCheckLog();
-                                ExcelData excelData = dataList.get(i);
-                                selfCheckLog.setLength(excelData.getString("var0") == null ? null : TypeConverter.toInteger(excelData.getString("var0")));//pad上传的ID
-                                selfCheckLog.setModuleId(excelData.getString("var1") == null ? null : TypeConverter.toInteger(excelData.getString("var1")));
-                                selfCheckLog.setFunctionId(excelData.getString("var2") == null ? null : TypeConverter.toInteger(excelData.getString("var2")));
-                                selfCheckLog.setData(excelData.getString("var3") == null ? null : TypeConverter.toString(excelData.getString("var3")));
-                                selfCheckLog.setTime(excelData.getString("var4") == null ? null : TypeConverter.toLong(excelData.getString("var4")));
-//                                selfCheckLog.setEventLevel(excelData.getString("var5") == null ? null : new EventLevel().getEventLevel(TypeConverter.toInteger(excelData.getString("var5"))+""));
-                                try {
-                                    selfCheckLogService.update(selfCheckLog);
-                                } catch (ServiceException e) {
-                                    logger.error("message:SelfCheckLog保存失败!",e);
-                                }
-                            }
-                        }
-                    }
-                }).start();
-            }
-        }  catch (Exception e) {
-            e.printStackTrace();
-            logger.error(e.getMessage(), e);
-            return ResponseData.errorData("糟了...系统出错了...");
-        }
-        return ResponseData.successData("success");
-    }
+//    @RequestMapping(value = "services/uploadStructureData")
+//    @ResponseBody
+//    public ResponseData reportData(@RequestParam("resFile") CommonsMultipartFile file, String uploadType, Long storeId,HttpServletRequest request) {
+//        logger.info("导入excel数据到数据库(app端点击数据的收集),storeId:" + storeId);
+//        try {
+//            /*String type = FileType.getFileType(file);
+//            if(!type.matches(OFF_ALLOW_EXCEL)){
+//                return ResponseData.errorData("格式不正确,只能为xls格式");
+//            }*/
+//            String downloadHome = DOWNLOAD_HOME;
+//            final File dest = getResFile(storeId, "SelfCheckLog" + "/" + DateTimeUtils.getCurrentDateString("yyyyMMddHHmmss") + "/" + file.getOriginalFilename(),downloadHome);
+//            if (!file.isEmpty()) {
+//                dest.mkdirs();
+//                file.transferTo(dest);
+//                //异步插入数据库
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        List<ExcelData> dataList = null;
+//                        try {
+//                            dataList = (List) ObjectExcelRead.readExcel(dest.getAbsolutePath(), 1, 0, 0);//执行读EXCEL操作,读出的数据导入List 2:从第3行开始；0:从第A列开始；0:第0个sheet
+//                        } catch (Exception e) {
+//                            logger.error("读取readExcel失败!", e);
+//                        }
+//                        int totalSize = dataList.size();
+//                        if(dataList != null && totalSize > 0){
+//                            for(int i = 0; i < totalSize; i++){
+//                                SelfCheckLog selfCheckLog = new SelfCheckLog();
+//                                ExcelData excelData = dataList.get(i);
+//                                selfCheckLog.setLength(excelData.getString("var0") == null ? null : TypeConverter.toInteger(excelData.getString("var0")));//pad上传的ID
+//                                selfCheckLog.setModuleId(excelData.getString("var1") == null ? null : TypeConverter.toInteger(excelData.getString("var1")));
+//                                selfCheckLog.setFunctionId(excelData.getString("var2") == null ? null : TypeConverter.toInteger(excelData.getString("var2")));
+//                                selfCheckLog.setData(excelData.getString("var3") == null ? null : TypeConverter.toString(excelData.getString("var3")));
+//                                selfCheckLog.setTime(excelData.getString("var4") == null ? null : TypeConverter.toLong(excelData.getString("var4")));
+////                                selfCheckLog.setEventLevel(excelData.getString("var5") == null ? null : TypeConverter.toInteger(excelData.getString("var5")));
+//                                try {
+//                                    selfCheckLogService.update(selfCheckLog);
+//                                } catch (ServiceException e) {
+//                                    logger.error("message:SelfCheckLog保存失败!",e);
+//                                }
+//                            }
+//                        }
+//                    }
+//                }).start();
+//            }
+//        }  catch (Exception e) {
+//            e.printStackTrace();
+//            logger.error(e.getMessage(), e);
+//            return ResponseData.errorData("糟了...系统出错了...");
+//        }
+//        return ResponseData.successData("success");
+//    }
 
     static File getResFile(Long orgID, String absPath, String downloadHome) {
         return FileUtils.getFile(downloadHome, Long.toString(orgID), absPath);

@@ -1,8 +1,7 @@
 package com.myee.tarot.campaign.service.impl.redis;
 
-
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -32,7 +31,7 @@ public class DateTimeUtils {
 
     public static final String HOUR_START = " 00:00:00";
 
-    private static Map<String, FastDateFormat> dateFormatCache = new ConcurrentHashMap<String, FastDateFormat>();
+//    private static Map<String, FastDateFormat> dateFormatCache = new ConcurrentHashMap<String, FastDateFormat>();
 
     /**
      * 以yyyy-MM-dd HH:mm:ss形式返回当前时间的字符串
@@ -62,19 +61,20 @@ public class DateTimeUtils {
         if (pattern == null || "".equals(pattern.trim())) {
             return null;
         }
-        FastDateFormat sdf = null;
-        if (dateFormatCache.containsKey(pattern)) {
-            sdf = dateFormatCache.get(pattern);
-        } else {
-            try {
-                sdf = FastDateFormat.getInstance(pattern);
-                dateFormatCache.put(pattern, sdf);
-            } catch (Exception e) {
-                e.printStackTrace();
-                sdf = FastDateFormat.getInstance(DEFAULT_DATE_FORMAT_PATTERN_FULL);
-            }
-        }
-        return sdf.format(new Date());
+//        FastDateFormat sdf = null;
+//        if (dateFormatCache.containsKey(pattern)) {
+//            sdf = dateFormatCache.get(pattern);
+//        } else {
+//            try {
+//                sdf = FastDateFormat.getInstance(pattern);
+//                dateFormatCache.put(pattern, sdf);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                sdf = FastDateFormat.getInstance(DEFAULT_DATE_FORMAT_PATTERN_FULL);
+//            }
+//        }
+//        return sdf.format(new Date());
+        return DateTime.now().toString(pattern);
     }
 
     /**
@@ -88,19 +88,19 @@ public class DateTimeUtils {
         if (date == null || pattern == null || "".equals(pattern.trim())) {
             return null;
         }
-        FastDateFormat sdf = null;
-        if (dateFormatCache.containsKey(pattern)) {
-            sdf = dateFormatCache.get(pattern);
-        } else {
-            try {
-                sdf = FastDateFormat.getInstance(pattern);
-                dateFormatCache.put(pattern, sdf);
-            } catch (Exception e) {
-                e.printStackTrace();
-                sdf = FastDateFormat.getInstance(DEFAULT_DATE_FORMAT_PATTERN_FULL);
-            }
-        }
-        return sdf.format(date);
+//        FastDateFormat sdf = null;
+//        if (dateFormatCache.containsKey(pattern)) {
+//            sdf = dateFormatCache.get(pattern);
+//        } else {
+//            try {
+//                sdf = FastDateFormat.getInstance(pattern);
+//                dateFormatCache.put(pattern, sdf);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                sdf = FastDateFormat.getInstance(DEFAULT_DATE_FORMAT_PATTERN_FULL);
+//            }
+//        }
+        return new DateTime(date).toString(pattern);
     }
 
     /**
@@ -110,20 +110,22 @@ public class DateTimeUtils {
      * @param pattern
      * @return
      */
-   public static Date getDateByString(String dateTimeString, String pattern) {
+    public static Date getDateByString(String dateTimeString, String pattern) {
         if (dateTimeString == null || "".equals(dateTimeString.trim()) || pattern == null || "".equals(pattern.trim())) {
             return null;
         }
-        FastDateFormat sdf = null;
+
+//        FastDateFormat sdf = null;
         try {
-            if (dateFormatCache.containsKey(pattern)) {
-                sdf = dateFormatCache.get(pattern);
-                return sdf.parse(dateTimeString);
-            } else {
-                sdf = FastDateFormat.getInstance(pattern);
-                dateFormatCache.put(pattern, sdf);
-                return sdf.parse(dateTimeString);
-            }
+//            if (dateFormatCache.containsKey(pattern)) {
+//                sdf = dateFormatCache.get(pattern);
+//                return sdf.parse(dateTimeString);
+//            } else {
+//                sdf = FastDateFormat.getInstance(pattern);
+//                dateFormatCache.put(pattern, sdf);
+//                return sdf.parse(dateTimeString);
+//            }
+            return DateTimeFormat.forPattern(pattern).parseDateTime(dateTimeString).toDate();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -131,7 +133,7 @@ public class DateTimeUtils {
     }
 
     public static void main(String[] args) {
-        Date date = getDateByString("2016-5-30 23:30:34","yyyy-MM-dd HH:mm:ss");
+        Date date = getDateByString("2016-5-30 23:30:34", "yyyy-MM-dd HH:mm:ss");
         System.out.println(date.getTime());
     }
 
@@ -177,8 +179,7 @@ public class DateTimeUtils {
      * @date 2014年7月1日
      */
     public static String getDefaultDateString(Date date) {
-
-        return DateFormatUtils.format(date, DEFAULT_DATE_FORMAT_PATTERN_FULL);
+        return new DateTime(date).toString(DEFAULT_DATE_FORMAT_PATTERN_FULL);
     }
 
 
@@ -239,7 +240,6 @@ public class DateTimeUtils {
 
     /**
      * 获取距离现在N天后/前的时间
-     *
      */
     public static Date getInternalDateByDay(Date d, int days) {
         Calendar now = Calendar.getInstance(TimeZone.getDefault());

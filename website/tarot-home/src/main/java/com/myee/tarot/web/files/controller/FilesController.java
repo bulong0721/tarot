@@ -7,7 +7,6 @@ import com.google.common.collect.Sets;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.djinn.dto.ResponseData;
 import com.myee.tarot.core.Constants;
-import com.myee.tarot.core.util.CryptoUtil;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.files.FileDTO;
@@ -342,12 +341,12 @@ public class FilesController {
                         GZipUtil.doCompressFile(source,gzFile);
                     }*/
                     //用zip压缩文件，源文件的文件名不能包含空格
-                    fileName = CryptoUtil.md5(jsTreeDTO.getText()) + ".zip";
-                    zipFile = FileUtils.getFile(basePath, fileName);
-                    if(!zipFile.exists()){//如果压缩文件不存在，则执行压缩
+//                    fileName = CryptoUtil.md5(jsTreeDTO.getText()) + ".zip";
+//                    zipFile = FileUtils.getFile(basePath, fileName);
+//                    if(!zipFile.exists()){//如果压缩文件不存在，则执行压缩
 //                        ZipUtil.compress(jsTreeDTO.getId(),jsTreeDTO.getText(), zipFile.getPath());
-                    }
-                    hotfixSet.add(new HotfixVo(fileName, getGzipUrl(zipFile), null, true));//将压缩文件信息写入接口返回信息中
+//                    }
+//                    hotfixSet.add(new HotfixVo(fileName, getGzipUrl(zipFile), null, true));//将压缩文件信息写入接口返回信息中
                 }
             }
         } else {

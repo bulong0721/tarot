@@ -22,6 +22,7 @@
         <version.joda>2.8.2</version.joda>
         <version.c3p0>0.9.1.2</version.c3p0>
         <version.aspectj>1.8.7</version.aspectj>
+        <version.logback>1.1.7</version.logback>
         <poi.version>3.11</poi.version>
     </properties>
 

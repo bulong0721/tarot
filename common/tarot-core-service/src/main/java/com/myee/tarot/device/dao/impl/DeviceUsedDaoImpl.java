@@ -6,10 +6,10 @@ import com.myee.tarot.catalog.domain.QDeviceUsed;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.device.dao.DeviceUsedDao;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Repository;
 
@@ -29,7 +29,7 @@ public class DeviceUsedDaoImpl extends GenericEntityDaoImpl<Long, DeviceUsed> im
         if(id != null) {
             query.where(qDeviceUsed.store.id.eq(id));
         }
-        if(StringUtils.isNotBlank(pageRequest.getQueryName())){
+        if(!StringUtil.isBlank(pageRequest.getQueryName())){
             query.where(qDeviceUsed.name.like("%" + pageRequest.getQueryName() + "%"));
         }
         pageList.setRecordsTotal(query.from(qDeviceUsed).fetchCount());

@@ -4,8 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.myee.tarot.campaign.domain.bean.Pager;
 import com.myee.tarot.campaign.domain.bean.RedisKeyConstants;
 import com.myee.tarot.campaign.domain.bean.RedisObjInfo;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
+import com.myee.tarot.core.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -443,7 +442,7 @@ public class RedisUtil {
         if (redisSwitch) {
             try {
                 String objectJson = (String) redisTemplate.opsForValue().get(redisKey);
-                if (StringUtils.isBlank(objectJson)) {
+                if (StringUtil.isBlank(objectJson)) {
                     return null;
             }
                 return JSON.parseObject(objectJson, clazz);
@@ -464,7 +463,7 @@ public class RedisUtil {
         if (redisSwitch) {
             try {
                 String objectJson = (String) redisTemplate.opsForValue().get(redisKey);
-                if (StringUtils.isBlank(objectJson)) {
+                if (StringUtil.isBlank(objectJson)) {
                     return null;
                 }
                 return objectJson;
@@ -488,7 +487,7 @@ public class RedisUtil {
         if (redisSwitch) {
             try {
                 String objectJson = (String) redisTemplate.opsForValue().get(redisKey);
-                if (StringUtils.isBlank(objectJson)) {
+                if (StringUtil.isBlank(objectJson)) {
                     return new ArrayList<T>();
                 }
                 return JSON.parseArray(objectJson, clazz);
@@ -514,7 +513,7 @@ public class RedisUtil {
         if (redisSwitch) {
             try {
                 String objectJson = (String) redisTemplate.opsForHash().get(redisKey, filedKey);
-                if (StringUtils.isBlank(objectJson)) {
+                if (StringUtil.isBlank(objectJson)) {
                     return null;
                 }
                 return JSON.parseObject(objectJson, clazz);
@@ -539,7 +538,7 @@ public class RedisUtil {
         if (redisSwitch) {
             try {
                 String objectJson = (String) redisTemplate.opsForHash().get(redisKey, filedKey);
-                if (StringUtils.isBlank(objectJson)) {
+                if (StringUtil.isBlank(objectJson)) {
                     return new ArrayList<T>();
                 }
                 return JSON.parseArray(objectJson, clazz);
@@ -1124,7 +1123,8 @@ public class RedisUtil {
                 };
                 return (List<Map<String, String>>) redisTemplate.executePipelined(callback, stringRedisSerializer);
             } catch (Throwable e) {
-                logger.error("hgetallBatch KEY:" + ArrayUtils.toString(redisKeys) + " error:", e);
+                //TODO
+//                logger.error("hgetallBatch KEY:" + Arrays.toString(redisKeys) + " error:", e);
             }
         }
         return null;

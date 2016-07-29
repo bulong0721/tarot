@@ -5,10 +5,10 @@ import com.myee.tarot.catalog.domain.QProductUsed;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.product.dao.ProductUsedDao;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public class ProductUsedDaoImpl extends GenericEntityDaoImpl<Long, ProductUsed> 
         PageResult<ProductUsed> pageList = new PageResult<ProductUsed>();
         QProductUsed qProductUsed = QProductUsed.productUsed;
         JPQLQuery<ProductUsed> query = new JPAQuery(getEntityManager());
-        if (StringUtils.isNotBlank(pageRequest.getQueryName())) {
+        if (!StringUtil.isBlank(pageRequest.getQueryName())) {
             query.where(qProductUsed.code.like("%" + pageRequest.getQueryName() + "%"));
         }
         pageList.setRecordsTotal(query.from(qProductUsed).fetchCount());
@@ -42,7 +42,7 @@ public class ProductUsedDaoImpl extends GenericEntityDaoImpl<Long, ProductUsed> 
         JPQLQuery<ProductUsed> query = new JPAQuery(getEntityManager());
         query.where(qProductUsed.store.id.eq(id));
 
-        if (StringUtils.isNotBlank(pageRequest.getQueryName())) {
+        if (!StringUtil.isBlank(pageRequest.getQueryName())) {
             query.where(qProductUsed.code.like("%" + pageRequest.getQueryName() + "%"));
         }
         pageList.setRecordsTotal(query.from(qProductUsed).fetchCount());

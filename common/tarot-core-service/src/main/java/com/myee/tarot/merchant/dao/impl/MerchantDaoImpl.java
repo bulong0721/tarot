@@ -3,12 +3,12 @@ package com.myee.tarot.merchant.dao.impl;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.merchant.dao.MerchantDao;
 import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.QMerchant;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
@@ -37,7 +37,7 @@ public class MerchantDaoImpl extends GenericEntityDaoImpl<Long, Merchant> implem
         PageResult<Merchant> pageList = new PageResult<Merchant>();
         QMerchant qMerchant = QMerchant.merchant;
         JPQLQuery<Merchant> query = new JPAQuery(getEntityManager());
-        if(StringUtils.isNotBlank(pageRequest.getQueryName())){
+        if(!StringUtil.isBlank(pageRequest.getQueryName())){
             query.where(qMerchant.name.like("%" + pageRequest.getQueryName() + "%"));
         }
         pageList.setRecordsTotal(query.from(qMerchant).fetchCount());

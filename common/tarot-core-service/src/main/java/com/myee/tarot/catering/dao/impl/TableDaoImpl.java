@@ -6,9 +6,9 @@ import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.StringUtil;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public class TableDaoImpl extends GenericEntityDaoImpl<Long, Table> implements T
         PageResult<Table> pageList = new PageResult<Table>();
         QTable qTable = QTable.table;
         JPQLQuery<Table> query = new JPAQuery(getEntityManager());
-        if(StringUtils.isNotBlank(pageRequest.getQueryName())){
+        if(!StringUtil.isBlank(pageRequest.getQueryName())){
             query.where(qTable.name.like("%" + pageRequest.getQueryName() + "%"));
         }
         query.where(qTable.store.id.eq(id));

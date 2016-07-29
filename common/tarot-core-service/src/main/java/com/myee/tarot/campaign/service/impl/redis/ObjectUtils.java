@@ -1,6 +1,6 @@
 package com.myee.tarot.campaign.service.impl.redis;
 
-import org.apache.commons.lang3.StringUtils;
+import com.myee.tarot.core.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,7 +134,7 @@ public class ObjectUtils {
     }
 
     public static  String newStr(Long id){
-        return StringUtils.leftPad(String.valueOf(id), 11, "0");
+        return StringUtil.leftPad(String.valueOf(id), 11, "0");
     }
 
     public static void main(String[] args){

@@ -10,7 +10,6 @@ import com.myee.tarot.datacenter.domain.QSelfCheckLog;
 import com.myee.tarot.datacenter.domain.SelfCheckLog;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
@@ -36,7 +35,7 @@ public class SelfCheckLogDaoImpl extends GenericEntityDaoImpl<Long, SelfCheckLog
                 .leftJoin(qSelfCheckLog.eventModule)
                 .fetchJoin();
         String eventLevel = whereRequest.getEventLevel();
-        if(StringUtils.isNotBlank(eventLevel)) {
+        if(!StringUtil.isBlank(eventLevel)) {
             query.where(qSelfCheckLog.eventLevel.eq(eventLevel));
         }
         Map moduleObjectMap = StringUtil.transStringToMap(whereRequest.getModuleObject());

@@ -1,7 +1,7 @@
 package com.myee.tarot.core.web.controller;
 
 import com.alibaba.fastjson.JSON;
-import org.apache.commons.lang3.StringUtils;
+import com.myee.tarot.core.util.StringUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,7 +19,7 @@ public abstract class AbstractController {
 
     protected String getContextPath(HttpServletRequest request) {
         String ctxPath = request.getContextPath();
-        if (StringUtils.isBlank(ctxPath)) {
+        if (StringUtil.isBlank(ctxPath)) {
             return "/";
         } else {
             if (ctxPath.charAt(0) != '/') {

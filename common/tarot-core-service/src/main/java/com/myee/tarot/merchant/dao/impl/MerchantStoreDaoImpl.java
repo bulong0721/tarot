@@ -3,12 +3,12 @@ package com.myee.tarot.merchant.dao.impl;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.merchant.dao.MerchantStoreDao;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.domain.QMerchantStore;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
@@ -103,7 +103,7 @@ public class MerchantStoreDaoImpl extends GenericEntityDaoImpl<Long, MerchantSto
         QMerchantStore qMerchantStore = QMerchantStore.merchantStore;
         JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
 
-        if (StringUtils.isNotBlank(pageRequest.getQueryName())) {
+        if (!StringUtil.isBlank(pageRequest.getQueryName())) {
             query.where(qMerchantStore.name.like("%" + pageRequest.getQueryName() + "%"));
         }
         if(id != null) {
