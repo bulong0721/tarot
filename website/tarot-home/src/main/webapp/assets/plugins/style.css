@@ -10178,7 +10178,7 @@ th.center, td.center {
 
 .formly-field-datepicker .form-group  {overflow: inherit !important;  width: 100%;   display: inline-block; margin: 0;}
 .formly-field-datepicker .form-group label {width: 16.66666667%; float: left}
-.formly-field-datepicker p {margin: 0;}
+.formly-field-datepicker p {margin: 0; max-width: 450px;}
 
 .file-box {
     float: none;
