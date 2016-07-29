@@ -60,7 +60,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
         {
             displayName: '操作',
             columnWidth: '150',
-            cellTemplate: '<a><i class="btn-icon fa fa-plus" ng-click="cellTemplateScope.add(row.branch)"></i></a>' +
+            cellTemplate: '<a><i ng-if="row.branch.type==0" class="btn-icon fa fa-plus" ng-click="cellTemplateScope.add(row.branch)"></i></a>' +
             '<span class="divider"></span>' +
             '<a><i class="btn-icon fa fa-pencil" ng-click="cellTemplateScope.edit(row.branch)"></i></a>' +
             '<span class="divider"></span>' +

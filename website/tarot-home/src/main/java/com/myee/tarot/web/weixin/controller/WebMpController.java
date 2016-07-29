@@ -4,7 +4,6 @@ import com.myee.djinn.dto.WaitTokenState;
 import com.myee.tarot.campaign.domain.PriceInfo;
 import com.myee.tarot.campaign.service.PriceInfoService;
 import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
-import com.myee.tarot.core.util.TimeUtil;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantStoreService;
@@ -26,7 +25,6 @@ import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import org.apache.commons.io.FileUtils;
-import org.aspectj.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +49,7 @@ import java.util.Map;
 @RequestMapping("weixin/wxmp")
 public class WebMpController {
     private static final Logger logger = LoggerFactory.getLogger(WebMpController.class);
-    private static final String wpSite = "http://www.myee7.com/biplus";
+    private static final String wpSite = "http://www.myee7.com/tarot_test";
     @Autowired
     private   WxMpService       wxMpService;
     @Autowired
@@ -191,6 +189,7 @@ public class WebMpController {
                 Map<String,Object> msgMap = checkLatestDevelopments(inMessage.getContent());
                 inMessage.setMap(msgMap);
             }
+                System.out.println("coding->here2");
                 WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage);
                 String str = outMessage.toXml();
                 out.print(str);
@@ -229,19 +228,21 @@ public class WebMpController {
         return wxMpService.createJsapiSignature(url);
     }
 
-    @RequestMapping(value = "fromWxAuth")
-    public String fromWxAuth(String code, String page, String args) {
-        if ("account".equalsIgnoreCase(page)) {
-            return "redirect:/weixin.html#/account?code=" + code;
-        } else if ("contact".equalsIgnoreCase(page)) {
-            return "redirect:/weixin.html#/contact?code=" + code;
-        }
-        return "redirect:/weixin.html#/shop_list?code=" + code;
-    }
+//    @RequestMapping(value = "fromWxAuth")
+//    public String fromWxAuth(String code, String page, String args) {
+////        if ("myPrize".equalsIgnoreCase(page)) {
+////            return "redirect:/api/info/getInfoByStatusAndKeyId?code=" + code + args +"=1";
+////        } else if ("contact".equalsIgnoreCase(page)) {
+////            return "redirect:/weixin.html#/contact?code=" + code;
+////        }
+////        return "redirect:http://www.qq.com";
+//        System.out.println("hahahaha-code:" + code);
+//        return "http://www.myee7.com/?code=" + code;
+//    }
 
-    private String buildAuthorizationUrl(String page, String args) {
-        String redirectURI = String.format("%s/wxmp/fromWxAuth?page=%s&args=%s", wpSite, page, args);
-        return wxMpService.oauth2buildAuthorizationUrl(redirectURI, WxConsts.OAUTH2_SCOPE_BASE, null);
+    private String buildAuthorizationUrl() {
+        String redirectURI = "http://www.myee7.com/tarot_test/customerClient/index.html";
+        return wxMpService.oauth2buildAuthorizationUrl(redirectURI, WxConsts.OAUTH2_SCOPE_BASE, "123");
     }
 
     /*
@@ -296,21 +297,15 @@ public class WebMpController {
             WxMenu menu = new WxMenu();
             WxMenu.WxMenuButton button1 = new WxMenu.WxMenuButton();
             button1.setType(WxConsts.BUTTON_SCANCODE_PUSH);
-            button1.setName("扫码查询");
+            button1.setName("扫码兑奖");
             button1.setKey("QUERY_SCAN_LOTTERY");
-
-            WxMenu.WxMenuButton button2 = new WxMenu.WxMenuButton();
-            button2.setType(WxConsts.BUTTON_CLICK);
-            button2.setName("菜单2");
-            button2.setKey("V1001_QUERY_CODE");
 
             WxMenu.WxMenuButton button3 = new WxMenu.WxMenuButton();
             button3.setType(WxConsts.BUTTON_VIEW);
             button3.setName("我的奖券");
-            button3.setUrl("http://www.baidu.com");
+            button3.setUrl(buildAuthorizationUrl());
 
             menu.getButtons().add(button1);
-            menu.getButtons().add(button2);
             menu.getButtons().add(button3);
 
             wxMpService.menuCreate(menu);
