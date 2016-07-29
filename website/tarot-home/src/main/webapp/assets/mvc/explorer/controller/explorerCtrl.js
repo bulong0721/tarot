@@ -4,8 +4,11 @@ angular.module('myee', [])
 /**
  * explorerCtrl - controller
  */
-explorerCtrl.$inject = ['$scope', '$resource', '$filter'];
-function explorerCtrl($scope, $resource, $filter) {
+explorerCtrl.$inject = ['$scope', '$resource', '$filter','cfromly','Constants'];
+function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
+
+    var iDatatable = 0, iEditor = 1;
+    $scope.showInfoPush = false;
     $scope.treeData = [{path: '/', name: '/', type: 0}];
     $scope.expandField = {field: 'name'};
     $scope.treeColumns = [
@@ -93,19 +96,23 @@ function explorerCtrl($scope, $resource, $filter) {
     $scope.goSend = function () {
         var arraySelected = [];
         var data = $scope.treeData;
-        $scope.recursionTree(data, arraySelected);
-        $resource('../file/search').save({}, JSON.stringify(arraySelected)).$promise.then(saveSuccess, saveFailed);
+        recursionTree(data, arraySelected);
+        console.log(JSON.stringify(arraySelected))
+        //$resource('../file/search').save({}, JSON.stringify(arraySelected)).$promise.then(saveSuccess, saveFailed);
+        $scope.activeTab = iEditor;
+        $scope.showInfoPush = true;
+        $scope.formData.model.store = {name: Constants.thisMerchantStore.name};
     };
 
     //递归出所有选中的文件
-    $scope.recursionTree = function(data, arraySelected){
+    function recursionTree(data, arraySelected){
         angular.forEach(data, function(d){
             //console.log(d)
             if(d.checked == true && d.type == 1){
-                arraySelected.push(d);
+                arraySelected.push({url: d.path, name: d.name, salt: d.salt});
             }
             if(d.children.length > 0){
-                $scope.recursionTree(d.children, arraySelected);
+                recursionTree(d.children, arraySelected);
             }
         });
     }
@@ -118,4 +125,58 @@ function explorerCtrl($scope, $resource, $filter) {
     //失败调用
     function saveFailed(response) {
     }
+
+    //查询推送下拉框内容
+    function getDeviceList() {
+        var data = $resource("../device/list").query();
+        return data;
+    }
+
+    var mgrData = {
+        fields: [
+            {
+                id: 'store.name',
+                key: 'store.name',
+                type: 'c_input',
+                templateOptions: {disabled: true, label: '推送门店', placeholder: '推送门店'}
+            },
+            {key: 'name', type: 'c_input', templateOptions: {label: '推送设备', required: true, placeholder: '推送设备'}},
+            {key: 'heartbeat', type: 'c_input', templateOptions: {label: '推动应用', placeholder: '推动应用'}},
+            {key: 'boardNo', type: 'c_input', templateOptions: {label: '过期时间', placeholder: '过期时间'}},
+            {
+                key: 'description',
+                type: 'c_textarea',
+                ngModelAttrs: {
+                    style: {attribute: 'style'}
+                },
+                templateOptions: {label: '推动内容', placeholder: '推动内容', rows: 10,style: 'max-width:450px'}
+            }
+            ,
+            //{
+            //    key: 'device.id',
+            //    type: 'c_select',
+            //    className: 'c_select',
+            //    templateOptions: {label: '选择设备类型', required: true, options: getDeviceList()}
+            //}
+
+        ],
+        api: {
+            //read: '../device/used/paging',
+            //update: '../device/used/update',
+            //delete: '../device/used/delete',
+            //updateAttr: '../device/used/attribute/save',
+            //deleteAttr: '../device/used/attribute/delete',
+        }
+    };
+
+    //formly配置项
+    $scope.formData = {
+        fields: mgrData.fields
+    };
+
+    //formly返回
+    $scope.goDataTable = function () {
+        $scope.activeTab = iDatatable;
+        $scope.showInfoPush = false;
+    };
 }
