@@ -7,10 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedInputStream;
 
