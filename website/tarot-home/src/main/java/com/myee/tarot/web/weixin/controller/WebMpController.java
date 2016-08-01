@@ -136,9 +136,7 @@ public class WebMpController {
                     map.put("storeName",merchantStore.getName());
                     map.put("prizeStartDate", DateTimeUtils.getDateString(startDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
                     map.put("prizeEndDate", DateTimeUtils.getDateString(endDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
-                    map.put("prizeUrl",buildAuthorizationUrl(2,priceInfo.getId().toString(),inMessage.getFromUserName()));
-                    map.put("openId",inMessage.getFromUserName());
-                    map.put("priceId",priceInfo.getPrice().getId());
+                    map.put("prizeUrl","http://www.myee7.com/tarot_test/customerClient/index.html#!/myCouponView/"+priceInfo.getId().toString()+"/"+inMessage.getFromUserName());
                     inMessage.setMap(map);
                 }
 
@@ -156,9 +154,7 @@ public class WebMpController {
                     map.put("storeName",merchantStore.getName());
                     map.put("prizeStartDate", DateTimeUtils.getDateString(startDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
                     map.put("prizeEndDate", DateTimeUtils.getDateString(endDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
-                    map.put("prizeUrl",buildAuthorizationUrl(2,priceInfo.getId().toString(),inMessage.getFromUserName()));
-                    map.put("openId",inMessage.getFromUserName());
-                    map.put("priceId",priceInfo.getPrice().getId());
+                    map.put("prizeUrl", "http://www.myee7.com/tarot_test/customerClient/index.html#!/myCouponView/"+priceInfo.getId().toString()+"/"+inMessage.getFromUserName());
                     inMessage.setMap(map);
                 }
 
