@@ -25,11 +25,11 @@ public class Table extends GenericEntity<Long, Table> {
     protected String description;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = TableType.class)
-    @JoinColumn(name = "TABLE_TYPE", nullable = false)
+    @JoinColumn(name = "TABLE_TYPE", referencedColumnName = "TABLE_TYPE_ID", nullable = false)
     private TableType tableType;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = TableZone.class)
-    @JoinColumn(name = "TABLE_ZONE")
+    @JoinColumn(name = "TABLE_ZONE", referencedColumnName = "TABLE_ZONE_ID")
     private TableZone tableZone;
 
     @ManyToOne(fetch = FetchType.LAZY)
