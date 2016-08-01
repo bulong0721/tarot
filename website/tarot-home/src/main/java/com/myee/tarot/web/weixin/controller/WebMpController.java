@@ -136,6 +136,9 @@ public class WebMpController {
                     map.put("storeName",merchantStore.getName());
                     map.put("prizeStartDate", DateTimeUtils.getDateString(startDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
                     map.put("prizeEndDate", DateTimeUtils.getDateString(endDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
+                    map.put("prizeUrl",buildAuthorizationUrl(2,priceInfo.getId().toString(),inMessage.getFromUserName()));
+                    map.put("openId",inMessage.getFromUserName());
+                    map.put("priceId",priceInfo.getPrice().getId());
                     inMessage.setMap(map);
                 }
 
@@ -153,6 +156,9 @@ public class WebMpController {
                     map.put("storeName",merchantStore.getName());
                     map.put("prizeStartDate", DateTimeUtils.getDateString(startDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
                     map.put("prizeEndDate", DateTimeUtils.getDateString(endDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
+                    map.put("prizeUrl",buildAuthorizationUrl(2,priceInfo.getId().toString(),inMessage.getFromUserName()));
+                    map.put("openId",inMessage.getFromUserName());
+                    map.put("priceId",priceInfo.getPrice().getId());
                     inMessage.setMap(map);
                 }
 
@@ -240,8 +246,23 @@ public class WebMpController {
 //        return "http://www.myee7.com/?code=" + code;
 //    }
 
-    private String buildAuthorizationUrl() {
-        String redirectURI = "http://www.myee7.com/tarot_test/customerClient/index.html";
+    /**
+     *
+     * @param type
+     * @param param1 prizeId
+     * @param param2 openId
+     * @return
+     */
+    private String buildAuthorizationUrl(Integer type,String param1, String param2) {
+        String redirectURI = null;
+        if (type == 1) {
+            //我的奖券
+            redirectURI = "http://www.myee7.com/tarot_test/customerClient/index.html";
+        }
+        if (type == 2) {
+            //图文消息点击打开
+            redirectURI = "http://www.myee7.com/tarot_test/customerClient/index.html#!/myCouponView/"+param1+"/"+param2;
+        }
         return wxMpService.oauth2buildAuthorizationUrl(redirectURI, WxConsts.OAUTH2_SCOPE_BASE, "123");
     }
 
@@ -303,7 +324,7 @@ public class WebMpController {
             WxMenu.WxMenuButton button3 = new WxMenu.WxMenuButton();
             button3.setType(WxConsts.BUTTON_VIEW);
             button3.setName("我的奖券");
-            button3.setUrl(buildAuthorizationUrl());
+            button3.setUrl(buildAuthorizationUrl(1,null,null));
 
             menu.getButtons().add(button1);
             menu.getButtons().add(button3);

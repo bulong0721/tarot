@@ -99,23 +99,29 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
     //点击推送按钮时调用
     $scope.goSend = function () {
         var arraySelected = [];
-        var arraySelected1 = [];
         var data = $scope.treeData;
         recursionTree(data, arraySelected);
-        arraySelected1.push({url: "http://localhost/push/100/20/statistic/20160311/2016-03-09.xls", name: "2016-03-09.xls"});
-        arraySelected1.push({url: "http://localhost/push/100/20/statistic/20160311/2016-03-10.xls", name: "2016-03-10.xls"});
-        console.log(JSON.stringify(arraySelected1))
-        console.log(JSON.stringify(arraySelected))
+        //var objectStr = {hotfixSet:arraySelected, publisher: '', transactional: false};
+        console.log("array showing...")
+        //console.log(arraySelected)
+        console.log(arraySelected)
+        var content = "";
+        for(var i in arraySelected){
+            console.log("each obj...")
+            console.log(i)
+            content += "{'url': '"+ arraySelected[i].url +"','name': '"+ arraySelected[i].name +"'},";
+        }
+        console.log(content)
         //$resource('../file/search').save({}, JSON.stringify(arraySelected)).$promise.then(saveSuccess, saveFailed);
         $scope.activeTab = iEditor;
         $scope.showInfoPush = true;
         $scope.formData.model.store = {name: Constants.thisMerchantStore.name};
-        //var objectStr = {hotfixSet:arraySelected, publisher: '', transactional: false};
-        $scope.formData.model.context = JSON.stringify(arraySelected);
+        $scope.formData.model.context = "[" + content + "]";
     };
 
     //递归出所有选中的文件
     function recursionTree(data, arraySelected){
+
         angular.forEach(data, function(d){
             //console.log(d)
             if(d.checked == true && d.type == 1){

@@ -8,7 +8,6 @@ import com.google.common.collect.Maps;
 import com.myee.djinn.dto.ResponseData;
 import com.myee.djinn.endpoint.OrchidService;
 import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
-import com.myee.tarot.catalog.domain.Notification;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
@@ -158,11 +157,29 @@ public class PushController {
             e.printStackTrace();
         }
         AjaxResponse resp = new AjaxResponse();
-        String pushStr = JSONObject.toJSONString(pushDTO);
+        String pushDtoJson = "{";
+        if(pushDTO.getAppId() != null) {
+            pushDtoJson += "appId: "+ pushDTO.getAppId() + ",";
+        }
+        if (pushDTO.getContext() != null) {
+            pushDtoJson+= "context:" + pushDTO.getContext() + ",";
+        }
+        if (pushDTO.getTimeout() != null) {
+            pushDtoJson+= "timeout:" + pushDTO.getTimeout().getTime() + ",";
+        }
+        if (pushDTO.getUniqueNo() != null) {
+            pushDtoJson+= "uniqueNo:" + pushDTO.getUniqueNo();
+        }
+        pushDtoJson+= "}";
+        String pushStr = JSONObject.toJSONString(pushDtoJson);
+        System.out.println("pushStr: " + pushStr);
         ResponseData rd = null;
         try {
             rd = eptService.sendNotification(pushStr);
+            //新增notification记录
+            System.out.println("rd:"+ rd.toString());
         } catch (Exception e) {
+            System.out.println("errorMessage:" + e.getMessage());
             e.printStackTrace();
         }
         if(rd != null && rd.isSuccess()) {
