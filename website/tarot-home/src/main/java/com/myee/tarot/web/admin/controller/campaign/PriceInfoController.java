@@ -12,8 +12,11 @@ import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
+import me.chanjar.weixin.common.util.StringUtils;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +32,8 @@ import java.util.*;
  */
 @Controller
 public class PriceInfoController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PriceInfo.class);
 
     @Autowired
     private PriceInfoService priceInfoService;
@@ -65,11 +70,27 @@ public class PriceInfoController {
      */
     @RequestMapping(value = "api/info/getInfoByStatusAndKeyId")
     @ResponseBody
-    public AjaxResponse getPriceInfoByStatusAndKeyId(@RequestParam("code")String code,@RequestParam("status")int status){
+    public AjaxResponse getPriceInfoByStatusAndKeyId(@RequestParam(value = "code",required = false)String code,
+                                                     @RequestParam("status")int status,
+                                                     @RequestParam(value = "keyId",required = false)String keyId){
         try {
+            LOGGER.info("code为"+ code);
             AjaxResponse resp = new AjaxResponse();
-            WxMpOAuth2AccessToken wxMpOAuth2AccessToken = wxMpService.oauth2getAccessToken(code);
-            List<PriceInfo> infos = priceInfoService.findByStatusAndKeyId(wxMpOAuth2AccessToken.getOpenId(), status);
+            String openId = "";
+            if(StringUtils.isNotBlank(keyId)){
+                openId = keyId;
+            }else{
+                if(StringUtils.isNotBlank(code)){
+                    WxMpOAuth2AccessToken wxMpOAuth2AccessToken = wxMpService.oauth2getAccessToken(code);
+                    openId = wxMpOAuth2AccessToken.getOpenId();
+                }else{
+                    resp.setErrorString("请求参数code和keyId不能均为空");
+                    resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                    return resp;
+                }
+            }
+            LOGGER.info("keyID为"+ openId);
+            List<PriceInfo> infos = priceInfoService.findByStatusAndKeyId(openId, status);
             //每次请求未使用获取信息对后进行过期判定
             if(status == Constants.PRICEINFO_UNUSED){
                 Iterator<PriceInfo> iter = infos.iterator();
@@ -83,9 +104,9 @@ public class PriceInfoController {
                     }
                 }
             }
-
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
             resp.addEntry("result", infos);
+            resp.addEntry("keyId",openId);
             return resp;
         } catch (Exception e) {
             e.printStackTrace();
