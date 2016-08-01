@@ -159,7 +159,12 @@ public class PushController {
         }
         AjaxResponse resp = new AjaxResponse();
         String pushStr = JSONObject.toJSONString(pushDTO);
-        ResponseData rd = eptService.sendNotification(pushStr);
+        ResponseData rd = null;
+        try {
+            rd = eptService.sendNotification(pushStr);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if(rd != null && rd.isSuccess()) {
             resp = AjaxResponse.success();
         } else {
