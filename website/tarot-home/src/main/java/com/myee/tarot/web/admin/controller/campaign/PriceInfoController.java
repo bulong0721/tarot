@@ -77,7 +77,7 @@ public class PriceInfoController {
             LOGGER.info("code为"+ code);
             AjaxResponse resp = new AjaxResponse();
             String openId = "";
-            if(StringUtils.isNotBlank(openId)){
+            if(StringUtils.isNotBlank(keyId)){
                 openId = keyId;
             }else{
                 if(StringUtils.isNotBlank(code)){

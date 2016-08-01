@@ -2,6 +2,7 @@ package com.myee.tarot.campaign.service.impl.redis;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -31,7 +32,7 @@ public class DateTimeUtils {
 
     public static final String HOUR_START = " 00:00:00";
 
-//    private static Map<String, FastDateFormat> dateFormatCache = new ConcurrentHashMap<String, FastDateFormat>();
+    private static Map<String, DateTimeFormatter> dateFormatCache = new ConcurrentHashMap<String, DateTimeFormatter>();
 
     /**
      * 以yyyy-MM-dd HH:mm:ss形式返回当前时间的字符串
@@ -61,20 +62,20 @@ public class DateTimeUtils {
         if (pattern == null || "".equals(pattern.trim())) {
             return null;
         }
-//        FastDateFormat sdf = null;
-//        if (dateFormatCache.containsKey(pattern)) {
-//            sdf = dateFormatCache.get(pattern);
-//        } else {
-//            try {
-//                sdf = FastDateFormat.getInstance(pattern);
-//                dateFormatCache.put(pattern, sdf);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                sdf = FastDateFormat.getInstance(DEFAULT_DATE_FORMAT_PATTERN_FULL);
-//            }
-//        }
-//        return sdf.format(new Date());
-        return DateTime.now().toString(pattern);
+
+        DateTimeFormatter sdf = null;
+        if (dateFormatCache.containsKey(pattern)) {
+            sdf = dateFormatCache.get(pattern);
+       } else {
+            try {
+               sdf = DateTimeFormat.forPattern(pattern);
+               dateFormatCache.put(pattern, sdf);
+           } catch (Exception e) {
+               e.printStackTrace();
+                sdf = DateTimeFormat.forPattern(DEFAULT_DATE_FORMAT_PATTERN_FULL);
+           }
+        }
+       return DateTime.now().toString(sdf);
     }
 
     /**
@@ -88,19 +89,19 @@ public class DateTimeUtils {
         if (date == null || pattern == null || "".equals(pattern.trim())) {
             return null;
         }
-//        FastDateFormat sdf = null;
-//        if (dateFormatCache.containsKey(pattern)) {
-//            sdf = dateFormatCache.get(pattern);
-//        } else {
-//            try {
-//                sdf = FastDateFormat.getInstance(pattern);
-//                dateFormatCache.put(pattern, sdf);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                sdf = FastDateFormat.getInstance(DEFAULT_DATE_FORMAT_PATTERN_FULL);
-//            }
-//        }
-        return new DateTime(date).toString(pattern);
+        DateTimeFormatter sdf = null;
+        if (dateFormatCache.containsKey(pattern)) {
+            sdf = dateFormatCache.get(pattern);
+        } else {
+            try {
+                sdf = DateTimeFormat.forPattern(pattern);
+                dateFormatCache.put(pattern, sdf);
+            } catch (Exception e) {
+                e.printStackTrace();
+                sdf = DateTimeFormat.forPattern(DEFAULT_DATE_FORMAT_PATTERN_FULL);
+            }
+        }
+        return new DateTime(date).toString(sdf);
     }
 
     /**
@@ -115,17 +116,16 @@ public class DateTimeUtils {
             return null;
         }
 
-//        FastDateFormat sdf = null;
+       DateTimeFormatter sdf = null;
         try {
-//            if (dateFormatCache.containsKey(pattern)) {
-//                sdf = dateFormatCache.get(pattern);
-//                return sdf.parse(dateTimeString);
-//            } else {
-//                sdf = FastDateFormat.getInstance(pattern);
-//                dateFormatCache.put(pattern, sdf);
-//                return sdf.parse(dateTimeString);
-//            }
-            return DateTimeFormat.forPattern(pattern).parseDateTime(dateTimeString).toDate();
+            if (dateFormatCache.containsKey(pattern)) {
+                sdf = dateFormatCache.get(pattern);
+                return DateTime.parse(dateTimeString,sdf).toDate();
+            } else {
+                sdf = DateTimeFormat.forPattern(pattern);
+                dateFormatCache.put(pattern, sdf);
+                return DateTime.parse(dateTimeString,sdf).toDate();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

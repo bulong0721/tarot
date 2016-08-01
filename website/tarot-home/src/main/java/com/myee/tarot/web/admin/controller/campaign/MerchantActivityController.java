@@ -36,7 +36,6 @@ public class MerchantActivityController {
 
     @Autowired
     private MerchantPriceService merchantPriceService;
-
     @Autowired
     private RedisUtil redisUtil;
 
@@ -80,7 +79,6 @@ public class MerchantActivityController {
                     MerchantPrice price = merchantPriceService.findById(priceId);
                     if(price!=null){
                         //修改
-                        price.setLevel(prices.get(0).getLevel());
                         price.setName(prices.get(0).getName());
                         price.setDescription(prices.get(0).getDescription());
                         price.setStartDate(prices.get(0).getStartDate());

@@ -19,9 +19,6 @@ public class MerchantPrice extends GenericEntity<Long, MerchantPrice>{
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     protected Long id;
 
-    @Column(name= "LEVEL")
-    private String level; //奖券等级
-
     @Column(name= "NAME")
     private String name; //奖券名称
 
@@ -103,14 +100,6 @@ public class MerchantPrice extends GenericEntity<Long, MerchantPrice>{
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getLevel() {
-        return level;
-    }
-
-    public void setLevel(String level) {
-        this.level = level;
     }
 
     public Date getStartDate() {
