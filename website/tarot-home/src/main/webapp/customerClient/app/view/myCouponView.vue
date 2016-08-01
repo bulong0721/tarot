@@ -9,10 +9,8 @@
 				<span></span>
 			</div>
 			<p>
-				<span>1.积分攀升的积分攀升积分攀升d</span>
-				<span>2.积分攀升的积分攀升积分攀升d</span>
-				<span>3.积分攀升的积分攀升积分攀升d</span>
-				<span>4.有效期{{view.price.startDate}} ~ {{view.price.endDate}}</span>
+				<span v-for="d in view.price.description | des_br" >{{($index+1)+'.'+d}}</span>
+				<span>{{view.price.description | des_br 'true'}}.有效期{{view.price.startDate}} ~ {{view.price.endDate}}</span>
 			</p>
 		</div>
 	</div>
@@ -29,14 +27,14 @@
 		},
 	  	data(){
 		    return {
-		    	logo: 'img/logo.jpg',
+		    	logo: './dist/img/logo.jpg',
 		    	view:{}
 		    }
 	  	}
 	}
 </script>
 <style>
-	.couponView {height: 100%; width: 100%; position: absolute; background: #ff5721 url('http://127.0.0.1/ceshi/a173e26045d35ed721875d3055c84f56.jpg') top left no-repeat;background-size: 100%; padding: 0 20px; box-sizing: border-box;}
+	.couponView {height: 100%; width: 100%; position: absolute; background: #ff5721 url('http://www.myee7.com/tarot_test/customerClient/dist/img/coupon_bg.jpg') top left no-repeat;background-size: 100%; padding: 0 20px; box-sizing: border-box;}
 	.cw_main {background: #fff; border-radius: 5px; width: 100%; padding-bottom: 20px; margin-top: 30%; position: relative; text-align: center;}
 	.cw_main span {display: block;}
 	.cw_main .cw_logo {margin-top: -60px; display: inline-block;}

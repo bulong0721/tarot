@@ -1,5 +1,5 @@
 <template>
-	<div id="rulelist">
+	<div id="rulelist" v-show="storeId">
 		<span>抽奖活动</span>
 		<table v-show="rulelist" cellspacing="0">
 			<tbody>
@@ -46,7 +46,7 @@
 	export default {
 	  	route: {
 		    data({next }){
-				resource.post(this,'api/activity/findStoreActivity',{storeId:100}).then((res) => {
+				resource.post(this,'api/activity/findStoreActivity',{storeId:this.storeId}).then((res) => {
 					let r = res.dataMap.result.prices;
 					if(r && r.length>0){
 						next({
@@ -75,7 +75,7 @@
             },
             openActivity(){
 				MessageBox.confirm('抽奖设置已经更改,<br />是否继续?').then(action => {
-					resource.post(this,'api/activity/openActivity',{storeId:100,priceIds:this.ck.join(',')}).then((res) => {
+					resource.post(this,'api/activity/openActivity',{storeId:this.storeId,priceIds:this.ck.join(',')}).then((res) => {
 						res.status == 0?Toast('启动成功'):Toast('启动失败');
 					});
 				});
@@ -84,7 +84,8 @@
 	  	data () {
 	    	return {
 	     		rulelist: null,
-	     		ck:[]
+	     		ck:[],
+	     		storeId:resource.urlGet('storeId')
 	    	}
 	  	}
 	}

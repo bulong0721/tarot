@@ -1,5 +1,5 @@
 const Api = {
-	url:'/'
+	url:'/tarot_test/'
 }
 import Vue from 'vue';
 import Toast from 'mint-ui/lib/toast';
@@ -25,5 +25,15 @@ export default {
 	},
 	getData(data = null){
 		return data !== null ? this.ruleList = data : this.ruleList;
+	},
+	urlGet(name){
+        let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"),
+        r = window.location.search.substr(1).match(reg);
+        if (r != null){
+        	return unescape(r[2]);
+        }else{
+        	Toast('非法操作');
+        	return null;
+        }
 	}
 }

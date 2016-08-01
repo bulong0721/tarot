@@ -1,30 +1,27 @@
 <template>
 	<div>
 		<mt-navbar class="page-part" :selected.sync="status">
-			<mt-tab-item id="0">未使用</mt-tab-item>
-			<mt-tab-item id="1">已使用</mt-tab-item>
+			<mt-tab-item id="1">未使用</mt-tab-item>
+			<mt-tab-item id="0">已使用</mt-tab-item>
 			<mt-tab-item id="2">已过期</mt-tab-item>
 		</mt-navbar>
 		<ul class="couponList">
-			<li v-for="c in couponList" :class="{ gray: status>0 }">
+			<li v-for="c in couponList" :class="{ gray: status == 0 || status == 2  }">
 				<div class="ctitle"><h2>{{c.price.name}}</h2><span>NO.{{c.checkCode}}</span></div>
 				<div class="ccare">
 					<span>注意事项:</span>
-					<p>• 消费满200可用</p>
+					<p v-for="d in c.price.description | des_br" v-if="d && $index==0">• {{d}}</p>
 					<p>• {{c.price.startDate}} ~ {{c.price.endDate}}</p>
 				</div>
 				<div class="cmore" @click="goview($index)"><span>详情<i class="arrow"></i></span></div>
-				<img class="ico" v-if="status==1" :src="state_ico1" />
+				<img class="ico" v-if="status==0" :src="state_ico1" />
 				<img class="ico" v-if="status==2" :src="state_ico2" />
 			</li>
 		</ul>
 	</div>
 </template>
 <script>
-//	import Vue from 'vue';
 	import resource from '../server/resource';
-/*	import Navbar from 'mint-ui/lib/navbar';
-	Vue.component(Navbar.name, Navbar);*/
 
 	export default {
 		route: {
@@ -36,7 +33,8 @@
         	mList(state){
         		if(!this.data[state]){
         			this.data[state] = [];
-					resource.post(this,'api/info/getInfoByStatusAndKeyId',{keyId:123,status:state}).then((res) => {
+					resource.post(this,'api/info/getInfoByStatusAndKeyId',{code:this.code,keyId:this.keyId,status:state}).then((res) => {
+						localStorage.keyId = res.dataMap.keyId || '';
 						return this.data[state] = res.dataMap.result;
 					}).then((res) => {
 						this.couponList = this.data[state];
@@ -50,9 +48,6 @@
     			this.$route.router.go('/myCouponView');
     		}
         },
-        compiled(){
-        	//this.mList(this.status)
-        },
 		watch:{
 			'status': function (n, o) {
 				this.mList(n)
@@ -60,11 +55,13 @@
 		},
 	  	data(){
 		    return {
-		    	status: '0',
-		    	state_ico1: 'img/coupon_ion_ok.png',
-		    	state_ico2: 'img/coupon_ion_over.png',
+		    	status: '1',
+		    	state_ico1: './dist/img/coupon_ion_ok.png',
+		    	state_ico2: './dist/img/coupon_ion_over.png',
 		    	couponList:{},
-		    	data:[]
+		    	data:[],
+		    	keyId:localStorage.keyId || '',
+		    	code:resource.urlGet('code')
 		    }
 	  	}
 	}

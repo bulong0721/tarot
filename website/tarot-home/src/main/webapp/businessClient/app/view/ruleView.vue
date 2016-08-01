@@ -1,5 +1,5 @@
 <template>
-	<div id="ruleview">
+	<div id="ruleview" v-show="storeId">
 		<ul>
 			<li class="list"><div><label class="t"><em>*</em>奖品名称</label></div><div><input type="text" placeholder="请输入奖品名称" maxlength="30" v-model="v.name" /><div></li>
 			<li class="list"><div><label class="t"><em>*</em>奖品数量</label></div><div><input type="number" placeholder="请输入奖品数量" v-model="v.total" min="0"/><div></li>
@@ -55,7 +55,7 @@
 
 					let data = {
 					    "store": {
-					        "id":100
+					        "id":this.storeId
 					    },
 					    "prices": [
 					         {
@@ -92,7 +92,8 @@
 	  			m = d.getMonth()+1;
 		    return {
 		    	v:{},
-		    	today:d.getFullYear()+'-'+(m>9?m:'0'+m)+'-'+d.getDate()
+		    	today:d.getFullYear()+'-'+(m>9?m:'0'+m)+'-'+d.getDate(),
+		    	storeId:resource.urlGet('storeId')
 		    }
 	  	}
 	}

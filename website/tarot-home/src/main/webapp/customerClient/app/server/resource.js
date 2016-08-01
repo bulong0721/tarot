@@ -1,6 +1,7 @@
 const Api = {
-	url:'http://127.0.0.1:8080/'
+	url:'/tarot_test/'
 }
+
 export default {
 	ruleList:null,
 	post (that,path, params) {
@@ -20,5 +21,15 @@ export default {
 	},
 	getData(data = null){
 		return data !== null ? this.ruleList = data : this.ruleList;
+	},
+	urlGet(name){
+        let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"),
+        r = window.location.search.substr(1).match(reg);
+        if (r != null){
+        	return unescape(r[2]);
+        }else{
+        	Toast('非法操作');
+        	return null;
+        }
 	}
 }
