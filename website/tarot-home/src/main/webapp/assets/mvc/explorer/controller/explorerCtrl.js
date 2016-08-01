@@ -99,8 +99,12 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
     //点击推送按钮时调用
     $scope.goSend = function () {
         var arraySelected = [];
+        var arraySelected1 = [];
         var data = $scope.treeData;
         recursionTree(data, arraySelected);
+        arraySelected1.push({url: "http://localhost/push/100/20/statistic/20160311/2016-03-09.xls", name: "2016-03-09.xls"});
+        arraySelected1.push({url: "http://localhost/push/100/20/statistic/20160311/2016-03-10.xls", name: "2016-03-10.xls"});
+        console.log(JSON.stringify(arraySelected1))
         console.log(JSON.stringify(arraySelected))
         //$resource('../file/search').save({}, JSON.stringify(arraySelected)).$promise.then(saveSuccess, saveFailed);
         $scope.activeTab = iEditor;
@@ -112,7 +116,6 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
 
     //递归出所有选中的文件
     function recursionTree(data, arraySelected){
-
         angular.forEach(data, function(d){
             //console.log(d)
             if(d.checked == true && d.type == 1){
@@ -127,7 +130,6 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
     //查询推送设备下拉框内容
     function getDeviceUsedList() {
         var data = $resource("../deviceUsed/list").query();
-        console.log(data)
         return data;
     }
 
