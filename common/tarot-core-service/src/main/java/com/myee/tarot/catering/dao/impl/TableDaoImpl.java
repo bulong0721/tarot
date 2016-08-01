@@ -46,7 +46,7 @@ public class TableDaoImpl extends GenericEntityDaoImpl<Long, Table> implements T
             query.where(qTable.name.like("%" + pageRequest.getQueryName() + "%"));
         }
         query.where(qTable.store.id.eq(id));
-        pageList.setRecordsTotal(query.from(qTable).fetchCount());
+        pageList.setRecordsTotal(query.fetchCount());
         if (pageRequest.getCount() > 0) {
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }

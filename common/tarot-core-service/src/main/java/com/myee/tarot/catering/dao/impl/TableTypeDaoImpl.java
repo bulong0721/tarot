@@ -36,11 +36,12 @@ public class TableTypeDaoImpl extends GenericEntityDaoImpl<Long, TableType> impl
         PageResult<TableType> pageList = new PageResult<TableType>();
         QTableType qTableType = QTableType.tableType;
         JPQLQuery<TableType> query = new JPAQuery(getEntityManager());
+        query.from(qTableType);
         if(!StringUtil.isBlank(pageRequest.getQueryName())){
             query.where(qTableType.name.like("%" + pageRequest.getQueryName() + "%"));
         }
         query.where(qTableType.store.id.eq(id));
-        pageList.setRecordsTotal(query.from(qTableType).fetchCount());
+        pageList.setRecordsTotal(query.fetchCount());
         if( pageRequest.getCount() > 0){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
