@@ -19,7 +19,6 @@
         <dependency>
             <groupId>com.myee.tarot</groupId>
             <artifactId>tarot-core</artifactId>
-            <version>0.7</version>
         </dependency>
     </dependencies>
 
