@@ -60,13 +60,17 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
         {
             displayName: '操作',
             columnWidth: '150',
-            cellTemplate: '<a><i ng-if="row.branch.type==0" class="btn-icon fa fa-plus" ng-click="cellTemplateScope.add(row.branch)"></i></a>' +
+            cellTemplate: '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-plus" ng-click="cellTemplateScope.add(row.branch)"></i></a>' +
+            '<a><i ng-if="row.branch.type == 1" class="btn-icon fa fa-ban" title="文件不能新增"></i></a>' +
             '<span class="divider"></span>' +
-            '<a><i class="btn-icon fa fa-pencil" ng-click="cellTemplateScope.edit(row.branch)"></i></a>' +
+            '<a><i ng-if="row.branch.type == 1" class="btn-icon fa fa-pencil" ng-click="cellTemplateScope.edit(row.branch)"></i></a>' +
+            '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-ban" title="文件夹不能编辑"></i></a>' +
             '<span class="divider"></span>' +
-            '<a><i class="btn-icon fa fa-trash-o" ng-click="cellTemplateScope.delete(row.branch)"></i></a>' +
+            '<a><i ng-if="row.branch.salt == row.branch.storeId && row.branch.path != \'/\'" class="btn-icon fa fa-trash-o" ng-click="cellTemplateScope.delete(row.branch)"></i></a>' +
+            '<a><i ng-if="row.branch.salt != row.branch.storeId || row.branch.path == \'/\'" class="btn-icon fa fa-ban" title="没有权限删除"></i></a>' +
             '<span class="divider"></span>' +
-            '<a><i class="btn-icon fa fa-download" ng-click="cellTemplateScope.download(row.branch)"></i></a>',
+            '<a><i ng-if="row.branch.type == 1" class="btn-icon fa fa-download" ng-click="cellTemplateScope.download(row.branch)"></i></a>' +
+            '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-ban" title="文件夹不能下载"></i></a>',
             cellTemplateScope: {
                 add: function (data) {
                     alert('add:' + data);
@@ -112,7 +116,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
         angular.forEach(data, function(d){
             //console.log(d)
             if(d.checked == true && d.type == 1){
-                arraySelected.push({url: d.salt, name: d.name});
+                arraySelected.push({url: d.url, name: d.name});
             }
             if(d.children.length > 0){
                 recursionTree(d.children, arraySelected);

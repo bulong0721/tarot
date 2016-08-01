@@ -60,10 +60,10 @@ public class PushController {
         MerchantStore store = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
         File template = getResFile(100L, parentNode);
         Map<String, FileItem> resMap = Maps.newLinkedHashMap();
-        listFiles(template, resMap, 100L);
+        listFiles(template, resMap, 100L, store.getId());
         if (100L != store.getId()) {
             File dir = getResFile(store.getId(), parentNode);
-            listFiles(dir, resMap, store.getId());
+            listFiles(dir, resMap, store.getId(), store.getId());
         }
         return new AjaxPageableResponse(Lists.<Object>newArrayList(resMap.values()));
     }
@@ -73,7 +73,7 @@ public class PushController {
     public FileItem createResource(long orgID, @RequestParam("resFile") CommonsMultipartFile file, String entityText) throws IllegalStateException, IOException {
         FileItem vo = JSON.parseObject(entityText, FileItem.class);
         File dest = getResFile(orgID, vo.getPath());
-        vo.setSalt(Long.toString(orgID));
+        vo.setSalt(orgID);
 //        if (1 == vo.getResType()) {
 //            dest.mkdirs();
 //        } else
@@ -122,16 +122,16 @@ public class PushController {
         return true;
     }
 
-    private void listFiles(File parentFile, Map<String, FileItem> resMap, Long orgID) {
+    private void listFiles(File parentFile, Map<String, FileItem> resMap, Long orgID, Long storeId) {
         if (!parentFile.exists() || !parentFile.isDirectory() || null == parentFile.listFiles()) {
             return;
         }
         String prefix = FilenameUtils.concat(DOWNLOAD_HOME, Long.toString(orgID));
         String prefixHttp = FilenameUtils.concat(DOWNLOAD_HTTP, Long.toString(orgID));
         for (File file : parentFile.listFiles()) {
-            FileItem fileItem = FileItem.toResourceModel(file);
+            FileItem fileItem = FileItem.toResourceModel(file, orgID, storeId);
             fileItem.setPath(trimStart(fileItem.getPath(), prefix));
-            fileItem.setSalt(FilenameUtils.concat(prefixHttp, fileItem.getPath()));
+            fileItem.setUrl(FilenameUtils.concat(prefixHttp, fileItem.getPath()));
             resMap.put(file.getName(), fileItem);
         }
     }

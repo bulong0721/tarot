@@ -11,7 +11,9 @@ public class FileItem implements Serializable{
 
     private String name;
     private String path;
-    private String salt;
+    private Long salt;
+    private String url;
+    private Long storeId;
     private String content;
     private long   modified;
     private Long   size;
@@ -31,12 +33,28 @@ public class FileItem implements Serializable{
         this.type = type;
     }
 
-    public String getSalt() {
+    public Long getSalt() {
         return salt;
     }
 
-    public void setSalt(String salt) {
+    public void setSalt(Long salt) {
         this.salt = salt;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public Long getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(Long storeId) {
+        this.storeId = storeId;
     }
 
     public String getPath() {
@@ -87,9 +105,11 @@ public class FileItem implements Serializable{
         this.name = name;
     }
 
-    public static FileItem toResourceModel(File file) {
+    public static FileItem toResourceModel(File file, Long salt, Long storeId) {
         FileItem resVo = new FileItem();
         resVo.setName(file.getName());
+        resVo.setSalt(salt);
+        resVo.setStoreId(storeId);
         resVo.setPath(file.getAbsolutePath());
         resVo.setModified(file.lastModified());
         resVo.type = file.isDirectory() ? DIR : FILE;
