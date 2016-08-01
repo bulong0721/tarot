@@ -138,6 +138,11 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
         }
     }
 
+    @Override
+    public PriceInfo findByIdAndKeyId(Long id, String keyId) {
+        return priceInfoDao.findByIdAndKeyId(id,keyId);
+    }
+
     public PriceInfo getRandomPrice(PriceInfo basePriceInfo,List<Integer> priceList,List<MerchantPrice> prices){
         Random random = new Random();
         int index = random.nextInt(priceList.size());

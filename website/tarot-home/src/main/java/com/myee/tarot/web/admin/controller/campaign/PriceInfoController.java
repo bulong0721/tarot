@@ -180,6 +180,27 @@ public class PriceInfoController {
         return resp;
     }
 
+    /**
+     * 根据id获取单个奖券信息
+     * @param id
+     * @param keyId
+     * @return
+     */
+    @RequestMapping(value = "api/info/getPrice")
+    @ResponseBody
+    private AjaxResponse getPrice(@RequestParam("id")Long id,@RequestParam("keyId")String keyId){
+        try {
+            AjaxResponse resp = new AjaxResponse();
+            PriceInfo info = priceInfoService.findByIdAndKeyId(id, keyId);
+            resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
+            resp.addEntry("result", info);
+            return resp;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResponse.failed(-1);
+    }
+
     //把类转换成entry返回给前端，解耦和
     private Map objectToEntry(PriceInfo priceInfo) {
         Map entry = new HashMap();

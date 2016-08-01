@@ -47,25 +47,6 @@ public class MerchantPriceController {
         return AjaxResponse.failed(-1);
     }
 
-    /**
-     * 根据id获取单个奖券信息
-     * @param priceId
-     * @return
-     */
-    @RequestMapping(value = "api/price/getPrice")
-    @ResponseBody
-    private AjaxResponse getPrice(@RequestParam("priceId")Long priceId){
-        try {
-            AjaxResponse resp = new AjaxResponse();
-            MerchantPrice price = merchantPriceService.findById(priceId);
-            resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
-            resp.addEntry("result",price);
-            return resp;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return AjaxResponse.failed(-1);
-    }
 
     /**
      * 删除 奖项

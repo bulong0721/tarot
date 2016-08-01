@@ -18,4 +18,6 @@ public interface PriceInfoDao extends GenericEntityDao<Long, PriceInfo>{
     PriceInfo priceCheckCode(Long storeId,String checkCode);
 
     List<PriceInfo> findByStoreIdAndKeyId(Long storeId,String keyId);
+
+    PriceInfo findByIdAndKeyId(Long id,String keyId);
 }

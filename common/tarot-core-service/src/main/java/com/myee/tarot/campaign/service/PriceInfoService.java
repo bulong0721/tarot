@@ -25,4 +25,6 @@ public interface PriceInfoService extends GenericEntityService<Long ,PriceInfo>{
     AjaxResponse savePriceInfo(String keyId,Long storeId) throws ServiceException;
 
     void updateRedisDrawList() throws ServiceException;
+
+    PriceInfo findByIdAndKeyId(Long id,String keyId);
 }
