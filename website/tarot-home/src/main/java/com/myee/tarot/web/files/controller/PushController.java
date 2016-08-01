@@ -126,11 +126,11 @@ public class PushController {
             return;
         }
         String prefix = FilenameUtils.concat(DOWNLOAD_HOME, Long.toString(orgID));
-        String prefixHttp = FilenameUtils.concat(DOWNLOAD_HTTP, Long.toString(orgID));
+//        String prefixHttp = FilenameUtils.concat(DOWNLOAD_HTTP, Long.toString(orgID));
         for (File file : parentFile.listFiles()) {
             FileItem fileItem = FileItem.toResourceModel(file, orgID, storeId);
             fileItem.setPath(trimStart(fileItem.getPath(), prefix));
-            fileItem.setUrl(FilenameUtils.concat(prefixHttp, fileItem.getPath()));
+            fileItem.setUrl(DOWNLOAD_HTTP+orgID+File.separator+fileItem.getPath());
             resMap.put(file.getName(), fileItem);
         }
     }
