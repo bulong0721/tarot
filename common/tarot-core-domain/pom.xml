@@ -63,27 +63,7 @@
                 <plugin>
                     <groupId>org.bsc.maven</groupId>
                     <artifactId>maven-processor-plugin</artifactId>
-                    <version>2.0.5</version>
-                    <configuration>
-                        <outputDirectory>target/generated-sources</outputDirectory>
-                        <options>
-                            <fullyAnnotationConfigured>true</fullyAnnotationConfigured>
-                            <addSuppressWarningsAnnotation>true</addSuppressWarningsAnnotation>
-                        </options>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>process</id>
-                            <goals>
-                                <goal>process</goal>
-                            </goals>
-                            <phase>generate-sources</phase>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.bsc.maven</groupId>
-                    <artifactId>maven-processor-plugin</artifactId>
+                    <version>3.1.0</version>
                     <executions>
                         <execution>
                             <id>process</id>
@@ -103,7 +83,7 @@
                         <dependency>
                             <groupId>org.hibernate</groupId>
                             <artifactId>hibernate-jpamodelgen</artifactId>
-                            <version>4.3.0.Final</version>
+                            <version>4.3.5.Final</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -132,39 +112,7 @@
                         </dependency>
                     </dependencies>
                 </plugin>
-                <!-- hbm2ddl Hibernate entities to schema -->
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>hibernate3-maven-plugin</artifactId>
-                    <version>2.2</version>
-                    <!-- 2.2 -->
-                    <executions>
-                        <execution>
-                            <phase>process-classes</phase>
-                            <goals>
-                                <goal>hbm2ddl</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <components>
-                            <component>
-                                <name>hbm2ddl</name>
-                                <implementation>jpaconfiguration</implementation>
-                            </component>
-                        </components>
-                        <componentProperties>
-                            <persistenceunit>sm-unit</persistenceunit>
-                            <!--<propertyfile>src/test/resources/hbm2ddl.properties</propertyfile> -->
-                            <outputfilename>schema.ddl</outputfilename>
-                            <drop>false</drop>
-                            <create>true</create>
-                            <export>false</export>
-                            <format>true</format>
-                        </componentProperties>
-                    </configuration>
-                </plugin>
-                <!--This plugin's configuration is used to store Eclipse m2e settings
+                <!--This codegen's configuration is used to store Eclipse m2e settings
                     only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>

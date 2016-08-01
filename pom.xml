@@ -31,6 +31,7 @@
         <module>common/tarot-core</module>
         <module>common/tarot-core-domain</module>
         <module>common/tarot-core-service</module>
+        <module>plugin/tarot-codegen</module>
     </modules>
 
     <dependencyManagement>
