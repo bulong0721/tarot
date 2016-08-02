@@ -1,39 +1,29 @@
 package com.tarot.codegen;
 
-import javax.annotation.processing.ProcessingEnvironment;
+import com.google.common.collect.Maps;
+import com.mysema.query.codegen.EntityType;
+
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
-import javax.tools.Diagnostic;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Created by Martin on 2016/8/1.
+ * Created by Martin on 2016/8/2.
  */
-public final class Context {
-    private final ProcessingEnvironment pe;
-    private final boolean logDebug = true;
+public class Context {
+    final Map<String, EntityType> entityTypes = Maps.newHashMap();
 
-    public Context(ProcessingEnvironment pe) {
-        this.pe = pe;
-    }
+    final Map<String, TypeElement> daoElements = Maps.newHashMap();
 
-    public TypeElement getTypeElementForFullyQualifiedName(String fqcn) {
-        Elements elementUtils = pe.getElementUtils();
-        return elementUtils.getTypeElement( fqcn );
-    }
+    final Map<String, TypeElement> daoImplElements = Maps.newHashMap();
 
-    public void logMessage(Diagnostic.Kind type, String message) {
-        if (!logDebug && type.equals(Diagnostic.Kind.OTHER)) {
-            return;
-        }
-        pe.getMessager().printMessage(type, message);
-    }
+    final Map<String, TypeElement> svcElements = Maps.newHashMap();
 
-    public Elements getElementUtils() {
-        return pe.getElementUtils();
-    }
+    final Map<String, TypeElement> svcImplElements = Maps.newHashMap();
 
-    public Types getTypeUtils() {
-        return pe.getTypeUtils();
+    public void clean() {
+
+        TypeElement element = null;
+
     }
 }
