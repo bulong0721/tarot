@@ -66,6 +66,7 @@ public class AdminFilter extends HandlerInterceptorAdapter {
                 user = userService.getByLogin(userName);
                 if (user != null) {
 //                    storeCode = user.getMerchantStore().getCode();
+
                 } else {
                     LOGGER.warn("User name not found " + userName);
                 }
