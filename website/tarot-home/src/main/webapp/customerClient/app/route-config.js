@@ -5,15 +5,15 @@ export function configRouter (router) {
             name:'myCouponList',
             component: require('./view/myCouponList.vue')
         },
-        '/myCouponView': {
+        '/myCouponView/:id/:keyId': {
             title:'我的详情',
             name:'myCouponView',
             component: require('./view/myCouponView.vue')
-        },
+        }
     });
 
     router.redirect({
-        '*':"/myCouponList"
+        '*':"/"
     });
 
     router.beforeEach(transition => {
