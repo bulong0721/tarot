@@ -128,34 +128,43 @@ public class WebMpController {
                     Long storeId = Long.valueOf(inMessage.getEventKey().substring(1, inMessage.getEventKey().length()));
                     AjaxResponse aResp = priceInfoService.savePriceInfo(inMessage.getFromUserName(), storeId);
                     PriceInfo priceInfo = (PriceInfo) aResp.getDataMap().get("result");
-                    Date startDate = priceInfo.getPrice().getStartDate();
-                    Date endDate = priceInfo.getPrice().getEndDate();
-                    //根据店铺ID查店铺名称
-                    MerchantStore merchantStore = merchantStoreService.findById(storeId);
                     Map map = new HashMap();
-                    map.put("storeName",merchantStore.getName());
-                    map.put("prizeStartDate", DateTimeUtils.getDateString(startDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
-                    map.put("prizeEndDate", DateTimeUtils.getDateString(endDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
-                    map.put("prizeUrl","http://www.myee7.com/tarot_test/customerClient/index.html#!/myCouponView/"+priceInfo.getId().toString()+"/"+inMessage.getFromUserName());
-                    inMessage.setMap(map);
+                    if(priceInfo != null) {
+                        Date startDate = priceInfo.getPrice().getStartDate();
+                        Date endDate = priceInfo.getPrice().getEndDate();
+                        //根据店铺ID查店铺名称
+                        MerchantStore merchantStore = merchantStoreService.findById(storeId);
+                        map.put("storeName",merchantStore.getName());
+                        map.put("prizeStartDate", DateTimeUtils.getDateString(startDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
+                        map.put("prizeEndDate", DateTimeUtils.getDateString(endDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
+                        map.put("prizeUrl","http://www.myee7.com/tarot_test/customerClient/index.html#!/myCouponView/"+priceInfo.getId().toString()+"/"+inMessage.getFromUserName());
+                        inMessage.setMap(map);
+                    } else {
+                        map.put("prizeNotAvailable", "您已兑奖，请点击我的奖券");
+                        inMessage.setMap(map);
+                    }
                 }
 
-                //进公众号里面的扫码(获取绑定抽奖信息-代号3)
-                if (inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent() != null && inMessage.getEvent().equals(WxConsts.BUTTON_SCANCODE_PUSH) && inMessage.getEventKey().substring(0,1).equals("3")) {
+                //进公众号里面的扫码(获取绑定抽奖信息-代号2)
+                if (inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent() != null && inMessage.getEvent().equals(WxConsts.BUTTON_SCANCODE_PUSH) && inMessage.getEventKey().substring(0,1).equals("2")) {
                     Long storeId = Long.valueOf(inMessage.getEventKey().substring(1, inMessage.getEventKey().length()));
-                    priceInfoService.savePriceInfo(inMessage.getFromUserName(),storeId);
                     AjaxResponse aResp = priceInfoService.savePriceInfo(inMessage.getFromUserName(), storeId);
                     PriceInfo priceInfo = (PriceInfo) aResp.getDataMap().get("result");
-                    Date startDate = priceInfo.getPrice().getStartDate();
-                    Date endDate = priceInfo.getPrice().getEndDate();
-                    //根据店铺ID查店铺名称
-                    MerchantStore merchantStore = merchantStoreService.findById(storeId);
                     Map map = new HashMap();
-                    map.put("storeName",merchantStore.getName());
-                    map.put("prizeStartDate", DateTimeUtils.getDateString(startDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
-                    map.put("prizeEndDate", DateTimeUtils.getDateString(endDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
-                    map.put("prizeUrl", "http://www.myee7.com/tarot_test/customerClient/index.html#!/myCouponView/"+priceInfo.getId().toString()+"/"+inMessage.getFromUserName());
-                    inMessage.setMap(map);
+                    if (priceInfo != null) {
+                        Date startDate = priceInfo.getPrice().getStartDate();
+                        Date endDate = priceInfo.getPrice().getEndDate();
+                        //根据店铺ID查店铺名称
+                        MerchantStore merchantStore = merchantStoreService.findById(storeId);
+                        map.put("storeName",merchantStore.getName());
+                        map.put("prizeStartDate", DateTimeUtils.getDateString(startDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
+                        map.put("prizeEndDate", DateTimeUtils.getDateString(endDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
+                        map.put("prizeUrl", "http://www.myee7.com/tarot_test/customerClient/index.html#!/myCouponView/" + priceInfo.getId().toString() + "/" + inMessage.getFromUserName());
+                        inMessage.setMap(map);
+                    }  else {
+                        map.put("prizeNotAvailable", "您已兑奖，请点击我的奖券");
+                        inMessage.setMap(map);
+                    }
                 }
 
                 //点击事件
@@ -166,22 +175,44 @@ public class WebMpController {
 
                 //微信自带的扫二维码，未关注
                 if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent() != null && inMessage.getEvent().equals(WxConsts.EVT_SUBSCRIBE) && inMessage.getTicket() != null) {
-                    String merchantStoreId = inMessage.getEventKey();
-                    System.out.println("merchantStoreId:" + merchantStoreId);
-                    String redisKeyOfUcdScId = RedisKeys.getIdentityCode(Long.valueOf(merchantStoreId));
-                    String identityCode = manager.getIdentityCode(redisKeyOfUcdScId);
-                    //将该二维码绑定扫码的微信OpenId
-                    Map<String,Object> msgMap = new HashMap<String,Object>();
-                    if(wxService.bondQrCodeByScan(identityCode, inMessage.getFromUserName())) {
-                        msgMap = checkLatestDevelopments(identityCode);
-                        int i = wxService.modifyWaitingInfo(Long.parseLong(msgMap.get("waitedTableCount").toString()),identityCode,Long.valueOf(msgMap.get("timeTook").toString()), Long.parseLong(msgMap.get("predictWaitingTime").toString()));
-                        if(i != 1) {
-                            logger.error("修改排号信息失败!");
+                    if(inMessage.getEventKey().substring(0,1).equals("1")) {
+                        String merchantStoreId = inMessage.getEventKey();
+                        System.out.println("merchantStoreId:" + merchantStoreId);
+                        String redisKeyOfUcdScId = RedisKeys.getIdentityCode(Long.valueOf(merchantStoreId));
+                        String identityCode = manager.getIdentityCode(redisKeyOfUcdScId);
+                        //将该二维码绑定扫码的微信OpenId
+                        Map<String,Object> msgMap = new HashMap<String,Object>();
+                        if(wxService.bondQrCodeByScan(identityCode, inMessage.getFromUserName())) {
+                            msgMap = checkLatestDevelopments(identityCode);
+                            int i = wxService.modifyWaitingInfo(Long.parseLong(msgMap.get("waitedTableCount").toString()),identityCode,Long.valueOf(msgMap.get("timeTook").toString()), Long.parseLong(msgMap.get("predictWaitingTime").toString()));
+                            if(i != 1) {
+                                logger.error("修改排号信息失败!");
+                            }
+                        } else {
+                            msgMap.put("vaild","该唯一码已过期或无效，查询进度失败!");
                         }
+                        inMessage.setMap(msgMap);
                     } else {
-                        msgMap.put("vaild","该唯一码已过期或无效，查询进度失败!");
+                        Long storeId = Long.valueOf(inMessage.getEventKey().substring(9, inMessage.getEventKey().length()));
+                        AjaxResponse aResp = priceInfoService.savePriceInfo(inMessage.getFromUserName(), storeId);
+                        PriceInfo priceInfo = (PriceInfo) aResp.getDataMap().get("result");
+                        Map map = new HashMap();
+                        if(priceInfo != null) {
+                            Date startDate = priceInfo.getPrice().getStartDate();
+                            Date endDate = priceInfo.getPrice().getEndDate();
+                            //根据店铺ID查店铺名称
+                            MerchantStore merchantStore = merchantStoreService.findById(storeId);
+                            map.put("storeName",merchantStore.getName());
+                            map.put("prizeStartDate", DateTimeUtils.getDateString(startDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
+                            map.put("prizeEndDate", DateTimeUtils.getDateString(endDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
+                            map.put("prizeUrl", "http://www.myee7.com/tarot_test/customerClient/index.html#!/myCouponView/"+priceInfo.getId().toString()+"/"+inMessage.getFromUserName());
+                            inMessage.setMap(map);
+                        } else {
+                            map.put("prizeNotAvailable", "您已兑奖，请点击我的奖券");
+                            inMessage.setMap(map);
+                        }
                     }
-                    inMessage.setMap(msgMap);
+
                 }
             //正则表达式判断是否包含字母数字(6位)
             String pattern = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6}$";
@@ -191,7 +222,6 @@ public class WebMpController {
                 Map<String,Object> msgMap = checkLatestDevelopments(inMessage.getContent());
                 inMessage.setMap(msgMap);
             }
-                System.out.println("coding->here2");
                 WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage);
                 String str = outMessage.toXml();
                 out.print(str);
