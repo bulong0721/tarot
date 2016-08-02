@@ -105,11 +105,11 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
         recursionTree(data, arraySelected);
         var content = "";
         for(var i in arraySelected){
-            content += "{'url': '"+ arraySelected[i].url +"','name': '"+ arraySelected[i].name +"'},";
+            content += '{"url": "'+ arraySelected[i].url +'","name": "'+ arraySelected[i].name +'"},';
         }
         $scope.activeTab = iPush;
         $scope.formData.model.store = {name: Constants.thisMerchantStore.name};
-        $scope.formData.model.context = "[" + content + "]";
+        $scope.formData.model.content = "[" + content + "]";
     };
 
     //递归出所有选中的文件
@@ -157,7 +157,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
             },
             {key: 'timeout', type: 'datepicker', templateOptions: {label: '过期时间', placeholder: '过期时间',type: 'text', datepickerPopup: 'yyyy-MM-dd', datepickerOptions: {format: 'yyyy-MM-dd'}}},
             {
-                key: 'context',
+                key: 'content',
                 type: 'c_textarea',
                 ngModelAttrs: {
                     style: {attribute: 'style'}
