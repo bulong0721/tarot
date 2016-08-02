@@ -7,9 +7,9 @@ angular.module('myee', [])
 explorerCtrl.$inject = ['$scope', '$resource', '$filter','cfromly','Constants'];
 function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
 
-    var iDatatable = 0, iEditor = 1;
-    $scope.showInfoPush = false;
-    $scope.treeData = [{path: '/', name: '/', type: 0}];
+    var iDatatable = 0, iPush = 1, iEditor = 2;
+    $scope.activeTab = iDatatable;
+    $scope.treeData = [{path: '/', name: '/', type: 0, salt: '/'}];
     $scope.expandField = {field: 'name'};
     $scope.treeColumns = [
         {
@@ -73,10 +73,12 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
             '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-ban" title="文件夹不能下载"></i></a>',
             cellTemplateScope: {
                 add: function (data) {
-                    alert('add:' + data);
+                    $scope.activeTab = iEditor;
+                    $scope.formData1.model.salt = data.salt;
                 },
                 edit: function (data) {
-                    alert('edit:' + data);
+                    $scope.activeTab = iEditor;
+                    $scope.formData1.model.salt = data.salt;
                 },
                 delete: function (data) {
                     alert('delete:' + data);
@@ -101,29 +103,18 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
         var arraySelected = [];
         var data = $scope.treeData;
         recursionTree(data, arraySelected);
-        //var objectStr = {hotfixSet:arraySelected, publisher: '', transactional: false};
-        console.log("array showing...")
-        //console.log(arraySelected)
-        console.log(arraySelected)
         var content = "";
         for(var i in arraySelected){
-            console.log("each obj...")
-            console.log(i)
             content += "{'url': '"+ arraySelected[i].url +"','name': '"+ arraySelected[i].name +"'},";
         }
-        console.log(content)
-        //$resource('../file/search').save({}, JSON.stringify(arraySelected)).$promise.then(saveSuccess, saveFailed);
-        $scope.activeTab = iEditor;
-        $scope.showInfoPush = true;
+        $scope.activeTab = iPush;
         $scope.formData.model.store = {name: Constants.thisMerchantStore.name};
         $scope.formData.model.context = "[" + content + "]";
     };
 
     //递归出所有选中的文件
     function recursionTree(data, arraySelected){
-
         angular.forEach(data, function(d){
-            //console.log(d)
             if(d.checked == true && d.type == 1){
                 arraySelected.push({url: d.url, name: d.name});
             }
@@ -183,9 +174,31 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
         }
     };
 
-    //formly配置项
+    var mgrData1 = {
+        fields: [
+            {
+                key: 'salt',
+                type: 'c_input',
+                templateOptions: {disabled: true, label: '隐藏ID', placeholder: '隐藏ID'}
+            }
+        ],
+        api: {
+            //read: '../device/used/paging',
+            create: '../admin/file/create',
+            //delete: '../device/used/delete',
+            //updateAttr: '../device/used/attribute/save',
+            //deleteAttr: '../device/used/attribute/delete',
+        }
+    };
+
+    //formly配置项push
     $scope.formData = {
         fields: mgrData.fields
+    };
+
+    //formly配置项editor
+    $scope.formData1 = {
+        fields: mgrData1.fields
     };
 
     //formly提交
@@ -198,10 +211,19 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
         }
     };
 
+    //formly提交
+    $scope.editorSubmit = function () {
+        var formly = $scope.formData1;
+        console.log(formly)
+        if (formly.form.$valid) {
+            formly.options.updateInitialValue();
+            $resource(mgrData.api.create).save({}, formly.model).$promise.then(saveSuccess, saveFailed);
+        }
+    };
+
     //formly返回
-    $scope.goPushDataTable = function () {
+    $scope.goDataTable = function () {
         $scope.activeTab = iDatatable;
-        $scope.showInfoPush = false;
     };
 
     //成功后调用

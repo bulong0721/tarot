@@ -73,9 +73,9 @@ public class PushController {
         FileItem vo = JSON.parseObject(entityText, FileItem.class);
         File dest = getResFile(orgID, vo.getPath());
         vo.setSalt(orgID);
-//        if (1 == vo.getResType()) {
-//            dest.mkdirs();
-//        } else
+        if (1 == vo.getType()) {
+            dest.mkdirs();
+        } else
         if (!file.isEmpty()) {
             dest.mkdirs();
             file.transferTo(dest);
