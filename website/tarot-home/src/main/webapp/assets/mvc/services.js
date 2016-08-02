@@ -325,8 +325,8 @@ function cfromlyService(formlyConfig, $window) {
     });
 }
 /*
-* cAlerts
-* */
+ * cAlerts
+ * */
 
 function cAlerts($uibModal){
     return {

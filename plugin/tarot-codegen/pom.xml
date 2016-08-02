@@ -32,5 +32,10 @@
             <artifactId>maven-processor-plugin</artifactId>
             <version>3.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa</artifactId>
+            <version>2.4.1</version>
+        </dependency>
     </dependencies>
 </project>

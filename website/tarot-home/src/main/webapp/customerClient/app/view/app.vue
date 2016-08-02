@@ -1,6 +1,6 @@
 <template>
 	<div>
-    	<router-view class="view" transition="am" transition-mode="out-in"></router-view>
+    	<router-view></router-view>
     </div>
 </template>
 <style>
@@ -10,7 +10,4 @@
 	ul,li {list-style: none;}
 	i {vertical-align: middle;}
 	p {margin: 8px 0}
-	.view {transition: all .2s ease;}
-	.am-enter, .am-leave {opacity: 0;transform: translate3d(0, 5px, 0);}
-	[v-cloak] {display: none;}
 </style>

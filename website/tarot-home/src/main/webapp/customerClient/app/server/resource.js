@@ -2,6 +2,11 @@ const Api = {
 	url:'/tarot_test/'
 }
 
+import Vue from 'vue';
+import Toast from 'mint-ui/lib/toast';
+import 'mint-ui/lib/toast/style.css';
+Vue.component(Toast.name, Toast);
+
 export default {
 	ruleList:null,
 	post (that,path, params) {

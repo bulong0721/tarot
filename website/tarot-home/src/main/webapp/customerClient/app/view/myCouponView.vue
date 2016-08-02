@@ -20,9 +20,11 @@
 	export default {
 		route: {
 			data({to,next}){
-				next({
-					view: resource.getData()
-				});
+				resource.post(this,'api/info/getPrice',{id:to.params.id,keyId:to.params.keyId}).then((res) => {
+					next({
+						view: res.dataMap.result
+					});
+				})
 			}
 		},
 	  	data(){
