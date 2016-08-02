@@ -13,6 +13,7 @@ import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
+import com.myee.tarot.customer.service.CustomerUserDetails;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.apiold.BusinessException;
 import com.myee.tarot.web.files.vo.FileItem;
@@ -23,15 +24,16 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -87,6 +89,21 @@ public class PushController {
         return vo;
     }
 
+    @RequestMapping(value = "admin/file/delete", method = RequestMethod.POST)
+    @ResponseBody
+    @Transactional
+    public boolean deleteResource(@RequestParam("salt") Long orgID, @RequestParam("path") String path, HttpServletRequest request) {
+        MerchantStore store = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
+        if (store.getId() != orgID) {
+            return false;
+        }
+        File resFile = getResFile(orgID, path);
+        if (resFile.exists()) {
+            FileUtils.deleteQuietly(resFile);
+        }
+        return true;
+    }
+
     @RequestMapping("admin/content/get")
     @ResponseBody
     public String getContentText(Long orgID, String absPath) {
@@ -105,22 +122,19 @@ public class PushController {
         }
     }
 
-    @RequestMapping("admin/file/delete")
+    @RequestMapping(value = "admin/file/download" , method = RequestMethod.POST)
     @ResponseBody
-    @Transactional
-    public boolean deleteResource(@RequestParam("salt") Long orgID, String path, HttpServletRequest request) {
+    public AjaxResponse exportResource(@RequestParam("salt") Long orgID,@RequestParam("path") String path, HttpServletRequest request, HttpServletResponse response) {
         MerchantStore store = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
-        if(store == null ){
-            return false;
-        }
         if (store.getId() != orgID) {
-            return false;
+            return null;
         }
-        File resFile = getResFile(orgID, path);
-        if (resFile.exists()) {
-            FileUtils.deleteQuietly(resFile);
-        }
-        return true;
+        String url = DOWNLOAD_HTTP + orgID.toString() + File.separator + path;
+        AjaxResponse ajaxResponse = new AjaxResponse().success();
+        Map map = new HashMap();
+        map.put("url",url);
+        ajaxResponse.addDataEntry(map);
+        return ajaxResponse;
     }
 
     private void listFiles(File parentFile, Map<String, FileItem> resMap, Long orgID, Long storeId) {

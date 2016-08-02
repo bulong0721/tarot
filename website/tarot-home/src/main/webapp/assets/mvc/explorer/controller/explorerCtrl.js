@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * explorerCtrl - controller
  */
-explorerCtrl.$inject = ['$scope', '$resource', '$filter','cfromly','Constants'];
-function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
+explorerCtrl.$inject = ['$scope', '$resource', '$filter','cfromly','Constants','cAlerts'];
+function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts) {
 
     var iDatatable = 0, iPush = 1, iEditor = 2;
     $scope.activeTab = iDatatable;
@@ -81,10 +81,10 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
                     $scope.formData1.model.salt = data.salt;
                 },
                 delete: function (data) {
-                    alert('delete:' + data);
+                    $scope.delete(data.salt,data.path);
                 },
                 download: function (data) {
-                    alert('download:' + data);
+                    $scope.download(data.salt,data.path);
                 }
             }
         }
@@ -168,9 +168,9 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
         api: {
             //read: '../device/used/paging',
             push: '../admin/file/push',
-            //delete: '../device/used/delete',
-            //updateAttr: '../device/used/attribute/save',
-            //deleteAttr: '../device/used/attribute/delete',
+            //export: '../admin/file/export',
+            download: '../admin/file/download',
+            delete: '../admin/file/delete',
         }
     };
 
@@ -209,6 +209,22 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
             formly.options.updateInitialValue();
             $resource(mgrData.api.push).save({}, formly.model).$promise.then(saveSuccess, saveFailed);
         }
+    };
+
+    //删除资源
+    $scope.delete = function (salt, path) {
+        cAlerts.confirm('确定删除?',function(){
+            //点击确定回调
+            $resource(mgrData.api.delete).save({salt: salt, path: path}, {}).$promise.then(saveSuccess, saveFailed);
+        },function(){
+            //点击取消回调
+        });
+    };
+
+    $scope.download = function (salt, path) {
+        $resource(mgrData.api.download).save({salt: salt, path: path}, {}).$promise.then(function(data) {
+            window.location.href = data.rows[0].url;
+        });
     };
 
     //formly提交
