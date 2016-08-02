@@ -15,8 +15,6 @@ import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.apiold.BusinessException;
 import com.myee.tarot.web.files.vo.FileItem;
 import com.myee.tarot.web.files.vo.PushDTO;
-import com.myee.tarot.web.files.vo.PushResourceDTO;
-import com.myee.tarot.web.files.vo.ResourceDTO;
 import com.myee.tarot.web.util.StringUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
@@ -69,21 +67,22 @@ public class PushController {
         return new AjaxPageableResponse(Lists.<Object>newArrayList(resMap.values()));
     }
 
-    @RequestMapping("admin/file/create")
+    @RequestMapping(value = "admin/file/create",method = {RequestMethod.POST,RequestMethod.GET})
     @ResponseBody
-    public FileItem createResource(long orgID, @RequestParam("resFile") CommonsMultipartFile file, String entityText) throws IllegalStateException, IOException {
+    public FileItem createResource(  String entityText) throws IllegalStateException, IOException {
         FileItem vo = JSON.parseObject(entityText, FileItem.class);
-        File dest = getResFile(orgID, vo.getPath());
-        vo.setSalt(orgID);
-        if (1 == vo.getType()) {
-            dest.mkdirs();
-        } else
-        if (!file.isEmpty()) {
-            dest.mkdirs();
-            file.transferTo(dest);
-        } else if (!StringUtil.isNullOrEmpty(vo.getContent(), true)) {
-            FileUtils.writeStringToFile(dest, vo.getContent());
-        }
+//        File dest = getResFile(orgID, vo.getPath());
+//        vo.setSalt(orgID);
+//        if (1 == vo.getType()) {
+//            dest.mkdirs();
+//        }
+//        else
+//        if (!file.isEmpty()) { @RequestParam(value = "resFile",required = false) CommonsMultipartFile file,
+//            dest.mkdirs();
+//            file.transferTo(dest);
+//        } else if (!StringUtil.isNullOrEmpty(vo.getContent(), true)) {
+//            FileUtils.writeStringToFile(dest, vo.getContent());
+//        }
         return vo;
     }
 
@@ -132,7 +131,7 @@ public class PushController {
         for (File file : parentFile.listFiles()) {
             FileItem fileItem = FileItem.toResourceModel(file, orgID, storeId);
             fileItem.setPath(trimStart(fileItem.getPath(), prefix));
-            fileItem.setUrl(DOWNLOAD_HTTP+orgID+File.separator+fileItem.getPath().replace("\\", "/"));
+            fileItem.setUrl(DOWNLOAD_HTTP+orgID+File.separator+fileItem.getPath());
             resMap.put(file.getName(), fileItem);
         }
     }
@@ -152,32 +151,42 @@ public class PushController {
     @RequestMapping(value = "admin/file/push", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse pushResource(@Valid @RequestBody PushDTO pushDTO) {
-        AjaxResponse resp = new AjaxResponse();
-        PushResourceDTO dto = new PushResourceDTO(pushDTO);
         OrchidService eptService = null;
         try {
             eptService = serverBootstrap.getClient(OrchidService.class, pushDTO.getUniqueNo());
         } catch (Exception e) {
-            resp = AjaxResponse.failed(-1);
+            e.printStackTrace();
         }
-        if(eptService == null){
-            resp = AjaxResponse.failed(-2);
+        AjaxResponse resp = new AjaxResponse();
+        String pushDtoJson = "{";
+        if(pushDTO.getAppId() != null) {
+            pushDtoJson += "appId: "+ pushDTO.getAppId() + ",";
         }
-        try {
-            dto.setContent(JSON.parseArray(pushDTO.getContent(), ResourceDTO.class));
-        }catch (Exception e){
-            resp = AjaxResponse.failed(-3);
+        if (pushDTO.getContext() != null) {
+            pushDtoJson+= "context:" + pushDTO.getContext() + ",";
         }
+        if (pushDTO.getTimeout() != null) {
+            pushDtoJson+= "timeout:" + pushDTO.getTimeout().getTime() + ",";
+        }
+        if (pushDTO.getUniqueNo() != null) {
+            pushDtoJson+= "uniqueNo:" + pushDTO.getUniqueNo();
+        }
+        pushDtoJson+= "}";
+        String pushStr = JSONObject.toJSONString(pushDtoJson);
+        System.out.println("pushStr: " + pushStr);
         ResponseData rd = null;
         try {
-//            rd = eptService.sendNotification(dto);
+            rd = eptService.sendNotification(pushStr);
+            //新增notification记录
+//            System.out.println("rd:"+ rd.toString());
         } catch (Exception e) {
-            resp = AjaxResponse.failed(-4);
+            System.out.println("errorMessage:" + e.getMessage());
+            e.printStackTrace();
         }
         if(rd != null && rd.isSuccess()) {
             resp = AjaxResponse.success();
         } else {
-            resp = AjaxResponse.failed(-5);
+            resp = AjaxResponse.failed(-1);
         }
         return resp;
     }

@@ -2,6 +2,7 @@ package com.myee.tarot.web.datacenter.controller;
 
 import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.catering.service.TableTypeService;
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
@@ -46,6 +47,8 @@ public class WaitTokenController {
     @ResponseBody
     public AjaxPageableResponse pageWaitToken(Model model, HttpServletRequest request, WhereRequest whereRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
+        String adminStore = request.getSession().getAttribute(Constants.ADMIN_STORE).toString();
+        int i =0;
         try {
             PageResult<WxWaitToken> pageList = waitTokenService.pageWaitToken(whereRequest);
             List<WxWaitToken> wxWaitTokenList = pageList.getList();

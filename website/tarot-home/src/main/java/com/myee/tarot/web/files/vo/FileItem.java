@@ -18,6 +18,7 @@ public class FileItem implements Serializable{
     private long   modified;
     private Long   size;
     private int    type;
+    private String currPath;
 
     private List<FileItem> children;
 
@@ -103,6 +104,14 @@ public class FileItem implements Serializable{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCurrPath() {
+        return currPath;
+    }
+
+    public void setCurrPath(String currPath) {
+        this.currPath = currPath;
     }
 
     public static FileItem toResourceModel(File file, Long salt, Long storeId) {
