@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.myee.djinn.dto.PushResourceDTO;
+import com.myee.djinn.dto.ResourceDTO;
 import com.myee.djinn.dto.ResponseData;
 import com.myee.djinn.endpoint.OrchidService;
 import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
@@ -67,22 +69,21 @@ public class PushController {
         return new AjaxPageableResponse(Lists.<Object>newArrayList(resMap.values()));
     }
 
-    @RequestMapping(value = "admin/file/create",method = {RequestMethod.POST,RequestMethod.GET})
+    @RequestMapping("admin/file/create")
     @ResponseBody
-    public FileItem createResource(  String entityText) throws IllegalStateException, IOException {
+    public FileItem createResource(long orgID, @RequestParam("resFile") CommonsMultipartFile file, String entityText) throws IllegalStateException, IOException {
         FileItem vo = JSON.parseObject(entityText, FileItem.class);
-//        File dest = getResFile(orgID, vo.getPath());
-//        vo.setSalt(orgID);
-//        if (1 == vo.getType()) {
-//            dest.mkdirs();
-//        }
-//        else
-//        if (!file.isEmpty()) { @RequestParam(value = "resFile",required = false) CommonsMultipartFile file,
-//            dest.mkdirs();
-//            file.transferTo(dest);
-//        } else if (!StringUtil.isNullOrEmpty(vo.getContent(), true)) {
-//            FileUtils.writeStringToFile(dest, vo.getContent());
-//        }
+        File dest = getResFile(orgID, vo.getPath());
+        vo.setSalt(orgID);
+        if (1 == vo.getType()) {
+            dest.mkdirs();
+        } else
+        if (!file.isEmpty()) {
+            dest.mkdirs();
+            file.transferTo(dest);
+        } else if (!StringUtil.isNullOrEmpty(vo.getContent(), true)) {
+            FileUtils.writeStringToFile(dest, vo.getContent());
+        }
         return vo;
     }
 
@@ -131,7 +132,7 @@ public class PushController {
         for (File file : parentFile.listFiles()) {
             FileItem fileItem = FileItem.toResourceModel(file, orgID, storeId);
             fileItem.setPath(trimStart(fileItem.getPath(), prefix));
-            fileItem.setUrl(DOWNLOAD_HTTP+orgID+File.separator+fileItem.getPath());
+            fileItem.setUrl(DOWNLOAD_HTTP+orgID+File.separator+fileItem.getPath().replace("\\", "/"));
             resMap.put(file.getName(), fileItem);
         }
     }
@@ -151,44 +152,33 @@ public class PushController {
     @RequestMapping(value = "admin/file/push", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse pushResource(@Valid @RequestBody PushDTO pushDTO) {
+        AjaxResponse resp = new AjaxResponse();
+        PushResourceDTO dto = new PushResourceDTO();
         OrchidService eptService = null;
         try {
             eptService = serverBootstrap.getClient(OrchidService.class, pushDTO.getUniqueNo());
         } catch (Exception e) {
-            e.printStackTrace();
+            return AjaxResponse.failed(-1);
         }
-        AjaxResponse resp = new AjaxResponse();
-        String pushDtoJson = "{";
-        if(pushDTO.getAppId() != null) {
-            pushDtoJson += "appId: "+ pushDTO.getAppId() + ",";
+        if(eptService == null){
+            return AjaxResponse.failed(-2);
         }
-        if (pushDTO.getContext() != null) {
-            pushDtoJson+= "context:" + pushDTO.getContext() + ",";
+        try {
+            dto.setContent(JSON.parseArray(pushDTO.getContent(), ResourceDTO.class));
+        }catch (Exception e){
+            return AjaxResponse.failed(-3);
         }
-        if (pushDTO.getTimeout() != null) {
-            pushDtoJson+= "timeout:" + pushDTO.getTimeout().getTime() + ",";
-        }
-        if (pushDTO.getUniqueNo() != null) {
-            pushDtoJson+= "uniqueNo:" + pushDTO.getUniqueNo();
-        }
-        pushDtoJson+= "}";
-        String pushStr = JSONObject.toJSONString(pushDtoJson);
-        System.out.println("pushStr: " + pushStr);
         ResponseData rd = null;
         try {
-            rd = eptService.sendNotification(pushStr);
-            //新增notification记录
-//            System.out.println("rd:"+ rd.toString());
+            rd = eptService.sendNotification(dto);
         } catch (Exception e) {
-            System.out.println("errorMessage:" + e.getMessage());
-            e.printStackTrace();
+            return AjaxResponse.failed(-4);
         }
         if(rd != null && rd.isSuccess()) {
-            resp = AjaxResponse.success();
+            return AjaxResponse.success();
         } else {
-            resp = AjaxResponse.failed(-1);
+            return AjaxResponse.failed(-5);
         }
-        return resp;
     }
 
     @RequestMapping(value = "admin/table/push", method = RequestMethod.POST)
@@ -203,7 +193,7 @@ public class PushController {
         try {
             eptService = serverBootstrap.getClient(OrchidService.class, mbNum);
             String pushTableStr = JSONObject.toJSONString(tableStrTest);
-            rd = eptService.sendNotification(pushTableStr);
+//            rd = eptService.sendNotification(pushTableStr);
             if(rd != null) {
                 resp = AjaxResponse.success();
             } else {

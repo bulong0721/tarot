@@ -4,13 +4,12 @@ angular.module('myee', [])
 /**
  * explorerCtrl - controller
  */
-explorerCtrl.$inject = ['$scope', '$resource', '$filter','cfromly','Constants','toaster','$http'];
-function explorerCtrl($scope, $resource, $filter,cfromly,Constants,toaster,$http) {
+explorerCtrl.$inject = ['$scope', '$resource', '$filter','cfromly','Constants'];
+function explorerCtrl($scope, $resource, $filter,cfromly,Constants) {
 
     var iDatatable = 0, iPush = 1, iEditor = 2;
     $scope.activeTab = iDatatable;
-    var nodeTypes =[{'name':'目录','value':'0'},{'name':'文件','value':'1'}];
-    $scope.treeData = [{path: '/', name: '/', type: 0, salt: 0}];
+    $scope.treeData = [{path: '/', name: '/', type: 0, salt: '/'}];
     $scope.expandField = {field: 'name'};
     $scope.treeColumns = [
         {
@@ -76,8 +75,6 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,toaster,$http
                 add: function (data) {
                     $scope.activeTab = iEditor;
                     $scope.formData1.model.salt = data.salt;
-                    //$scope.formData1.model.entityText = {};
-                    $scope.formData1.model.path = data.path;
                 },
                 edit: function (data) {
                     $scope.activeTab = iEditor;
@@ -90,8 +87,8 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,toaster,$http
                     alert('download:' + data);
                 }
             }
-        },
-];
+        }
+    ];
 
     $scope.handleSelect = function (data) {
         if (data.type == 0) {
@@ -108,11 +105,11 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,toaster,$http
         recursionTree(data, arraySelected);
         var content = "";
         for(var i in arraySelected){
-            content += "{'url': '"+ arraySelected[i].url +"','name': '"+ arraySelected[i].name +"'},";
+            content += '{"url": "'+ arraySelected[i].url +'","name": "'+ arraySelected[i].name +'"},';
         }
         $scope.activeTab = iPush;
         $scope.formData.model.store = {name: Constants.thisMerchantStore.name};
-        $scope.formData.model.context = "[" + content.substr(0,content.length-1) + "]";
+        $scope.formData.model.content = "[" + content + "]";
     };
 
     //递归出所有选中的文件
@@ -160,7 +157,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,toaster,$http
             },
             {key: 'timeout', type: 'datepicker', templateOptions: {label: '过期时间', placeholder: '过期时间',type: 'text', datepickerPopup: 'yyyy-MM-dd', datepickerOptions: {format: 'yyyy-MM-dd'}}},
             {
-                key: 'context',
+                key: 'content',
                 type: 'c_textarea',
                 ngModelAttrs: {
                     style: {attribute: 'style'}
@@ -177,88 +174,22 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,toaster,$http
         }
     };
 
-    var mgrData1 = $scope.mgrData1 = {
-        model:{},
-        options:{},
+    var mgrData1 = {
         fields: [
             {
                 key: 'salt',
                 type: 'c_input',
-                templateOptions: {disabled: true, label: '隐藏ID', placeholder: '隐藏ID'},
-                //hideExpression: function ($viewValue, $modelValue, scope) {
-                //     return true;   //隐藏
-                //}
-            },
-            {
-                id: 'path',
-                key: 'path',
-                type: 'c_input',
-                templateOptions: { disabled: true, label: '绝对路径', placeholder: '绝对路径'}
-            },
-            {
-                id: 'name',
-                key: 'name',
-                type: 'c_input',
-                templateOptions: { required: true, label: '节点名称', placeholder: '节点名称'}
-            },
-            {
-                id: 'currPath',
-                key: 'currPath',
-                type: 'c_input',
-                templateOptions: { required: true, label: '节点路径', placeholder: '节点路径'}
-            },
-            {
-                id: 'type',
-                key: 'type',
-                type: 'c_select',
-                className: 'c_select',
-                templateOptions: { required: true, label: '节点类型',  options: nodeTypes }
-            },
-            {
-                key: 'resFile',
-                type: 'c_input',
-                templateOptions: {type: 'file', label: '节点文件' },
-                hideExpression: function ($viewValue, $modelValue, scope) {
-                    scope.model.entityText?scope.model.entityText:scope.model.entityText={};
-                    if (scope.model.entityText.type == 0 ) {
-                        return true;   //新增文件夹时隐藏文件内容输入框
-                    } else {
-                        return false;  //新增时显示批量修改
-                    }
-                }
-            },
-            {
-                id: 'content',
-                key: 'content',
-                type: 'c_textarea',
-                ngModelAttrs: {
-                    style: {attribute: 'style'}
-                },
-                templateOptions: {label: '文件内容', placeholder: '文件内容',rows: 10,style: 'max-width:500px' },
-                hideExpression: function ($viewValue, $modelValue, scope) {
-                    //scope.model.entityText?scope.model.entityText:scope.model.entityText={};
-                    if (scope.model.type == 0 ) {
-                        return true;   //新增文件夹时隐藏文件内容输入框
-                    } else {
-                        return false;  //新增时显示批量修改
-                    }
-                }
-            },
+                templateOptions: {disabled: true, label: '隐藏ID', placeholder: '隐藏ID'}
+            }
         ],
         api: {
+            //read: '../device/used/paging',
             create: '../admin/file/create',
             //delete: '../device/used/delete',
             //updateAttr: '../device/used/attribute/save',
             //deleteAttr: '../device/used/attribute/delete',
         }
     };
-    //lingshi
-    $scope.formData = null;
-    var unlisten = $scope.$on('fileToUpload', function(event, arg) {
-        $scope.formData = arg;
-    });
-    $scope.$on('$destroy', unlisten);
-    //lingshi end
 
     //formly配置项push
     $scope.formData = {
@@ -273,10 +204,9 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,toaster,$http
     //formly提交
     $scope.pushSubmit = function () {
         var formly = $scope.formData;
-        console.log(formly);
+        console.log(formly)
         if (formly.form.$valid) {
-            //formly.options.updateInitialValue();
-            console.log(formly.fields.uniqueNo);
+            formly.options.updateInitialValue();
             $resource(mgrData.api.push).save({}, formly.model).$promise.then(saveSuccess, saveFailed);
         }
     };
@@ -284,22 +214,10 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,toaster,$http
     //formly提交
     $scope.editorSubmit = function () {
         var formly = $scope.formData1;
-        //console.log(formly)
+        console.log(formly)
         if (formly.form.$valid) {
-            //formly.options.updateInitialValue();
-            //if(!formly.model.resFile)formly.model.resFile="";
-            if(formly.model.resFile){
-                //需要优化 $http改成$resource方式 to macky
-                $http.post(mgrData1.api.create, $scope.formData, {
-                    withCreadential: true,
-                    headers: {'Content-Type': undefined, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Origin': '*',},
-                    transformRequest: angular.identity
-                }).then(function(res){
-                    console.log(res)
-                });
-            }
-            if(!formly.model.salt)formly.model.salt=0;
-            $resource(mgrData1.api.create).save({}, formly.model).$promise.then(saveSuccess, saveFailed);
+            formly.options.updateInitialValue();
+            $resource(mgrData.api.create).save({}, formly.model).$promise.then(saveSuccess, saveFailed);
         }
     };
 
@@ -310,17 +228,10 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,toaster,$http
 
     //成功后调用
     function saveSuccess(response) {
-        if (0 == response.status) {
-            toaster.success({ body:"推送成功！"});
-            goDataTable();
-        }
+
     }
 
     //失败调用
     function saveFailed(response) {
-        if (0 != response.status) {
-            toaster.warning({ body:"推送成功！"});
-            return;
-        }
     }
 }

@@ -22,7 +22,7 @@ function constServiceCtor($resource, $q) {
     //    });
     //    return deferred.promise;
     //}
-    console.log(vm.merchantType);
+
     //切换门店
     vm.thisMerchantStore = {};
     vm.getSwitchMerchantStore = function () {
@@ -325,8 +325,8 @@ function cfromlyService(formlyConfig, $window) {
     });
 }
 /*
-* cAlerts
-* */
+ * cAlerts
+ * */
 
 function cAlerts($uibModal){
     return {
@@ -343,19 +343,6 @@ function cAlerts($uibModal){
                     $scope.cancel = function(){
                         $uibModalInstance.dismiss('cancel');
                         cancel();
-                    }
-                },
-                size: 'sm'
-            });
-        },
-        info:function(titile,ok){
-            $uibModal.open({
-                animation: false,
-                template: '<alerts data-title="'+titile+'"></alerts>',
-                controller: function($scope,$uibModalInstance){
-                    $scope.ok = function(){
-                        $uibModalInstance.close();
-                        ok();
                     }
                 },
                 size: 'sm'
