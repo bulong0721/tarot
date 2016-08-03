@@ -6,17 +6,19 @@ import com.myee.djinn.server.operations.OperationsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 /**
  * Created by Ray.Fu on 2016/6/30.
  */
 @Service
+@Scope("singleton")
 public class BootStrapFactoryBean extends AbstractFactoryBean<ServerBootstrap> {
     @Value("${djinn.port}")
     private int               djinnPort;
     @Autowired
-    private OperationsService optService;
+    private OperationsService operationsService;
 
     private static ServerBootstrap instance;
 
@@ -33,7 +35,7 @@ public class BootStrapFactoryBean extends AbstractFactoryBean<ServerBootstrap> {
             instance = new ServerBootstrap(nettyServerConfig);
             instance.initialize();
             try {
-                instance.export(optService, OperationsService.class);
+                instance.export(operationsService, OperationsService.class);
             } catch (Exception e) {
                 e.printStackTrace();
             }

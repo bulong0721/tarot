@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * explorerCtrl - controller
  */
-explorerCtrl.$inject = ['$scope', '$resource', '$filter','cfromly','Constants','cAlerts'];
-function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts) {
+explorerCtrl.$inject = ['$scope', '$resource', '$filter','cfromly','Constants','cAlerts','toaster'];
+function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts, toaster) {
 
     var iDatatable = 0, iPush = 1, iEditor = 2;
     $scope.activeTab = iDatatable;
@@ -92,9 +92,14 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts) {
 
     $scope.handleSelect = function (data) {
         if (data.type == 0) {
-            $resource('../admin/file/search').get({node: data.path}, {}, function success(resp) {
-                angular.merge(data.children, resp.rows);
-            });
+            //$resource('../admin/file/search').get({node: data.path}, {}, function success(resp) {
+            //    angular.merge(data.children, resp.rows);
+            //});
+            $resource('../admin/file/search').save({node: data.path}, {}).$promise.then(
+                function success(resp) {
+                    angular.merge(data.children, resp.rows);
+                }
+            );
         }
     };
 
@@ -103,6 +108,10 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts) {
         var arraySelected = [];
         var data = $scope.treeData;
         recursionTree(data, arraySelected);
+        if(arraySelected.length == 0){
+            toaster.warning({ body:"请选择文件！"});
+            return;
+        }
         var content = "";
         for(var i in arraySelected){
             content += '{"url": "'+ arraySelected[i].url +'","name": "'+ arraySelected[i].name +'"},';
@@ -168,7 +177,6 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts) {
         api: {
             //read: '../device/used/paging',
             push: '../admin/file/push',
-            //export: '../admin/file/export',
             download: '../admin/file/download',
             delete: '../admin/file/delete',
         }
@@ -186,8 +194,6 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts) {
             //read: '../device/used/paging',
             create: '../admin/file/create',
             //delete: '../device/used/delete',
-            //updateAttr: '../device/used/attribute/save',
-            //deleteAttr: '../device/used/attribute/delete',
         }
     };
 
@@ -207,7 +213,23 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts) {
         console.log(formly)
         if (formly.form.$valid) {
             formly.options.updateInitialValue();
-            $resource(mgrData.api.push).save({}, formly.model).$promise.then(saveSuccess, saveFailed);
+            $resource(mgrData.api.push).save({}, formly.model).$promise.then(
+                function success(resp) {
+                    if(resp != null && resp.status == 0){
+                        toaster.success({ body:"发送成功"});
+                    }else if(resp != null && resp.status == -1){
+                        toaster.error({ body:"连接客户端错误"});
+                    }else if(resp != null && resp.status == -2){
+                        toaster.error({ body:"获取接口出错"});
+                    }else if(resp != null && resp.status == -3){
+                        toaster.error({ body:"推送内容格式错误"});
+                    }else if(resp != null && resp.status == -4){
+                        toaster.error({ body:"客户端不存在"});
+                    }else if(resp != null && resp.status == -5){
+                        toaster.error({ body:"发送失败，客户端出错"});
+                    }
+                }
+            );
         }
     };
 
@@ -244,10 +266,11 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts) {
 
     //成功后调用
     function saveSuccess(response) {
-
+        alert("success");
     }
 
     //失败调用
     function saveFailed(response) {
+        alert("fail");
     }
 }
