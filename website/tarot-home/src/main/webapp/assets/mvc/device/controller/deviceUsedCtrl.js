@@ -190,7 +190,7 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
                 hideExpression: '!model.ifBatch'
             },
             {key: 'heartbeat', type: 'c_input', templateOptions: {label: '心跳', placeholder: '心跳'}},
-            {key: 'boardNo', type: 'c_input', templateOptions: {label: '主板编号', placeholder: '主板编号'}},
+            {key: 'boardNo', type: 'c_input', templateOptions: {label: '主板编号', placeholder: '主板编号',required: true}},
             {key: 'deviceNum', type: 'c_input', templateOptions: {label: '设备号', placeholder: '设备号'}},
             {key: 'description', type: 'c_input', templateOptions: {label: '描述', placeholder: '描述'}},
             {
