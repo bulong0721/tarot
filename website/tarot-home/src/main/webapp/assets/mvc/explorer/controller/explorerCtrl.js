@@ -83,7 +83,12 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 },
                 edit: function (data) {
                     $scope.activeTab = iEditor;
-                    $scope.formData1.model.salt = data.salt;
+                    $scope.formData1.model = {
+                        salt:data.salt,
+                        name:data.name,
+                        path:data.path,
+                        currPath:data.path,
+                    }
                 },
                 delete: function (data) {
                     $scope.delete(data.salt,data.path);
@@ -219,9 +224,21 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 type: 'upload',
                 templateOptions: {required: false,type: 'file', label: '节点文件' },
                 hideExpression: function ($viewValue, $modelValue, scope) {
-                    //scope.model.entityText?scope.model.entityText:scope.model.entityText={};
                     return scope.model.type == 0?true:false;//true新增文件夹时隐藏文件内容输入框 false新增时显示批量修改
+                },
+                expressionProperties: {
+                    'templateOptions.disabled': 'model.ifEditor' // disabled when ifEditor is true
                 }
+            },
+            {
+                key: 'ifEditor',
+                type: 'c_input',
+                className:'formly-min-checkbox',
+                templateOptions: {label: '文本编辑', required: false, type: 'checkbox'},
+                defaultValue: false,
+                hideExpression: function ($viewValue, $modelValue, scope) {
+                    return scope.model.type == 0?true:false;//新增文件夹时隐藏
+                },
             },
             {
                 id: 'content',
@@ -230,10 +247,12 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 ngModelAttrs: {
                     style: {attribute: 'style'}
                 },
-                templateOptions: {label: '文件内容', placeholder: '文件内容',rows: 10,style: 'max-width:500px' },
+                templateOptions: {disabled : true,label: '文件内容', placeholder: '文件内容',rows: 10,style: 'max-width:500px' },
                 hideExpression: function ($viewValue, $modelValue, scope) {
-                    //scope.model.entityText?scope.model.entityText:scope.model.entityText={};
                     return scope.model.type == 0?true:false;//true新增文件夹时隐藏文件内容输入框 false新增时显示批量修改
+                },
+                expressionProperties: {
+                    'templateOptions.disabled': '!model.ifEditor' // disabled when ifEditor is false
                 }
             }
         ],
