@@ -2,7 +2,6 @@ package com.myee.tarot.web.files.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.myee.djinn.dto.PushResourceDTO;
@@ -13,7 +12,6 @@ import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
-import com.myee.tarot.customer.service.CustomerUserDetails;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.apiold.BusinessException;
 import com.myee.tarot.web.files.vo.FileItem;
@@ -52,7 +50,7 @@ public class PushController {
     @Autowired
     private ServerBootstrap serverBootstrap;
 
-    @RequestMapping("admin/file/search")
+    @RequestMapping(value = "admin/file/search" , method = RequestMethod.POST)
     @ResponseBody
     public AjaxPageableResponse searchResource(@RequestParam("node") String parentNode, HttpServletRequest request) {
 //        if ("/".equals(parentNode)) {
@@ -175,6 +173,9 @@ public class PushController {
     public AjaxResponse pushResource(@Valid @RequestBody PushDTO pushDTO) {
         AjaxResponse resp = new AjaxResponse();
         PushResourceDTO dto = new PushResourceDTO();
+        dto.setUniqueNo(pushDTO.getUniqueNo());
+        dto.setAppId(pushDTO.getAppId());
+        dto.setTimeout(pushDTO.getTimeout());
         OrchidService eptService = null;
         try {
             eptService = serverBootstrap.getClient(OrchidService.class, pushDTO.getUniqueNo());
@@ -212,7 +213,7 @@ public class PushController {
         ResponseData rd = null;
         AjaxResponse resp = new AjaxResponse();
         try {
-            eptService = serverBootstrap.getClient(OrchidService.class, mbNum);
+//            eptService = serverBootstrap.getClient(OrchidService.class, mbNum);
             String pushTableStr = JSONObject.toJSONString(tableStrTest);
 //            rd = eptService.sendNotification(pushTableStr);
             if(rd != null) {
