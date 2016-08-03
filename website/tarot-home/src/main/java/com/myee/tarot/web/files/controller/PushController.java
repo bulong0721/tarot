@@ -16,6 +16,7 @@ import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.customer.service.CustomerUserDetails;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.apiold.BusinessException;
+import com.myee.tarot.web.files.vo.CreateDTO;
 import com.myee.tarot.web.files.vo.FileItem;
 import com.myee.tarot.web.files.vo.PushDTO;
 import com.myee.tarot.web.util.StringUtil;
@@ -28,6 +29,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -73,18 +75,24 @@ public class PushController {
 
     @RequestMapping("admin/file/create")
     @ResponseBody
-    public FileItem createResource(long orgID, @RequestParam("resFile") CommonsMultipartFile file, String entityText) throws IllegalStateException, IOException {
+    public FileItem createResource( @RequestParam("file") CommonsMultipartFile file, @RequestParam("entityText") String entityText) throws IllegalStateException, IOException {
         FileItem vo = JSON.parseObject(entityText, FileItem.class);
-        File dest = getResFile(orgID, vo.getPath());
-        vo.setSalt(orgID);
+        Long orgID = vo.getSalt();
+        File dest = FileUtils.getFile(DOWNLOAD_HOME, Long.toString(orgID), vo.getPath(), vo.getCurrPath());
         if (1 == vo.getType()) {
             dest.mkdirs();
-        } else
+        }
         if (!file.isEmpty()) {
-            dest.mkdirs();
-            file.transferTo(dest);
-        } else if (!StringUtil.isNullOrEmpty(vo.getContent(), true)) {
-            FileUtils.writeStringToFile(dest, vo.getContent());
+            String fileName = file.getFileItem().getName();
+            File desFile = new File(dest+File.separator+fileName);
+            desFile.createNewFile();
+            file.transferTo(desFile);
+        }
+        if (!StringUtil.isNullOrEmpty(vo.getContent(), true)) {
+            String name = vo.getName();
+            File desFile = new File(dest+File.separator+name);
+            desFile.createNewFile();
+            FileUtils.writeStringToFile(desFile, vo.getContent());
         }
         return vo;
     }
