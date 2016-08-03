@@ -4,11 +4,12 @@ angular.module('myee', [])
 /**
  * explorerCtrl - controller
  */
-explorerCtrl.$inject = ['$scope', '$resource', '$filter','cfromly','Constants','cAlerts'];
-function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts) {
+explorerCtrl.$inject = ['$scope', '$resource', '$filter','cfromly','Constants','cAlerts','toaster','$http'];
+function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toaster,$http) {
 
     var iDatatable = 0, iPush = 1, iEditor = 2;
     $scope.activeTab = iDatatable;
+    var nodeTypes =[{'name':'目录','value':'0'},{'name':'文件','value':'1'}];
     $scope.treeData = [{path: '/', name: '/', type: 0, salt: '/'}];
     $scope.expandField = {field: 'name'};
     $scope.treeColumns = [
@@ -75,6 +76,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts) {
                 add: function (data) {
                     $scope.activeTab = iEditor;
                     $scope.formData1.model.salt = data.salt;
+                    $scope.formData1.model.path = data.path;
                 },
                 edit: function (data) {
                     $scope.activeTab = iEditor;
@@ -109,7 +111,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts) {
         }
         $scope.activeTab = iPush;
         $scope.formData.model.store = {name: Constants.thisMerchantStore.name};
-        $scope.formData.model.content = "[" + content + "]";
+        $scope.formData.model.content = "[" + content.substr(0,content.length-1)  + "]";
     };
 
     //递归出所有选中的文件
@@ -179,7 +181,65 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts) {
             {
                 key: 'salt',
                 type: 'c_input',
-                templateOptions: {disabled: true, label: '隐藏ID', placeholder: '隐藏ID'}
+                templateOptions: {disabled: true, label: '隐藏ID', placeholder: '隐藏ID'},
+                hideExpression: function ($viewValue, $modelValue, scope) {
+                    return true;   //隐藏
+                }
+            },
+            {
+                id: 'path',
+                key: 'path',
+                type: 'c_input',
+                templateOptions: { disabled: true, label: '绝对路径', placeholder: '绝对路径'}
+            },
+            {
+                id: 'name',
+                key: 'name',
+                type: 'c_input',
+                templateOptions: { required: true, label: '节点名称', placeholder: '节点名称'}
+            },
+            {
+                id: 'currPath',
+                key: 'currPath',
+                type: 'c_input',
+                templateOptions: { required: true, label: '节点路径', placeholder: '节点路径'}
+            },
+            {
+                id: 'type',
+                key: 'type',
+                type: 'c_select',
+                className: 'c_select',
+                templateOptions: { required: true, label: '节点类型',  options: nodeTypes }
+            },
+            {
+                key: 'resFile',
+                type: 'upload',
+                templateOptions: {required: false,type: 'file', label: '节点文件' },
+                hideExpression: function ($viewValue, $modelValue, scope) {
+                    //scope.model.entityText?scope.model.entityText:scope.model.entityText={};
+                    if (scope.model.type == 0 ) {
+                        return true;   //新增文件夹时隐藏文件内容输入框
+                    } else {
+                        return false;  //新增时显示批量修改
+                    }
+                }
+            },
+            {
+                id: 'content',
+                key: 'content',
+                type: 'c_textarea',
+                ngModelAttrs: {
+                    style: {attribute: 'style'}
+                },
+                templateOptions: {label: '文件内容', placeholder: '文件内容',rows: 10,style: 'max-width:500px' },
+                hideExpression: function ($viewValue, $modelValue, scope) {
+                    //scope.model.entityText?scope.model.entityText:scope.model.entityText={};
+                    if (scope.model.type == 0 ) {
+                        return true;   //新增文件夹时隐藏文件内容输入框
+                    } else {
+                        return false;  //新增时显示批量修改
+                    }
+                }
             }
         ],
         api: {
@@ -190,7 +250,6 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts) {
             //deleteAttr: '../device/used/attribute/delete',
         }
     };
-
     //formly配置项push
     $scope.formData = {
         fields: mgrData.fields
@@ -228,14 +287,52 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts) {
     };
 
     //formly提交
+    //$scope.editorSubmit = function () {
+    //    var formly = $scope.formData1;
+    //    console.log(formly)
+    //    if (formly.form.$valid) {
+    //        formly.options.updateInitialValue();
+    //        $resource(mgrData.api.create).save({}, formly.model).$promise.then(saveSuccess, saveFailed);
+    //    }
+    //};
+
+    //formly提交
     $scope.editorSubmit = function () {
         var formly = $scope.formData1;
-        console.log(formly)
+        //console.log(formly)
+        //console.log(formly.model)
         if (formly.form.$valid) {
-            formly.options.updateInitialValue();
-            $resource(mgrData.api.create).save({}, formly.model).$promise.then(saveSuccess, saveFailed);
+            //$scope.formData1.options.updateInitialValue();
+            //console.log(formly.model)
+            $http.post(mgrData1.api.create, $scope.formData_11, {
+                withCreadential: true,
+                headers: {
+                    'Content-Type': undefined,
+                    'Access-Control-Allow-Methods': '*',
+                    'Access-Control-Allow-Origin': '*',
+                },
+                transformRequest: angular.identity
+            }).success(function(){
+                //formly.options.updateInitialValue();
+                $scope.goDataTable();
+                }).then(function(res){
+                console.log(res)
+            });
+            /*$resource(mgrData1.api.create).save({}, $scope.formData,{withCreadential: true,
+             headers: {
+             'Content-Type': undefined,
+             'Access-Control-Allow-Methods': '*',
+             'Access-Control-Allow-Origin': '*',
+             },
+             transformRequest: angular.identity}).$promise.then(saveSuccess, saveFailed);*/
         }
     };
+    $scope.formData_11 = null;
+    var unlisten = $scope.$on('fileToUpload', function(event, arg) {
+        arg.append('entityText', JSON.stringify($scope.formData1.model));
+        $scope.formData_11 = arg;
+    });
+    $scope.$on('$destroy', unlisten);
 
     //formly返回
     $scope.goDataTable = function () {
@@ -244,10 +341,17 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts) {
 
     //成功后调用
     function saveSuccess(response) {
-
+        if (0 == response.status) {
+            toaster.success({ body:"推送成功！"});
+            goDataTable();
+        }
     }
 
     //失败调用
     function saveFailed(response) {
+        if (0 != response.status) {
+            toaster.warning({ body:"推送成功！"});
+            return;
+        }
     }
 }
