@@ -16,7 +16,6 @@ import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.customer.service.CustomerUserDetails;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.apiold.BusinessException;
-import com.myee.tarot.web.files.vo.CreateDTO;
 import com.myee.tarot.web.files.vo.FileItem;
 import com.myee.tarot.web.files.vo.PushDTO;
 import com.myee.tarot.web.util.StringUtil;
@@ -75,7 +74,7 @@ public class PushController {
 
     @RequestMapping("admin/file/create")
     @ResponseBody
-    public FileItem createResource( @RequestParam("file") CommonsMultipartFile file, @RequestParam("entityText") String entityText) throws IllegalStateException, IOException {
+    public FileItem createResource( @RequestParam(value="file",required = false) CommonsMultipartFile file, @RequestParam("entityText") String entityText) throws IllegalStateException, IOException {
         FileItem vo = JSON.parseObject(entityText, FileItem.class);
         Long orgID = vo.getSalt();
         File dest = FileUtils.getFile(DOWNLOAD_HOME, Long.toString(orgID), vo.getPath(), vo.getCurrPath());

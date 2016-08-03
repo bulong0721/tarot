@@ -217,11 +217,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 templateOptions: {required: false,type: 'file', label: '节点文件' },
                 hideExpression: function ($viewValue, $modelValue, scope) {
                     //scope.model.entityText?scope.model.entityText:scope.model.entityText={};
-                    if (scope.model.type == 0 ) {
-                        return true;   //新增文件夹时隐藏文件内容输入框
-                    } else {
-                        return false;  //新增时显示批量修改
-                    }
+                    return scope.model.type == 0?true:false;//true新增文件夹时隐藏文件内容输入框 false新增时显示批量修改
                 }
             },
             {
@@ -234,11 +230,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 templateOptions: {label: '文件内容', placeholder: '文件内容',rows: 10,style: 'max-width:500px' },
                 hideExpression: function ($viewValue, $modelValue, scope) {
                     //scope.model.entityText?scope.model.entityText:scope.model.entityText={};
-                    if (scope.model.type == 0 ) {
-                        return true;   //新增文件夹时隐藏文件内容输入框
-                    } else {
-                        return false;  //新增时显示批量修改
-                    }
+                    return scope.model.type == 0?true:false;//true新增文件夹时隐藏文件内容输入框 false新增时显示批量修改
                 }
             }
         ],
@@ -300,37 +292,30 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
     $scope.editorSubmit = function () {
         var formly = $scope.formData1;
         //console.log(formly)
-        //console.log(formly.model)
+        //console.log(formly.model);
         if (formly.form.$valid) {
             //$scope.formData1.options.updateInitialValue();
             //console.log(formly.model)
-            $http.post(mgrData1.api.create, $scope.formData_11, {
+            var  addFile = $scope.formData_addFile;
+            if(!addFile){
+                addFile = new FormData();
+            }
+            addFile.append('entityText', JSON.stringify($scope.formData1.model));
+
+            $http.post(mgrData1.api.create, addFile, {
                 withCreadential: true,
-                headers: {
-                    'Content-Type': undefined,
-                    'Access-Control-Allow-Methods': '*',
-                    'Access-Control-Allow-Origin': '*',
-                },
+                headers: {'Content-Type': undefined, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Origin': '*'},
                 transformRequest: angular.identity
             }).success(function(){
                 //formly.options.updateInitialValue();
                 $scope.goDataTable();
-                }).then(function(res){
-                console.log(res)
             });
-            /*$resource(mgrData1.api.create).save({}, $scope.formData,{withCreadential: true,
-             headers: {
-             'Content-Type': undefined,
-             'Access-Control-Allow-Methods': '*',
-             'Access-Control-Allow-Origin': '*',
-             },
-             transformRequest: angular.identity}).$promise.then(saveSuccess, saveFailed);*/
+            /*$resource(mgrData1.api.create).save({}, $scope.formData).$promise.then(saveSuccess, saveFailed);*/
         }
     };
-    $scope.formData_11 = null;
+    $scope.formData_addFile = null;
     var unlisten = $scope.$on('fileToUpload', function(event, arg) {
-        arg.append('entityText', JSON.stringify($scope.formData1.model));
-        $scope.formData_11 = arg;
+        $scope.formData_addFile = arg;
     });
     $scope.$on('$destroy', unlisten);
 
