@@ -16,7 +16,6 @@ import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.customer.service.CustomerUserDetails;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.apiold.BusinessException;
-import com.myee.tarot.web.files.vo.CreateDTO;
 import com.myee.tarot.web.files.vo.FileItem;
 import com.myee.tarot.web.files.vo.PushDTO;
 import com.myee.tarot.web.util.StringUtil;
