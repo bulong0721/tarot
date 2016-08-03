@@ -80,6 +80,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                         salt:data.salt,
                         path:data.path
                     }
+                    //$scope.current = data;
                 },
                 edit: function (data) {
                     $scope.activeTab = iEditor;
@@ -212,13 +213,13 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 type: 'c_input',
                 templateOptions: { required: true, label: '节点路径', placeholder: '节点路径'}
             },
-            {
-                id: 'type',
-                key: 'type',
-                type: 'c_select',
-                className: 'c_select',
-                templateOptions: { required: true, label: '节点类型',  options: nodeTypes }
-            },
+            //{
+            //    id: 'type',
+            //    key: 'type',
+            //    type: 'c_select',
+            //    className: 'c_select',
+            //    templateOptions: { required: true, label: '节点类型',  options: nodeTypes }
+            //},
             {
                 key: 'resFile',
                 type: 'upload',
@@ -323,7 +324,6 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 addFile = new FormData();
             }
             addFile.append('entityText', JSON.stringify($scope.formData1.model));
-
             $http.post(mgrData1.api.create, addFile, {
                 withCreadential: true,
                 headers: {'Content-Type': undefined, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Origin': '*'},
@@ -332,6 +332,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 //formly.options.updateInitialValue();
                 $scope.goDataTable();
             });
+
             /*$resource(mgrData1.api.create).save({}, $scope.formData).$promise.then(saveSuccess, saveFailed);*/
         }
     };

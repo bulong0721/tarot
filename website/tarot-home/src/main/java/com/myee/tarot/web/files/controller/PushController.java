@@ -78,7 +78,7 @@ public class PushController {
         FileItem vo = JSON.parseObject(entityText, FileItem.class);
         Long orgID = vo.getSalt();
         File dest = FileUtils.getFile(DOWNLOAD_HOME, Long.toString(orgID), vo.getPath(), vo.getCurrPath());
-        if (1 == vo.getType()) {
+        if (!dest.exists()) {
             dest.mkdirs();
         }
         if (file != null && !file.isEmpty()) {
