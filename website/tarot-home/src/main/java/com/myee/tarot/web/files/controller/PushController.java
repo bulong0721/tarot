@@ -100,14 +100,17 @@ public class PushController {
     public AjaxResponse deleteResource(@RequestParam("salt") Long orgID, @RequestParam("path") String path, HttpServletRequest request) {
         File resFile = getResFile(orgID, path);
         boolean flag = false;
+        Map map = new HashMap();
+        AjaxResponse ajaxResponse = new AjaxResponse();
         if(resFile.isDirectory()) {
             if(getFiles(resFile)) {
                 flag = false;
+                map.put("message",flag);
+                ajaxResponse.addDataEntry(map);
+                return ajaxResponse;
             }
         }
         boolean isCopy = copyToRecycle(resFile);//复制文件到回收站
-        Map map = new HashMap();
-        AjaxResponse ajaxResponse = new AjaxResponse();
         if(isCopy) { //复制成功后执行删除
             MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
             if (store.getId() != orgID) {
