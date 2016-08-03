@@ -227,6 +227,7 @@ public class DeviceController {
             resp.setRecordsTotal(pageResult.getRecordsTotal());
         } catch (Exception e) {
             LOGGER.error("Error while paging products", e);
+            resp.setErrorString("出错");
         }
         return resp;
     }
@@ -272,22 +273,29 @@ public class DeviceController {
                 resp.setErrorString("结束编号不能小于开始编号");
                 return resp;
             }
+            if(deviceUsed.getBoardNo() == null || "".equals(deviceUsed.getBoardNo())){
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("主板编号不能为空");
+                return resp;
+            }
             MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
 
             List<Object> updateResult = new ArrayList<Object>();
             deviceUsed.setStore(merchantStore1);
             //校验主板编号
             DeviceUsed dU = deviceUsedService.getStoreInfoByMbCode(deviceUsed.getBoardNo());
-            if (dU != null) {
+            if (dU != null && dU.getId() != deviceUsed.getId()) { //编辑时排除当前设备
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("已存在的主板编号");
                 return resp;
             }
             if(autoEnd != null && autoStart !=null &&  autoEnd >= 0 && autoStart >= 0 ){//批量新增
                 String commonName = deviceUsed.getName();
+                String commonBoardNo = deviceUsed.getBoardNo();
                 for(Long i=autoStart;i < autoEnd+1;i++){
                     DeviceUsed deviceUsedResult = new DeviceUsed();
                     deviceUsed.setName(commonName + i);
+                    deviceUsed.setBoardNo(String.valueOf(System.currentTimeMillis())+"auto" +commonBoardNo+ i);
                     deviceUsedResult = deviceUsedService.update(deviceUsed);
                     updateResult.add(objectToEntry(deviceUsedResult));
                 }
@@ -360,10 +368,9 @@ public class DeviceController {
         entry.put("name",deviceUsed.getName());
         entry.put("heartbeat",deviceUsed.getHeartbeat());
         entry.put("boardNo",deviceUsed.getBoardNo());
-        entry.put("deviceNum",deviceUsed.getDeviceNum());
+        entry.put("deviceNum", deviceUsed.getDeviceNum());
         entry.put("description",deviceUsed.getDescription());
-        deviceUsed.getDevice().setAttributes(null);
-        entry.put("device",deviceUsed.getDevice());
+
         if(deviceUsed.getProductUsed() != null ){
             for(ProductUsed productUsed : deviceUsed.getProductUsed()){
                 productUsed.setDeviceUsed(null);
@@ -371,14 +378,32 @@ public class DeviceController {
             }
         }
         entry.put("productUsedList",deviceUsed.getProductUsed());
-        List<AttributeDTO> attributeDTOs = Lists.transform(deviceUsed.getAttributes(), new Function<DeviceUsedAttribute, AttributeDTO>() {
+
+        //把device的属性作为公共属性传到前端
+//        List<AttributeDTO> attributeDTOs = Lists.transform(deviceUsed.getDevice().getAttributes(), new Function<DeviceAttribute, AttributeDTO>() {
+//            @Nullable
+//            @Override
+//            public AttributeDTO apply(DeviceAttribute input) {
+//                input.setId(0L);//公共属性的id设为0，前端不显示编辑和删除按钮
+//                return new AttributeDTO(input);
+//            }
+//        });
+
+        //清空关联的设备类型的属性，防止前端无限循环
+        deviceUsed.getDevice().setAttributes(null);
+        entry.put("device", deviceUsed.getDevice());
+
+        //把deviceUsed的私有属性传到前端
+        List<AttributeDTO> attributePrivateDTOs = Lists.transform(deviceUsed.getAttributes(), new Function<DeviceUsedAttribute, AttributeDTO>() {
             @Nullable
             @Override
             public AttributeDTO apply(DeviceUsedAttribute input) {
                 return new AttributeDTO(input);
             }
         });
-        entry.put("attributes", attributeDTOs);
+//        attributeDTOs.addAll(attributePrivateDTOs);
+//        entry.put("attributes", attributeDTOs);
+        entry.put("attributes", attributePrivateDTOs);
         return entry;
     }
 
@@ -404,25 +429,6 @@ public class DeviceController {
 
     @RequestMapping(value = "device/used/attribute/delete", method = RequestMethod.POST)
     @ResponseBody
-//    public AjaxResponse deleteAttributeDevice(@RequestParam Long id, HttpServletRequest request) throws Exception {
-//        AjaxResponse resp = new AjaxResponse();
-//        try {
-//            if (StringUtil.isNullOrEmpty(id.toString())) {
-//                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-//                resp.setErrorString("参数不能为空");
-//                return resp;
-//            }
-//            DeviceUsedAttribute deviceAttribute = deviceUsedAttributeService.findById(id);
-//            deviceUsedAttributeService.delete(deviceAttribute);
-//            return AjaxResponse.success();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            resp.setErrorString("删除产品属性异常");
-//            LOGGER.error("Error delete productAttributes", e);
-//        }
-//        return resp;
-//
-//    }
     public AjaxResponse deleteAttribute(@Valid @RequestBody DeviceUsedAttribute attribute,  HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {

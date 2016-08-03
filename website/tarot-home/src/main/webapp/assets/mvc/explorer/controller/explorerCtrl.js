@@ -4,11 +4,12 @@ angular.module('myee', [])
 /**
  * explorerCtrl - controller
  */
-explorerCtrl.$inject = ['$scope', '$resource', '$filter','cfromly','Constants','cAlerts','toaster'];
-function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts, toaster) {
+explorerCtrl.$inject = ['$scope', '$resource', '$filter','cfromly','Constants','cAlerts','toaster','$http'];
+function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toaster,$http) {
 
     var iDatatable = 0, iPush = 1, iEditor = 2;
     $scope.activeTab = iDatatable;
+    var nodeTypes =[{'name':'目录','value':'0'},{'name':'文件','value':'1'}];
     $scope.treeData = [{path: '/', name: '/', type: 0, salt: '/'}];
     $scope.expandField = {field: 'name'};
     $scope.treeColumns = [
@@ -73,12 +74,21 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts, toas
             '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-ban" title="文件夹不能下载"></i></a>',
             cellTemplateScope: {
                 add: function (data) {
+                    $scope.formData1.options.resetModel();
                     $scope.activeTab = iEditor;
-                    $scope.formData1.model.salt = data.salt;
+                    $scope.formData1.model ={
+                        salt:data.salt,
+                        path:data.path
+                    }
                 },
                 edit: function (data) {
                     $scope.activeTab = iEditor;
-                    $scope.formData1.model.salt = data.salt;
+                    $scope.formData1.model = {
+                        salt:data.salt,
+                        name:data.name,
+                        path:data.path,
+                        currPath:data.path,
+                    }
                 },
                 delete: function (data) {
                     $scope.delete(data.salt,data.path);
@@ -92,9 +102,6 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts, toas
 
     $scope.handleSelect = function (data) {
         if (data.type == 0) {
-            //$resource('../admin/file/search').get({node: data.path}, {}, function success(resp) {
-            //    angular.merge(data.children, resp.rows);
-            //});
             $resource('../admin/file/search').save({node: data.path}, {}).$promise.then(
                 function success(resp) {
                     angular.merge(data.children, resp.rows);
@@ -118,7 +125,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts, toas
         }
         $scope.activeTab = iPush;
         $scope.formData.model.store = {name: Constants.thisMerchantStore.name};
-        $scope.formData.model.content = "[" + content + "]";
+        $scope.formData.model.content = "[" + content.substr(0,content.length-1)  + "]";
     };
 
     //递归出所有选中的文件
@@ -187,7 +194,71 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts, toas
             {
                 key: 'salt',
                 type: 'c_input',
-                templateOptions: {disabled: true, label: '隐藏ID', placeholder: '隐藏ID'}
+                templateOptions: {disabled: true, label: '隐藏ID', placeholder: '隐藏ID'},
+                hideExpression: function ($viewValue, $modelValue, scope) {
+                    return true;   //隐藏
+                }
+            },
+            {
+                id: 'path',
+                key: 'path',
+                type: 'c_input',
+                templateOptions: { disabled: true, label: '绝对路径', placeholder: '绝对路径'}
+            },
+            {
+                id: 'name',
+                key: 'name',
+                type: 'c_input',
+                templateOptions: { required: true, label: '节点名称', placeholder: '节点名称'}
+            },
+            {
+                id: 'currPath',
+                key: 'currPath',
+                type: 'c_input',
+                templateOptions: { required: true, label: '节点路径', placeholder: '节点路径'}
+            },
+            {
+                id: 'type',
+                key: 'type',
+                type: 'c_select',
+                className: 'c_select',
+                templateOptions: { required: true, label: '节点类型',  options: nodeTypes }
+            },
+            {
+                key: 'resFile',
+                type: 'upload',
+                templateOptions: {required: false,type: 'file', label: '节点文件' },
+                hideExpression: function ($viewValue, $modelValue, scope) {
+                    return scope.model.type == 0?true:false;//true新增文件夹时隐藏文件内容输入框 false新增时显示批量修改
+                },
+                expressionProperties: {
+                    'templateOptions.disabled': 'model.ifEditor' // disabled when ifEditor is true
+                }
+            },
+            {
+                key: 'ifEditor',
+                type: 'c_input',
+                className:'formly-min-checkbox',
+                templateOptions: {label: '文本编辑', required: false, type: 'checkbox'},
+                defaultValue: false,
+                hideExpression: function ($viewValue, $modelValue, scope) {
+                    return scope.model.type == 0?true:false;//新增文件夹时隐藏
+                },
+            },
+            {
+                id: 'content',
+                key: 'content',
+                type: 'c_textarea',
+                ngModelAttrs: {
+                    style: {attribute: 'style'}
+                },
+                templateOptions: {disabled : true,label: '文件内容', placeholder: '文件内容',rows: 10,style: 'max-width:500px' },
+                hideExpression: function ($viewValue, $modelValue, scope) {
+                    return scope.model.type == 0?true:false;//true新增文件夹时隐藏文件内容输入框 false新增时显示批量修改
+                },
+                expressionProperties: {
+                    'templateOptions.disabled': '!model.ifEditor' // disabled when ifEditor is false
+                }
             }
         ],
         api: {
@@ -196,7 +267,6 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts, toas
             //delete: '../device/used/delete',
         }
     };
-
     //formly配置项push
     $scope.formData = {
         fields: mgrData.fields
@@ -250,14 +320,45 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts, toas
     };
 
     //formly提交
+    //$scope.editorSubmit = function () {
+    //    var formly = $scope.formData1;
+    //    console.log(formly)
+    //    if (formly.form.$valid) {
+    //        formly.options.updateInitialValue();
+    //        $resource(mgrData.api.create).save({}, formly.model).$promise.then(saveSuccess, saveFailed);
+    //    }
+    //};
+
+    //formly提交
     $scope.editorSubmit = function () {
         var formly = $scope.formData1;
-        console.log(formly)
+        //console.log(formly)
+        //console.log(formly.model);
         if (formly.form.$valid) {
-            formly.options.updateInitialValue();
-            $resource(mgrData.api.create).save({}, formly.model).$promise.then(saveSuccess, saveFailed);
+            //$scope.formData1.options.updateInitialValue();
+            //console.log(formly.model)
+            var  addFile = $scope.formData_addFile;
+            if(!addFile){
+                addFile = new FormData();
+            }
+            addFile.append('entityText', JSON.stringify($scope.formData1.model));
+
+            $http.post(mgrData1.api.create, addFile, {
+                withCreadential: true,
+                headers: {'Content-Type': undefined, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Origin': '*'},
+                transformRequest: angular.identity
+            }).success(function(){
+                //formly.options.updateInitialValue();
+                $scope.goDataTable();
+            });
+            /*$resource(mgrData1.api.create).save({}, $scope.formData).$promise.then(saveSuccess, saveFailed);*/
         }
     };
+    $scope.formData_addFile = null;
+    var unlisten = $scope.$on('fileToUpload', function(event, arg) {
+        $scope.formData_addFile = arg;
+    });
+    $scope.$on('$destroy', unlisten);
 
     //formly返回
     $scope.goDataTable = function () {
@@ -266,11 +367,10 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts, toas
 
     //成功后调用
     function saveSuccess(response) {
-        alert("success");
+
     }
 
     //失败调用
     function saveFailed(response) {
-        alert("fail");
     }
 }
