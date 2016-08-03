@@ -288,16 +288,8 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 function success(resp) {
                     if(resp != null && resp.status == 0){
                         toaster.success({ body:"发送成功"});
-                    }else if(resp != null && resp.status == -1){
-                        toaster.error({ body:"连接客户端错误"});
-                    }else if(resp != null && resp.status == -2){
-                        toaster.error({ body:"获取接口出错"});
-                    }else if(resp != null && resp.status == -3){
-                        toaster.error({ body:"推送内容格式错误"});
-                    }else if(resp != null && resp.status == -4){
-                        toaster.error({ body:"客户端不存在"});
-                    }else if(resp != null && resp.status == -5){
-                        toaster.error({ body:"发送失败，客户端出错"});
+                    }else{
+                        toaster.error({ body:resp.statusMessage});
                     }
                 }
             );

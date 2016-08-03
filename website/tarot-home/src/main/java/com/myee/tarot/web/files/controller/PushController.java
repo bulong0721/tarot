@@ -199,26 +199,26 @@ public class PushController {
         try {
             eptService = serverBootstrap.getClient(OrchidService.class, pushDTO.getUniqueNo());
         } catch (Exception e) {
-            return AjaxResponse.failed(-1);
+            return AjaxResponse.failed(-1, "连接客户端错误");
         }
         if(eptService == null){
-            return AjaxResponse.failed(-2);
+            return AjaxResponse.failed(-2, "获取接口出错");
         }
         try {
             dto.setContent(JSON.parseArray(pushDTO.getContent(), ResourceDTO.class));
         }catch (Exception e){
-            return AjaxResponse.failed(-3);
+            return AjaxResponse.failed(-3, "推送内容格式错误");
         }
         ResponseData rd = null;
         try {
             rd = eptService.sendNotification(dto);
         } catch (Exception e) {
-            return AjaxResponse.failed(-4);
+            return AjaxResponse.failed(-4, "客户端不存在");
         }
         if(rd != null && rd.isSuccess()) {
             return AjaxResponse.success();
         } else {
-            return AjaxResponse.failed(-5);
+            return AjaxResponse.failed(-5, "发送失败，客户端出错");
         }
     }
 
