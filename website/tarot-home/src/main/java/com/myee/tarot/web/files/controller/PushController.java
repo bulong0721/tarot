@@ -81,7 +81,7 @@ public class PushController {
         if (1 == vo.getType()) {
             dest.mkdirs();
         }
-        if (!file.isEmpty()) {
+        if (file != null && !file.isEmpty()) {
             String fileName = file.getFileItem().getName();
             File desFile = new File(dest+File.separator+fileName);
             desFile.createNewFile();

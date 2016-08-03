@@ -74,9 +74,12 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
             '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-ban" title="文件夹不能下载"></i></a>',
             cellTemplateScope: {
                 add: function (data) {
+                    $scope.formData1.options.resetModel();
                     $scope.activeTab = iEditor;
-                    $scope.formData1.model.salt = data.salt;
-                    $scope.formData1.model.path = data.path;
+                    $scope.formData1.model ={
+                        salt:data.salt,
+                        path:data.path
+                    }
                 },
                 edit: function (data) {
                     $scope.activeTab = iEditor;
