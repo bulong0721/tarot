@@ -97,16 +97,32 @@ public class PushController {
     @RequestMapping(value = "admin/file/delete", method = RequestMethod.POST)
     @ResponseBody
     @Transactional
-    public boolean deleteResource(@RequestParam("salt") Long orgID, @RequestParam("path") String path, HttpServletRequest request) {
-        MerchantStore store = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
-        if (store.getId() != orgID) {
-            return false;
-        }
+    public AjaxResponse deleteResource(@RequestParam("salt") Long orgID, @RequestParam("path") String path, HttpServletRequest request) {
         File resFile = getResFile(orgID, path);
-        if (resFile.exists()) {
-            FileUtils.deleteQuietly(resFile);
+        boolean flag = false;
+        if(resFile.isDirectory()) {
+            if(getFiles(resFile)) {
+                flag = false;
+            }
         }
-        return true;
+        boolean isCopy = copyToRecycle(resFile);//复制文件到回收站
+        Map map = new HashMap();
+        AjaxResponse ajaxResponse = new AjaxResponse();
+        if(isCopy) { //复制成功后执行删除
+            MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (store.getId() != orgID) {
+                flag = false;
+            } else {
+                if (resFile.exists()) {
+                    FileUtils.deleteQuietly(resFile);
+                    flag = true;
+                }
+            }
+
+        }
+        map.put("message",flag);
+        ajaxResponse.addDataEntry(map);
+        return ajaxResponse;
     }
 
     @RequestMapping("admin/content/get")
@@ -234,4 +250,62 @@ public class PushController {
         return Base64.encodeBase64String(rawId.getBytes(charset));
     }
 
+    /**
+     * 复制文件至回收站
+     * @param file
+     * @return
+     */
+    public boolean copyToRecycle(File file) {
+        try {
+            if (file.exists()) {
+                String tempFilePath = file.getPath().replaceAll("\\\\", "/");//把路径中的反斜杠替换成斜杠
+                String tempDownloadPath = DOWNLOAD_HOME.replaceAll("\\\\","/")+"/";//准备用于替换成url的下载文件夹路径
+                String tempTargetPath = (DOWNLOAD_HOME + File.separator + "deleted" + File.separator).replaceAll("\\\\","/");
+                String targetPath = tempFilePath.replaceAll(tempDownloadPath, tempTargetPath);
+                targetPath = targetPath.replaceAll("/","\\\\");//把路径转回linux兼容
+                if (file.isFile()) {
+                    // Destination directory
+                    File dir = new File(targetPath);
+                    File parentPath = new File(dir.getParent());
+                    parentPath.mkdirs();
+                    // Move file to new directory
+                    boolean success = file.renameTo(dir);
+                } else if (file.isDirectory()) {
+                    File files[] = file.listFiles();
+                    for (int i = 0; i < files.length; i++) {
+                        copyToRecycle(files[i]);
+                    }
+                }
+                return true;
+            } else {
+                System.out.println("所删除的文件不存在！" + '\n');
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.print("unable to delete the folder!");
+        }
+        return false;
+    }
+
+    /*
+     * 通过递归得到某一路径下所有的目录及其文件
+    */
+    static boolean getFiles(File root){
+//        File root = new File(filePath);
+        File[] files = root.listFiles();
+        boolean flag = false;
+        for(File file : files){
+            if(file.isDirectory()){
+                /*
+                 * 递归调用
+                */
+                getFiles(file);
+            } else{
+                flag = true;
+                break;
+            }
+        }
+        return flag;
+    }
 }

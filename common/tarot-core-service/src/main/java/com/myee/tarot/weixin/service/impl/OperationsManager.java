@@ -17,6 +17,7 @@ import com.myee.tarot.datacenter.domain.SelfCheckLogVO;
 import com.myee.tarot.datacenter.service.SelfCheckLogService;
 import com.myee.tarot.device.service.DeviceUsedService;
 import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.weixin.dao.WxWaitTokenDao;
 import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.myee.tarot.weixin.util.TimeUtil;
@@ -78,6 +79,9 @@ public class OperationsManager extends RedisOperation implements OperationsServi
     @Autowired
     private SelfCheckLogService selfCheckLogService;
 
+    @Autowired
+    private MerchantStoreService merchantStoreService;
+
     /*
      * 小女生取号
      *
@@ -90,8 +94,6 @@ public class OperationsManager extends RedisOperation implements OperationsServi
         String redisKeyOfShopTb = RedisKeys.waitOfTableType(waitToken.getShopId(), waitToken.getTableTypeId());
         //唯一码-SeceneId对应Key
         String redisKeyOfUcdScId = RedisKeys.getIdentityCode(Long.valueOf(waitToken.getSceneId()));
-        String identityCode = waitToken.getIdentityCode();
-        waitToken.setIdentityCode(identityCode);
         Date date = new Date();
         waitToken.setTimeTook(date.getTime() / 1000);
         //然后二维码的数字码放Redis，跟identityCode唯一码绑定
@@ -99,7 +101,7 @@ public class OperationsManager extends RedisOperation implements OperationsServi
         //然后identityCode放Redis，跟排号的key绑定
         Map<String, Date> map1 = new HashMap<String, Date>();
         map1 = TimeUtil.getAfterDate(date);
-        append(waitToken.getIdentityCode(), redisKeyOfShopTb, map1.get("eTime"));
+        hsetSimple(waitToken.getIdentityCode(), redisKeyOfShopTb, map1.get("eTime"));
         hset(redisKeyOfShopTb, waitToken.getToken(), waitToken, map1.get("eTime"));
         WxMpQrCodeTicket myticket = null;
         WxWaitToken wxWaitToken = null;
@@ -265,12 +267,13 @@ public class OperationsManager extends RedisOperation implements OperationsServi
             for (WaitToken wt : waitTokenMap.values()) {
                 waitNumSet.add(Integer.parseInt(wt.getToken().substring(1, 3)));
                 if (identityCode.equals(wt.getIdentityCode())) {
-                    String shopKey = RedisKeys.shopOfClient(wt.getShopId());
+//                    String shopKey = RedisKeys.shopOfClient(wt.getShopId());
 //                    shopName = getSimple(shopKey).toString();
                     userNum = Integer.parseInt(wt.getToken().substring(1, 3));
                     waitMinutes = wt.getWaitMinutes();
                     waitToken = wt.getToken();
                     timeTook = wt.getTimeTook();
+                    shopName = wt.getClientName();
                     if (wt.getWaitStatus() == 1) {
                         queueStatus = "排队中";
                     }
@@ -319,6 +322,7 @@ public class OperationsManager extends RedisOperation implements OperationsServi
                     if (identityCode.equals(wt.getIdentityCode())) {
                         userNum = Integer.parseInt(wt.getToken().substring(1, 3));
                         timeTook = wt.getTimeTook().getTime();
+                        shopName = merchantStoreService.findById(wt.getMerchantStoreId()).getName();
                         if (wt.getState() == 1) {
                             queueStatus = "排队中";
                         }

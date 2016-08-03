@@ -140,7 +140,7 @@ public class WebMpController {
                         map.put("prizeUrl","http://www.myee7.com/tarot_test/customerClient/index.html#!/myCouponView/"+priceInfo.getId().toString()+"/"+inMessage.getFromUserName());
                         inMessage.setMap(map);
                     } else {
-                        map.put("prizeNotAvailable", "您已兑奖，请点击我的奖券");
+                        map.put("prizeNotAvailable", aResp.getStatusMessage());
                         inMessage.setMap(map);
                     }
                 }
@@ -162,7 +162,7 @@ public class WebMpController {
                         map.put("prizeUrl", "http://www.myee7.com/tarot_test/customerClient/index.html#!/myCouponView/" + priceInfo.getId().toString() + "/" + inMessage.getFromUserName());
                         inMessage.setMap(map);
                     }  else {
-                        map.put("prizeNotAvailable", "您已兑奖，请点击我的奖券");
+                        map.put("prizeNotAvailable", aResp.getStatusMessage());
                         inMessage.setMap(map);
                     }
                 }
@@ -208,7 +208,7 @@ public class WebMpController {
                             map.put("prizeUrl", "http://www.myee7.com/tarot_test/customerClient/index.html#!/myCouponView/"+priceInfo.getId().toString()+"/"+inMessage.getFromUserName());
                             inMessage.setMap(map);
                         } else {
-                            map.put("prizeNotAvailable", "您已兑奖，请点击我的奖券");
+                            map.put("prizeNotAvailable", aResp.getStatusMessage());
                             inMessage.setMap(map);
                         }
                     }
