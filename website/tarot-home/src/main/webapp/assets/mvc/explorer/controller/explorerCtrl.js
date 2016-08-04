@@ -128,7 +128,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
         }
         $scope.activeTab = iPush;
         $scope.formData.model.store = {name: Constants.thisMerchantStore.name};
-        $scope.formData.model.content = "[" + content.substr(0,content.length-1)  + "]";
+        $scope.formData.model.content = $scope.formatJSON("[" + content.substr(0,content.length-1)  + "]", true);
     };
 
     //递归出所有选中的文件
@@ -192,7 +192,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     style: {attribute: 'style'},
                     maxlen: { attribute: 'maxlength' }
                 },
-                templateOptions: {label: '推动内容', required: true, placeholder: '推动内容(长度小于1000)', rows: 20, style: 'max-width:450px', maxlen:1000}
+                templateOptions: {label: '推动内容', required: true, placeholder: '推动内容(长度小于1000)', rows: 20, style: 'max-width:1000px', maxlen:1000}
             }
         ],
         api: {
@@ -302,13 +302,12 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
     //formly提交
     $scope.pushSubmit = function () {
         var formly = $scope.formData;
-        console.log(formly)
         if (formly.form.$valid) {
             formly.options.updateInitialValue();
             $resource(mgrData.api.push).save({}, formly.model).$promise.then(
                 function success(resp) {
                     if(resp != null && resp.status == 0){
-                        toaster.success({ body:"发送成功"});
+                        toaster.success({ body:resp.statusMessage});
                         $scope.goDataTable();
                     }else{
                         toaster.error({ body:resp.statusMessage});
@@ -404,5 +403,44 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 toaster.error({ body:resp.statusMessage});
             }
         });
+    }
+
+    $scope.formatJSON = function(txt,compress){
+        var indentChar = '    ';
+        if(/^\s*$/.test(txt)){
+            toaster.error({ body:"数据为空,无法格式化!"});
+            return;
+        }
+        try{var data=eval('('+txt+')');}
+        catch(e){
+            toaster.error({ body:'数据源语法错误,格式化失败! 错误信息: '+ (e.description,'err')});
+            return;
+        };
+        var draw=[],last=false,This=this,line=compress?'':'\n',nodeCount=0,maxDepth=0;
+
+        var notify=function(name,value,isLast,indent,formObj){
+            nodeCount++;
+            for (var i=0,tab='';i<indent;i++ )tab+=indentChar;
+            tab=compress?'':tab;
+            maxDepth=++indent;
+            if(value&&value.constructor==Array){
+                draw.push(tab+(formObj?('"'+name+'":'):'')+'['+line);
+                for (var i=0;i<value.length;i++)
+                    notify(i,value[i],i==value.length-1,indent,false);
+                draw.push(tab+']'+(isLast?line:(','+line)));
+            }else   if(value&&typeof value=='object'){
+                draw.push(tab+(formObj?('"'+name+'":'):'')+'{'+line);
+                var len=0,i=0;
+                for(var key in value)len++;
+                for(var key in value)notify(key,value[key],++i==len,indent,true);
+                draw.push(tab+'}'+(isLast?line:(','+line)));
+            }else{
+                if(typeof value=='string')value='"'+value+'"';
+                draw.push(tab+(formObj?('"'+name+'":'):'')+value+(isLast?'':',')+line);
+            };
+        };
+        var isLast=true,indent=0;
+        notify('',data,isLast,indent,false);
+        return draw.join('');
     }
 }

@@ -24,6 +24,7 @@ public class Constants {
 
 	public final static String UNDERSCORE                = "_";
 	public final static String SLASH                     = "/";
+	public final static String BACKSLASH                 = "\\";
 	public final static String TRUE                      = "true";
 	public final static String FALSE                     = "false";
 	public final static String OT_ITEM_PRICE_MODULE_CODE = "itemprice";

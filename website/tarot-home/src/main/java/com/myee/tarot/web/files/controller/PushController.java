@@ -215,7 +215,7 @@ public class PushController {
         for (File file : parentFile.listFiles()) {
             FileItem fileItem = FileItem.toResourceModel(file, orgID, storeId);
             fileItem.setPath(trimStart(fileItem.getPath(), prefix));
-            fileItem.setUrl(DOWNLOAD_HTTP + orgID + File.separator + fileItem.getPath().replace("\\", "/"));
+            fileItem.setUrl(DOWNLOAD_HTTP + orgID + Constants.SLASH + fileItem.getPath().replace(Constants.BACKSLASH, Constants.SLASH));
             resMap.put(file.getName(), fileItem);
         }
     }
@@ -262,7 +262,7 @@ public class PushController {
             return AjaxResponse.failed(-4, "客户端不存在");
         }
         if (rd != null && rd.isSuccess()) {
-            return AjaxResponse.success();
+            return AjaxResponse.success("推送成功");
         } else {
             return AjaxResponse.failed(-5, "发送失败，客户端出错");
         }
