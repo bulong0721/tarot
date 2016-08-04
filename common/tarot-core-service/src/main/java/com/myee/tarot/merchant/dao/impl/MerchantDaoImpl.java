@@ -37,10 +37,11 @@ public class MerchantDaoImpl extends GenericEntityDaoImpl<Long, Merchant> implem
         PageResult<Merchant> pageList = new PageResult<Merchant>();
         QMerchant qMerchant = QMerchant.merchant;
         JPQLQuery<Merchant> query = new JPAQuery(getEntityManager());
+        query.from(qMerchant);
         if(!StringUtil.isBlank(pageRequest.getQueryName())){
             query.where(qMerchant.name.like("%" + pageRequest.getQueryName() + "%"));
         }
-        pageList.setRecordsTotal(query.from(qMerchant).fetchCount());
+        pageList.setRecordsTotal(query.fetchCount());
         if( pageRequest.getCount() > 0){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }

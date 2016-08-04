@@ -24,10 +24,13 @@ public class ProductUsedDaoImpl extends GenericEntityDaoImpl<Long, ProductUsed> 
         PageResult<ProductUsed> pageList = new PageResult<ProductUsed>();
         QProductUsed qProductUsed = QProductUsed.productUsed;
         JPQLQuery<ProductUsed> query = new JPAQuery(getEntityManager());
+        query.from(qProductUsed)
+                .leftJoin(qProductUsed.attributes)
+                .fetchJoin();
         if (!StringUtil.isBlank(pageRequest.getQueryName())) {
             query.where(qProductUsed.code.like("%" + pageRequest.getQueryName() + "%"));
         }
-        pageList.setRecordsTotal(query.from(qProductUsed).fetchCount());
+        pageList.setRecordsTotal(query.fetchCount());
         if( pageRequest.getCount() > 0){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
@@ -40,12 +43,15 @@ public class ProductUsedDaoImpl extends GenericEntityDaoImpl<Long, ProductUsed> 
         PageResult<ProductUsed> pageList = new PageResult<ProductUsed>();
         QProductUsed qProductUsed = QProductUsed.productUsed;
         JPQLQuery<ProductUsed> query = new JPAQuery(getEntityManager());
+        query.from(qProductUsed)
+                .leftJoin(qProductUsed.attributes)
+                .fetchJoin();
         query.where(qProductUsed.store.id.eq(id));
 
         if (!StringUtil.isBlank(pageRequest.getQueryName())) {
             query.where(qProductUsed.code.like("%" + pageRequest.getQueryName() + "%"));
         }
-        pageList.setRecordsTotal(query.from(qProductUsed).fetchCount());
+        pageList.setRecordsTotal(query.fetchCount());
         if( pageRequest.getCount() > 0){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
@@ -57,7 +63,9 @@ public class ProductUsedDaoImpl extends GenericEntityDaoImpl<Long, ProductUsed> 
     public List<ProductUsed> listByIDs(List<Long> idList) {
         QProductUsed qProductUsed = QProductUsed.productUsed;
         JPQLQuery<ProductUsed> query = new JPAQuery(getEntityManager());
-        query.from(qProductUsed);
+        query.from(qProductUsed)
+                .leftJoin(qProductUsed.attributes)
+                .fetchJoin();
         query.where(qProductUsed.id.in(idList));
         return query.fetch();
     }
