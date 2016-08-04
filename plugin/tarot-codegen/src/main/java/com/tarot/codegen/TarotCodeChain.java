@@ -1,8 +1,6 @@
 package com.tarot.codegen;
 
-import com.mysema.query.codegen.EntityType;
-
-import javax.lang.model.element.TypeElement;
+import com.querydsl.codegen.EntityType;
 
 /**
  * Created by Martin on 2016/8/1.
@@ -10,10 +8,10 @@ import javax.lang.model.element.TypeElement;
 public final class TarotCodeChain {
     public final EntityType entity;
 
-    public TypeElement dao;
-    public TypeElement daoImpl;
-    public TypeElement svc;
-    public TypeElement svcImpl;
+    public TarotCodeItem dao;
+    public TarotCodeItem daoImpl;
+    public TarotCodeItem svc;
+    public TarotCodeItem svcImpl;
 
     public TarotCodeChain(EntityType entity) {
         this.entity = entity;
