@@ -98,7 +98,7 @@ function showThisMerchant(Constants,$rootScope) {
 /**
  * switchMerchant
  */
-function switchMerchant(Constants,$resource,$state,$rootScope,NgTableParams) {
+function switchMerchant(Constants,$resource,$state,$rootScope,NgTableParams,toaster,$q) {
     return {
         link:function($scope){
 
@@ -116,10 +116,16 @@ function switchMerchant(Constants,$resource,$state,$rootScope,NgTableParams) {
                 if (rowIndex > -1) {
                     var data = $scope.tableOpts.data[rowIndex];
                     $resource('merchantStore/switch').save(data.id, function (resp) {
+                        if (0 != resp.status) {
+                            toaster.error({ body:"出错啦！"+resp.statusMessage});
+                            return;
+                        }
+
                         //关闭侧边栏
                         $rootScope.rightSidebar = !$rootScope.rightSidebar;
                         //刷新当前页面的显示
                         $rootScope.storeInfo = $scope.merchantStoreSelect = Constants.thisMerchantStore = resp.rows[0];
+                        toaster.success({ body:"门店切换成功"});
                         $state.go($state.current, {}, {reload: true});
                     });
                 }
@@ -136,6 +142,18 @@ function switchMerchant(Constants,$resource,$state,$rootScope,NgTableParams) {
                     var args = angular.extend(params.url(), $scope.where);
 
                     return xhr.get(args).$promise.then(function (data) {
+                        if (0 != data.status) {
+                            toaster.error({ body:"出错啦！"+resp.statusMessage});
+                            return;
+                        }
+                        console.log($rootScope.storeInfo.firstSwitch)
+                        if($rootScope.storeInfo.firstSwitch){//第一次不弹提示,把标记位改变
+                            $rootScope.storeInfo.firstSwitch = false;
+                        }
+                        else{
+                            toaster.success({ body:"查询成功"});
+                        }
+
                         params.total(data.recordsTotal);
                         return data.rows;
                     });
@@ -150,10 +168,10 @@ function switchMerchant(Constants,$resource,$state,$rootScope,NgTableParams) {
             };
 
             //监听第一次点击切换门店，执行初始化搜索一次，执行完销毁该函数
-            $scope.watchFistSwitch = $scope.$watch('storeInfo.firstSwitch',function(newValue,oldValue){
+            $scope.watchFirstSwitch = $scope.$watch('storeInfo.firstSwitch',function(newValue,oldValue){
                 if(newValue){
                     $scope.search();
-                    $scope.watchFistSwitch = null;
+                    $scope.watchFirstSwitch = null;
                 }
             });
 
