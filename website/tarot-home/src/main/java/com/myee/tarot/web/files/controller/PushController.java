@@ -9,12 +9,10 @@ import com.myee.djinn.dto.ResourceDTO;
 import com.myee.djinn.dto.ResponseData;
 import com.myee.djinn.endpoint.OrchidService;
 import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
-import com.myee.tarot.campaign.domain.MerchantActivity;
 import com.myee.tarot.core.Constants;
-import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
+import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
-import com.myee.tarot.web.apiold.BusinessException;
 import com.myee.tarot.web.files.vo.FileItem;
 import com.myee.tarot.web.files.vo.PushDTO;
 import com.myee.tarot.web.util.StringUtil;
@@ -25,19 +23,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Martin on 2016/4/21.
@@ -45,7 +45,7 @@ import java.util.*;
 @Controller
 public class PushController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MerchantActivity.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PushController.class);
 
     @Value("${cleverm.push.dirs}")
     private String DOWNLOAD_HOME;
@@ -55,7 +55,7 @@ public class PushController {
     @Autowired
     private ServerBootstrap serverBootstrap;
 
-    @RequestMapping(value = "admin/file/search" , method = RequestMethod.POST)
+    @RequestMapping(value = "admin/file/search", method = RequestMethod.POST)
     @ResponseBody
     public AjaxPageableResponse searchResource(@RequestParam("node") String parentNode, HttpServletRequest request) {
 //        if ("/".equals(parentNode)) {
@@ -64,7 +64,7 @@ public class PushController {
 ////            root.setResTypeName("目录");
 //            return new AjaxPageableResponse(Arrays.<Object>asList(root));
 //        }
-        MerchantStore store = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
+        MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
         File template = getResFile(100L, parentNode);
         Map<String, FileItem> resMap = Maps.newLinkedHashMap();
         listFiles(template, resMap, 100L, store.getId());
@@ -77,40 +77,40 @@ public class PushController {
 
     @RequestMapping("admin/file/create")
     @ResponseBody
-    public AjaxPageableResponse createResource(@RequestParam(value="file",required = false) CommonsMultipartFile file, @RequestParam("entityText") String entityText, HttpServletRequest request){
+    public AjaxPageableResponse createResource(@RequestParam(value = "file", required = false) CommonsMultipartFile file, @RequestParam("entityText") String entityText, HttpServletRequest request) {
         FileItem vo = JSON.parseObject(entityText, FileItem.class);
         Long orgID = vo.getSalt();
         Map<String, FileItem> resMap = Maps.newLinkedHashMap();
         try {
             File dest = FileUtils.getFile(DOWNLOAD_HOME, Long.toString(orgID), vo.getPath()); //新增文件父路径
-            String currPath = vo.getCurrPath()==null? "":vo.getCurrPath();
+            String currPath = vo.getCurrPath() == null ? "" : vo.getCurrPath();
 
-            if(!dest.exists())   //新增文件夹和文件需要检测文件夹是否存在
+            if (!dest.exists())   //新增文件夹和文件需要检测文件夹是否存在
                 dest.mkdirs();
             if (file != null && !file.isEmpty()) {
                 String fileName = file.getFileItem().getName();
 
-                File desDir = new File(dest+File.separator+currPath);
-                if(!desDir.exists())
+                File desDir = new File(dest + File.separator + currPath);
+                if (!desDir.exists())
                     desDir.mkdirs();
-                File desFile = new File(desDir+File.separator+fileName);
+                File desFile = new File(desDir + File.separator + fileName);
                 desFile.createNewFile();
                 file.transferTo(desFile);
             }
             if (!StringUtil.isNullOrEmpty(vo.getContent(), true)) {
                 String name = vo.getName();
-                File desDir = new File(dest+File.separator+currPath);
-                if(!desDir.exists())
+                File desDir = new File(dest + File.separator + currPath);
+                if (!desDir.exists())
                     desDir.mkdirs();
 
-                File desFile = new File(desDir+File.separator+name);
+                File desFile = new File(desDir + File.separator + name);
                 desFile.createNewFile();
                 FileUtils.writeStringToFile(desFile, vo.getContent());
             }
-            MerchantStore store = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
             listFiles(dest, resMap, store.getId(), store.getId());
         } catch (IOException e) {
-            LOGGER.error("create file error",e);
+            LOGGER.error("create file error", e);
         }
         return new AjaxPageableResponse(Lists.<Object>newArrayList(resMap.values()));
     }
@@ -119,65 +119,89 @@ public class PushController {
     @ResponseBody
     @Transactional
     public AjaxResponse deleteResource(@RequestParam("salt") Long orgID, @RequestParam("path") String path, HttpServletRequest request) {
-        File resFile = getResFile(orgID, path);
-        boolean flag = false;
+        String message = "";
         Map map = new HashMap();
         AjaxResponse ajaxResponse = new AjaxResponse();
-        if(resFile.isDirectory()) {
-            if(getFiles(resFile)) {
-                flag = false;
-                map.put("message",flag);
-                ajaxResponse.addDataEntry(map);
-                return ajaxResponse;
-            }
-        }
-        boolean isCopy = copyToRecycle(resFile);//复制文件到回收站
-        if(isCopy) { //复制成功后执行删除
-            MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
-            if (store.getId() != orgID) {
-                flag = false;
-            } else {
-                if (resFile.exists()) {
-                    FileUtils.deleteQuietly(resFile);
-                    flag = true;
+        //不允许删除别的店铺下的资源
+        MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        if (!store.getId().equals(orgID)) {
+            message = "不允许删除别的店铺下的资源";
+            return AjaxResponse.failed(-1, message);
+        }  else {
+            File resFile = getResFile(orgID, path);
+            if (resFile.isDirectory()) {
+                try {
+                    getFiles(resFile);
+                } catch (StopMsgException e) {
+                    message = "该目录下还有文件，请先删除文件";
+                    return AjaxResponse.failed(-2, message);
                 }
             }
-
+            boolean isCopy = copyToRecycle(resFile);//复制文件到回收站
+            if (isCopy) { //复制成功后执行删除
+                message = "删除成功!";
+                if (resFile.exists()) {
+                    FileUtils.deleteQuietly(resFile);
+                    message = "删除成功!";
+                }
+                return AjaxResponse.success();
+            } else {
+                message = "所删除的文件不存在！";
+                return AjaxResponse.failed(-3, message);
+            }
         }
-        map.put("message",flag);
-        ajaxResponse.addDataEntry(map);
-        return ajaxResponse;
     }
 
     @RequestMapping("admin/content/get")
     @ResponseBody
-    public String getContentText(Long orgID, String absPath) {
-        File resFile = getResFile(orgID, absPath);
+    public AjaxResponse getContentText(@RequestParam("data") String data, HttpServletRequest request) {
+        AjaxResponse ajaxResponse = new AjaxResponse();
+        Map<String, Object> map = new HashMap<String, Object>();
+        boolean flag = true;
+        FileItem fileItem = JSON.parseObject(data, FileItem.class);
+        MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        Long orgID = store.getId();
+        if (orgID != fileItem.getSalt()) {
+            return AjaxResponse.failed(-1, "文件不属于该店铺，不能修改");
+        }
+
+        File resFile = getResFile(orgID, fileItem.getPath());
         if (!resFile.exists()) {
-            return "";
+            return AjaxResponse.failed(-2, "文件不存在");
         }
         if (resFile.length() > 4096L) {
-            throw new BusinessException("超过文本读取大小限制。");
+            return AjaxResponse.failed(-3, "超过文本读取大小限制。");
+        }
+        String fileName = resFile.getName();
+        String extension = fileName.substring(fileName.lastIndexOf(".")+1);
+        List<String> typeLists = new ArrayList<String>();
+        typeLists.add("xml");
+        typeLists.add("txt");
+        typeLists.add("csv");
+        if (!typeLists.contains(extension)) {
+            return AjaxResponse.failed(-4, "读取文本读格式错误。仅支持txt、xml文件");
         }
         try {
             String value = FileUtils.readFileToString(resFile, "utf-8");
-            return value;
+            map.put("message", value);
+            ajaxResponse.addDataEntry(map);
         } catch (IOException ie) {
-            throw new BusinessException(ie);
+            LOGGER.error("读取文件错误", ie);
         }
+        return ajaxResponse;
     }
 
-    @RequestMapping(value = "admin/file/download" , method = RequestMethod.POST)
+    @RequestMapping(value = "admin/file/download", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse exportResource(@RequestParam("salt") Long orgID,@RequestParam("path") String path, HttpServletRequest request, HttpServletResponse response) {
-        MerchantStore store = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
+    public AjaxResponse exportResource(@RequestParam("salt") Long orgID, @RequestParam("path") String path, HttpServletRequest request, HttpServletResponse response) {
+        MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
         if (store.getId() != orgID) {
             return null;
         }
         String url = DOWNLOAD_HTTP + orgID.toString() + File.separator + path;
         AjaxResponse ajaxResponse = new AjaxResponse().success();
         Map map = new HashMap();
-        map.put("url",url);
+        map.put("url", url);
         ajaxResponse.addDataEntry(map);
         return ajaxResponse;
     }
@@ -191,7 +215,7 @@ public class PushController {
         for (File file : parentFile.listFiles()) {
             FileItem fileItem = FileItem.toResourceModel(file, orgID, storeId);
             fileItem.setPath(trimStart(fileItem.getPath(), prefix));
-            fileItem.setUrl(DOWNLOAD_HTTP+orgID+File.separator+fileItem.getPath().replace("\\", "/"));
+            fileItem.setUrl(DOWNLOAD_HTTP + orgID + File.separator + fileItem.getPath().replace("\\", "/"));
             resMap.put(file.getName(), fileItem);
         }
     }
@@ -222,12 +246,12 @@ public class PushController {
         } catch (Exception e) {
             return AjaxResponse.failed(-1, "连接客户端错误");
         }
-        if(eptService == null){
+        if (eptService == null) {
             return AjaxResponse.failed(-2, "获取接口出错");
         }
         try {
             dto.setContent(JSON.parseArray(pushDTO.getContent(), ResourceDTO.class));
-        }catch (Exception e){
+        } catch (Exception e) {
             return AjaxResponse.failed(-3, "推送内容格式错误");
         }
         ResponseData rd = null;
@@ -236,7 +260,7 @@ public class PushController {
         } catch (Exception e) {
             return AjaxResponse.failed(-4, "客户端不存在");
         }
-        if(rd != null && rd.isSuccess()) {
+        if (rd != null && rd.isSuccess()) {
             return AjaxResponse.success();
         } else {
             return AjaxResponse.failed(-5, "发送失败，客户端出错");
@@ -256,7 +280,7 @@ public class PushController {
 //            eptService = serverBootstrap.getClient(OrchidService.class, mbNum);
             String pushTableStr = JSONObject.toJSONString(tableStrTest);
 //            rd = eptService.sendNotification(pushTableStr);
-            if(rd != null) {
+            if (rd != null) {
                 resp = AjaxResponse.success();
             } else {
                 resp = AjaxResponse.failed(-1);
@@ -276,6 +300,7 @@ public class PushController {
 
     /**
      * 复制文件至回收站
+     *
      * @param file
      * @return
      */
@@ -283,10 +308,10 @@ public class PushController {
         try {
             if (file.exists()) {
                 String tempFilePath = file.getPath().replaceAll("\\\\", "/");//把路径中的反斜杠替换成斜杠
-                String tempDownloadPath = DOWNLOAD_HOME.replaceAll("\\\\","/")+"/";//准备用于替换成url的下载文件夹路径
-                String tempTargetPath = (DOWNLOAD_HOME + File.separator + "deleted" + File.separator).replaceAll("\\\\","/");
+                String tempDownloadPath = DOWNLOAD_HOME.replaceAll("\\\\", "/") + "/";//准备用于替换成url的下载文件夹路径
+                String tempTargetPath = (DOWNLOAD_HOME + File.separator + "deleted" + File.separator).replaceAll("\\\\", "/");
                 String targetPath = tempFilePath.replaceAll(tempDownloadPath, tempTargetPath);
-                targetPath = targetPath.replaceAll("/","\\\\");//把路径转回linux兼容
+                targetPath = targetPath.replaceAll("/", "\\\\");//把路径转回linux兼容
                 if (file.isFile()) {
                     // Destination directory
                     File dir = new File(targetPath);
@@ -315,21 +340,22 @@ public class PushController {
     /*
      * 通过递归得到某一路径下所有的目录及其文件
     */
-    static boolean getFiles(File root){
-//        File root = new File(filePath);
+    static boolean getFiles(File root) {
         File[] files = root.listFiles();
-        boolean flag = false;
-        for(File file : files){
-            if(file.isDirectory()){
+        for (File file : files) {
+            if (file.isDirectory()) {
                 /*
                  * 递归调用
                 */
                 getFiles(file);
-            } else{
-                flag = true;
-                break;
+            } else {
+                // 跳出
+                throw new StopMsgException();
             }
         }
-        return flag;
+        return false;
+    }
+
+    static class StopMsgException extends RuntimeException {
     }
 }

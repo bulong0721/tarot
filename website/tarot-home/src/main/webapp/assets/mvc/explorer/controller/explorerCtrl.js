@@ -9,7 +9,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
 
     var iDatatable = 0, iPush = 1, iEditor = 2;
     $scope.activeTab = iDatatable;
-    var nodeTypes =[{'name':'目录','value':'0'},{'name':'文件','value':'1'}];
+    var nodeTypes =[{name:'目录',value:0},{name:'文件',value:1}];
     $scope.treeData = [{path: '/', name: '/', type: 0, salt: '/'}];
     $scope.expandField = {field: 'name'};
     $scope.treeColumns = [
@@ -74,9 +74,9 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
             '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-ban" title="文件夹不能下载"></i></a>',
             cellTemplateScope: {
                 add: function (data) {
-                    $scope.formData1.options.resetModel();
+                    $scope.formDataEditor.options.resetModel();
                     $scope.activeTab = iEditor;
-                    $scope.formData1.model ={
+                    $scope.formDataEditor.model ={
                         salt:data.salt,
                         path:data.path
                     }
@@ -84,12 +84,14 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 },
                 edit: function (data) {
                     $scope.activeTab = iEditor;
-                    $scope.formData1.model = {
+                    $scope.formDataEditor.model = {
                         salt:data.salt,
                         name:data.name,
-                        path:data.path,
                         currPath:data.path,
+                        path:data.path,
+                        type:data.type,
                     }
+                    $scope.current = data;
                 },
                 delete: function (data) {
                     $scope.delete(data.salt,data.path);
@@ -190,7 +192,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
         }
     };
 
-    var mgrData1 = {
+    var mgrDataEditor = {
         fields: [
             {
                 key: 'salt',
@@ -246,6 +248,11 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 templateOptions: {label: '文本编辑', required: false, type: 'checkbox'},
                 defaultValue: false,
                 hideExpression: function ($viewValue, $modelValue, scope) {
+                    if(scope.model.ifEditor){
+                        $scope.showContent($scope.current);
+                    }else{
+                        scope.model.content="";
+                    }
                     return scope.model.type == 0?true:false;//新增文件夹时隐藏
                 },
             },
@@ -266,7 +273,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
             }
         ],
         api: {
-            //read: '../device/used/paging',
+            getContent: '../admin/content/get',
             create: '../admin/file/create',
             //delete: '../device/used/delete',
         }
@@ -277,8 +284,8 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
     };
 
     //formly配置项editor
-    $scope.formData1 = {
-        fields: mgrData1.fields
+    $scope.formDataEditor = {
+        fields: mgrDataEditor.fields
     };
 
     //formly提交
@@ -291,6 +298,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 function success(resp) {
                     if(resp != null && resp.status == 0){
                         toaster.success({ body:"发送成功"});
+                        $scope.goDataTable();
                     }else{
                         toaster.error({ body:resp.statusMessage});
                     }
@@ -303,9 +311,14 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
     $scope.delete = function (salt, path) {
         cAlerts.confirm('确定删除?',function(){
             //点击确定回调
-            $resource(mgrData.api.delete).save({salt: salt, path: path}, {}).$promise.then(saveSuccess, saveFailed);
-        },function(){
-            //点击取消回调
+            $resource(mgrData.api.delete).save({salt: salt, path: path}, {}).$promise.then(function success(resp){
+                    if(resp != null && resp.status == 0){
+                        toaster.success({ body:"删除成功"});
+                        $scope.goDataTable();
+                    }else{
+                        toaster.error({ body:resp.statusMessage});
+                    }
+            });
         });
     };
 
@@ -316,56 +329,39 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
     };
 
     //formly提交
-    //$scope.editorSubmit = function () {
-    //    var formly = $scope.formData1;
-    //    console.log(formly)
-    //    if (formly.form.$valid) {
-    //        formly.options.updateInitialValue();
-    //        $resource(mgrData.api.create).save({}, formly.model).$promise.then(saveSuccess, saveFailed);
-    //    }
-    //};
-
-    //formly提交
     $scope.editorSubmit = function () {
-        var formly = $scope.formData1;
-        //console.log(formly)
-        //console.log(formly.model);
+        var formly = $scope.formDataEditor;
         if (formly.form.$valid) {
-            //$scope.formData1.options.updateInitialValue();
-            //console.log(formly.model)
             var  addFile = $scope.formData_addFile;
             if(!addFile){
                 addFile = new FormData();
             }
-            if($scope.formData1.model.type ==0){
-                console.log($scope.formData1.model)
+            if($scope.formDataEditor.model.type ==0){
+                console.log($scope.formDataEditor.model)
                 console.log($scope.current);
                 $scope.current.children.push({
-                    name:$scope.formData1.model.name,
-                    path:$scope.current.path+"/"+$scope.formData1.model.currPath,
+                    name:$scope.formDataEditor.model.name,
+                    path:$scope.current.path+"/"+$scope.formDataEditor.model.currPath,
                     salt:$scope.current.salt,
                     storeId:$scope.current.storeId,
-                    url:$scope.current.url+"/"+$scope.formData1.model.currPath,
+                    url:$scope.current.url+"/"+$scope.formDataEditor.model.currPath,
                     size:0,
                     modified:new Date(),
                     children:[],
                     type:0});
                 $scope.goDataTable();
             }else{
-                addFile.append('entityText', JSON.stringify($scope.formData1.model));
-                $http.post(mgrData1.api.create, addFile, {
+                addFile.append('entityText', JSON.stringify($scope.formDataEditor.model));
+                $http.post(mgrDataEditor.api.create, addFile, {
                     withCreadential: true,
                     headers: {'Content-Type': undefined, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Origin': '*'},
                     transformRequest: angular.identity
                 }).success(function(res){
-                    //formly.options.updateInitialValue();
-                    //$scope.current.children.push(res.rows);
                     angular.merge($scope.current.children, res.rows);
                     $scope.goDataTable();
                 });
             }
 
-            /*$resource(mgrData1.api.create).save({}, $scope.formData).$promise.then(saveSuccess, saveFailed);*/
         }
     };
     $scope.formData_addFile = null;
@@ -386,5 +382,16 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
 
     //失败调用
     function saveFailed(response) {
+    }
+
+    $scope.showContent = function(data){
+        $resource(mgrDataEditor.api.getContent).get({data: data}, {}).$promise.then(function success(resp) {
+            console.log(resp)
+            if(resp != null && resp.status == 0){
+                $scope.formDataEditor.model.content=resp.rows[0].message;
+            }else{
+                toaster.error({ body:resp.statusMessage});
+            }
+        });
     }
 }
