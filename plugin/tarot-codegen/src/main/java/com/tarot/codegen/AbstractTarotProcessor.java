@@ -76,10 +76,12 @@ public abstract class AbstractTarotProcessor extends AbstractProcessor {
 
     private EntityType handleEntityType(TypeElement element) {
         List<? extends TypeMirror> typeArguments = ((DeclaredType) element.getSuperclass()).getTypeArguments();
-        Type[] typeArray = new Type[2];
-        typeArray[0] = new SimpleType(declareToType(typeArguments.get(0)));
-        typeArray[1] = new SimpleType(declareToType(typeArguments.get(1)));
-
+        Type[] typeArray = new Type[0];
+        if (null != typeArguments && typeArguments.size() >= 2) {
+            typeArray = new Type[2];
+            typeArray[0] = new SimpleType(declareToType(typeArguments.get(0)));
+            typeArray[1] = new SimpleType(declareToType(typeArguments.get(1)));
+        }
         String fullName = element.getQualifiedName().toString();
         String simpleName = element.getSimpleName().toString();
         String packageName = fullName.substring(0, fullName.indexOf(simpleName) - 1);
