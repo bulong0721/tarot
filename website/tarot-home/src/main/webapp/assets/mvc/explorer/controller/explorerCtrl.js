@@ -80,7 +80,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                         salt:data.salt,
                         path:data.path
                     }
-                    //$scope.current = data;
+                    $scope.current = data;
                 },
                 edit: function (data) {
                     $scope.activeTab = iEditor;
@@ -216,15 +216,18 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 id: 'currPath',
                 key: 'currPath',
                 type: 'c_input',
-                templateOptions: { required: true, label: '节点路径', placeholder: '节点路径'}
+                templateOptions: { required: true, label: '节点路径', placeholder: '节点路径'},
+                expressionProperties: {
+                    'templateOptions.required': 'model.type==1?false:true' // disabled when ifEditor is true
+                }
             },
-            //{
-            //    id: 'type',
-            //    key: 'type',
-            //    type: 'c_select',
-            //    className: 'c_select',
-            //    templateOptions: { required: true, label: '节点类型',  options: nodeTypes }
-            //},
+            {
+                id: 'type',
+                key: 'type',
+                type: 'c_select',
+                className: 'c_select',
+                templateOptions: { required: true, label: '节点类型',  options: nodeTypes }
+            },
             {
                 key: 'resFile',
                 type: 'upload',
@@ -288,16 +291,8 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 function success(resp) {
                     if(resp != null && resp.status == 0){
                         toaster.success({ body:"发送成功"});
-                    }else if(resp != null && resp.status == -1){
-                        toaster.error({ body:"连接客户端错误"});
-                    }else if(resp != null && resp.status == -2){
-                        toaster.error({ body:"获取接口出错"});
-                    }else if(resp != null && resp.status == -3){
-                        toaster.error({ body:"推送内容格式错误"});
-                    }else if(resp != null && resp.status == -4){
-                        toaster.error({ body:"客户端不存在"});
-                    }else if(resp != null && resp.status == -5){
-                        toaster.error({ body:"发送失败，客户端出错"});
+                    }else{
+                        toaster.error({ body:resp.statusMessage});
                     }
                 }
             );
@@ -342,15 +337,33 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
             if(!addFile){
                 addFile = new FormData();
             }
-            addFile.append('entityText', JSON.stringify($scope.formData1.model));
-            $http.post(mgrData1.api.create, addFile, {
-                withCreadential: true,
-                headers: {'Content-Type': undefined, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Origin': '*'},
-                transformRequest: angular.identity
-            }).success(function(){
-                //formly.options.updateInitialValue();
+            if($scope.formData1.model.type ==0){
+                console.log($scope.formData1.model)
+                console.log($scope.current);
+                $scope.current.children.push({
+                    name:$scope.formData1.model.name,
+                    path:$scope.current.path+"/"+$scope.formData1.model.currPath,
+                    salt:$scope.current.salt,
+                    storeId:$scope.current.storeId,
+                    url:$scope.current.url+"/"+$scope.formData1.model.currPath,
+                    size:0,
+                    modified:new Date(),
+                    children:[],
+                    type:0});
                 $scope.goDataTable();
-            });
+            }else{
+                addFile.append('entityText', JSON.stringify($scope.formData1.model));
+                $http.post(mgrData1.api.create, addFile, {
+                    withCreadential: true,
+                    headers: {'Content-Type': undefined, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Origin': '*'},
+                    transformRequest: angular.identity
+                }).success(function(res){
+                    //formly.options.updateInitialValue();
+                    //$scope.current.children.push(res.rows);
+                    angular.merge($scope.current.children, res.rows);
+                    $scope.goDataTable();
+                });
+            }
 
             /*$resource(mgrData1.api.create).save({}, $scope.formData).$promise.then(saveSuccess, saveFailed);*/
         }

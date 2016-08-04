@@ -492,12 +492,14 @@ public class WeixinManager extends RedisOperation implements WeixinService {
             for (String key : myMap.keySet()) {
                 if (myMap.get(key).getIdentityCode().equals(identityCode)) {
                     WaitToken newWt = myMap.get(key);
+                    //删掉原来Redis中对应的排号数据，为了修改将openid绑定进去
                     hdelete(redisKey, myMap.get(key).getToken());
                     newWt.setOpenId(openId);
                     Map<String,Date> map1 = TimeUtil.getAfterDate(new Date(myMap.get(key).getTimeTook() * 1000));
                     hset(redisKey, newWt.getToken(), newWt, map1.get("eTime"));
                     Long timeTookLong = myMap.get(key).getTimeTook();
                     waitTokenDao.updateWaitTokenOpenId(openId, myMap.get(key).getIdentityCode(), timeTookLong);
+                    //将openId跟店铺id作为key，绑定到之前的排号list的key中
                     String redisKeyOpenIdRef = RedisKeys.openIdToTableType(myMap.get(key).getShopId(), openId);
                     hsetSimple(redisKeyOpenIdRef, redisKey, map1.get("eTime"));
                     break;

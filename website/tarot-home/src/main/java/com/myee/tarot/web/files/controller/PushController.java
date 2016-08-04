@@ -9,6 +9,7 @@ import com.myee.djinn.dto.ResourceDTO;
 import com.myee.djinn.dto.ResponseData;
 import com.myee.djinn.endpoint.OrchidService;
 import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
+import com.myee.tarot.campaign.domain.MerchantActivity;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
@@ -20,6 +21,8 @@ import com.myee.tarot.web.util.StringUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,6 +44,8 @@ import java.util.*;
  */
 @Controller
 public class PushController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MerchantActivity.class);
 
     @Value("${cleverm.push.dirs}")
     private String DOWNLOAD_HOME;
@@ -72,41 +77,76 @@ public class PushController {
 
     @RequestMapping("admin/file/create")
     @ResponseBody
-    public FileItem createResource( @RequestParam(value="file",required = false) CommonsMultipartFile file, @RequestParam("entityText") String entityText) throws IllegalStateException, IOException {
+    public AjaxPageableResponse createResource(@RequestParam(value="file",required = false) CommonsMultipartFile file, @RequestParam("entityText") String entityText, HttpServletRequest request){
         FileItem vo = JSON.parseObject(entityText, FileItem.class);
         Long orgID = vo.getSalt();
-        File dest = FileUtils.getFile(DOWNLOAD_HOME, Long.toString(orgID), vo.getPath(), vo.getCurrPath());
-        if (!dest.exists()) {
-            dest.mkdirs();
+        Map<String, FileItem> resMap = Maps.newLinkedHashMap();
+        try {
+            File dest = FileUtils.getFile(DOWNLOAD_HOME, Long.toString(orgID), vo.getPath()); //新增文件父路径
+            String currPath = vo.getCurrPath()==null? "":vo.getCurrPath();
+
+            if(!dest.exists())   //新增文件夹和文件需要检测文件夹是否存在
+                dest.mkdirs();
+            if (file != null && !file.isEmpty()) {
+                String fileName = file.getFileItem().getName();
+
+                File desDir = new File(dest+File.separator+currPath);
+                if(!desDir.exists())
+                    desDir.mkdirs();
+                File desFile = new File(desDir+File.separator+fileName);
+                desFile.createNewFile();
+                file.transferTo(desFile);
+            }
+            if (!StringUtil.isNullOrEmpty(vo.getContent(), true)) {
+                String name = vo.getName();
+                File desDir = new File(dest+File.separator+currPath);
+                if(!desDir.exists())
+                    desDir.mkdirs();
+
+                File desFile = new File(desDir+File.separator+name);
+                desFile.createNewFile();
+                FileUtils.writeStringToFile(desFile, vo.getContent());
+            }
+            MerchantStore store = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
+            listFiles(dest, resMap, store.getId(), store.getId());
+        } catch (IOException e) {
+            LOGGER.error("create file error",e);
         }
-        if (file != null && !file.isEmpty()) {
-            String fileName = file.getFileItem().getName();
-            File desFile = new File(dest+File.separator+fileName);
-            desFile.createNewFile();
-            file.transferTo(desFile);
-        }
-        if (!StringUtil.isNullOrEmpty(vo.getContent(), true)) {
-            String name = vo.getName();
-            File desFile = new File(dest+File.separator+name);
-            desFile.createNewFile();
-            FileUtils.writeStringToFile(desFile, vo.getContent());
-        }
-        return vo;
+        return new AjaxPageableResponse(Lists.<Object>newArrayList(resMap.values()));
     }
 
     @RequestMapping(value = "admin/file/delete", method = RequestMethod.POST)
     @ResponseBody
     @Transactional
-    public boolean deleteResource(@RequestParam("salt") Long orgID, @RequestParam("path") String path, HttpServletRequest request) {
-        MerchantStore store = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
-        if (store.getId() != orgID) {
-            return false;
-        }
+    public AjaxResponse deleteResource(@RequestParam("salt") Long orgID, @RequestParam("path") String path, HttpServletRequest request) {
         File resFile = getResFile(orgID, path);
-        if (resFile.exists()) {
-            FileUtils.deleteQuietly(resFile);
+        boolean flag = false;
+        Map map = new HashMap();
+        AjaxResponse ajaxResponse = new AjaxResponse();
+        if(resFile.isDirectory()) {
+            if(getFiles(resFile)) {
+                flag = false;
+                map.put("message",flag);
+                ajaxResponse.addDataEntry(map);
+                return ajaxResponse;
+            }
         }
-        return true;
+        boolean isCopy = copyToRecycle(resFile);//复制文件到回收站
+        if(isCopy) { //复制成功后执行删除
+            MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (store.getId() != orgID) {
+                flag = false;
+            } else {
+                if (resFile.exists()) {
+                    FileUtils.deleteQuietly(resFile);
+                    flag = true;
+                }
+            }
+
+        }
+        map.put("message",flag);
+        ajaxResponse.addDataEntry(map);
+        return ajaxResponse;
     }
 
     @RequestMapping("admin/content/get")
@@ -180,26 +220,26 @@ public class PushController {
         try {
             eptService = serverBootstrap.getClient(OrchidService.class, pushDTO.getUniqueNo());
         } catch (Exception e) {
-            return AjaxResponse.failed(-1);
+            return AjaxResponse.failed(-1, "连接客户端错误");
         }
         if(eptService == null){
-            return AjaxResponse.failed(-2);
+            return AjaxResponse.failed(-2, "获取接口出错");
         }
         try {
             dto.setContent(JSON.parseArray(pushDTO.getContent(), ResourceDTO.class));
         }catch (Exception e){
-            return AjaxResponse.failed(-3);
+            return AjaxResponse.failed(-3, "推送内容格式错误");
         }
         ResponseData rd = null;
         try {
             rd = eptService.sendNotification(dto);
         } catch (Exception e) {
-            return AjaxResponse.failed(-4);
+            return AjaxResponse.failed(-4, "客户端不存在");
         }
         if(rd != null && rd.isSuccess()) {
             return AjaxResponse.success();
         } else {
-            return AjaxResponse.failed(-5);
+            return AjaxResponse.failed(-5, "发送失败，客户端出错");
         }
     }
 
@@ -234,4 +274,62 @@ public class PushController {
         return Base64.encodeBase64String(rawId.getBytes(charset));
     }
 
+    /**
+     * 复制文件至回收站
+     * @param file
+     * @return
+     */
+    public boolean copyToRecycle(File file) {
+        try {
+            if (file.exists()) {
+                String tempFilePath = file.getPath().replaceAll("\\\\", "/");//把路径中的反斜杠替换成斜杠
+                String tempDownloadPath = DOWNLOAD_HOME.replaceAll("\\\\","/")+"/";//准备用于替换成url的下载文件夹路径
+                String tempTargetPath = (DOWNLOAD_HOME + File.separator + "deleted" + File.separator).replaceAll("\\\\","/");
+                String targetPath = tempFilePath.replaceAll(tempDownloadPath, tempTargetPath);
+                targetPath = targetPath.replaceAll("/","\\\\");//把路径转回linux兼容
+                if (file.isFile()) {
+                    // Destination directory
+                    File dir = new File(targetPath);
+                    File parentPath = new File(dir.getParent());
+                    parentPath.mkdirs();
+                    // Move file to new directory
+                    boolean success = file.renameTo(dir);
+                } else if (file.isDirectory()) {
+                    File files[] = file.listFiles();
+                    for (int i = 0; i < files.length; i++) {
+                        copyToRecycle(files[i]);
+                    }
+                }
+                return true;
+            } else {
+                System.out.println("所删除的文件不存在！" + '\n');
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.print("unable to delete the folder!");
+        }
+        return false;
+    }
+
+    /*
+     * 通过递归得到某一路径下所有的目录及其文件
+    */
+    static boolean getFiles(File root){
+//        File root = new File(filePath);
+        File[] files = root.listFiles();
+        boolean flag = false;
+        for(File file : files){
+            if(file.isDirectory()){
+                /*
+                 * 递归调用
+                */
+                getFiles(file);
+            } else{
+                flag = true;
+                break;
+            }
+        }
+        return flag;
+    }
 }
