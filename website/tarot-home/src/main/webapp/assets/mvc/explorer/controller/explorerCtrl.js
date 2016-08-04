@@ -90,8 +90,10 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                         currPath:data.path,
                         path:data.path,
                         type:data.type,
+                        editorModel:1
                     }
                     $scope.current = data;
+                    $scope.flag1  = true;
                 },
                 delete: function (data) {
                     $scope.delete(data.salt,data.path);
@@ -126,9 +128,15 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
         for(var i in arraySelected){
             content += '{"url": "'+ arraySelected[i].url +'","name": "'+ arraySelected[i].name +'"},';
         }
+        var formatJSONStr = $scope.formatJSON("[" + content.substr(0,content.length-1)  + "]", true);
+        console.log(formatJSONStr.length)
+        if(formatJSONStr.length >= 2000){
+            toaster.warning({ body:"一次推送文件过多！"});
+            return;
+        }
         $scope.activeTab = iPush;
         $scope.formData.model.store = {name: Constants.thisMerchantStore.name};
-        $scope.formData.model.content = "[" + content.substr(0,content.length-1)  + "]";
+        $scope.formData.model.content = formatJSONStr;
     };
 
     //递归出所有选中的文件
@@ -172,7 +180,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 key: 'appId',
                 type: 'c_select',
                 className: 'c_select',
-                templateOptions: {label: '选择推动应用', required: true, options: getAppList()}
+                templateOptions: {label: '选择推送应用', required: true, options: getAppList()}
             },
             {key: 'timeout', type: 'datepicker', templateOptions: {label: '过期时间', placeholder: '过期时间',type: 'text', datepickerPopup: 'yyyy-MM-dd', datepickerOptions: {format: 'yyyy-MM-dd'}}},
             {
@@ -192,7 +200,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     style: {attribute: 'style'},
                     maxlen: { attribute: 'maxlength' }
                 },
-                templateOptions: {label: '推动内容', required: true, placeholder: '推动内容(长度小于1000)', rows: 20, style: 'max-width:450px', maxlen:1000}
+                templateOptions: {label: '推动内容(长度小于2000)', required: true, placeholder: '推动内容(长度小于2000)', rows: 20, style: 'max-width:1000px', maxlen:2000}
             }
         ],
         api: {
@@ -214,6 +222,14 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 }
             },
             {
+                key: 'editorModel',
+                type: 'c_input',
+                templateOptions: {disabled: true, label: '编辑模式', placeholder: '编辑模式'},
+                hideExpression: function ($viewValue, $modelValue, scope) {
+                    return true;   //隐藏
+                }
+            },
+            {
                 id: 'path',
                 key: 'path',
                 type: 'c_input',
@@ -229,9 +245,10 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 id: 'currPath',
                 key: 'currPath',
                 type: 'c_input',
-                templateOptions: { required: true, label: '节点路径', placeholder: '节点路径'},
+                templateOptions: { label: '节点路径', placeholder: '节点路径'},
                 expressionProperties: {
-                    'templateOptions.required': 'model.type==1?false:true' // disabled when ifEditor is true
+                    'templateOptions.required': 'model.type==0?true:false' ,// disabled when ifEditor is true
+                    'templateOptions.disabled': 'model.editorModel==1?true:false' //编辑模式不能修改节点路径
                 }
             },
             {
@@ -239,7 +256,10 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 key: 'type',
                 type: 'c_select',
                 className: 'c_select',
-                templateOptions: { required: true, label: '节点类型',  options: nodeTypes }
+                templateOptions: { required: true, label: '节点类型',  options: nodeTypes },
+                expressionProperties: {
+                    'templateOptions.disabled': 'model.editorModel==1?true:false' //编辑模式不能修改节点类型
+                }
             },
             {
                 key: 'resFile',
@@ -249,7 +269,8 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     return scope.model.type == 0?true:false;//true新增文件夹时隐藏文件内容输入框 false新增时显示批量修改
                 },
                 expressionProperties: {
-                    'templateOptions.disabled': 'model.ifEditor' // disabled when ifEditor is true
+                    'templateOptions.disabled': 'model.ifEditor', // disabled when ifEditor is true
+                    //'templateOptions.disabled': 'model.editorModel==1?true:false'
                 }
             },
             {
@@ -259,13 +280,13 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 templateOptions: {label: '文本编辑', required: false, type: 'checkbox'},
                 defaultValue: false,
                 hideExpression: function ($viewValue, $modelValue, scope) {
-                    if(scope.model.ifEditor){
+                    var flag = scope.model.editorModel==1?true:false;//是否是编辑模式
+                    if(scope.model.ifEditor && flag && $scope.flag1){
                         $scope.showContent($scope.current);
-                    }else{
-                        scope.model.content="";
+                        $scope.flag1 = false;
                     }
                     return scope.model.type == 0?true:false;//新增文件夹时隐藏
-                },
+                }
             },
             {
                 id: 'content',
@@ -302,13 +323,12 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
     //formly提交
     $scope.pushSubmit = function () {
         var formly = $scope.formData;
-        console.log(formly)
         if (formly.form.$valid) {
             formly.options.updateInitialValue();
             $resource(mgrData.api.push).save({}, formly.model).$promise.then(
                 function success(resp) {
                     if(resp != null && resp.status == 0){
-                        toaster.success({ body:"发送成功"});
+                        toaster.success({ body:resp.statusMessage});
                         $scope.goDataTable();
                     }else{
                         toaster.error({ body:resp.statusMessage});
@@ -404,5 +424,44 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 toaster.error({ body:resp.statusMessage});
             }
         });
+    }
+
+    $scope.formatJSON = function(txt,compress){
+        var indentChar = '    ';
+        if(/^\s*$/.test(txt)){
+            toaster.error({ body:"数据为空,无法格式化!"});
+            return;
+        }
+        try{var data=eval('('+txt+')');}
+        catch(e){
+            toaster.error({ body:'数据源语法错误,格式化失败! 错误信息: '+ (e.description,'err')});
+            return;
+        };
+        var draw=[],last=false,This=this,line=compress?'':'\n',nodeCount=0,maxDepth=0;
+
+        var notify=function(name,value,isLast,indent,formObj){
+            nodeCount++;
+            for (var i=0,tab='';i<indent;i++ )tab+=indentChar;
+            tab=compress?'':tab;
+            maxDepth=++indent;
+            if(value&&value.constructor==Array){
+                draw.push(tab+(formObj?('"'+name+'":'):'')+'['+line);
+                for (var i=0;i<value.length;i++)
+                    notify(i,value[i],i==value.length-1,indent,false);
+                draw.push(tab+']'+(isLast?line:(','+line)));
+            }else   if(value&&typeof value=='object'){
+                draw.push(tab+(formObj?('"'+name+'":'):'')+'{'+line);
+                var len=0,i=0;
+                for(var key in value)len++;
+                for(var key in value)notify(key,value[key],++i==len,indent,true);
+                draw.push(tab+'}'+(isLast?line:(','+line)));
+            }else{
+                if(typeof value=='string')value='"'+value+'"';
+                draw.push(tab+(formObj?('"'+name+'":'):'')+value+(isLast?'':',')+line);
+            };
+        };
+        var isLast=true,indent=0;
+        notify('',data,isLast,indent,false);
+        return draw.join('');
     }
 }
