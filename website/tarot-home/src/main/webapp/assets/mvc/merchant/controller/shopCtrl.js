@@ -196,6 +196,7 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
             'merchantId': $scope.formBindData.model.id
         }, {}, function (respSucc) {
             if (0 != respSucc.status) {
+                $scope.toasterManage($scope.toastError,respSucc);
                 return;
             }
 
@@ -220,9 +221,11 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
                 }
             });
 
+            $scope.toasterManage($scope.toastOperationSucc);
             $scope.goDataTable();
         }, function (respFail) {
-            console.log(respFail);
+            //console.log(respFail);
+            $scope.toasterManage($scope.toastError,respFail);
         });
     };
 
