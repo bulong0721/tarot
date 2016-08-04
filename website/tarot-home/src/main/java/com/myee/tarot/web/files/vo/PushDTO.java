@@ -9,6 +9,7 @@ public class PushDTO implements Serializable{
     private String uniqueNo;
     private Integer appId;
     private Long timeout;
+    private String storagePath;
     private String content;
 
 
@@ -34,6 +35,14 @@ public class PushDTO implements Serializable{
 
     public void setTimeout(Long timeout) {
         this.timeout = timeout;
+    }
+
+    public String getStoragePath() {
+        return storagePath;
+    }
+
+    public void setStoragePath(String storagePath) {
+        this.storagePath = storagePath;
     }
 
     public String getContent() {

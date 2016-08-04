@@ -240,6 +240,7 @@ public class PushController {
         dto.setUniqueNo(pushDTO.getUniqueNo());
         dto.setAppId(pushDTO.getAppId());
         dto.setTimeout(pushDTO.getTimeout());
+        dto.setStoragePath(pushDTO.getStoragePath());
         OrchidService eptService = null;
         try {
             eptService = serverBootstrap.getClient(OrchidService.class, pushDTO.getUniqueNo());
