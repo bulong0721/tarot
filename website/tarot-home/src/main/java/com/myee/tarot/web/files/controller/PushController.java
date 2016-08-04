@@ -9,6 +9,7 @@ import com.myee.djinn.dto.ResourceDTO;
 import com.myee.djinn.dto.ResponseData;
 import com.myee.djinn.endpoint.OrchidService;
 import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
+import com.myee.tarot.campaign.domain.MerchantActivity;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
@@ -20,6 +21,8 @@ import com.myee.tarot.web.util.StringUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,6 +44,8 @@ import java.util.*;
  */
 @Controller
 public class PushController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MerchantActivity.class);
 
     @Value("${cleverm.push.dirs}")
     private String DOWNLOAD_HOME;
@@ -72,26 +77,42 @@ public class PushController {
 
     @RequestMapping("admin/file/create")
     @ResponseBody
-    public FileItem createResource( @RequestParam(value="file",required = false) CommonsMultipartFile file, @RequestParam("entityText") String entityText) throws IllegalStateException, IOException {
+    public AjaxPageableResponse createResource(@RequestParam(value="file",required = false) CommonsMultipartFile file, @RequestParam("entityText") String entityText, HttpServletRequest request){
         FileItem vo = JSON.parseObject(entityText, FileItem.class);
         Long orgID = vo.getSalt();
-        File dest = FileUtils.getFile(DOWNLOAD_HOME, Long.toString(orgID), vo.getPath(), vo.getCurrPath());
-        if (!dest.exists()) {
-            dest.mkdirs();
+        Map<String, FileItem> resMap = Maps.newLinkedHashMap();
+        try {
+            File dest = FileUtils.getFile(DOWNLOAD_HOME, Long.toString(orgID), vo.getPath()); //新增文件父路径
+            String currPath = vo.getCurrPath()==null? "":vo.getCurrPath();
+
+            if(!dest.exists())   //新增文件夹和文件需要检测文件夹是否存在
+                dest.mkdirs();
+            if (file != null && !file.isEmpty()) {
+                String fileName = file.getFileItem().getName();
+
+                File desDir = new File(dest+File.separator+currPath);
+                if(!desDir.exists())
+                    desDir.mkdirs();
+                File desFile = new File(desDir+File.separator+fileName);
+                desFile.createNewFile();
+                file.transferTo(desFile);
+            }
+            if (!StringUtil.isNullOrEmpty(vo.getContent(), true)) {
+                String name = vo.getName();
+                File desDir = new File(dest+File.separator+currPath);
+                if(!desDir.exists())
+                    desDir.mkdirs();
+
+                File desFile = new File(desDir+File.separator+name);
+                desFile.createNewFile();
+                FileUtils.writeStringToFile(desFile, vo.getContent());
+            }
+            MerchantStore store = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
+            listFiles(dest, resMap, store.getId(), store.getId());
+        } catch (IOException e) {
+            LOGGER.error("create file error",e);
         }
-        if (file != null && !file.isEmpty()) {
-            String fileName = file.getFileItem().getName();
-            File desFile = new File(dest+File.separator+fileName);
-            desFile.createNewFile();
-            file.transferTo(desFile);
-        }
-        if (!StringUtil.isNullOrEmpty(vo.getContent(), true)) {
-            String name = vo.getName();
-            File desFile = new File(dest+File.separator+name);
-            desFile.createNewFile();
-            FileUtils.writeStringToFile(desFile, vo.getContent());
-        }
-        return vo;
+        return new AjaxPageableResponse(Lists.<Object>newArrayList(resMap.values()));
     }
 
     @RequestMapping(value = "admin/file/delete", method = RequestMethod.POST)
