@@ -311,9 +311,14 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
     $scope.delete = function (salt, path) {
         cAlerts.confirm('确定删除?',function(){
             //点击确定回调
-            $resource(mgrData.api.delete).save({salt: salt, path: path}, {}).$promise.then(saveSuccess, saveFailed);
-        },function(){
-            //点击取消回调
+            $resource(mgrData.api.delete).save({salt: salt, path: path}, {}).$promise.then(function success(resp){
+                    if(resp != null && resp.status == 0){
+                        toaster.success({ body:"删除成功"});
+                        $scope.goDataTable();
+                    }else{
+                        toaster.error({ body:resp.statusMessage});
+                    }
+            });
         });
     };
 
