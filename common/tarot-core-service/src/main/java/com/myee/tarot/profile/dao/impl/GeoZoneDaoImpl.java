@@ -19,12 +19,15 @@ import java.util.List;
 public class GeoZoneDaoImpl extends GenericEntityDaoImpl<Long, GeoZone> implements GeoZoneDao {
 
     public static Log log = LogFactory.getLog(GeoZoneDaoImpl.class);
+    private static final int Level_Province = 1;
+    private static final int Level_City     = 2;
+    private static final int Level_District = 3;
 
     public List<GeoZone> listProvince() {
         QGeoZone qGeoZone = QGeoZone.geoZone;
         JPQLQuery<GeoZone> query = new JPAQuery(getEntityManager());
         query.from(qGeoZone)
-                .where(qGeoZone.level.eq(1));
+                .where(qGeoZone.level.eq(Level_Province));
 
         return query.fetch();
     }
@@ -33,7 +36,7 @@ public class GeoZoneDaoImpl extends GenericEntityDaoImpl<Long, GeoZone> implemen
         QGeoZone qGeoZone = QGeoZone.geoZone;
         JPQLQuery<GeoZone> query = new JPAQuery(getEntityManager());
         query.from(qGeoZone)
-                .where(qGeoZone.level.eq(2))
+                .where(qGeoZone.level.eq(Level_City))
                 .where(qGeoZone.parent.eq(provinceId));
 
         return query.fetch();
@@ -43,7 +46,7 @@ public class GeoZoneDaoImpl extends GenericEntityDaoImpl<Long, GeoZone> implemen
         QGeoZone qGeoZone = QGeoZone.geoZone;
         JPQLQuery<GeoZone> query = new JPAQuery(getEntityManager());
         query.from(qGeoZone)
-                .where(qGeoZone.level.eq(3))
+                .where(qGeoZone.level.eq(Level_District))
                 .where(qGeoZone.parent.eq(cityId));
 
         return query.fetch();

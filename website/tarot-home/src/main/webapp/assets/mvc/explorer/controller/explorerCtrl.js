@@ -151,7 +151,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
 
     //查询推送应用下拉框内容
     function getAppList() {
-        return [{name: 'gaea', value: 1},{name: 'gaea1', value: 2}];
+        return [{name: 'gaea', value: 1}];
     }
 
     var mgrData = {
@@ -176,12 +176,23 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
             },
             {key: 'timeout', type: 'datepicker', templateOptions: {label: '过期时间', placeholder: '过期时间',type: 'text', datepickerPopup: 'yyyy-MM-dd', datepickerOptions: {format: 'yyyy-MM-dd'}}},
             {
+                key: 'storagePath',
+                type: 'c_input',
+                ngModelAttrs: {
+                    maxlen: {
+                        attribute: 'maxlength'
+                    }
+                },
+                templateOptions: {label: '终端存储路径', placeholder: '终端存储路径(长度小于50)', maxlen:50}
+            },
+            {
                 key: 'content',
                 type: 'c_textarea',
                 ngModelAttrs: {
-                    style: {attribute: 'style'}
+                    style: {attribute: 'style'},
+                    maxlen: { attribute: 'maxlength' }
                 },
-                templateOptions: {label: '推动内容', required: true, placeholder: '推动内容', rows: 10,style: 'max-width:450px'}
+                templateOptions: {label: '推动内容', required: true, placeholder: '推动内容(长度小于1000)', rows: 20, style: 'max-width:450px', maxlen:1000}
             }
         ],
         api: {
@@ -311,9 +322,14 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
     $scope.delete = function (salt, path) {
         cAlerts.confirm('确定删除?',function(){
             //点击确定回调
-            $resource(mgrData.api.delete).save({salt: salt, path: path}, {}).$promise.then(saveSuccess, saveFailed);
-        },function(){
-            //点击取消回调
+            $resource(mgrData.api.delete).save({salt: salt, path: path}, {}).$promise.then(function success(resp){
+                    if(resp != null && resp.status == 0){
+                        toaster.success({ body:"删除成功"});
+                        $scope.goDataTable();
+                    }else{
+                        toaster.error({ body:resp.statusMessage});
+                    }
+            });
         });
     };
 

@@ -24,7 +24,9 @@ public class AdminUserDaoImpl extends GenericEntityDaoImpl<Long, AdminUser> impl
         JPQLQuery<AdminUser> query = new JPAQuery(getEntityManager());
 
         query.from(qUser)
-                .where(qUser.name.eq(userName));
+                .leftJoin(qUser.merchantStore)
+                .fetchJoin();
+        query.where(qUser.name.eq(userName));
 
         AdminUser user = query.fetchFirst();
 
@@ -48,7 +50,9 @@ public class AdminUserDaoImpl extends GenericEntityDaoImpl<Long, AdminUser> impl
         JPQLQuery<AdminUser> query = new JPAQuery(getEntityManager());
 
         query.from(qUser)
-                .where(qUser.login.eq(login));
+                .leftJoin(qUser.merchantStore)
+                .fetchJoin();
+        query.where(qUser.login.eq(login));
 
         AdminUser user = query.fetchFirst();
 

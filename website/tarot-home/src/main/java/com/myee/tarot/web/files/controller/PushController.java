@@ -119,34 +119,37 @@ public class PushController {
     @ResponseBody
     @Transactional
     public AjaxResponse deleteResource(@RequestParam("salt") Long orgID, @RequestParam("path") String path, HttpServletRequest request) {
-        File resFile = getResFile(orgID, path);
-        boolean flag = false;
+        String message = "";
         Map map = new HashMap();
         AjaxResponse ajaxResponse = new AjaxResponse();
-        if (resFile.isDirectory()) {
-            if (getFiles(resFile)) {
-                flag = false;
-                map.put("message", flag);
-                ajaxResponse.addDataEntry(map);
-                return ajaxResponse;
-            }
-        }
-        boolean isCopy = copyToRecycle(resFile);//复制文件到回收站
-        if (isCopy) { //复制成功后执行删除
-            MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
-            if (store.getId() != orgID) {
-                flag = false;
-            } else {
-                if (resFile.exists()) {
-                    FileUtils.deleteQuietly(resFile);
-                    flag = true;
+        //不允许删除别的店铺下的资源
+        MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        if (!store.getId().equals(orgID)) {
+            message = "不允许删除别的店铺下的资源";
+            return AjaxResponse.failed(-1, message);
+        }  else {
+            File resFile = getResFile(orgID, path);
+            if (resFile.isDirectory()) {
+                try {
+                    getFiles(resFile);
+                } catch (StopMsgException e) {
+                    message = "该目录下还有文件，请先删除文件";
+                    return AjaxResponse.failed(-2, message);
                 }
             }
-
+            boolean isCopy = copyToRecycle(resFile);//复制文件到回收站
+            if (isCopy) { //复制成功后执行删除
+                message = "删除成功!";
+                if (resFile.exists()) {
+                    FileUtils.deleteQuietly(resFile);
+                    message = "删除成功!";
+                }
+                return AjaxResponse.success();
+            } else {
+                message = "所删除的文件不存在！";
+                return AjaxResponse.failed(-3, message);
+            }
         }
-        map.put("message", flag);
-        ajaxResponse.addDataEntry(map);
-        return ajaxResponse;
     }
 
     @RequestMapping("admin/content/get")
@@ -237,6 +240,7 @@ public class PushController {
         dto.setUniqueNo(pushDTO.getUniqueNo());
         dto.setAppId(pushDTO.getAppId());
         dto.setTimeout(pushDTO.getTimeout());
+        dto.setStoragePath(pushDTO.getStoragePath());
         OrchidService eptService = null;
         try {
             eptService = serverBootstrap.getClient(OrchidService.class, pushDTO.getUniqueNo());
@@ -338,9 +342,7 @@ public class PushController {
      * 通过递归得到某一路径下所有的目录及其文件
     */
     static boolean getFiles(File root) {
-//        File root = new File(filePath);
         File[] files = root.listFiles();
-        boolean flag = false;
         for (File file : files) {
             if (file.isDirectory()) {
                 /*
@@ -348,10 +350,13 @@ public class PushController {
                 */
                 getFiles(file);
             } else {
-                flag = true;
-                break;
+                // 跳出
+                throw new StopMsgException();
             }
         }
-        return flag;
+        return false;
+    }
+
+    static class StopMsgException extends RuntimeException {
     }
 }

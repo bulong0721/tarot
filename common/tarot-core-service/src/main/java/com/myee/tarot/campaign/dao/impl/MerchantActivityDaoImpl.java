@@ -21,7 +21,7 @@ public class MerchantActivityDaoImpl extends GenericEntityDaoImpl<Long, Merchant
         QMerchantActivity qMerchantActivity = QMerchantActivity.merchantActivity;
         JPQLQuery<MerchantActivity> query = new JPAQuery(getEntityManager());
         List<MerchantActivity> result = query.from(qMerchantActivity).where(qMerchantActivity.store.id.eq(storeId).and(qMerchantActivity.deleteStatus.eq(Constants.DELETE_NO))).fetch();
-        return result!=null&&result.size()>0 ? result.get(0):null;
+        return result != null && result.size() > 0 ? result.get(0) : null;
     }
 
     @Override

@@ -26,13 +26,18 @@ public class DeviceUsedDaoImpl extends GenericEntityDaoImpl<Long, DeviceUsed> im
         PageResult<DeviceUsed> pageList = new PageResult<DeviceUsed>();
         QDeviceUsed qDeviceUsed = QDeviceUsed.deviceUsed;
         JPQLQuery<DeviceUsed> query = new JPAQuery(getEntityManager());
+        query.from(qDeviceUsed)
+                .leftJoin(qDeviceUsed.attributes)
+                .fetchJoin()
+                .leftJoin(qDeviceUsed.device)
+                .fetchJoin();
         if(id != null) {
             query.where(qDeviceUsed.store.id.eq(id));
         }
         if(!StringUtil.isBlank(pageRequest.getQueryName())){
             query.where(qDeviceUsed.name.like("%" + pageRequest.getQueryName() + "%"));
         }
-        pageList.setRecordsTotal(query.from(qDeviceUsed).fetchCount());
+        pageList.setRecordsTotal(query.fetchCount());
         if( pageRequest.getCount() > 0){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
@@ -44,7 +49,11 @@ public class DeviceUsedDaoImpl extends GenericEntityDaoImpl<Long, DeviceUsed> im
     public List<DeviceUsed> listByIDs(List<Long> bindList){
         QDeviceUsed qDeviceUsed = QDeviceUsed.deviceUsed;
         JPQLQuery<DeviceUsed> query = new JPAQuery(getEntityManager());
-        query.from(qDeviceUsed);
+        query.from(qDeviceUsed)
+                .leftJoin(qDeviceUsed.attributes)
+                .fetchJoin()
+                .leftJoin(qDeviceUsed.device)
+                .fetchJoin();
         query.where(qDeviceUsed.id.in(bindList));
         return query.fetch();
     }
@@ -58,7 +67,11 @@ public class DeviceUsedDaoImpl extends GenericEntityDaoImpl<Long, DeviceUsed> im
     public DeviceUsed getStoreInfoByMbCode(String mainBoardCode) {
         QDeviceUsed qDeviceUsed = QDeviceUsed.deviceUsed;
         JPQLQuery<DeviceUsed> query = new JPAQuery(getEntityManager());
-        query.from(qDeviceUsed);
+        query.from(qDeviceUsed)
+                .leftJoin(qDeviceUsed.attributes)
+                .fetchJoin()
+                .leftJoin(qDeviceUsed.device)
+                .fetchJoin();
         query.where(qDeviceUsed.boardNo.eq(mainBoardCode));
         DeviceUsed deviceUsed = query.fetchFirst();
         if(deviceUsed != null){
