@@ -27,91 +27,69 @@
             <plugin>
                 <groupId>org.bsc.maven</groupId>
                 <artifactId>maven-processor-plugin</artifactId>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
+                        <id>process</id>
                         <goals>
                             <goal>process</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.mysema.maven</groupId>
-                <artifactId>maven-apt-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
+                        <phase>generate-sources</phase>
                         <configuration>
-                            <outputDirectory>target/generated-sources/querydsl</outputDirectory>
-                            <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+                            <options>
+                                <fullyAnnotationConfigured>true</fullyAnnotationConfigured>
+                                <addSuppressWarningsAnnotation>true</addSuppressWarningsAnnotation>
+                            </options>
                         </configuration>
                     </execution>
                 </executions>
                 <dependencies>
                     <dependency>
-                        <groupId>com.querydsl</groupId>
-                        <artifactId>querydsl-apt</artifactId>
-                        <version>${version.querydsl}</version>
+                        <groupId>org.hibernate</groupId>
+                        <artifactId>hibernate-jpamodelgen</artifactId>
+                        <version>4.3.5.Final</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>com.mysema.maven</groupId>
+                <artifactId>apt-maven-plugin</artifactId>
+                <version>1.1.3</version>
+                <executions>
+                    <execution>
+                        <id>querydsl</id>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <outputDirectory>target/generated-sources/querydsl</outputDirectory>
+                            <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+                        </configuration>
+                    </execution>
+                    <!--<execution>-->
+                        <!--<id>tarot-core-service</id>-->
+                        <!--<goals>-->
+                            <!--<goal>process</goal>-->
+                        <!--</goals>-->
+                        <!--<phase>generate-sources</phase>-->
+                        <!--<configuration>-->
+                            <!--<outputDirectory>${project.basedir}/../tarot-core-service/src/main/generated-java</outputDirectory>-->
+                            <!--<processor>com.tarot.codegen.TarotCodeProcessor</processor>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.myee.tarot</groupId>
+                        <artifactId>tarot-codegen</artifactId>
+                        <version>0.7</version>
                     </dependency>
                 </dependencies>
             </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.bsc.maven</groupId>
-                    <artifactId>maven-processor-plugin</artifactId>
-                    <version>3.1.0</version>
-                    <executions>
-                        <execution>
-                            <id>process</id>
-                            <goals>
-                                <goal>process</goal>
-                            </goals>
-                            <phase>generate-sources</phase>
-                            <configuration>
-                                <options>
-                                    <fullyAnnotationConfigured>true</fullyAnnotationConfigured>
-                                    <addSuppressWarningsAnnotation>true</addSuppressWarningsAnnotation>
-                                </options>
-                            </configuration>
-                        </execution>
-                    </executions>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.hibernate</groupId>
-                            <artifactId>hibernate-jpamodelgen</artifactId>
-                            <version>4.3.5.Final</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
-                <plugin>
-                    <groupId>com.mysema.maven</groupId>
-                    <artifactId>maven-apt-plugin</artifactId>
-                    <version>1.0.4</version>
-                    <configuration>
-                        <outputDirectory>target/generated-sources/querydsl</outputDirectory>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>process</goal>
-                            </goals>
-                            <configuration>
-                                <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
-                            </configuration>
-                        </execution>
-                    </executions>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.mysema.querydsl</groupId>
-                            <artifactId>querydsl-apt</artifactId>
-                            <version>3.7.1</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
                 <!--This codegen's configuration is used to store Eclipse m2e settings
                     only. It has no influence on the Maven build itself. -->
                 <plugin>

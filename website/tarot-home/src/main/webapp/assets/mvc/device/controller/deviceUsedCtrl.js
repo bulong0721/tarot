@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * productUsedCtrl - controller
  */
-deviceUsedCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables', 'cfromly', 'NgTableParams', '$q','cAlerts'];
-function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableParams, $q,cAlerts) {
+deviceUsedCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables', 'cfromly', 'NgTableParams', '$q','cAlerts','toaster'];
+function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableParams, $q,cAlerts,toaster) {
 
     var iDatatable = 0, iEditor = 1;
     //绑定产品相关参数
@@ -116,6 +116,7 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
             'deviceUsedId': $scope.formBindData.model.id
         }, {}, function (respSucc) {
             if (0 != respSucc.status) {
+                $scope.toasterManage($scope.toastError,respSucc);
                 return;
             }
 
@@ -140,9 +141,11 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
                 }
             });
 
+            $scope.toasterManage($scope.toastOperationSucc);
             $scope.goDataTable();
         }, function (respFail) {
-            console.log(respFail);
+            //console.log(respFail);
+            $scope.toasterManage($scope.toastError,respFail);
         });
     };
 
@@ -231,6 +234,7 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
                 autoEnd: formly.model.endNo ? formly.model.endNo : ""
             }, formly.model).$promise.then(function saveSuccess(response) {
                     if (0 != response.status) {
+                        $scope.toasterManage($scope.toastError,response);
                         return;
                     }
                     //批量添加的数据添加到ngtables
@@ -243,8 +247,10 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
                         }
                     })
 
+                    $scope.toasterManage($scope.toastOperationSucc);
                     $scope.goDataTable();
                 }, function saveFailed(response) {
+                    $scope.toasterManage($scope.toastError,response);
                 });
         }
     };
@@ -266,6 +272,11 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
     $scope.updateAttr = function (product, attr) {
         var xhr = $resource(mgrData.api.updateAttr);
         xhr.save({id: product.id}, attr).$promise.then(function (result) {
+            if (0 != result.status) {
+                $scope.toasterManage($scope.toastError,result);
+                return;
+            }
+            $scope.toasterManage($scope.toastOperationSucc);
             attr.editing = false;
         });
     };
@@ -275,6 +286,11 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
             //点击确定回调
             var xhr = $resource(mgrData.api.deleteAttr);
             xhr.save({id: product.id}, attr).$promise.then(function (result) {
+                if (0 != result.status) {
+                    $scope.toasterManage($scope.toastError,result);
+                    return;
+                }
+                $scope.toasterManage($scope.toastDeleteSucc);
                 var index = product.attributes.indexOf(attr);
                 product.attributes.splice(index, 1);
             });

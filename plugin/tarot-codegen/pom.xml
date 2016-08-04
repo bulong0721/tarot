@@ -18,19 +18,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
-            <version>4.3.5.Final</version>
+            <groupId>com.myee.tarot</groupId>
+            <artifactId>tarot-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.mysema.querydsl</groupId>
+            <groupId>com.querydsl</groupId>
             <artifactId>querydsl-apt</artifactId>
-            <version>3.7.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.bsc.maven</groupId>
-            <artifactId>maven-processor-plugin</artifactId>
-            <version>3.1.0</version>
+            <version>${version.querydsl}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.openjpa</groupId>
