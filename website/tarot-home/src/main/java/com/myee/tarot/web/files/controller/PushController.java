@@ -270,7 +270,7 @@ public class PushController {
         try {
             rd = eptService.sendNotification(dto);
         } catch (Exception e) {
-            return AjaxResponse.failed(-4, "客户端不存在");
+            return AjaxResponse.failed(-4, "客户端不存在或网络无法连接");
         }
         if (rd != null && rd.isSuccess()) {
             return AjaxResponse.success("推送成功");

@@ -128,9 +128,15 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
         for(var i in arraySelected){
             content += '{"url": "'+ arraySelected[i].url +'","name": "'+ arraySelected[i].name +'"},';
         }
+        var formatJSONStr = $scope.formatJSON("[" + content.substr(0,content.length-1)  + "]", true);
+        console.log(formatJSONStr.length)
+        if(formatJSONStr.length >= 2000){
+            toaster.warning({ body:"一次推送文件过多！"});
+            return;
+        }
         $scope.activeTab = iPush;
         $scope.formData.model.store = {name: Constants.thisMerchantStore.name};
-        $scope.formData.model.content = $scope.formatJSON("[" + content.substr(0,content.length-1)  + "]", true);
+        $scope.formData.model.content = formatJSONStr;
     };
 
     //递归出所有选中的文件
@@ -194,7 +200,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     style: {attribute: 'style'},
                     maxlen: { attribute: 'maxlength' }
                 },
-                templateOptions: {label: '推动内容', required: true, placeholder: '推动内容(长度小于1000)', rows: 20, style: 'max-width:1000px', maxlen:1000}
+                templateOptions: {label: '推动内容(长度小于2000)', required: true, placeholder: '推动内容(长度小于2000)', rows: 20, style: 'max-width:1000px', maxlen:2000}
             }
         ],
         api: {
