@@ -2,6 +2,7 @@ angular
     .module('myee')
     .filter('sizeFormatter', sizeFormatter)
     .filter('dateFormatter', dateFormatter)
+    .filter('inputType',inputType)
 
 //计算文件大小的单位
 function sizeFormatter() {
@@ -29,5 +30,32 @@ function dateFormatter($filter) {
             return $filter('date')(new Date(value), 'yyyy-MM-dd HH:mm:ss');
         }
         return '-';
+    }
+}
+
+//根据扩展名列表判断文件是否包含在里面，返回true1/false0
+function inputType(){
+    var img  = ['png','jpg','jpeg','gif','bmp'],
+        video = ['swf','avi','rmvb','mp3','mp4','mp5','mkv','wmv','csf','3gp'],
+        txt = ['txt','pdf'],
+        material = ['wav','apk','txt','bin','img'];
+    return function(val,type){
+        switch(type)
+        {
+            case 'img':
+                return img.indexOf(val);
+                break;
+            case 'video':
+                return video.indexOf(val);
+                break;
+            case 'txt':
+                return txt.indexOf(val);
+                break;
+            case 'material':
+                return material.indexOf(val);
+                break;
+            default:
+                return false;
+        }
     }
 }
