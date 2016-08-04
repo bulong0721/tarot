@@ -87,11 +87,12 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     $scope.formDataEditor.model = {
                         salt:data.salt,
                         name:data.name,
-                        currPath:data.path,
                         path:data.path,
                         type:data.type,
+                        editorModel:1
                     }
                     $scope.current = data;
+                    $scope.flag1  = true;
                 },
                 delete: function (data) {
                     $scope.delete(data.salt,data.path);
@@ -151,7 +152,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
 
     //查询推送应用下拉框内容
     function getAppList() {
-        return [{name: 'gaea', value: 1}];
+        return [{name: 'gaea', value: 1},{name: 'gaea1', value: 2}];
     }
 
     var mgrData = {
@@ -172,7 +173,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 key: 'appId',
                 type: 'c_select',
                 className: 'c_select',
-                templateOptions: {label: '选择推动应用', required: true, options: getAppList()}
+                templateOptions: {label: '选择推送应用', required: true, options: getAppList()}
             },
             {key: 'timeout', type: 'datepicker', templateOptions: {label: '过期时间', placeholder: '过期时间',type: 'text', datepickerPopup: 'yyyy-MM-dd', datepickerOptions: {format: 'yyyy-MM-dd'}}},
             {
@@ -192,7 +193,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     style: {attribute: 'style'},
                     maxlen: { attribute: 'maxlength' }
                 },
-                templateOptions: {label: '推动内容', required: true, placeholder: '推动内容(长度小于1000)', rows: 20, style: 'max-width:450px', maxlen:1000}
+                templateOptions: {label: '推送内容', required: true, placeholder: '推动内容(长度小于1000)', rows: 20, style: 'max-width:450px', maxlen:1000}
             }
         ],
         api: {
@@ -214,6 +215,14 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 }
             },
             {
+                key: 'editorModel',
+                type: 'c_input',
+                templateOptions: {disabled: true, label: '编辑模式', placeholder: '编辑模式'},
+                hideExpression: function ($viewValue, $modelValue, scope) {
+                    return true;   //隐藏
+                }
+            },
+            {
                 id: 'path',
                 key: 'path',
                 type: 'c_input',
@@ -229,9 +238,10 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 id: 'currPath',
                 key: 'currPath',
                 type: 'c_input',
-                templateOptions: { required: true, label: '节点路径', placeholder: '节点路径'},
+                templateOptions: { label: '节点路径', placeholder: '节点路径'},
                 expressionProperties: {
-                    'templateOptions.required': 'model.type==1?false:true' // disabled when ifEditor is true
+                    'templateOptions.required': 'model.type==0?true:false' ,// disabled when ifEditor is true
+                    'templateOptions.disabled': 'model.editorModel==1?true:false' //编辑模式不能修改节点路径
                 }
             },
             {
@@ -239,7 +249,10 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 key: 'type',
                 type: 'c_select',
                 className: 'c_select',
-                templateOptions: { required: true, label: '节点类型',  options: nodeTypes }
+                templateOptions: { required: true, label: '节点类型',  options: nodeTypes },
+                expressionProperties: {
+                    'templateOptions.disabled': 'model.editorModel==1?true:false' //编辑模式不能修改节点类型
+                }
             },
             {
                 key: 'resFile',
@@ -249,7 +262,8 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     return scope.model.type == 0?true:false;//true新增文件夹时隐藏文件内容输入框 false新增时显示批量修改
                 },
                 expressionProperties: {
-                    'templateOptions.disabled': 'model.ifEditor' // disabled when ifEditor is true
+                    'templateOptions.disabled': 'model.ifEditor', // disabled when ifEditor is true
+                    //'templateOptions.disabled': 'model.editorModel==1?true:false'
                 }
             },
             {
@@ -259,13 +273,13 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 templateOptions: {label: '文本编辑', required: false, type: 'checkbox'},
                 defaultValue: false,
                 hideExpression: function ($viewValue, $modelValue, scope) {
-                    if(scope.model.ifEditor){
+                    var flag = scope.model.editorModel==1?true:false;//是否是编辑模式
+                    if(scope.model.ifEditor && flag && $scope.flag1){
                         $scope.showContent($scope.current);
-                    }else{
-                        scope.model.content="";
+                        $scope.flag1 = false;
                     }
                     return scope.model.type == 0?true:false;//新增文件夹时隐藏
-                },
+                }
             },
             {
                 id: 'content',
@@ -368,6 +382,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     headers: {'Content-Type': undefined, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Origin': '*'},
                     transformRequest: angular.identity
                 }).success(function(res){
+                    console.log(res.rows)
                     angular.merge($scope.current.children, res.rows);
                     $scope.goDataTable();
                 });

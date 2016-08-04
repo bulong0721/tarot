@@ -80,14 +80,25 @@ public class PushController {
     public AjaxPageableResponse createResource(@RequestParam(value = "file", required = false) CommonsMultipartFile file, @RequestParam("entityText") String entityText, HttpServletRequest request) {
         FileItem vo = JSON.parseObject(entityText, FileItem.class);
         Long orgID = vo.getSalt();
+        boolean editorModel = false;
         Map<String, FileItem> resMap = Maps.newLinkedHashMap();
         try {
             File dest = FileUtils.getFile(DOWNLOAD_HOME, Long.toString(orgID), vo.getPath()); //新增文件父路径
             String currPath = vo.getCurrPath() == null ? "" : vo.getCurrPath();
-
-            if (!dest.exists())   //新增文件夹和文件需要检测文件夹是否存在
+            if(dest.exists() && dest.isFile()){  //如果文件已经存在，则为编辑模式,
+                editorModel = true;
+                //删除原文件，创建一个新的文件，将内容写入
+                String name = vo.getName();
+                String path = dest.getAbsolutePath().substring(0,dest.getAbsolutePath().lastIndexOf(File.separator));
+                dest.delete();
+                File desFile = new File(path + File.separator + name);
+                desFile.createNewFile();
+                FileUtils.writeStringToFile(desFile, vo.getContent());
+                dest = new File(path);  //用于查找文件
+            }
+            if (!editorModel &&!dest.exists())   //新增文件夹和文件需要检测文件夹是否存在
                 dest.mkdirs();
-            if (file != null && !file.isEmpty()) {
+            if (!editorModel && file != null && !file.isEmpty()) {  //文件上传
                 String fileName = file.getFileItem().getName();
 
                 File desDir = new File(dest + File.separator + currPath);
@@ -97,7 +108,7 @@ public class PushController {
                 desFile.createNewFile();
                 file.transferTo(desFile);
             }
-            if (!StringUtil.isNullOrEmpty(vo.getContent(), true)) {
+            if (!editorModel && !StringUtil.isNullOrEmpty(vo.getContent(), true)) { //界面输入文件内容
                 String name = vo.getName();
                 File desDir = new File(dest + File.separator + currPath);
                 if (!desDir.exists())
