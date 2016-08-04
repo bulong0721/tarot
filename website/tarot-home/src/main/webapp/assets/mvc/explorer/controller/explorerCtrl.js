@@ -9,7 +9,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
 
     var iDatatable = 0, iPush = 1, iEditor = 2;
     $scope.activeTab = iDatatable;
-    var nodeTypes =[{'name':'目录','value':'0'},{'name':'文件','value':'1'}];
+    var nodeTypes =[{name:'目录',value:0},{name:'文件',value:1}];
     $scope.treeData = [{path: '/', name: '/', type: 0, salt: '/'}];
     $scope.expandField = {field: 'name'};
     $scope.treeColumns = [
@@ -87,9 +87,11 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     $scope.formData1.model = {
                         salt:data.salt,
                         name:data.name,
-                        path:data.path,
                         currPath:data.path,
+                        path:data.path,
+                        type:data.type,
                     }
+                    $scope.current = data;
                 },
                 delete: function (data) {
                     $scope.delete(data.salt,data.path);
@@ -246,6 +248,11 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 templateOptions: {label: '文本编辑', required: false, type: 'checkbox'},
                 defaultValue: false,
                 hideExpression: function ($viewValue, $modelValue, scope) {
+                    if(scope.model.ifEditor){
+                        $scope.showContent($scope.current);
+                    }else{
+                        scope.model.content="";
+                    }
                     return scope.model.type == 0?true:false;//新增文件夹时隐藏
                 },
             },
@@ -266,7 +273,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
             }
         ],
         api: {
-            //read: '../device/used/paging',
+            getContent: '../admin/content/get',
             create: '../admin/file/create',
             //delete: '../device/used/delete',
         }
@@ -291,6 +298,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 function success(resp) {
                     if(resp != null && resp.status == 0){
                         toaster.success({ body:"发送成功"});
+                        $scope.goDataTable();
                     }else{
                         toaster.error({ body:resp.statusMessage});
                     }
@@ -386,5 +394,16 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
 
     //失败调用
     function saveFailed(response) {
+    }
+
+    $scope.showContent = function(data){
+        $resource(mgrData1.api.getContent).get({data: data}, {}).$promise.then(function success(resp) {
+            console.log(resp)
+            if(resp != null && resp.status == 0){
+                $scope.formData1.model.content=resp.rows[0].message;
+            }else{
+                toaster.error({ body:resp.statusMessage});
+            }
+        });
     }
 }
