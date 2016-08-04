@@ -14,7 +14,7 @@ import java.util.List;
  * Created by Administrator on 2016/7/12.
  */
 @Repository
-public class MerchantPriceDaoImpl extends GenericEntityDaoImpl<Long , MerchantPrice> implements MerchantPriceDao {
+public class MerchantPriceDaoImpl extends GenericEntityDaoImpl<Long, MerchantPrice> implements MerchantPriceDao {
     @Override
     public List<MerchantPrice> findPriceByActivityId(Long activityId) {
         QMerchantPrice qMerchantPrice = QMerchantPrice.merchantPrice;
