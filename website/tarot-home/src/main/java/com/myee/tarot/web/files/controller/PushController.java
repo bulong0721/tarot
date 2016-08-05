@@ -268,7 +268,7 @@ public class PushController {
         }
         ResponseData rd = null;
         try {
-            rd = eptService.sendNotification(dto);
+            rd = eptService.pushResource(dto);
         } catch (Exception e) {
             return AjaxResponse.failed(-4, "客户端不存在或网络无法连接");
         }
