@@ -375,11 +375,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
             var i = 0;
             while (i < len) {
                 if(tr[i].name == path[j]) {
-                    if(tr[i].children.length>0){
-                        tr = tr[i].children;
-                    }else{
-                        trIndex = i;
-                    }
+                    tr[i].children.length>0?tr = tr[i].children:trIndex = i
                     break;
                 }
                 i++;
