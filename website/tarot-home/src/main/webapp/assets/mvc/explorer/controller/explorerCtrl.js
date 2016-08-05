@@ -95,7 +95,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     $scope.flag1  = true;
                 },
                 delete: function (data) {
-                    $scope.delete(data.salt,data.path);
+                    $scope.delete(data);
                 },
                 download: function (data) {
                     $scope.download(data.salt,data.path);
@@ -338,11 +338,12 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
     };
 
     //删除资源
-    $scope.delete = function (salt, path) {
+    $scope.delete = function (data) {
         cAlerts.confirm('确定删除?',function(){
             //点击确定回调
-            $resource(mgrData.api.delete).save({salt: salt, path: path}, {}).$promise.then(function success(resp){
+            $resource(mgrData.api.delete).save({salt: data.salt, path: data.path}, {}).$promise.then(function success(resp){
                     if(resp != null && resp.status == 0){
+                        $scope.deleteDom(data);
                         toaster.success({ body:"删除成功"});
                         $scope.goDataTable();
                     }else{
@@ -351,6 +352,40 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
             });
         });
     };
+
+    //删除资源dom删除
+    $scope.deleteDom = function (data) {
+        /*定义变量
+        // path:本文件的路径
+        // pathLen:路径深度
+        // tr:根目录对象 之后对tr目录遍历
+        // trIndex:本文件的索引位置
+        */
+        var path = data.path.split("\\"),pathLen = path.length,tr = $scope.treeData[0].children,trIndex = null;
+
+        //判断是否有删除的文件,如有删除
+        if(pathLen>0){
+            for(var j=0;j<pathLen;j++){
+                pathBreak(tr.length,j);
+            }
+            tr.splice(trIndex,1);
+        }
+        //循环查找文件深度
+        function  pathBreak(len,j){
+            var i = 0;
+            while (i < len) {
+                if(tr[i].name == path[j]) {
+                    if(tr[i].children.length>0){
+                        tr = tr[i].children;
+                    }else{
+                        trIndex = i;
+                    }
+                    break;
+                }
+                i++;
+            }
+        }
+    }
 
     $scope.download = function (salt, path) {
         $resource(mgrData.api.download).save({salt: salt, path: path}, {}).$promise.then(function(data) {
@@ -425,7 +460,6 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
 
     $scope.showContent = function(data){
         $resource(mgrDataEditor.api.getContent).get({data: data}, {}).$promise.then(function success(resp) {
-            console.log(resp)
             if(resp != null && resp.status == 0){
                 $scope.formDataEditor.model.content=resp.rows[0].message;
             }else{
