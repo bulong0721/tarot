@@ -47,11 +47,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
         // Set to true if you want to see what and when is dynamically loaded
         debug: false
     });
-    $httpProvider.defaults.transformRequest = angular.identity;
-    $httpProvider.defaults.withCreadential = true;
+
     $httpProvider.defaults.headers.post['Content-Type'] = undefined;
-    $httpProvider.defaults.headers.post['Access-Control-Allow-Methods'] =  '*';
-    $httpProvider.defaults.headers.post['Access-Control-Allow-Origin'] =  '*';
 
     $stateProvider
         .state('merchant', {

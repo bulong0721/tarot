@@ -75,10 +75,16 @@ public class PushController {
         return new AjaxPageableResponse(Lists.<Object>newArrayList(resMap.values()));
     }
 
-    @RequestMapping(value = "admin/file/create",method = RequestMethod.POST)
+    @RequestMapping(value = "admin/file/create")
     @ResponseBody
     public AjaxPageableResponse createResource(@RequestParam(value = "file", required = false) CommonsMultipartFile file, @RequestParam("entityText") String entityText, HttpServletRequest request) {
-        FileItem vo = JSON.parseObject(entityText, FileItem.class);
+        MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        JSONObject jsonObject = JSON.parseObject(entityText);
+        if("/".equals(jsonObject.getString("salt"))){
+            jsonObject.remove("salt");
+            jsonObject.put("salt",store.getId());
+        }
+        FileItem vo = JSON.parseObject(jsonObject.toJSONString(), FileItem.class);
         Long orgID = vo.getSalt();
         boolean editorModel = false;
         Map<String, FileItem> resMap = Maps.newLinkedHashMap();
@@ -118,7 +124,6 @@ public class PushController {
                 desFile.createNewFile();
                 FileUtils.writeStringToFile(desFile, vo.getContent());
             }
-            MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
             listFiles(dest, resMap, store.getId(), store.getId());
         } catch (IOException e) {
             LOGGER.error("create file error", e);
@@ -183,21 +188,15 @@ public class PushController {
         if (resFile.length() > 4096L) {
             return AjaxResponse.failed(-3, "超过文本读取大小限制。");
         }
-        String fileName = resFile.getName();
-        String extension = fileName.substring(fileName.lastIndexOf(".")+1);
-        List<String> typeLists = new ArrayList<String>();
-        typeLists.add("xml");
-        typeLists.add("txt");
-        typeLists.add("csv");
-        if (!typeLists.contains(extension)) {
-            return AjaxResponse.failed(-4, "读取文本读格式错误。仅支持txt、xml文件");
-        }
+        String value = "";
         try {
-            String value = FileUtils.readFileToString(resFile, "utf-8");
-            map.put("message", value);
-            ajaxResponse.addDataEntry(map);
+            value = FileUtils.readFileToString(resFile, "utf-8");
         } catch (IOException ie) {
             LOGGER.error("读取文件错误", ie);
+            return AjaxResponse.failed(-4, "读取文件错误");
+        }finally {
+            map.put("message", value);
+            ajaxResponse.addDataEntry(map);
         }
         return ajaxResponse;
     }
