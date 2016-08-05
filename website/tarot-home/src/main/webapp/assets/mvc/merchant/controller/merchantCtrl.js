@@ -31,12 +31,8 @@ function merchantCtrl($scope, Constants,cTables,cfromly) {
             {
                 key: 'imgFile',
                 type: 'upload',
-                ngModelAttrs: {
-                    media_type: {
-                        attribute: 'media_type'
-                    }
-                },
-                templateOptions: {type: 'file', label: '商户图标', placeholder: '商户图标',media_type:'img'},
+                name:'img',//这个name是用来判断上传文件的类型，不判断为空('') || null
+                templateOptions: {type: 'file', label: '商户图标', placeholder: '商户图标'}
             },
             {
                 key: 'description',

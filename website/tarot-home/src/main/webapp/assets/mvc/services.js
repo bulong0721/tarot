@@ -233,7 +233,7 @@ function cTablesService($resource,NgTableParams,cAlerts,toaster){
 /*
  * cfromly
  * */
-function cfromlyService(formlyConfig, $window,toaster) {
+function cfromlyService(formlyConfig, $window,toaster,$filter) {
     //自定义formly Label&input一行显示
     formlyConfig.setWrapper({
         name: 'lineLabel',
@@ -301,8 +301,8 @@ function cfromlyService(formlyConfig, $window,toaster) {
             el.on("change", function (changeEvent) {
                 var file = changeEvent.target.files[0],
                     name = file.name.replace(/.+\./, "");
-                console.log(scope)
-                if(attrs.media_type && $filter('inputType')(name,attrs.media_type)<0){
+
+                if(scope.name && $filter('inputType')(name,scope.name)<0){
                     toaster.error({body:"请上传png,jpg,gif,bmp图片格式！"});
                     return false;
                 }
