@@ -76,6 +76,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 add: function (data) {
                     $scope.formDataEditor.options.resetModel();
                     $scope.activeTab = iEditor;
+                    console.log(data);
                     $scope.formDataEditor.model ={
                         salt:data.salt,
                         path:data.path
@@ -405,9 +406,10 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 addFile = new FormData();
             }
             if($scope.formDataEditor.model.type ==0){
+                var parentPath = $scope.current.path == '/'?"":$scope.current.path;
                 $scope.current.children.push({
                     name:$scope.formDataEditor.model.name,
-                    path:$scope.current.path+"/"+$scope.formDataEditor.model.currPath,
+                    path:parentPath+"/"+$scope.formDataEditor.model.currPath,
                     salt:$scope.current.salt,
                     storeId:$scope.current.storeId,
                     url:$scope.current.url+"/"+$scope.formDataEditor.model.currPath,
@@ -422,9 +424,9 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     if($scope.formDataEditor.model.editorModel==1?true:false){
                         var fileNewName = $scope.formDataEditor.model.name;
                         $scope.current.name = fileNewName;
-                        var index = $scope.formDataEditor.model.path.lastIndexOf("\\");
+                        var index = $scope.formDataEditor.model.path.lastIndexOf("/");
                         var path = $scope.formDataEditor.model.path.substring(0,index);
-                        $scope.current.path = path+"\\"+fileNewName;
+                        $scope.current.path = path+"/"+fileNewName;
                     }else{
                         angular.merge($scope.current.children, res.rows);
                     }
