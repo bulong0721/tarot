@@ -261,7 +261,7 @@ public class FilesController {
      */
     @RequestMapping(value = {"services/public/files/upload","admin/files/create"})
     @ResponseBody
-    public AjaxResponse createResource(@RequestParam("resFile") CommonsMultipartFile file, String path, Long storeId,HttpServletRequest request) throws IllegalStateException, IOException {
+    public AjaxResponse createResource(@RequestParam("file") CommonsMultipartFile file, String path, @RequestParam(value = "storeId",required = false)Long storeId,HttpServletRequest request) throws IllegalStateException, IOException {
         AjaxResponse resp = AjaxResponse.success();
         try {
             String type = request.getParameter("type");

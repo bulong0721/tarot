@@ -53,7 +53,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
             read: '../admin/merchant/paging',
             update: '../admin/merchant/save',
             delete: '../admin/merchant/delete',
-            upload: '../admin/file/create'
+            upload: '../admin/files/create'
         }
     };
     cTables.initNgMgrCtrl(mgrData, $scope);
@@ -90,12 +90,11 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
 
     //上传控件监听器
     $scope.$on('fileToUpload', function (event, arg) {
+        console.log(arg)
         //上传文件到后台
         $resource(mgrData.api.upload).save({
-            entityText: {
-                salt: Constants.thisMerchantStore.id,
-                path: "logo"
-            }
+            path: "logo",
+            type: "file"
         }, arg).$promise.then(function (res) {
             console.log(res)
             if (0 != res.status) {
@@ -103,10 +102,10 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
                 return;
             }
             $scope.toasterManage($scope.toastUploadSucc);
-            $scope.formData.model.logo = res.rows[0].url;
+            $scope.formData.model.logo = res.dataMap.tree.downloadPath;
 
             console.log($scope.formData.model.images)
-            $scope.formData.model.images = res.rows[0].url;
+            $scope.formData.model.images = res.dataMap.tree.downloadPath;
         })
     });
 }

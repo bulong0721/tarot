@@ -52,7 +52,7 @@ function explorerCtrl($scope, $resource, $uibModal,toaster) {
         },
         addFile:function(path){
             var fd = new FormData();
-            fd.append("resFile",path.files[0]);
+            fd.append("file",path.files[0]);
             fd.append("path",vm.filePath);
             //fd.append("type",'flie');
             $resource('../files/create').save({type:'file'}, fd,function deleteSuccess(res){

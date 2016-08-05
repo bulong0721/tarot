@@ -270,8 +270,8 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 }
             },
             {
-                id:"resFile",
-                key: 'resFile',
+                id:"file",
+                key: 'file',
                 type: 'upload',
                 name:'',
                 templateOptions: {required: false,type: 'file', label: '节点文件' },
