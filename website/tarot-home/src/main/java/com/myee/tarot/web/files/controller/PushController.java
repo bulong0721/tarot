@@ -75,7 +75,7 @@ public class PushController {
         return new AjaxPageableResponse(Lists.<Object>newArrayList(resMap.values()));
     }
 
-    @RequestMapping("admin/file/create")
+    @RequestMapping(value = "admin/file/create",method = RequestMethod.POST)
     @ResponseBody
     public AjaxPageableResponse createResource(@RequestParam(value = "file", required = false) CommonsMultipartFile file, @RequestParam("entityText") String entityText, HttpServletRequest request) {
         FileItem vo = JSON.parseObject(entityText, FileItem.class);

@@ -244,7 +244,12 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 id: 'currPath',
                 key: 'currPath',
                 type: 'c_input',
-                templateOptions: { label: '节点路径', placeholder: '节点路径'},
+                ngModelAttrs: {
+                    maxlen: {
+                        attribute: 'maxlength'
+                    }
+                },
+                templateOptions: { label: '节点路径', placeholder: '节点路径(长度小于50)',maxlen:50},
                 expressionProperties: {
                     'templateOptions.required': 'model.type==0?true:false' ,// disabled when ifEditor is true
                     'templateOptions.disabled': 'model.editorModel==1?true:false' //编辑模式不能修改节点路径
@@ -263,6 +268,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
             {
                 key: 'resFile',
                 type: 'upload',
+                name:'',
                 templateOptions: {required: false,type: 'file', label: '节点文件' },
                 hideExpression: function ($viewValue, $modelValue, scope) {
                     return scope.model.type == 0?true:false;//true新增文件夹时隐藏文件内容输入框 false新增时显示批量修改
@@ -292,9 +298,10 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 key: 'content',
                 type: 'c_textarea',
                 ngModelAttrs: {
-                    style: {attribute: 'style'}
+                    style: {attribute: 'style'},
+                    maxlen: { attribute: 'maxlength' }
                 },
-                templateOptions: {disabled : true,label: '文件内容', placeholder: '文件内容',rows: 10,style: 'max-width:500px' },
+                templateOptions: {disabled : true,label: '文件内容', placeholder: '文件内容(长度小于2000)',rows: 15,style: 'max-width:500px',maxlen:2000 },
                 hideExpression: function ($viewValue, $modelValue, scope) {
                     return scope.model.type == 0?true:false;//true新增文件夹时隐藏文件内容输入框 false新增时显示批量修改
                 },
