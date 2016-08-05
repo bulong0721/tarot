@@ -295,7 +295,7 @@ function cfromlyService(formlyConfig, $window,toaster,$filter) {
             '{{to.label}}',
             '</label>',
             '<div ng-hide="hide" class="col-sm-8">',
-            '<img ng-if="!Multi"  ng-src="{{model.images}}" />',
+            '<img ng-if="!Multi"  ng-src="{{model.images}}" src="http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt?imageView2/1/w/150/h/95" />',
             '</div>'
         ].join(' ')
     });

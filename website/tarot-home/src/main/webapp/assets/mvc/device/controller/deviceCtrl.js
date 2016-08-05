@@ -33,6 +33,11 @@ function deviceCtrl($scope,$resource, Constants,cTables,cfromly,cAlerts) {
     $scope.updateAttr = function (product, attr) {
         var xhr = $resource(mgrData.api.updateAttr);
         xhr.save({id: product.id}, attr).$promise.then(function (result) {
+            if (0 != result.status) {
+                $scope.toasterManage($scope.toastError,result);
+                return;
+            }
+            $scope.toasterManage($scope.toastOperationSucc);
             attr.editing = false;
         });
     };
@@ -42,6 +47,11 @@ function deviceCtrl($scope,$resource, Constants,cTables,cfromly,cAlerts) {
             //点击确定回调
             var xhr = $resource(mgrData.api.deleteAttr);
             xhr.save({id: product.id}, attr).$promise.then(function (result) {
+                if (0 != result.status) {
+                    $scope.toasterManage($scope.toastError,result);
+                    return;
+                }
+                $scope.toasterManage($scope.toastDeleteSucc);
                 var index = product.attributes.indexOf(attr);
                 product.attributes.splice(index, 1);
             });

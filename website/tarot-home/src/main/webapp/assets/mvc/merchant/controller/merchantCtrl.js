@@ -33,12 +33,12 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
                 key: 'imgFile',
                 type: 'upload',
                 name: 'img',//这个name是用来判断上传文件的类型，不判断为空('') || null
-                templateOptions: {type: 'file', label: '商户图标', placeholder: '商户图标'}
+                templateOptions: {type: 'file', label: '商户图标', required: false,placeholder: '商户图标'}
             },
             {
                 key: 'images',
                 type: 'c_images',
-                templateOptions: {label: '商户图标',Multi:false}
+                templateOptions: {label: '商户图标预览',Multi:false}
             },
             {
                 key: 'description',
@@ -78,6 +78,8 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
         if (rowIndex > -1) {
             var data = $scope.tableOpts.data[rowIndex];
             $scope.formData.model = angular.copy(data);
+            console.log(data)
+            $scope.formData.model.images = data.logo;
             $scope.rowIndex = rowIndex;
         } else {
             $scope.formData.model = {};
