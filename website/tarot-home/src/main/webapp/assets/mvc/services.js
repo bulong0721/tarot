@@ -295,12 +295,9 @@ function cfromlyService(formlyConfig, $window,toaster,$filter) {
             '{{to.label}}',
             '</label>',
             '<div ng-hide="hide" class="col-sm-8">',
-            '<img ng-repeat="i in model.images" ng-src="{{i}}" />',
+            '<img ng-if="!Multi"  ng-src="{{model.images}}" />',
             '</div>'
-        ].join(' '),
-        controller:function($scope){
-            console.log($scope)
-        }
+        ].join(' ')
     });
 
     //file

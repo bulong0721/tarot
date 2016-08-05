@@ -38,7 +38,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
             {
                 key: 'images',
                 type: 'c_images',
-                templateOptions: {type: 'text', label: '商户图标'}
+                templateOptions: {label: '商户图标',Multi:false}
             },
             {
                 key: 'description',
@@ -102,10 +102,9 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
             }
             $scope.toasterManage($scope.toastUploadSucc);
             $scope.formData.model.logo = res.rows[0].url;
-            if(!$scope.formData.model.images){
-                $scope.formData.model.images = [];
-            }
-            $scope.formData.model.images.push(res.rows[0].url);
+
+            console.log($scope.formData.model.images)
+            $scope.formData.model.images = res.rows[0].url;
         })
     });
 }
