@@ -239,7 +239,10 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 id: 'name',
                 key: 'name',
                 type: 'c_input',
-                templateOptions: { required: true, label: '节点名称', placeholder: '节点名称'}
+                templateOptions: { label: '节点名称', placeholder: '节点名称'},
+                expressionProperties: {
+                    'templateOptions.required': 'model.ifEditor' // disabled when ifEditor is false
+                }
             },
             {
                 id: 'currPath',
@@ -274,11 +277,11 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 templateOptions: {required: false,type: 'file', label: '节点文件' },
                 hideExpression: function ($viewValue, $modelValue, scope) {
                     return scope.model.type == 0?true:false;//true新增文件夹时隐藏文件内容输入框 false新增时显示批量修改
-                },
-                expressionProperties: {
-                    'templateOptions.disabled': 'model.ifEditor', // disabled when ifEditor is true
-                    //'templateOptions.disabled': 'model.editorModel==1?true:false'
                 }
+                //expressionProperties: {
+                //    'templateOptions.disabled': 'model.ifEditor', // disabled when ifEditor is true
+                //    //'templateOptions.disabled': 'model.editorModel==1?true:false'
+                //}
             },
             {
                 key: 'ifEditor',
@@ -308,7 +311,8 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     return scope.model.type == 0?true:false;//true新增文件夹时隐藏文件内容输入框 false新增时显示批量修改
                 },
                 expressionProperties: {
-                    'templateOptions.disabled': '!model.ifEditor' // disabled when ifEditor is false
+                    'templateOptions.disabled': '!model.ifEditor', // disabled when ifEditor is false
+                    'templateOptions.required': 'model.ifEditor' // disabled when ifEditor is false
                 }
             }
         ],

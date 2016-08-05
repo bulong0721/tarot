@@ -10176,10 +10176,11 @@ th.center, td.center {
     margin: 0 0 0 20px;
 }
 
-.formly-field-datepicker .form-group,.formly-field-upload .form-group {overflow: inherit !important;  width: 100%;   display: inline-block; margin: 0;}
+.formly-field-datepicker .form-group,.formly-field-upload .form-group,.formly-field-c_images {overflow: inherit !important;  width: 100%;   display: inline-block; margin: 0;}
 .formly-field-datepicker .form-group label,.formly-field-upload .form-group label {width: 16.66666667%; float: left}
 .formly-field-upload .form-group input[type=file] {margin-left: 15px; display: inline-block;}
 .formly-field-datepicker p {margin: 0; max-width: 450px;}
+.formly-field-c_images img {width: 100px}
 
 .formly input[type=checkbox]:checked {  background-color: #4a90e2;  border-color: #4a90e2 !important;  }
 .formly input[type=checkbox] {  -webkit-appearance: none;  -moz-appearance: none;  appearance: none;  outline: 0;  background-color: #fff;  border: 2px solid #757575;  position: relative;  width: 20px;  height: 20px;  vertical-align: top;  border-radius: 2px;  padding: 0;  margin: 5px 10px 0 0;  }

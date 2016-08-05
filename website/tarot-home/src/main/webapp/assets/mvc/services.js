@@ -94,7 +94,7 @@ function cTablesService($resource,NgTableParams,cAlerts,toaster){
     var vm = this, iDatatable = 0, iEditor = 1;
 
     vm.initNgMgrCtrl = function(mgrOpts, scope) {
-        scope.toastError = 0,scope.toastOperationSucc = 1, scope.toastDeleteSucc = 2, scope.toastSearchSucc = 3;
+        scope.toastError = 0,scope.toastOperationSucc = 1, scope.toastDeleteSucc = 2, scope.toastSearchSucc = 3, scope.toastUploadSucc = 4 ;
         //初始化搜索配置
         scope.where = {};
 
@@ -109,7 +109,7 @@ function cTablesService($resource,NgTableParams,cAlerts,toaster){
         };
 
         //提交失败预留
-        function saveFailed(response) {
+        scope.saveFailed = function(response) {
             scope.toasterManage(scope.toastError,response);
         }
 
@@ -128,6 +128,9 @@ function cTablesService($resource,NgTableParams,cAlerts,toaster){
                 case scope.toastSearchSucc://查询成功
                     toaster.success({ body:"查询成功"});
                     break;
+                case scope.toastUploadSucc://查询成功
+                    toaster.success({ body:"上传成功"});
+                    break;
                 default :
                     toaster.error({ body:response.statusMessage});
             }
@@ -140,7 +143,7 @@ function cTablesService($resource,NgTableParams,cAlerts,toaster){
             if (formly.form.$valid) {
                 formly.options.updateInitialValue();
                 var xhr = $resource(mgrOpts.api.update);
-                xhr.save({}, formly.model).$promise.then(saveSuccess, saveFailed);
+                xhr.save({}, formly.model).$promise.then(scope.saveSuccess, scope.saveFailed);
             }
         };
 
@@ -173,7 +176,7 @@ function cTablesService($resource,NgTableParams,cAlerts,toaster){
                         }
                         scope.tableOpts.data.splice(rowIndex, 1);//更新数据表
                         scope.toasterManage(scope.toastDeleteSucc);
-                    }, saveFailed);
+                    }, scope.saveFailed);
                 }
             },function(){
                 //点击取消回调
@@ -182,7 +185,7 @@ function cTablesService($resource,NgTableParams,cAlerts,toaster){
         };
 
         //增删改查后处理tables数据
-        function saveSuccess(response) {
+        scope.saveSuccess = function(response) {
             if (0 != response.status) {
                 scope.toasterManage(scope.toastError,response);
                 return;
@@ -284,6 +287,19 @@ function cfromlyService(formlyConfig, $window,toaster,$filter) {
         wrapper: ['lineLabel', 'bootstrapHasError']
     });
 
+    //images
+    formlyConfig.setType({
+        name: 'c_images',
+        template: [
+            '<label ng-hide="hide" for="{{::id}}" class="col-sm-2 control-label">',
+            '{{to.label}}',
+            '</label>',
+            '<div ng-hide="hide" class="col-sm-8">',
+            '<img ng-if="!Multi"  ng-src="{{model.images}}" />',
+            '</div>'
+        ].join(' ')
+    });
+
     //file
     formlyConfig.setType({
         name: 'upload',
@@ -301,6 +317,7 @@ function cfromlyService(formlyConfig, $window,toaster,$filter) {
                 var file = changeEvent.target.files[0],
                     name = file.name.replace(/.+\./, "");
                 if(scope.name && $filter('inputType')(name,scope.name)<0){
+                    console.log(1)
                     toaster.error({body:"请上传png,jpg,gif,bmp图片格式！"});
                 }else{
                     if (file) {
