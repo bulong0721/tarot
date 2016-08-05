@@ -419,8 +419,8 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     type:0});
                 $scope.goDataTable();
             }else{
-                addFile.append('entityText', JSON.stringify($scope.formDataEditor.model));
-                $resource(mgrDataEditor.api.create).save({}, addFile).$promise.then(function(res) {
+                var addFile = $scope.formData_addFile || {};
+                $resource(mgrDataEditor.api.create).save({entityText:JSON.stringify($scope.formDataEditor.model)}, addFile).$promise.then(function(res) {
                     if($scope.formDataEditor.model.editorModel==1?true:false){
                         var fileNewName = $scope.formDataEditor.model.name;
                         $scope.current.name = fileNewName;
