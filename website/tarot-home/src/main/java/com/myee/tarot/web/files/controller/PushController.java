@@ -249,7 +249,7 @@ public class PushController {
         dto.setUniqueNo(pushDTO.getUniqueNo());
         dto.setAppId(pushDTO.getAppId());
         dto.setTimeout(pushDTO.getTimeout());
-        dto.setStoragePath(pushDTO.getStoragePath());
+//        dto.setStoragePath(pushDTO.getStoragePath());
         OrchidService eptService = null;
         try {
             eptService = serverBootstrap.getClient(OrchidService.class, pushDTO.getUniqueNo());
@@ -266,7 +266,7 @@ public class PushController {
         }
         ResponseData rd = null;
         try {
-            rd = eptService.pushResource(dto);
+//            rd = eptService.pushResource(dto);
         } catch (Exception e) {
             return AjaxResponse.failed(-4, "客户端不存在或网络无法连接");
         }
