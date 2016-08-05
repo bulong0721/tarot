@@ -422,7 +422,7 @@ public class FilesController {
                 String tempDownloadPath = DOWNLOAD_HOME.replaceAll("\\\\","/")+"/";//准备用于替换成url的下载文件夹路径
                 String tempTargetPath = (DOWNLOAD_HOME + File.separator + "deleted" + File.separator).replaceAll("\\\\","/");
                 String targetPath = tempFilePath.replaceAll(tempDownloadPath, tempTargetPath);
-                targetPath = targetPath.replaceAll("/","\\\\");//把路径转回linux兼容
+//                targetPath = targetPath.replaceAll("/","\\\\");//把路径转回linux兼容
                 if (file.isFile()) {
                     // Destination directory
                     File dir = new File(targetPath);

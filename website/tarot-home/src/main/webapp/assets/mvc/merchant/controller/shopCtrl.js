@@ -25,29 +25,54 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
                 key: 'address.province.id',
                 type: 'c_select',
                 className:'c_select',
-                templateOptions: {label: '省份', options: Constants.provinces},
-                expressionProperties: {
-                    value/*这个名字配置没用，市和区变化仍然会触发*/: function ($viewValue, $modelValue, scope) {
-                        Constants.getCitysByProvince($viewValue, $scope);
-                    }
-                }
+                templateOptions: {
+                    label: '省份',
+                    options: Constants.provinces,
+
+                },
             },
             {
                 key: 'address.city.id',
                 type: 'c_select',
                 className:'c_select',
-                templateOptions: {label: '城市', options: Constants.citys},
-                expressionProperties: {
-                    value/*这个名字配置没用，市和区变化仍然会触发*/: function ($viewValue, $modelValue, scope) {
-                        Constants.getDistrictsByCity($viewValue);
-                    }
+                templateOptions: {
+                    label: '城市',
+                    options: Constants.citys,
+                },
+                controller: function($scope, Constants) {
+                    $scope.$watch('model.address.province.id', function (newValue, oldValue, theScope) {
+                        if(newValue !== oldValue) {
+                            // logic to reload this select's options asynchronusly based on state's value (newValue)
+                            if($scope.model[$scope.options.key] && oldValue) {
+                                // reset this select
+                                $scope.model[$scope.options.key] = '';
+                            }
+                            // Reload options
+                            Constants.getCitysByProvince(newValue, $scope);
+                        }
+                    });
+
                 }
             },
             {
                 key: 'address.county.id',
                 type: 'c_select',
                 className:'c_select',
-                templateOptions: {label: '区县', options: Constants.districts}
+                templateOptions: {label: '区县', options: Constants.districts},
+                controller: function($scope, Constants) {
+                    $scope.$watch('model.address.city.id', function (newValue, oldValue, theScope) {
+                        if(newValue !== oldValue) {
+                            // logic to reload this select's options asynchronusly based on state's value (newValue)
+                            if($scope.model[$scope.options.key] && oldValue) {
+                                // reset this select
+                                $scope.model[$scope.options.key] = '';
+                            }
+                            // Reload options
+                            Constants.getDistrictsByCity(newValue);
+                        }
+                    });
+
+                }
             },
             {
                 key: 'address.circle.id',

@@ -297,28 +297,26 @@ function cfromlyService(formlyConfig, $window,toaster,$filter) {
         },
 
         link: function (scope, el, attrs) {
-
             el.on("change", function (changeEvent) {
                 var file = changeEvent.target.files[0],
                     name = file.name.replace(/.+\./, "");
-
                 if(scope.name && $filter('inputType')(name,scope.name)<0){
                     toaster.error({body:"请上传png,jpg,gif,bmp图片格式！"});
-                    return false;
-                }
-                if (file) {
-                    var fd = new FormData();
-                    fd.append('file', file);
-                    scope.$emit('fileToUpload', fd);
-                    var fileProp = {};
-                    for (var properties in file) {
-                        if (!angular.isFunction(file[properties])) {
-                            fileProp[properties] = file[properties];
+                }else{
+                    if (file) {
+                        var fd = new FormData();
+                        fd.append('file', file);
+                        scope.$emit('fileToUpload', fd);
+                        var fileProp = {};
+                        for (var properties in file) {
+                            if (!angular.isFunction(file[properties])) {
+                                fileProp[properties] = file[properties];
+                            }
                         }
+                        scope.fc.$setViewValue(fileProp);
+                    } else {
+                        scope.fc.$setViewValue(undefined);
                     }
-                    scope.fc.$setViewValue(fileProp);
-                } else {
-                    scope.fc.$setViewValue(undefined);
                 }
             });
             el.on("focusout", function (focusoutEvent) {
