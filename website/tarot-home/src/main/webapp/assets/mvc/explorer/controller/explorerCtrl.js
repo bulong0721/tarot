@@ -370,7 +370,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
         // tr:根目录对象 之后对tr目录遍历
         // trIndex:本文件的索引位置
         */
-        var path = data.path.split("\\"),pathLen = path.length,tr = $scope.treeData[0].children,trIndex = null;
+        var path = data.path.split("/"),pathLen = path.length,tr = $scope.treeData[0].children,trIndex = null;
 
         //判断是否有删除的文件,如有删除
         if(pathLen>0){
@@ -393,8 +393,8 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
     }
 
     $scope.download = function (salt, path) {
-        $resource(mgrData.api.download).save({salt: salt, path: path}, {}).$promise.then(function(data) {
-            window.location.href = data.rows[0].url;
+        $resource(mgrData.api.download).save({salt: salt, path: path}, {}).$promise.then(function(resp) {
+            window.location.href = resp.rows[0].url;
         });
     };
 

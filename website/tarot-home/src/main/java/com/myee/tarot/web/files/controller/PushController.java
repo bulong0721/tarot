@@ -136,10 +136,9 @@ public class PushController {
     @Transactional
     public AjaxResponse deleteResource(@RequestParam("salt") Long orgID, @RequestParam("path") String path, HttpServletRequest request) {
         String message = "";
-        Map map = new HashMap();
-        AjaxResponse ajaxResponse = new AjaxResponse();
         //不允许删除别的店铺下的资源
         MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        Map<String, FileItem> resMap = Maps.newLinkedHashMap();
         if (!store.getId().equals(orgID)) {
             message = "不允许删除别的店铺下的资源";
             return AjaxResponse.failed(-1, message);
@@ -160,7 +159,11 @@ public class PushController {
                     FileUtils.deleteQuietly(resFile);
                     message = "删除成功!";
                 }
-                return AjaxResponse.success();
+                if(path.lastIndexOf(File.separator) != -1) {
+                    File parentPathFile = getResFile(orgID, path.substring(0, path.lastIndexOf(File.separator)));
+                    listFiles(parentPathFile, resMap, store.getId(), store.getId());
+                }
+                return new AjaxPageableResponse(Lists.<Object>newArrayList(resMap.values()));
             } else {
                 message = "所删除的文件不存在！";
                 return AjaxResponse.failed(-3, message);
@@ -204,13 +207,9 @@ public class PushController {
     @RequestMapping(value = "admin/file/download", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse exportResource(@RequestParam("salt") Long orgID, @RequestParam("path") String path, HttpServletRequest request, HttpServletResponse response) {
-        MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
-        if (store.getId() != orgID) {
-            return null;
-        }
         String url = DOWNLOAD_HTTP + orgID.toString() + File.separator + path;
         AjaxResponse ajaxResponse = new AjaxResponse().success();
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<String, Object>();
         map.put("url", url);
         ajaxResponse.addDataEntry(map);
         return ajaxResponse;
@@ -224,7 +223,7 @@ public class PushController {
 //        String prefixHttp = FilenameUtils.concat(DOWNLOAD_HTTP, Long.toString(orgID));
         for (File file : parentFile.listFiles()) {
             FileItem fileItem = FileItem.toResourceModel(file, orgID, storeId);
-            fileItem.setPath(trimStart(fileItem.getPath(), prefix));
+            fileItem.setPath((trimStart(fileItem.getPath(), prefix)).replace(Constants.BACKSLASH, Constants.SLASH));
             fileItem.setUrl(DOWNLOAD_HTTP + orgID + Constants.SLASH + fileItem.getPath().replace(Constants.BACKSLASH, Constants.SLASH));
             resMap.put(file.getName(), fileItem);
         }
@@ -322,7 +321,6 @@ public class PushController {
                 String tempDownloadPath = DOWNLOAD_HOME.replaceAll("\\\\", "/") + "/";//准备用于替换成url的下载文件夹路径
                 String tempTargetPath = (DOWNLOAD_HOME + File.separator + "deleted" + File.separator).replaceAll("\\\\", "/");
                 String targetPath = tempFilePath.replaceAll(tempDownloadPath, tempTargetPath);
-                targetPath = targetPath.replaceAll("/", "\\\\");//把路径转回linux兼容
                 if (file.isFile()) {
                     // Destination directory
                     File dir = new File(targetPath);
