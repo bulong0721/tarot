@@ -85,7 +85,7 @@ public class PushController {
         try {
             File dest = FileUtils.getFile(DOWNLOAD_HOME, Long.toString(orgID), vo.getPath()); //新增文件父路径
             String currPath = vo.getCurrPath() == null ? "" : vo.getCurrPath();
-            if(dest.exists() && dest.isFile()){  //如果文件已经存在，则为编辑模式,
+            if(dest.exists() && dest.isFile() && !StringUtil.isNullOrEmpty(vo.getContent(), true)){  //如果文件已经存在，则为编辑模式,
                 editorModel = true;
                 //删除原文件，创建一个新的文件，将内容写入
                 String name = vo.getName();
