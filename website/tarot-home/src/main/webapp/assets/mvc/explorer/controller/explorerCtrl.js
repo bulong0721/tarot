@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * explorerCtrl - controller
  */
-explorerCtrl.$inject = ['$scope', '$resource', '$filter','cfromly','Constants','cAlerts','toaster','$http'];
-function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toaster,$http) {
+explorerCtrl.$inject = ['$scope', '$resource', '$filter','cfromly','Constants','cAlerts','toaster'];
+function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toaster) {
 
     var iDatatable = 0, iPush = 1, iEditor = 2;
     $scope.activeTab = iDatatable;
@@ -405,8 +405,6 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 addFile = new FormData();
             }
             if($scope.formDataEditor.model.type ==0){
-                console.log($scope.formDataEditor.model)
-                console.log($scope.current);
                 $scope.current.children.push({
                     name:$scope.formDataEditor.model.name,
                     path:$scope.current.path+"/"+$scope.formDataEditor.model.currPath,
@@ -420,12 +418,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 $scope.goDataTable();
             }else{
                 addFile.append('entityText', JSON.stringify($scope.formDataEditor.model));
-                $http.post(mgrDataEditor.api.create, addFile, {
-                    withCreadential: true,
-                    headers: {'Content-Type': undefined, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Origin': '*'},
-                    transformRequest: angular.identity
-                }).success(function(res){
-                    console.log(res.rows)
+                $resource(mgrDataEditor.api.create).save({}, addFile).$promise.then(function(res) {
                     if($scope.formDataEditor.model.editorModel==1?true:false){
                         var fileNewName = $scope.formDataEditor.model.name;
                         $scope.current.name = fileNewName;
