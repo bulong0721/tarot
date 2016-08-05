@@ -287,6 +287,22 @@ function cfromlyService(formlyConfig, $window,toaster,$filter) {
         wrapper: ['lineLabel', 'bootstrapHasError']
     });
 
+    //images
+    formlyConfig.setType({
+        name: 'c_images',
+        template: [
+            '<label ng-hide="hide" for="{{::id}}" class="col-sm-2 control-label">',
+            '{{to.label}}',
+            '</label>',
+            '<div ng-hide="hide" class="col-sm-8">',
+            '<img ng-repeat="i in model.images" ng-src="{{i}}" />',
+            '</div>'
+        ].join(' '),
+        controller:function($scope){
+            console.log($scope)
+        }
+    });
+
     //file
     formlyConfig.setType({
         name: 'upload',
