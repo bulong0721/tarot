@@ -87,7 +87,6 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     $scope.formDataEditor.model = {
                         salt:data.salt,
                         name:data.name,
-                        currPath:data.path,
                         path:data.path,
                         type:data.type,
                         editorModel:1
@@ -388,7 +387,16 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     headers: {'Content-Type': undefined, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Origin': '*'},
                     transformRequest: angular.identity
                 }).success(function(res){
-                    angular.merge($scope.current.children, res.rows);
+                    console.log(res.rows)
+                    if($scope.formDataEditor.model.editorModel==1?true:false){
+                        var fileNewName = $scope.formDataEditor.model.name;
+                        $scope.current.name = fileNewName;
+                        var index = $scope.formDataEditor.model.path.lastIndexOf("\\");
+                        var path = $scope.formDataEditor.model.path.substring(0,index);
+                        $scope.current.path = path+"\\"+fileNewName;
+                    }else{
+                        angular.merge($scope.current.children, res.rows);
+                    }
                     $scope.goDataTable();
                 });
             }
