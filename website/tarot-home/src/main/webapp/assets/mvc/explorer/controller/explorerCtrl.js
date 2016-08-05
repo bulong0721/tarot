@@ -434,11 +434,10 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
 
         }
     };
-    $scope.formData_addFile = null;
-    var unlisten = $scope.$on('fileToUpload', function(event, arg) {
+
+    $scope.$on('fileToUpload', function(event, arg) {
         $scope.formData_addFile = arg;
     });
-    $scope.$on('$destroy', unlisten);
 
     //formly返回
     $scope.goDataTable = function () {
