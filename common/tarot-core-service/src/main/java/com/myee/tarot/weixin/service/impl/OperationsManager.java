@@ -93,7 +93,8 @@ public class OperationsManager extends RedisOperation implements OperationsServi
         //排号Key
         String redisKeyOfShopTb = RedisKeys.waitOfTableType(waitToken.getShopId(), waitToken.getTableTypeId());
         //唯一码-SeceneId对应Key
-        String redisKeyOfUcdScId = RedisKeys.getIdentityCode(Long.valueOf(waitToken.getSceneId()));
+        String sourceStr = RedisKeys.getIdentityCode(Long.valueOf(waitToken.getSceneId()));
+        String redisKeyOfUcdScId = sourceStr.substring(0, 22) + sourceStr.substring(23,sourceStr.length());
         Date date = new Date();
         waitToken.setTimeTook(date.getTime() / 1000);
         //然后二维码的数字码放Redis，跟identityCode唯一码绑定
