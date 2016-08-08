@@ -3,6 +3,7 @@ package com.myee.tarot.campaign.domain;
 import com.google.common.collect.Lists;
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -39,6 +40,19 @@ public class MerchantActivity extends GenericEntity<Long, MerchantActivity>{
 
     @Column(name = "ACTIVITY_STATUS")
     private int activityStatus; //是否启用  0为启用 1为停止
+
+    @Column(name = "PRICE_LIST")
+    @Type(type = "text")
+    private String priceList; //中奖列表
+
+
+    public String getPriceList() {
+        return priceList;
+    }
+
+    public void setPriceList(String priceList) {
+        this.priceList = priceList;
+    }
 
     public int getActivityStatus() {
         return activityStatus;

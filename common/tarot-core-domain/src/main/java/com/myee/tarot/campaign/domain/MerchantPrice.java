@@ -48,11 +48,22 @@ public class MerchantPrice extends GenericEntity<Long, MerchantPrice>{
     @Column(name = "STORE_ID")
     private Long storeId; //使用的门店id
 
+    @Column(name = "LOGO_URL")
+    private String logoUrl; //使用门店的URL
+
     @Column(name = "ACTIVE_STATUS")
     private int activeStatus; //是否启用   0为启用，1为不启用
 
     @Column(name = "DELETE_STATUS")
     private int deleteStatus; //是否被删除   0为启用，1为删除
+
+    public String getLogoUrl() {
+        return logoUrl;
+    }
+
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
+    }
 
     public Long getStoreId() {
         return storeId;

@@ -31,6 +31,25 @@ public class PriceInfo extends GenericEntity<Long, PriceInfo>{
     @JoinColumn(name = "PRICE_ID")
     private MerchantPrice price;  //获取对应的奖项
 
+    //快照对应的当时的奖券信息 不因关联
+    @Column(name = "PRICE_NAME")
+    private String priceName;
+
+    @Column(name = "PRICE_DESCRIPTION")
+    private String priceDescription;
+
+    @Column(name = "PRICE_LOGO")
+    private String priceLogo;
+
+    @Column(name = "PRICE_START_DATE")
+    @JSONField(format = "yyyy-MM-dd")
+    private Date priceStartDate;
+
+    @Column(name = "PRICE_END_DATE")
+    @JSONField(format = "yyyy-MM-dd")
+    private Date priceEndDate;
+
+
     @Column(name = "CHECK_DATE")
     @JSONField(format = "yyyy-MM-dd")
     private Date checkDate; //扫描使用时间
@@ -38,6 +57,46 @@ public class PriceInfo extends GenericEntity<Long, PriceInfo>{
     @Column(name = "GET_DATE")
     @JSONField(format = "yyyy-MM-dd")
     private Date getDate; //获取该奖券的时间
+
+    public String getPriceLogo() {
+        return priceLogo;
+    }
+
+    public void setPriceLogo(String priceLogo) {
+        this.priceLogo = priceLogo;
+    }
+
+    public String getPriceName() {
+        return priceName;
+    }
+
+    public void setPriceName(String priceName) {
+        this.priceName = priceName;
+    }
+
+    public String getPriceDescription() {
+        return priceDescription;
+    }
+
+    public void setPriceDescription(String priceDescription) {
+        this.priceDescription = priceDescription;
+    }
+
+    public Date getPriceStartDate() {
+        return priceStartDate;
+    }
+
+    public void setPriceStartDate(Date priceStartDate) {
+        this.priceStartDate = priceStartDate;
+    }
+
+    public Date getPriceEndDate() {
+        return priceEndDate;
+    }
+
+    public void setPriceEndDate(Date priceEndDate) {
+        this.priceEndDate = priceEndDate;
+    }
 
     public Date getGetDate() {
         return getDate;

@@ -96,7 +96,7 @@ public class PriceInfoController {
                 Iterator<PriceInfo> iter = infos.iterator();
                 while(iter.hasNext()){
                     PriceInfo info = iter.next();
-                    boolean result = compareTime(info.getPrice());
+                    boolean result = compareTime(info);
                     if(!result) {
                         info.setStatus(Constants.PRICEINFO_EXPIRE);
                         priceInfoService.update(info);
@@ -116,7 +116,7 @@ public class PriceInfoController {
 
 
     /**
-     * 获取本商户下当天已使用的奖券
+     * 获取本商户下已使用的奖券
      * @return
      */
     @RequestMapping(value = "api/info/findHistoryInfoByStoreToday",method = RequestMethod.GET )
@@ -154,7 +154,7 @@ public class PriceInfoController {
                 return resp;
             }
             MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
-            PriceInfo priceInfo = priceInfoService.priceCheckCode(merchantStore1.getId(), checkCode);
+            PriceInfo priceInfo = priceInfoService.priceCheckCode(merchantStore1.getId(), checkCode.toUpperCase());
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
             if(priceInfo!=null){
                 //判断状态
@@ -209,13 +209,17 @@ public class PriceInfoController {
         entry.put("checkCode", priceInfo.getCheckCode());
         entry.put("checkDate", priceInfo.getCheckDate());
         entry.put("status", priceInfo.getStatus());
-        entry.put("price", priceInfo.getPrice());
+        entry.put("priceName", priceInfo.getPriceName());
+        entry.put("priceLogo", priceInfo.getPriceLogo());
+        entry.put("priceDescription", priceInfo.getPriceDescription());
+        entry.put("priceStartDate", priceInfo.getPriceStartDate());
+        entry.put("priceEndDate", priceInfo.getPriceEndDate());
         return entry;
     }
 
-    private boolean compareTime(MerchantPrice price){
-        Date startDate = price.getStartDate();
-        Date endDate = price.getEndDate();
+    private boolean compareTime(PriceInfo info){
+        Date startDate = info.getPriceStartDate();
+        Date endDate = info.getPriceEndDate();
         Date now = new Date();
         int start = startDate.compareTo(now);
         int end = endDate.compareTo(now);
