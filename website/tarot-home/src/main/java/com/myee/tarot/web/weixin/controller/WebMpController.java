@@ -37,10 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Martin on 2016/1/8.
@@ -167,10 +164,10 @@ public class WebMpController {
                 }
 
                 //点击事件
-                /*if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent()!= null && inMessage.getEvent().equals(WxConsts.EVT_CLICK)) {
-                    Map<String,Object> msgMap = checkLatestDevelopments(inMessage.getFromUserName(), WaitTokenState.WAITING.getValue());
-                    inMessage.setMap(msgMap);
-                }*/
+                if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent()!= null && inMessage.getEvent().equals(WxConsts.EVT_CLICK)) {
+                    Map<String,Object> map = checkLatestDevelopments(inMessage.getFromUserName(), WaitTokenState.WAITING.getValue());
+                    inMessage.setMap(map);
+                }
 
                 //微信自带的扫二维码，未关注
                 if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent() != null && inMessage.getEvent().equals(WxConsts.EVT_SUBSCRIBE) && inMessage.getTicket() != null) {
@@ -217,11 +214,11 @@ public class WebMpController {
               String pattern = "[0-9A-Za-z]{4,6}$";//测试用
 
             //直接输唯一码
-            if(inMessage.getMsgType() != null && inMessage.getMsgType().equals("text") && inMessage.getContent() != null && inMessage.getContent().matches(pattern)) {
+            if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.CUSTOM_MSG_TEXT) && inMessage.getContent() != null && inMessage.getContent().matches(pattern)) {
                 Map<String,Object> msgMap = checkLatestDevelopments(inMessage.getContent());
                 if (msgMap == null) {
-                        msgMap = new HashMap<String,Object>();
-                    }
+                    msgMap = new HashMap<String,Object>();
+                }
                 inMessage.setMap(msgMap);
             }
                 WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage);
@@ -346,15 +343,21 @@ public class WebMpController {
             WxMenu menu = new WxMenu();
             WxMenu.WxMenuButton button1 = new WxMenu.WxMenuButton();
             button1.setType(WxConsts.BUTTON_SCANCODE_PUSH);
-            button1.setName("扫码兑奖");
-            button1.setKey("QUERY_SCAN_LOTTERY");
+            button1.setName("扫二维码");
+            button1.setKey("QUERY_SCAN_QRCODE");
+
+            WxMenu.WxMenuButton button2 = new WxMenu.WxMenuButton();
+            button2.setType(WxConsts.BUTTON_CLICK);
+            button2.setName("查询进展");
+            button2.setKey("QUERY_LATEST_STATUS");
 
             WxMenu.WxMenuButton button3 = new WxMenu.WxMenuButton();
             button3.setType(WxConsts.BUTTON_VIEW);
             button3.setName("我的奖券");
-            button3.setUrl(buildAuthorizationUrl(1,null,null));
+            button3.setUrl(buildAuthorizationUrl(1, null, null));
 
             menu.getButtons().add(button1);
+            menu.getButtons().add(button2);
             menu.getButtons().add(button3);
 
             wxMpService.menuCreate(menu);
@@ -374,14 +377,14 @@ public class WebMpController {
             ticket = wxMpService.qrCodeCreateTmpTicket(shopId.intValue(), 604800);
             Long endTime = System.currentTimeMillis();
             Long time = endTime - startTime;
-            System.out.println("生成二维码接口时间消耗:" + time + "毫秒");
-            File file = wxMpService.qrCodePicture(ticket);
-            File directory = new File(DOWNLOAD_HOME + File.separator + "qrcode");
-            try {
-                FileUtils.copyFileToDirectory(file, directory);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            logger.info("生成二维码接口时间消耗:" + time + "毫秒");
+//            File file = wxMpService.qrCodePicture(ticket);
+//            File directory = new File(DOWNLOAD_HOME + File.separator + "qrcode");
+//            try {
+//                FileUtils.copyFileToDirectory(file, directory);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
         } catch (WxErrorException e) {
             e.printStackTrace();
         }

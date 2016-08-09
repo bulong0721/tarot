@@ -78,11 +78,8 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
         if(identityCode != null){
             query.where(qrWaitToken.identityCode.eq(identityCode));
         }
-        if(beginTime != null){
-            query.where(qrWaitToken.timeTook.after(new Date(beginTime)));
-        }
-        if(endTime != null){
-            query.where(qrWaitToken.timeTook.before(new Date(endTime)));
+        if(beginTime != null && endTime != null){
+            query.where(qrWaitToken.timeTook.between(new Date(beginTime), new Date(endTime)));
         }
         log.info("the result is: " + query.fetchFirst());
 
