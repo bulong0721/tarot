@@ -283,6 +283,8 @@ public class TableController {
                 entry.put("id", table.getId());
                 entry.put("name", table.getName());
                 entry.put("description", table.getDescription());
+                entry.put("textId", table.getTextId());
+                entry.put("scanCode", table.getScanCode());
                 entry.put("tableType", new TypeDTO(table.getTableType()));
                 entry.put("tableZone", new ZoneDTO(table.getTableZone()));
                 resp.addDataEntry(entry);

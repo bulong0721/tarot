@@ -392,6 +392,11 @@ public class OperationsManager extends RedisOperation implements OperationsServi
         return null;
     }*/
 
+    /**
+     *
+     * @param jsonArgs
+     * @return
+     */
 //    @Override
     public ResponseData getResourceInfo(String jsonArgs) {
         System.out.println("jsonArgs: " + jsonArgs);
@@ -404,6 +409,7 @@ public class OperationsManager extends RedisOperation implements OperationsServi
             String orgId = object.getString("orgId");
             StringBuilder sb = new StringBuilder();
             logger.info("================ request info  name:"+name+"  type:"+type+"   orgId:"+orgId);
+            //TODO
             if ("app".equals(type) || "ipc".equals(type)) {
                 sb.append(DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(type).append(File.separator).append(name).append(File.separator).append("VersionInfo.xml");
             } else {
@@ -414,19 +420,19 @@ public class OperationsManager extends RedisOperation implements OperationsServi
             if (file.exists()) {
                 result = ResponseData.successData(readfile(file));
             } else {
-                String filePath = sb.toString();
-                String cloudFilePath = filePath.replace(orgId, "100");
-                File cloudFile = new File(cloudFilePath);
-                if (cloudFile.exists()) {
-                    logger.info("========Cloud File path :"+cloudFilePath);
-                    result = ResponseData.successData(readfile(cloudFile));
-                }else{
-                    result = ResponseData.errorData("resource not exist ");
-                }
+//                String filePath = sb.toString();
+//                String cloudFilePath = filePath.replace(orgId, "100");
+//                File cloudFile = new File(cloudFilePath);
+//                if (cloudFile.exists()) {
+//                    logger.info("========Cloud File path :"+cloudFilePath);
+//                    result = ResponseData.successData(readfile(cloudFile));
+//                }else{
+                result = ResponseData.errorData("resource not exist ");
             }
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error Message: "+ e.getMessage());
+            return ResponseData.errorData("find file error ");
         }
         return result;
     }

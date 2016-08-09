@@ -24,6 +24,12 @@ public class Table extends GenericEntity<Long, Table> {
     @Column(name = "DESCRIPTION")
     protected String description;
 
+    @Column(name = "SCAN_CODE")
+    protected String scanCode;//桌子码，无线点点笔使用
+
+    @Column(name = "TEXT_ID")
+    protected String textId;//小超人点菜使用
+
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = TableType.class)
     @JoinColumn(name = "TABLE_TYPE", referencedColumnName = "TABLE_TYPE_ID", nullable = false)
     private TableType tableType;
@@ -42,6 +48,22 @@ public class Table extends GenericEntity<Long, Table> {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getScanCode() {
+        return scanCode;
+    }
+
+    public void setScanCode(String scanCode) {
+        this.scanCode = scanCode;
+    }
+
+    public String getTextId() {
+        return textId;
+    }
+
+    public void setTextId(String textId) {
+        this.textId = textId;
     }
 
     @Override

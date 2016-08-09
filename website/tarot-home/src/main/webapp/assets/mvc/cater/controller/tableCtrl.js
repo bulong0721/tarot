@@ -7,9 +7,9 @@ angular.module('myee', [])
 /**
  * roleCtrl - controller
  */
-tableMgrCtrl.$inject = ['$scope', '$resource', 'cTables', 'cfromly'];
+tableMgrCtrl.$inject = ['$scope', '$resource', 'cTables', 'cfromly','toaster'];
 
-function tableMgrCtrl($scope, $resource, cTables, cfromly) {
+function tableMgrCtrl($scope, $resource, cTables, cfromly,toaster) {
     var typeOpts = $resource('../admin/catering/type/options').query();
     var zoneOpts = $resource('../admin/catering/zone/options').query();
 
@@ -22,10 +22,22 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly) {
                 templateOptions: {label: '名称', required: true, placeholder: '名称'}
             },
             {
+                key: 'scanCode',
+                type: 'c_input',
+                className: 'c_formly_line',
+                templateOptions: {type:'number',label: '餐桌码', placeholder: '输入000-200之间的3位数字',min:0,max:200},
+            },
+            {
+                key: 'textId',
+                type: 'c_input',
+                className: 'c_formly_line',
+                templateOptions: {label: 'ERP ID', placeholder: '小超人点菜用'}
+            },
+            {
                 key: 'description',
                 type: 'c_input',
                 className: 'c_formly_line',
-                templateOptions: {label: '描述', required: true, placeholder: '描述'}
+                templateOptions: {label: '描述', placeholder: '描述'}
             },
             {
                 key: 'tableType.id',

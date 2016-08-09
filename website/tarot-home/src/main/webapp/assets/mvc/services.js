@@ -85,6 +85,7 @@ function constServiceCtor($resource, $q) {
 
 
     };
+
 }
 
 /**
