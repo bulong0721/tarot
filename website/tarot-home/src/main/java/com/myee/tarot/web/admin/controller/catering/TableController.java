@@ -221,6 +221,10 @@ public class TableController {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
+            if(!validateScanCode(table.getScanCode())){
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "桌子码只能是000-200之间的三位数字！");
+                return resp;
+            }
             MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
             table.setStore(merchantStore1);
             table = tableService.update(table);
@@ -234,6 +238,31 @@ public class TableController {
             return resp;
         }
         return resp;
+    }
+
+    //验证餐桌码只能在000-200之间
+    private boolean validateScanCode(String scanCode) {
+        if(scanCode == null || "".equals(scanCode)){
+            return true;
+        }
+        else if(scanCode.length() != 3){
+            return false;
+        }
+        else if(!scanCode.matches("(([01]{1}[0-9]{2})|([2]{1}[0]{2}))$")){//判断是不是0/1/2开头的3位纯数字
+            return false;
+        }
+        try{
+            int nScanCode = Integer.parseInt(scanCode);
+            if(nScanCode >= 0 && nScanCode <= 200){
+                return true;
+            }
+            else {
+                return false;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @RequestMapping(value = "admin/catering/table/delete", method = RequestMethod.POST)
