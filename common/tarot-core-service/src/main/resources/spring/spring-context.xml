@@ -129,6 +129,7 @@
                 <value>classpath:download.properties</value>
                 <value>classpath:email.properties</value>
                 <value>classpath:configs.properties</value>
+                <value>classpath:commApi.properties</value>
             </list>
         </property>
     </bean>

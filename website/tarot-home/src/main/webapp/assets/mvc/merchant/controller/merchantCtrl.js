@@ -78,7 +78,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
         if (rowIndex > -1) {
             var data = $scope.tableOpts.data[rowIndex];
             $scope.formData.model = angular.copy(data);
-            console.log(data)
+            //console.log(data)
             $scope.formData.model.images = data.logo;
             $scope.rowIndex = rowIndex;
         } else {
@@ -90,13 +90,13 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
 
     //上传控件监听器
     $scope.$on('fileToUpload', function (event, arg) {
-        console.log(arg)
+        //console.log(arg)
         //上传文件到后台
         $resource(mgrData.api.upload).save({
             path: "logo",
             type: "file"
         }, arg).$promise.then(function (res) {
-            console.log(res)
+            //console.log(res)
             if (0 != res.status) {
                 $scope.toasterManage($scope.toastError,res);
                 return;
@@ -104,7 +104,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
             $scope.toasterManage($scope.toastUploadSucc);
             $scope.formData.model.logo = res.dataMap.tree.downloadPath;
 
-            console.log($scope.formData.model.images)
+            //console.log($scope.formData.model.images)
             $scope.formData.model.images = res.dataMap.tree.downloadPath;
         })
     });

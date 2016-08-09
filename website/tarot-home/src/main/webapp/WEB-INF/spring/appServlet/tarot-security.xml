@@ -89,7 +89,7 @@
     <http pattern="/weixin/**" security="none">
     </http>
 
-    <!-- 小女生-->
+    <!-- 小女生，点点笔，小超人-->
     <http pattern="/api/**" security="none">
     </http>
 
