@@ -59,6 +59,10 @@ public class Constants {
 	public final static int DELETE_NO = 0; //启用
 	public final static int DELETE_YES = 1; //删除
 
+	//微信抽奖是否开启
+	public final static int WECHAT_OPEN = 0; //开启
+	public final static int WECHAT_CLOSE = 1;  //关闭
+
 	public final static String PRICEDRAW = "PRICEDRAW";
 
 }

@@ -4,12 +4,17 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.myee.tarot.campaign.domain.MerchantActivity;
 import com.myee.tarot.campaign.domain.MerchantPrice;
+import com.myee.tarot.campaign.domain.ModeSwitch;
+import com.myee.tarot.campaign.domain.bean.RedisKeyConstants;
 import com.myee.tarot.campaign.service.MerchantActivityService;
 import com.myee.tarot.campaign.service.MerchantPriceService;
+import com.myee.tarot.campaign.service.ModeSwitchService;
 import com.myee.tarot.campaign.service.impl.redis.RedisUtil;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
+import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.merchant.service.MerchantStoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +38,14 @@ public class MerchantActivityController {
 
     @Autowired
     private MerchantActivityService merchantActivityService;
-
     @Autowired
     private MerchantPriceService merchantPriceService;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private ModeSwitchService modeSwitchService;
+    @Autowired
+    private MerchantStoreService merchantStoreService;
 
     /**
      * 添加个新的奖券活动 传过来
@@ -57,16 +65,22 @@ public class MerchantActivityController {
                 return resp;
             }
             boolean exist = false;
-            MerchantActivity existActivity = merchantActivityService.findStoreActivity(merchantActivity.getStore().getId());
-            if(existActivity!=null){
+            Long storeId = merchantActivity.getStore().getId();
+            MerchantActivity existActivity =  merchantActivityService.findStoreActivity(storeId);
+            List<MerchantPrice> existPrices = null;
+            if(existActivity != null){
                 exist = true;
+                existPrices = existActivity.getPrices();
             }
             List<MerchantPrice> prices = merchantActivity.getPrices();
             for (MerchantPrice price : prices) {
                 if(exist){
+                    price.setLogoUrl(existActivity.getStore().getMerchant().getLogo());
                     price.setStoreId(existActivity.getStore().getId());
                     price.setActivity(existActivity);
                 }else{
+                    MerchantStore ms = merchantStoreService.findById(merchantActivity.getStore().getId());
+                    price.setLogoUrl(ms.getMerchant().getLogo());
                     price.setStoreId(merchantActivity.getStore().getId());
                     price.setActivity(merchantActivity);
                 }
@@ -76,33 +90,47 @@ public class MerchantActivityController {
                 //id存在
                 Long priceId = merchantActivity.getPrices().get(0).getId();
                 if(priceId!= null){
-                    MerchantPrice price = merchantPriceService.findById(priceId);
-                    if(price!=null){
+                    MerchantPrice findPrice = merchantPriceService.findById(priceId);
+                    if(findPrice!=null){
                         //修改
-                        price.setName(prices.get(0).getName());
-                        price.setDescription(prices.get(0).getDescription());
-                        price.setStartDate(prices.get(0).getStartDate());
-                        price.setEndDate(prices.get(0).getEndDate());
-                        price.setTotal(prices.get(0).getTotal());
-                        List<MerchantPrice> showPrices = Lists.newArrayList();
-                        MerchantPrice updatePrice = merchantPriceService.update(price);
-                        showPrices.add(updatePrice);
-                        merchantActivity.setPrices(showPrices);
-                        activity = merchantActivity;
+                        for (MerchantPrice price : existPrices) {
+                            if(price.getId() == priceId){
+                                //redis放缓存
+                                price.setName(prices.get(0).getName());
+                                price.setDescription(prices.get(0).getDescription());
+                                price.setStartDate(prices.get(0).getStartDate());
+                                price.setEndDate(prices.get(0).getEndDate());
+                                price.setTotal(prices.get(0).getTotal());
+                                findPrice.setName(prices.get(0).getName());
+                                //修改参数
+                                findPrice.setDescription(prices.get(0).getDescription());
+                                findPrice.setStartDate(prices.get(0).getStartDate());
+                                findPrice.setEndDate(prices.get(0).getEndDate());
+                                findPrice.setTotal(prices.get(0).getTotal());
+                                MerchantPrice updatePrice = merchantPriceService.update(findPrice);
+                                break;
+                            }
+                        }
+                        existActivity.setPrices(existPrices);
+                        activity = existActivity;
                     }else{
                         //去除id
                         prices.get(0).setId(null);
-                        existActivity.setPrices(merchantActivity.getPrices());
+                        existPrices.add(prices.get(0));
+                        existActivity.setPrices(existPrices);
                         activity = merchantActivityService.update(existActivity);
                     }
                 }else{
                     //id不存在情况
-                    existActivity.setPrices(merchantActivity.getPrices());
+                    existPrices.add(merchantActivity.getPrices().get(0));
+                    existActivity.setPrices(existPrices);
                     activity = merchantActivityService.update(existActivity);
                 }
             }else{
                 activity = merchantActivityService.update(merchantActivity);
             }
+            //添加或更新的时候，修改redis对应的商户的活动List
+            redisUtil.set(RedisKeyConstants.STORE_ACTIVITY + "_" + storeId, activity);
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
             resp.addEntry("result", activity);
             return resp;
@@ -147,7 +175,11 @@ public class MerchantActivityController {
     public AjaxResponse findStoreActivity(@RequestParam("storeId")Long storeId){
         try {
             AjaxResponse response = new AjaxResponse();
-            MerchantActivity result = merchantActivityService.findStoreActivity(storeId);
+            MerchantActivity result = redisUtil.get(RedisKeyConstants.STORE_ACTIVITY + "_" + storeId, MerchantActivity.class);
+            if(result == null){
+                result = merchantActivityService.findStoreActivity(storeId);
+                redisUtil.set(RedisKeyConstants.STORE_ACTIVITY + "_" + storeId ,result);
+            }
             response.addEntry("result", result);
             return response;
         } catch (Exception e) {
@@ -185,15 +217,17 @@ public class MerchantActivityController {
             if(active){
                 activity.setActivityStatus(Constants.ACTIVITY_ACTIVE);
             }
-            merchantActivityService.update(activity);
             //生成抽奖的List
             List<Integer> drawList = getPriceCountList(activePrice);
+            activity.setPriceList(JSON.toJSONString(drawList));
+            merchantActivityService.update(activity);
             //放置于redis中
-            if(drawList==null||drawList.size()==0){
+            /*if(drawList==null||drawList.size()==0){
                 redisUtil.delete(Constants.PRICEDRAW + "_" + storeId);
             }else{
                 redisUtil.set(Constants.PRICEDRAW + "_" + storeId, drawList, 365, TimeUnit.DAYS);
-            }
+            }*/
+            //改存放数据库
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
             return resp;
         } catch (Exception e) {
@@ -220,6 +254,42 @@ public class MerchantActivityController {
             e.printStackTrace();
         }
         return AjaxResponse.failed(-1);
+    }
+
+    /**
+     * 微信抽奖是否开启
+     * @param storeId
+     * @param status  0为开启 1为关闭
+     * @return
+     */
+    @RequestMapping(value = "api/activity/modeSwitch")
+    @ResponseBody
+    public AjaxResponse modeSwitch(@RequestParam("storeId")Long storeId,@RequestParam("status")int status){
+        try {
+            AjaxResponse resp = new AjaxResponse();
+            ModeSwitch modeSwitch = modeSwitchService.findByStoreId(storeId);
+            if(modeSwitch!= null){
+                modeSwitch.setStatus(status);
+                modeSwitchService.update(modeSwitch);
+                if(Constants.WECHAT_OPEN == status){
+                    resp.setErrorString("开启成功");
+                }else{
+                    resp.setErrorString("关闭成功");
+                }
+            }else{
+                ModeSwitch ms = new ModeSwitch();
+                ms.setStatus(status);
+                ms.setStoreId(storeId);
+                modeSwitchService.save(ms);
+                resp.setErrorString("开启成功");
+            }
+            resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
+            return resp;
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+        return AjaxResponse.failed(-1);
+
     }
 
     //重新分配奖券list

@@ -316,6 +316,7 @@ function cfromlyService(formlyConfig, $window,toaster,$filter) {
             el.on("change", function (changeEvent) {
                 var file = changeEvent.target.files[0],
                     name = file.name.replace(/.+\./, "");
+                    scope.model.name = file.name;
                 if(scope.name && $filter('inputType')(name,scope.name)<0){
                     toaster.error({body:"请上传png,jpg,gif,bmp图片格式！"});
                 }else{

@@ -52,6 +52,7 @@
         <class>com.myee.tarot.campaign.domain.MerchantPrice</class>
         <class>com.myee.tarot.campaign.domain.PriceInfo</class>
         <class>com.myee.tarot.campaign.domain.SaleCorpMerchant</class>
+        <class>com.myee.tarot.campaign.domain.ModeSwitch</class>
 
         <class>com.myee.tarot.datacenter.domain.SelfCheckLog</class>
         <class>com.myee.tarot.datacenter.domain.EventModule</class>

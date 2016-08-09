@@ -106,8 +106,7 @@ public class WebMpController {
                 System.out.println("inMessage:" + inMessage.toString());
                 //微信自带的扫二维码，已关注(查询进展用-代号1)
                 if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent() != null && inMessage.getEvent().equals(WxConsts.EVT_SCAN) && inMessage.getEventKey().substring(0,1).equals("1")) {
-                    String merchantStoreId = inMessage.getEventKey();
-                    System.out.println("merchantStoreId:" + merchantStoreId);
+                    String merchantStoreId = inMessage.getEventKey().substring(1, inMessage.getEventKey().length());
                     String redisKeyOfUcdScId = RedisKeys.getIdentityCode(Long.valueOf(merchantStoreId));
                     String identityCode = manager.getIdentityCode(redisKeyOfUcdScId);
                     //将该二维码绑定扫码的微信OpenId
@@ -168,16 +167,15 @@ public class WebMpController {
                 }
 
                 //点击事件
-                if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent()!= null && inMessage.getEvent().equals(WxConsts.EVT_CLICK)) {
+                /*if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent()!= null && inMessage.getEvent().equals(WxConsts.EVT_CLICK)) {
                     Map<String,Object> msgMap = checkLatestDevelopments(inMessage.getFromUserName(), WaitTokenState.WAITING.getValue());
                     inMessage.setMap(msgMap);
-                }
+                }*/
 
                 //微信自带的扫二维码，未关注
                 if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent() != null && inMessage.getEvent().equals(WxConsts.EVT_SUBSCRIBE) && inMessage.getTicket() != null) {
-                    if(inMessage.getEventKey().substring(0,1).equals("1")) {
-                        String merchantStoreId = inMessage.getEventKey();
-                        System.out.println("merchantStoreId:" + merchantStoreId);
+                    if(inMessage.getEventKey().substring(8,9).equals("1")) {
+                        String merchantStoreId = inMessage.getEventKey().substring(9, inMessage.getEventKey().length());
                         String redisKeyOfUcdScId = RedisKeys.getIdentityCode(Long.valueOf(merchantStoreId));
                         String identityCode = manager.getIdentityCode(redisKeyOfUcdScId);
                         //将该二维码绑定扫码的微信OpenId
@@ -215,11 +213,15 @@ public class WebMpController {
 
                 }
             //正则表达式判断是否包含字母数字(6位)
-            String pattern = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6}$";
+//            String pattern = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{4,6}$";
+              String pattern = "[0-9A-Za-z]{4,6}$";//测试用
 
             //直接输唯一码
             if(inMessage.getMsgType() != null && inMessage.getMsgType().equals("text") && inMessage.getContent() != null && inMessage.getContent().matches(pattern)) {
                 Map<String,Object> msgMap = checkLatestDevelopments(inMessage.getContent());
+                if (msgMap == null) {
+                        msgMap = new HashMap<String,Object>();
+                    }
                 inMessage.setMap(msgMap);
             }
                 WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage);

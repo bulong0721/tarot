@@ -24,8 +24,8 @@
                 <tr>
                     <th width="15%" class="center">验证码</th>
                     <th width="15%" class="center">对应keyId</th>
-                    <th width="15%" class="center">类型</th>
                     <th width="15%" class="center">奖券名</th>
+                    <th width="15%" class="center">兑奖时间</th>
                     <th width="20%" class="center">描述</th>
                 </tr>
                 </thead>
@@ -36,9 +36,9 @@
                 <tr ng-repeat="row in $data">
                     <td>{{::row.checkCode}}</td>
                     <td>{{::row.keyId}}</td>
-                    <td>{{::row.price.level}}</td>
-                    <td>{{::row.price.name}}</td>
-                    <td>{{::row.price.description}}</td>
+                    <td>{{::row.priceName}}</td>
+                    <td>{{::row.checkDate | date:'yyyy-MM-dd HH:mm'}}</td>
+                    <td>{{::row.priceDescription}}</td>
                    <!-- <td class="center">
                         &lt;!&ndash;<a ng-click="goEditor($index)"><i class="btn-icon fa fa-pencil"></i></a>
                         <span class="divider"></span>&ndash;&gt;

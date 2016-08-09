@@ -75,11 +75,13 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
             cellTemplateScope: {
                 add: function (data) {
                     $scope.formDataEditor.options.resetModel();
-                    angular.element('#resFile')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
                     $scope.activeTab = iEditor;
                     $scope.formDataEditor.model ={
                         salt:data.salt,
                         path:data.path
+                    }
+                    if(angular.element('#file')[0]){
+                        angular.element('#file')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
                     }
                     $scope.current = data;
                 },
