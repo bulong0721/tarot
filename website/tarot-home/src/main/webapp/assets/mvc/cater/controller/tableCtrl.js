@@ -7,9 +7,9 @@ angular.module('myee', [])
 /**
  * roleCtrl - controller
  */
-tableMgrCtrl.$inject = ['$scope', '$resource', 'cTables', 'cfromly','toaster'];
+tableMgrCtrl.$inject = ['$scope', '$resource', 'cTables', 'cfromly'];
 
-function tableMgrCtrl($scope, $resource, cTables, cfromly,toaster) {
+function tableMgrCtrl($scope, $resource, cTables, cfromly) {
     var typeOpts = $resource('../admin/catering/type/options').query();
     var zoneOpts = $resource('../admin/catering/zone/options').query();
 
@@ -25,7 +25,11 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly,toaster) {
                 key: 'scanCode',
                 type: 'c_input',
                 className: 'c_formly_line',
-                templateOptions: {type:'number',label: '餐桌码', placeholder: '输入000-200之间的3位数字',min:0,max:200},
+                templateOptions: {
+                    label: '餐桌码',
+                    placeholder: '输入000-200之间的3位数字',
+                    pattern:'(([01]{1}[0-9]{2})|([2]{1}[0]{2}))$'
+                }
             },
             {
                 key: 'textId',
