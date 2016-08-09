@@ -44,7 +44,7 @@
 
 <!-- jQuery and Bootstrap -->
 <script src="assets/plugins/jquery/jquery-2.1.1.min.js"></script>
-<script src="assets/plugins/jquery-ui/jquery-ui.js"></script>
+<script src="assets/plugins/jquery-ui/jquery-ui.min.js"></script>
 <script src="assets/plugins/bootstrap/bootstrap.min.js"></script>
 
 <!-- MetsiMenu -->
