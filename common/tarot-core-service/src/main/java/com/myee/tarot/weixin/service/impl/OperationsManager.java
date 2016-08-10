@@ -463,7 +463,7 @@ public class OperationsManager extends RedisOperation implements OperationsServi
     }
 
     @Override
-    public ResponseData sendResourceToCloud(boolean flag, String resourceType, String filePath) {
+    public ResponseData sendResourceToCloud(boolean flag, Long orgId,String resourceType, String filePath) {
         return null;
     }
 
