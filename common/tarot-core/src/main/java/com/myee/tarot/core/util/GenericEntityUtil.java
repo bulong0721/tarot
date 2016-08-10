@@ -5,7 +5,7 @@ import com.myee.tarot.core.GenericEntity;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-public final class GenericEntityUtils {
+public final class GenericEntityUtil {
 
 	public static Class<?> getGenericEntityClassFromComponentDefinition(Class<?> clazz) {
 		int retriesCount = 0;
@@ -38,7 +38,7 @@ public final class GenericEntityUtils {
 		}
 	}
 	
-	private GenericEntityUtils() {
+	private GenericEntityUtil() {
 	}
 	
 }

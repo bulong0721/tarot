@@ -48,20 +48,6 @@
         <property name="alidayuSignNameLuckDraw" value="${alidayu_sign_name_luck_draw}"/>
     </bean>
 
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="ignoreUnresolvablePlaceholders" value="false"/>
-        <property name="locations">
-            <list>
-                <value>classpath:database.properties</value>
-                <value>classpath:djinn.properties</value>
-                <value>classpath:redis.properties</value>
-                <value>classpath:download.properties</value>
-                <value>classpath:email.properties</value>
-                <value>classpath:configs.properties</value>
-            </list>
-        </property>
-    </bean>
-
     <import resource="controllers.xml"/>
 
 </beans>

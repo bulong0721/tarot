@@ -24,10 +24,12 @@
         <version.aspectj>1.8.7</version.aspectj>
         <version.logback>1.1.7</version.logback>
         <version.guava>18.0</version.guava>
+        <version.motan>0.2.0</version.motan>
     </properties>
 
     <modules>
         <module>website/tarot-home</module>
+        <module>website/tarot-starter</module>
         <module>common/tarot-core</module>
         <module>common/tarot-core-domain</module>
         <module>common/tarot-core-service</module>
@@ -218,6 +220,26 @@
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
                 <version>2.2.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.weibo</groupId>
+                <artifactId>motan-core</artifactId>
+                <version>${version.motan}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.weibo</groupId>
+                <artifactId>motan-transport-netty</artifactId>
+                <version>${version.motan}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.weibo</groupId>
+                <artifactId>motan-springsupport</artifactId>
+                <version>${version.motan}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.weibo</groupId>
+                <artifactId>motan-registry-zookeeper</artifactId>
+                <version>${version.motan}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

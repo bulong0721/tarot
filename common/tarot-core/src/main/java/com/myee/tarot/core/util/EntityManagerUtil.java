@@ -16,7 +16,7 @@ import javax.persistence.PersistenceContext;
  * <p>Utilisée dans les tests pour ouvrir la session au début d'un test et la fermet à la fin</p>
  */
 @Component
-public class EntityManagerUtils {
+public class EntityManagerUtil {
 
 	@Autowired
 	private EntityManagerFactory entityManagerFactory;

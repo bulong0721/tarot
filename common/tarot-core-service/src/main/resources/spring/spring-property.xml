@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreUnresolvablePlaceholders" value="false"/>
+        <property name="locations">
+            <list>
+                <value>classpath:database.properties</value>
+                <value>classpath:djinn.properties</value>
+                <value>classpath:redis.properties</value>
+                <value>classpath:download.properties</value>
+                <value>classpath:email.properties</value>
+                <value>classpath:configs.properties</value>
+                <value>classpath:commApi.properties</value>
+            </list>
+        </property>
+    </bean>
+</beans>

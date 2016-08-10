@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
  * Created by Martin on 2016/4/8.
  */
 @Component("cache")
-public class CacheUtils {
+public class CacheUtil {
 
     public void putInCache(Object object, String keyName) throws Exception {
 

@@ -91,11 +91,11 @@ function constServiceCtor($resource, $q) {
 /**
  * cTables
  * */
-function cTablesService($resource,NgTableParams,cAlerts,toaster){
+function cTablesService($resource, NgTableParams, cAlerts, toaster) {
     var vm = this, iDatatable = 0, iEditor = 1;
 
-    vm.initNgMgrCtrl = function(mgrOpts, scope) {
-        scope.toastError = 0,scope.toastOperationSucc = 1, scope.toastDeleteSucc = 2, scope.toastSearchSucc = 3, scope.toastUploadSucc = 4 ;
+    vm.initNgMgrCtrl = function (mgrOpts, scope) {
+        scope.toastError = 0, scope.toastOperationSucc = 1, scope.toastDeleteSucc = 2, scope.toastSearchSucc = 3, scope.toastUploadSucc = 4;
         //初始化搜索配置
         scope.where = {};
 
@@ -110,30 +110,30 @@ function cTablesService($resource,NgTableParams,cAlerts,toaster){
         };
 
         //提交失败预留
-        scope.saveFailed = function(response) {
-            scope.toasterManage(scope.toastError,response);
+        scope.saveFailed = function (response) {
+            scope.toasterManage(scope.toastError, response);
         }
 
         //弹提示
-        scope.toasterManage = function(type,response){
-            switch (type){
+        scope.toasterManage = function (type, response) {
+            switch (type) {
                 case scope.toastError://错误
-                    toaster.error({ body:"出错啦！"+response.statusMessage});
+                    toaster.error({body: "出错啦！" + response.statusMessage});
                     break;
                 case scope.toastOperationSucc://操作成功
-                    toaster.success({ body:"操作成功"});
+                    toaster.success({body: "操作成功"});
                     break;
                 case scope.toastDeleteSucc://删除成功
-                    toaster.success({ body:"删除成功"});
+                    toaster.success({body: "删除成功"});
                     break;
                 case scope.toastSearchSucc://查询成功
-                    toaster.success({ body:"查询成功"});
+                    toaster.success({body: "查询成功"});
                     break;
                 case scope.toastUploadSucc://查询成功
-                    toaster.success({ body:"上传成功"});
+                    toaster.success({body: "上传成功"});
                     break;
                 default :
-                    toaster.error({ body:response.statusMessage});
+                    toaster.error({body: response.statusMessage});
             }
 
         }
@@ -166,29 +166,29 @@ function cTablesService($resource,NgTableParams,cAlerts,toaster){
 
         //点击删除
         scope.doDelete = function (rowIndex) {
-            cAlerts.confirm('确定删除?',function(){
+            cAlerts.confirm('确定删除?', function () {
                 //点击确定回调
                 if (mgrOpts.api.delete && rowIndex > -1) {
                     var data = scope.tableOpts.data[rowIndex];
-                    $resource(mgrOpts.api.delete).save({}, data,function deleteSuccess(response){
+                    $resource(mgrOpts.api.delete).save({}, data, function deleteSuccess(response) {
                         if (0 != response.status) {
-                            scope.toasterManage(scope.toastError,response);
+                            scope.toasterManage(scope.toastError, response);
                             return;
                         }
                         scope.tableOpts.data.splice(rowIndex, 1);//更新数据表
                         scope.toasterManage(scope.toastDeleteSucc);
                     }, scope.saveFailed);
                 }
-            },function(){
+            }, function () {
                 //点击取消回调
             });
 
         };
 
         //增删改查后处理tables数据
-        scope.saveSuccess = function(response) {
+        scope.saveSuccess = function (response) {
             if (0 != response.status) {
-                scope.toasterManage(scope.toastError,response);
+                scope.toasterManage(scope.toastError, response);
                 return;
             }
             var data = response.dataMap.updateResult;//scope.formData.model;//response.rows[0].updateResult;//
@@ -215,12 +215,12 @@ function cTablesService($resource,NgTableParams,cAlerts,toaster){
 
                 return xhr.get(args).$promise.then(function (data) {
                     if (0 != data.status) {
-                        scope.toasterManage(scope.toastError,data);
+                        scope.toasterManage(scope.toastError, data);
                         return;
                     }
                     scope.toasterManage(scope.toastSearchSucc);
                     params.total(data.recordsTotal);
-                    return data.rows?data.rows:[];
+                    return data.rows ? data.rows : [];
                 });
             }
         });
@@ -237,7 +237,7 @@ function cTablesService($resource,NgTableParams,cAlerts,toaster){
 /*
  * cfromly
  * */
-function cfromlyService(formlyConfig, $window,toaster,$filter) {
+function cfromlyService(formlyConfig, $window, toaster, $filter) {
     //自定义formly Label&input一行显示
     formlyConfig.setWrapper({
         name: 'lineLabel',
@@ -317,10 +317,10 @@ function cfromlyService(formlyConfig, $window,toaster,$filter) {
             el.on("change", function (changeEvent) {
                 var file = changeEvent.target.files[0],
                     name = file.name.replace(/.+\./, "");
-                    scope.model.name = file.name;
-                if(scope.name && $filter('inputType')(name,scope.name)<0){
-                    toaster.error({body:"请上传png,jpg,gif,bmp图片格式！"});
-                }else{
+                scope.model.name = file.name;
+                if (scope.name && $filter('inputType')(name, scope.name) < 0) {
+                    toaster.error({body: "请上传png,jpg,gif,bmp图片格式！"});
+                } else {
                     if (file) {
                         var fd = new FormData();
                         fd.append('file', file);
@@ -362,7 +362,7 @@ function cfromlyService(formlyConfig, $window,toaster,$filter) {
         wrapper: ['bootstrapLabel', 'bootstrapHasError'],
         defaultOptions: {
             ngModelAttrs: {},
-            className:'c_datepicker',
+            className: 'c_datepicker',
             templateOptions: {
                 datepickerOptions: {
                     format: 'yyyy.MM.dd',
@@ -385,19 +385,19 @@ function cfromlyService(formlyConfig, $window,toaster,$filter) {
  * cAlerts
  * */
 
-function cAlerts($uibModal){
+function cAlerts($uibModal) {
     return {
-        confirm:function(titile,ok,cancel){
+        confirm: function (titile, ok, cancel) {
             $uibModal.open({
                 animation: false,
-                template: '<alerts data-title="'+titile+'"></alerts>',
-                controller: function($scope,$uibModalInstance){
-                    $scope.ok = function(){
+                template: '<alerts data-title="' + titile + '"></alerts>',
+                controller: function ($scope, $uibModalInstance) {
+                    $scope.ok = function () {
                         $uibModalInstance.close();
                         ok();
                     }
 
-                    $scope.cancel = function(){
+                    $scope.cancel = function () {
                         $uibModalInstance.dismiss('cancel');
                         cancel();
                     }

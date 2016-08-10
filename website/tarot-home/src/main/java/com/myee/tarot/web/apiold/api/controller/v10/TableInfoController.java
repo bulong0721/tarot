@@ -1,5 +1,6 @@
 package com.myee.tarot.web.apiold.api.controller.v10;
 
+import com.google.common.collect.Lists;
 import com.myee.tarot.apiold.domain.BaseDataInfo;
 import com.myee.tarot.campaign.service.impl.redis.RedisUtil;
 import com.myee.tarot.catering.domain.Table;
@@ -75,7 +76,7 @@ public class TableInfoController extends BaseController {
                 List<TableType> tableTypes = tableTypeService.listByStore(id);
 
                 if (list != null) {
-                    List<Map<Object,Object>> resultList = new ArrayList<>();//将我们的查询结果转换成兼容以前接口规范的结果
+                    List<Map<Object,Object>> resultList = Lists.newArrayList();//将我们的查询结果转换成兼容以前接口规范的结果
                     for (Table table : list) {
                         Map entry = new HashMap();
                         entry.put("id", table.getId());
@@ -89,7 +90,7 @@ public class TableInfoController extends BaseController {
                     tableInfos = new BaseDataInfo();
                     tableInfos.setList(resultList);
 
-                    List<Map<Object,Object>> resultList2 = new ArrayList<>();//将我们的查询结果转换成兼容以前接口规范的结果
+                    List<Map<Object,Object>> resultList2 = Lists.newArrayList();//将我们的查询结果转换成兼容以前接口规范的结果
                     if(tableTypes != null){
                         for(TableType tableType : tableTypes){
                             Map entry = new HashMap();

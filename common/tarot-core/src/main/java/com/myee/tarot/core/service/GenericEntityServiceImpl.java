@@ -3,7 +3,7 @@ package com.myee.tarot.core.service;
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.core.dao.GenericEntityDao;
 import com.myee.tarot.core.exception.ServiceException;
-import com.myee.tarot.core.util.GenericEntityUtils;
+import com.myee.tarot.core.util.GenericEntityUtil;
 
 import javax.persistence.metamodel.SingularAttribute;
 import java.io.Serializable;
@@ -23,7 +23,7 @@ public abstract class GenericEntityServiceImpl<K extends Serializable & Comparab
     public GenericEntityServiceImpl(GenericEntityDao<K, E> genericDao) {
         this.genericDao = genericDao;
 
-        this.objectClass = (Class<E>) GenericEntityUtils.getGenericEntityClassFromComponentDefinition(getClass());
+        this.objectClass = (Class<E>) GenericEntityUtil.getGenericEntityClassFromComponentDefinition(getClass());
     }
 
     protected final Class<E> getObjectClass() {

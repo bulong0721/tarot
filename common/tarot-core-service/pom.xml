@@ -57,6 +57,22 @@
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.weibo</groupId>-->
+            <!--<artifactId>motan-core</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.weibo</groupId>-->
+            <!--<artifactId>motan-transport-netty</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.weibo</groupId>-->
+            <!--<artifactId>motan-springsupport</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.weibo</groupId>-->
+            <!--<artifactId>motan-registry-zookeeper</artifactId>-->
+        <!--</dependency>-->
     </dependencies>
 
     <build>

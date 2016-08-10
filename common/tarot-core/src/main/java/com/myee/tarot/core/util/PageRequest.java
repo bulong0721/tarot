@@ -1,9 +1,11 @@
 package com.myee.tarot.core.util;
 
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2016/6/6.
  */
-public class PageRequest {
+public class PageRequest implements Serializable {
 
     private int page;
 

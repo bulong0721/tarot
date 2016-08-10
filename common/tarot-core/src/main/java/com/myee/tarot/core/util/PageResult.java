@@ -2,12 +2,13 @@ package com.myee.tarot.core.util;
 
 import com.google.common.collect.Lists;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Administrator on 2016/6/6.
  */
-public class PageResult<T> {
+public class PageResult<T> implements Serializable {
 
     private long recordsTotal;
 

@@ -1,7 +1,7 @@
 package com.myee.tarot.core.dao;
 
 import com.myee.tarot.core.GenericEntity;
-import com.myee.tarot.core.util.GenericEntityUtils;
+import com.myee.tarot.core.util.GenericEntityUtil;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.Expression;
@@ -21,7 +21,7 @@ public abstract class GenericEntityDaoImpl<K extends Serializable & Comparable<K
 
     @SuppressWarnings("unchecked")
     public GenericEntityDaoImpl() {
-        this.objectClass = (Class<E>) GenericEntityUtils.getGenericEntityClassFromComponentDefinition(getClass());
+        this.objectClass = (Class<E>) GenericEntityUtil.getGenericEntityClassFromComponentDefinition(getClass());
     }
 
     protected final Class<E> getObjectClass() {
