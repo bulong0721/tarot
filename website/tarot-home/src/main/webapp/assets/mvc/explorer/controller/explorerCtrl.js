@@ -127,16 +127,10 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
             toaster.warning({ body:"请选择文件！"});
             return;
         }
-        // var content = "";
-        // for(var i in arraySelected){
-        //     content += '{"url": "'+ arraySelected[i].url +'","name": "'+ arraySelected[i].name +'"},';
-        // }
-        // var formatJSONStr = $scope.formatJSON("[" + content.substr(0,content.length-1)  + "]", true);
-        // console.log(formatJSONStr.length)
-        // if(formatJSONStr.length >= 2000){
-        //     toaster.warning({ body:"一次推送文件过多！"});
-        //     return;
-        // }
+        if(arraySelected.length > 100){
+            toaster.warning({ body:"请选择不超过100个文件！"});
+            return;
+        }
         $scope.activeTab = iPush;
         $scope.formData.model.store = {name: Constants.thisMerchantStore.name};
         $scope.formData.model.content = arraySelected;
@@ -213,7 +207,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 },
                 parsers: [parsePushContent],
                 formatters: [formatPushContent],
-                templateOptions: {label: '推动内容', required: true, placeholder: '推动内容(长度小于2000)', rows: 20, style: 'max-width:1000px', maxlen:2000}
+                templateOptions: {label: '推送内容', required: true, placeholder: '推送内容(长度小于40000)', rows: 20, style: 'max-width:1000px', maxlen:40000}
             }
         ],
         api: {
