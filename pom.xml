@@ -241,6 +241,16 @@
                 <artifactId>motan-registry-zookeeper</artifactId>
                 <version>${version.motan}</version>
             </dependency>
+            <dependency>
+                <groupId>taobao.alidayu</groupId>
+                <artifactId>taobao-sdk-java-auto</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.3.2</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
