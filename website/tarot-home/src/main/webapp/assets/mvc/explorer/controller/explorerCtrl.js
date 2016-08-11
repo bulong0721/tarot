@@ -10,6 +10,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
     var iDatatable = 0, iPush = 1, iEditor = 2;
     $scope.activeTab = iDatatable;
     var nodeTypes =[{name:'目录',value:0},{name:'文件',value:1}];
+    $scope.treeControl = {};
     $scope.treeData = [{path: '/', name: '/', type: 0, salt: '/'}];
     $scope.expandField = {field: 'name'};
     $scope.treeColumns = [
@@ -126,21 +127,19 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
             toaster.warning({ body:"请选择文件！"});
             return;
         }
-        var content = "";
-        for(var i in arraySelected){
-            content += '{"url": "'+ arraySelected[i].url +'","name": "'+ arraySelected[i].name +'"},';
-        }
-        $filter('json')(arraySelected, 2);
-        var formatJSONStr = $filter('json')(arraySelected, 2);
-        // $scope.formatJSON("[" + content.substr(0,content.length-1)  + "]", true);
-        console.log(formatJSONStr.length)
-        if(formatJSONStr.length >= 2000){
-            toaster.warning({ body:"一次推送文件过多！"});
-            return;
-        }
+        // var content = "";
+        // for(var i in arraySelected){
+        //     content += '{"url": "'+ arraySelected[i].url +'","name": "'+ arraySelected[i].name +'"},';
+        // }
+        // var formatJSONStr = $scope.formatJSON("[" + content.substr(0,content.length-1)  + "]", true);
+        // console.log(formatJSONStr.length)
+        // if(formatJSONStr.length >= 2000){
+        //     toaster.warning({ body:"一次推送文件过多！"});
+        //     return;
+        // }
         $scope.activeTab = iPush;
         $scope.formData.model.store = {name: Constants.thisMerchantStore.name};
-        $scope.formData.model.content = formatJSONStr;
+        $scope.formData.model.content = arraySelected;
     };
 
     //递归出所有选中的文件
@@ -164,6 +163,14 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
     //查询推送应用下拉框内容
     function getAppList() {
         return [{name: 'gaea', value: 1}];
+    }
+
+    function parsePushContent(value) {
+        return eval(value);
+    }
+
+    function formatPushContent(value) {
+        return $filter('json')(value, 2);
     }
 
     var mgrData = {
@@ -204,6 +211,8 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     style: {attribute: 'style'},
                     maxlen: { attribute: 'maxlength' }
                 },
+                parsers: [parsePushContent],
+                formatters: [formatPushContent],
                 templateOptions: {label: '推动内容(长度小于2000)', required: true, placeholder: '推动内容(长度小于2000)', rows: 20, style: 'max-width:1000px', maxlen:2000}
             }
         ],
@@ -356,6 +365,8 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
 
     //删除资源
     $scope.delete = function (data) {
+        var parentNode = $scope.treeControl.get_parent_branch(data);
+        console.log(parentNode);
         cAlerts.confirm('确定删除?',function(){
             //点击确定回调
             $resource(mgrData.api.delete).save({salt: data.salt, path: data.path}, {}).$promise.then(function success(resp){
@@ -474,42 +485,42 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
         });
     }
 
-    $scope.formatJSON = function(txt,compress){
-        var indentChar = '    ';
-        if(/^\s*$/.test(txt)){
-            toaster.error({ body:"数据为空,无法格式化!"});
-            return;
-        }
-        try{var data=eval('('+txt+')');}
-        catch(e){
-            toaster.error({ body:'数据源语法错误,格式化失败! 错误信息: '+ (e.description,'err')});
-            return;
-        };
-        var draw=[],last=false,This=this,line=compress?'':'\n',nodeCount=0,maxDepth=0;
-
-        var notify=function(name,value,isLast,indent,formObj){
-            nodeCount++;
-            for (var i=0,tab='';i<indent;i++ )tab+=indentChar;
-            tab=compress?'':tab;
-            maxDepth=++indent;
-            if(value&&value.constructor==Array){
-                draw.push(tab+(formObj?('"'+name+'":'):'')+'['+line);
-                for (var i=0;i<value.length;i++)
-                    notify(i,value[i],i==value.length-1,indent,false);
-                draw.push(tab+']'+(isLast?line:(','+line)));
-            }else   if(value&&typeof value=='object'){
-                draw.push(tab+(formObj?('"'+name+'":'):'')+'{'+line);
-                var len=0,i=0;
-                for(var key in value)len++;
-                for(var key in value)notify(key,value[key],++i==len,indent,true);
-                draw.push(tab+'}'+(isLast?line:(','+line)));
-            }else{
-                if(typeof value=='string')value='"'+value+'"';
-                draw.push(tab+(formObj?('"'+name+'":'):'')+value+(isLast?'':',')+line);
-            };
-        };
-        var isLast=true,indent=0;
-        notify('',data,isLast,indent,false);
-        return draw.join('');
-    }
+    // $scope.formatJSON = function(txt,compress){
+    //     var indentChar = '    ';
+    //     if(/^\s*$/.test(txt)){
+    //         toaster.error({ body:"数据为空,无法格式化!"});
+    //         return;
+    //     }
+    //     try{var data=eval('('+txt+')');}
+    //     catch(e){
+    //         toaster.error({ body:'数据源语法错误,格式化失败! 错误信息: '+ (e.description,'err')});
+    //         return;
+    //     };
+    //     var draw=[],last=false,This=this,line=compress?'':'\n',nodeCount=0,maxDepth=0;
+    //
+    //     var notify=function(name,value,isLast,indent,formObj){
+    //         nodeCount++;
+    //         for (var i=0,tab='';i<indent;i++ )tab+=indentChar;
+    //         tab=compress?'':tab;
+    //         maxDepth=++indent;
+    //         if(value&&value.constructor==Array){
+    //             draw.push(tab+(formObj?('"'+name+'":'):'')+'['+line);
+    //             for (var i=0;i<value.length;i++)
+    //                 notify(i,value[i],i==value.length-1,indent,false);
+    //             draw.push(tab+']'+(isLast?line:(','+line)));
+    //         }else   if(value&&typeof value=='object'){
+    //             draw.push(tab+(formObj?('"'+name+'":'):'')+'{'+line);
+    //             var len=0,i=0;
+    //             for(var key in value)len++;
+    //             for(var key in value)notify(key,value[key],++i==len,indent,true);
+    //             draw.push(tab+'}'+(isLast?line:(','+line)));
+    //         }else{
+    //             if(typeof value=='string')value='"'+value+'"';
+    //             draw.push(tab+(formObj?('"'+name+'":'):'')+value+(isLast?'':',')+line);
+    //         };
+    //     };
+    //     var isLast=true,indent=0;
+    //     notify('',data,isLast,indent,false);
+    //     return draw.join('');
+    // }
 }
