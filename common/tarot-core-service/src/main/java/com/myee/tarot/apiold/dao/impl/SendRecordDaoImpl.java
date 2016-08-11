@@ -10,6 +10,5 @@ import org.springframework.transaction.annotation.Transactional;
  * Created by xiaoni on 2016/8/10.
  */
 @Repository
-@Transactional
 public class SendRecordDaoImpl extends GenericEntityDaoImpl<Long, SendRecord> implements SendRecordDao {
 }
