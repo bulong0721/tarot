@@ -2,9 +2,8 @@ package com.myee.tarot.web.apiold.api.controller;
 
 import com.myee.tarot.campaign.service.impl.redis.RedisUtil;
 import com.myee.tarot.web.apiold.api.util.CommConfig;
-import com.myee.tarot.web.apiold.api.view.MobileClient;
-//import org.apache.commons.lang3.StringUtils;
-import me.chanjar.weixin.common.util.StringUtils;
+import com.myee.tarot.apiold.view.MobileClient;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.ModelAttribute;

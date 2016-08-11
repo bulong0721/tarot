@@ -68,7 +68,8 @@ public class GenericJpaDaoSupport {
 			return null;
 		}
 	}
-	
+
+	@Transactional
 	protected <T> T update(T entity) {
 		if (!getEntityManager().contains(entity)) {
 			return getEntityManager().merge(entity);

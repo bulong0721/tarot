@@ -57,5 +57,9 @@
         <class>com.myee.tarot.datacenter.domain.SelfCheckLog</class>
         <class>com.myee.tarot.datacenter.domain.EventModule</class>
         <!--<class>com.myee.tarot.datacenter.domain.EventLevel</class>-->
+
+        <class>com.myee.tarot.apiold.domain.AkSk</class>
+        <class>com.myee.tarot.apiold.domain.SendRecord</class>
+        <class>com.myee.tarot.apiold.domain.TablePhone</class>
     </persistence-unit>
 </persistence>

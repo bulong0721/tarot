@@ -36,6 +36,14 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
+        <dependency>
+            <groupId>taobao.alidayu</groupId>
+            <artifactId>taobao-sdk-java-auto</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <finalName>tarot-home</finalName>

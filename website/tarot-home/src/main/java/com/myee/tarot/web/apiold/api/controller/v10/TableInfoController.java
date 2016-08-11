@@ -8,7 +8,7 @@ import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.catering.service.TableService;
 import com.myee.tarot.catering.service.TableTypeService;
 import com.myee.tarot.web.apiold.api.controller.BaseController;
-import com.myee.tarot.web.apiold.api.view.ClientAjaxResult;
+import com.myee.tarot.weixin.domain.ClientAjaxResult;
 import me.chanjar.weixin.common.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

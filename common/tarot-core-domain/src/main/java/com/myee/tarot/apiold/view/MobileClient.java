@@ -1,4 +1,4 @@
-package com.myee.tarot.web.apiold.api.view;
+package com.myee.tarot.apiold.view;
 
 
 public class MobileClient {

@@ -122,4 +122,20 @@ public class DateUtil {
     public Date getStartDate() {
         return startDate;
     }
+
+    /** 返回毫秒格式的秒数 */
+    public static Long getSecondsOfCurrentMillis() {
+        return System.currentTimeMillis() / 1000;
+    }
+
+    /**	得到给定日期n小时前的时间	*/
+    public static Date getHistoryDateTime(Date starttime, Integer hours) {
+        if(starttime == null || hours == null){
+            return null;
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(starttime);
+        calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY)-hours);
+        return calendar.getTime();
+    }
 }
