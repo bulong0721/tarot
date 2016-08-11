@@ -130,7 +130,9 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
         for(var i in arraySelected){
             content += '{"url": "'+ arraySelected[i].url +'","name": "'+ arraySelected[i].name +'"},';
         }
-        var formatJSONStr = $scope.formatJSON("[" + content.substr(0,content.length-1)  + "]", true);
+        $filter('json')(arraySelected, 2);
+        var formatJSONStr = $filter('json')(arraySelected, 2);
+        // $scope.formatJSON("[" + content.substr(0,content.length-1)  + "]", true);
         console.log(formatJSONStr.length)
         if(formatJSONStr.length >= 2000){
             toaster.warning({ body:"一次推送文件过多！"});
