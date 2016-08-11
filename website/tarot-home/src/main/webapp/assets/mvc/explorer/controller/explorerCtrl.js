@@ -102,7 +102,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     $scope.delete(data);
                 },
                 download: function (data) {
-                    $scope.download(data.salt,data.path);
+                    window.location.href = data.url;
                 }
             }
         }
@@ -213,7 +213,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 },
                 parsers: [parsePushContent],
                 formatters: [formatPushContent],
-                templateOptions: {label: '推动内容(长度小于2000)', required: true, placeholder: '推动内容(长度小于2000)', rows: 20, style: 'max-width:1000px', maxlen:2000}
+                templateOptions: {label: '推动内容', required: true, placeholder: '推动内容(长度小于2000)', rows: 20, style: 'max-width:1000px', maxlen:2000}
             }
         ],
         api: {
@@ -366,12 +366,11 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
     //删除资源
     $scope.delete = function (data) {
         var parentNode = $scope.treeControl.get_parent_branch(data);
-        console.log(parentNode);
         cAlerts.confirm('确定删除?',function(){
             //点击确定回调
             $resource(mgrData.api.delete).save({salt: data.salt, path: data.path}, {}).$promise.then(function success(resp){
                     if(resp != null && resp.status == 0){
-                        $scope.deleteDom(data);
+                        $scope.deleteDom(parentNode.children,data.uid);
                         toaster.success({ body:"删除成功"});
                         $scope.goDataTable();
                     }else{
@@ -382,40 +381,16 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
     };
 
     //删除资源dom删除
-    $scope.deleteDom = function (data) {
-        /*定义变量
-        // path:本文件的路径
-        // pathLen:路径深度
-        // tr:根目录对象 之后对tr目录遍历
-        // trIndex:本文件的索引位置
-        */
-        var path = data.path.split("/"),pathLen = path.length,tr = $scope.treeData[0].children,trIndex = null;
-
-        //判断是否有删除的文件,如有删除
-        if(pathLen>0){
-            for(var j=0;j<pathLen;j++){
-                pathBreak(tr.length,j);
-            }
-            tr.splice(trIndex,1);
-        }
-        //循环查找文件深度
-        function  pathBreak(len,j){
+    $scope.deleteDom = function (childrenList,uid) {
             var i = 0;
-            while (i < len) {
-                if(tr[i].name == path[j]) {
-                    tr[i].children.length>0?tr = tr[i].children:trIndex = i
+            while (i < childrenList.length) {
+                if(childrenList[i].uid == uid) {
+                    childrenList.splice(i,1)
                     break;
                 }
                 i++;
             }
-        }
     }
-
-    $scope.download = function (salt, path) {
-        $resource(mgrData.api.download).save({salt: salt, path: path}, {}).$promise.then(function(resp) {
-            window.location.href = resp.rows[0].url;
-        });
-    };
 
     //formly提交
     $scope.editorSubmit = function () {
@@ -484,43 +459,4 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
             }
         });
     }
-
-    // $scope.formatJSON = function(txt,compress){
-    //     var indentChar = '    ';
-    //     if(/^\s*$/.test(txt)){
-    //         toaster.error({ body:"数据为空,无法格式化!"});
-    //         return;
-    //     }
-    //     try{var data=eval('('+txt+')');}
-    //     catch(e){
-    //         toaster.error({ body:'数据源语法错误,格式化失败! 错误信息: '+ (e.description,'err')});
-    //         return;
-    //     };
-    //     var draw=[],last=false,This=this,line=compress?'':'\n',nodeCount=0,maxDepth=0;
-    //
-    //     var notify=function(name,value,isLast,indent,formObj){
-    //         nodeCount++;
-    //         for (var i=0,tab='';i<indent;i++ )tab+=indentChar;
-    //         tab=compress?'':tab;
-    //         maxDepth=++indent;
-    //         if(value&&value.constructor==Array){
-    //             draw.push(tab+(formObj?('"'+name+'":'):'')+'['+line);
-    //             for (var i=0;i<value.length;i++)
-    //                 notify(i,value[i],i==value.length-1,indent,false);
-    //             draw.push(tab+']'+(isLast?line:(','+line)));
-    //         }else   if(value&&typeof value=='object'){
-    //             draw.push(tab+(formObj?('"'+name+'":'):'')+'{'+line);
-    //             var len=0,i=0;
-    //             for(var key in value)len++;
-    //             for(var key in value)notify(key,value[key],++i==len,indent,true);
-    //             draw.push(tab+'}'+(isLast?line:(','+line)));
-    //         }else{
-    //             if(typeof value=='string')value='"'+value+'"';
-    //             draw.push(tab+(formObj?('"'+name+'":'):'')+value+(isLast?'':',')+line);
-    //         };
-    //     };
-    //     var isLast=true,indent=0;
-    //     notify('',data,isLast,indent,false);
-    //     return draw.join('');
-    // }
 }

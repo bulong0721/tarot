@@ -243,37 +243,36 @@ public class PushController {
 
     @RequestMapping(value = "admin/file/push", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse pushResource(@Valid @RequestBody PushDTO pushDTO) {
+    public AjaxResponse pushResource(@Valid @RequestBody PushResourceDTO pushResourceDTO) {
         AjaxResponse resp = new AjaxResponse();
-        PushResourceDTO dto = new PushResourceDTO();
-        dto.setUniqueNo(pushDTO.getUniqueNo());
-        dto.setAppId(pushDTO.getAppId());
-        dto.setTimeout(pushDTO.getTimeout());
-        dto.setStoragePath(pushDTO.getStoragePath());
         OrchidService eptService = null;
+        if(pushResourceDTO == null
+                || StringUtil.isNullOrEmpty(pushResourceDTO.getUniqueNo())
+                || pushResourceDTO.getAppId() == null
+                || pushResourceDTO.getAppId() == 0){
+            return AjaxResponse.failed(-1, "数据有误");
+        }
         try {
-            eptService = serverBootstrap.getClient(OrchidService.class, pushDTO.getUniqueNo());
+            eptService = serverBootstrap.getClient(OrchidService.class, pushResourceDTO.getUniqueNo());
         } catch (Exception e) {
-            return AjaxResponse.failed(-1, "连接客户端错误");
+            return AjaxResponse.failed(-2, "连接客户端错误");
         }
         if (eptService == null) {
-            return AjaxResponse.failed(-2, "获取接口出错");
+            return AjaxResponse.failed(-3, "获取接口出错");
         }
-        try {
-            dto.setContent(JSON.parseArray(pushDTO.getContent(), ResourceDTO.class));
-        } catch (Exception e) {
-            return AjaxResponse.failed(-3, "推送内容格式错误");
+        if(pushResourceDTO.getContent() == null || pushResourceDTO.getContent().size() <= 0){
+            return AjaxResponse.failed(-4, "推送内容为空或格式错误");
         }
         ResponseData rd = null;
         try {
-            rd = eptService.pushResource(dto);
+            rd = eptService.pushResource(pushResourceDTO);
         } catch (Exception e) {
-            return AjaxResponse.failed(-4, "客户端不存在或网络无法连接");
+            return AjaxResponse.failed(-5, "客户端不存在或网络无法连接");
         }
         if (rd != null && rd.isSuccess()) {
             return AjaxResponse.success("推送成功");
         } else {
-            return AjaxResponse.failed(-5, "发送失败，客户端出错");
+            return AjaxResponse.failed(-6, "发送失败，客户端出错");
         }
     }
 
