@@ -20,6 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,8 +37,7 @@ import java.util.Date;
  * Version: 1.0
  * History: <p>如果有修改过程，请记录</P>
  */
-@RestController
-@Scope("prototype")
+@Controller
 public class PartnerApiManageController extends BaseController {
 
     private Logger logger = LoggerFactory.getLogger(PartnerApiManageController.class);
@@ -52,6 +53,9 @@ public class PartnerApiManageController extends BaseController {
 
     @Autowired
     private TableService tableManageService;
+
+    @Autowired
+    private ThreadPoolTaskExecutor taskExecutor;
 
     /**
      * 点点笔发送短信接口
@@ -83,7 +87,8 @@ public class PartnerApiManageController extends BaseController {
             }
 
             //用redis消息队列缓存请求
-            int sendStatus = AlidayuSmsClient.sendSMS(
+
+            Runnable task = AlidayuSmsClient.sendSMS(
                     IPUtils.getIpAddr(getRequest()),
                     tablePhone,
                     table,
@@ -94,9 +99,7 @@ public class PartnerApiManageController extends BaseController {
                     System.currentTimeMillis()
             );//发送短信
 
-            if(sendStatus != 0){
-                return ClientAjaxResult.failed("send fail", "999");
-            }
+            taskExecutor.submit(task);
             return ClientAjaxResult.success();
         }  catch (Exception e) {
             e.printStackTrace();
@@ -138,7 +141,7 @@ public class PartnerApiManageController extends BaseController {
             if(result.getCode() != null && !result.getCode().equals("1000")){
                 return result;
             }
-            int sendStatus = AlidayuSmsClient.sendSMS(
+            Runnable task = AlidayuSmsClient.sendSMS(
                     IPUtils.getIpAddr(getRequest()),
                     sendRecordManageService,
                     mobiles.split(","),
@@ -147,9 +150,7 @@ public class PartnerApiManageController extends BaseController {
                     "酷奇",//签名
                     getCommConfig(),
                     System.currentTimeMillis());//发送短信
-            if(sendStatus != 0){
-                return ClientAjaxResult.failed("send fail", "999");
-            }
+            taskExecutor.submit(task);
             return ClientAjaxResult.success();
         }  catch (Exception e) {
             e.printStackTrace();

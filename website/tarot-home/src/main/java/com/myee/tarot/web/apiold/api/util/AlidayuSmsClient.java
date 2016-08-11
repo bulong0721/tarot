@@ -46,7 +46,7 @@ public class AlidayuSmsClient {
 	 * @param tb
 	 * @return
 	 */
-	public static int sendSMS(final String ipAddress,
+	public static Runnable sendSMS(final String ipAddress,
 							  final TablePhone ip,
 							  final Table tb,
 							  final SendRecordService sendRecordManageService,
@@ -54,7 +54,7 @@ public class AlidayuSmsClient {
 							  final String sign,
 							  final CommConfig commConfig,
 							  final long st) {
-		ThreadManager.getInstance().execute(new Runnable() {
+		return new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -89,8 +89,7 @@ public class AlidayuSmsClient {
 					e.printStackTrace();
 				}
 			}
-		});
-		return 0;
+		};
 	}
 
 	/**
@@ -102,7 +101,7 @@ public class AlidayuSmsClient {
 	 * @param st, 开始时间
 	 * @return
 	 */
-	public static int sendSMS(final String ip,
+	public static Runnable sendSMS(final String ip,
 							  final SendRecordService sendRecordManageService,
 							  final String[] smsNum,
 							  final String argName,
@@ -110,7 +109,7 @@ public class AlidayuSmsClient {
 							  final String sign,
 							  final CommConfig commConfig,
 							  final long st) {
-		ThreadManager.getInstance().execute(new Runnable() {
+		return new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -132,8 +131,7 @@ public class AlidayuSmsClient {
 					e.printStackTrace();
 				}
 			}
-		});
-		return 0;
+		};
 	}
 
 

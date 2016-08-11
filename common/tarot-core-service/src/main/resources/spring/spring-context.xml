@@ -27,9 +27,15 @@
     <context:annotation-config/>
     <context:component-scan base-package="com.myee.tarot.*.service.impl" />
     <context:component-scan base-package="com.myee.tarot.*.dao.impl"/>
-    <task:annotation-driven/>
     <!-- datasource -->
     <import resource="classpath:/spring/datasource-c3p0.xml"/>
+
+    <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="corePoolSize" value="5" />
+        <property name="maxPoolSize" value="10" />
+        <property name="queueCapacity" value="50" />
+    </bean>
+    <task:annotation-driven executor="taskExecutor" />
 
     <!--&lt;!&ndash; motan &ndash;&gt;-->
     <!--<import resource="classpath:/spring/tarot-motan-server.xml"/>-->
