@@ -24,7 +24,6 @@ import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -299,14 +297,12 @@ public class WebMpController {
      **/
 
     private Map<String,Object> checkLatestDevelopments(String openId, Integer state) {
-        //按openId和状态去数据库里查找
-        List<WxWaitToken> myWt = wxService.selectTokensByOpenIdState(openId,state);
+        //按openId和状态去数据库里查找最新的扫码绑定排位号
+        WxWaitToken myWt = wxService.selectTokensByOpenIdState(openId,state);
         //如果找到了，说明是可以通过点击按钮方式直接查询
         Map<String,Object> msgMap = new HashMap<String,Object>();
-        if (myWt != null && myWt.size() > 0) {
-            for (WxWaitToken w : myWt) {
-                msgMap = wxService.selectTokensByInfo(openId, w.getMerchantStoreId() ,w.getTableId());
-            }
+        if (myWt != null) {
+            msgMap = wxService.selectTokensByInfo(openId, myWt.getMerchantStoreId() ,myWt.getTableId());
         } else {
             msgMap.put("valid","您尚未绑定二维码，请扫码绑定!");
         }

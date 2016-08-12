@@ -242,6 +242,11 @@
                 <version>${version.motan}</version>
             </dependency>
             <dependency>
+                <groupId>com.opencsv</groupId>
+                <artifactId>opencsv</artifactId>
+                <version>3.4</version>
+            </dependency>
+            <dependency>
                 <groupId>taobao.alidayu</groupId>
                 <artifactId>taobao-sdk-java-auto</artifactId>
                 <version>1.0</version>

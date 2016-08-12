@@ -433,10 +433,9 @@ public class WeixinManager extends RedisOperation implements WeixinService {
     }
 
     @Override
-    public List<WxWaitToken> selectTokensByOpenIdState(String openId, Integer state) {
-        List<WxWaitToken> waitTList = new ArrayList<WxWaitToken>();
-        waitTList = waitTokenDao.selectAllTokenByOpenIdState(openId, state);
-        return waitTList;
+    public WxWaitToken selectTokensByOpenIdState(String openId, Integer state) {
+        WxWaitToken wxWaitToken = waitTokenDao.selectAllTokenByOpenIdState(openId, state);
+        return wxWaitToken;
     }
 
     final static Charset charset = Charset.forName("UTF8");

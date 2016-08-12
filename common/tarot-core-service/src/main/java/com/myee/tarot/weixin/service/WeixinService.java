@@ -50,7 +50,7 @@ public interface WeixinService {
      * @param state
      * @return
      */
-    List<WxWaitToken> selectTokensByOpenIdState(String openId, Integer state);
+    WxWaitToken selectTokensByOpenIdState(String openId, Integer state);
 
     boolean bondQrCodeByScan(String identityCode, String openId);
 

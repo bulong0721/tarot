@@ -46,6 +46,7 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
         rWaitToken.setTimeTook(new Date(date));
         rWaitToken = getWaitTokenByProp(rWaitToken);
         rWaitToken.setOpenId(openId);
+        rWaitToken.setUpdated(new Date());
         rWaitToken = this.update(rWaitToken);
         if(rWaitToken != null) {
             return 1;
@@ -130,7 +131,7 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
     }
 
     @Override
-    public List<WxWaitToken> selectAllTokenByOpenIdState(String openId, Integer state) {
+    public WxWaitToken selectAllTokenByOpenIdState(String openId, Integer state) {
         QWxWaitToken qrWaitToken = QWxWaitToken.wxWaitToken;
         JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
         query.from(qrWaitToken);
@@ -140,8 +141,9 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
         if(state != null) {
             query.where(qrWaitToken.state.eq(state));
         }
+        query.orderBy(qrWaitToken.updated.desc());
         log.info("the result counts: " + query.fetchCount());
-        return query.fetch();
+        return query.fetch().get(0);
     }
 
     @Override

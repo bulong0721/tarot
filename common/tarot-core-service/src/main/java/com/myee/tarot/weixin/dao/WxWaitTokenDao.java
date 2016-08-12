@@ -32,7 +32,7 @@ public interface WxWaitTokenDao extends GenericEntityDao<Long, WxWaitToken> {
     public List<WxWaitToken> selectAllTokenOpenIdNotNull(Long clientId, Long orgId, Long tableTypeId, Integer state);
 
 //    @Query("select rw from WaitToken rw where rw.openId = ?1 and rw.state = ?2")
-    public List<WxWaitToken> selectAllTokenByOpenIdState(String openId, Integer state);
+    public WxWaitToken selectAllTokenByOpenIdState(String openId, Integer state);
 
 //    @Query("select rw from WaitToken rw where rw.openId = ?1 and UNIX_TIMESTAMP(rw.timeTook) >= ?2 and UNIX_TIMESTAMP(rw.timeTook) <= ?3")
     public List<WxWaitToken> selectWait(String openId, Long bTime, Long eTime);

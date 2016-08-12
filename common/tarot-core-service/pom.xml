@@ -57,6 +57,10 @@
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+        </dependency>
         <!--<dependency>-->
             <!--<groupId>com.weibo</groupId>-->
             <!--<artifactId>motan-core</artifactId>-->

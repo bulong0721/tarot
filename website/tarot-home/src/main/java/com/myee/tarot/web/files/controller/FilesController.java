@@ -13,6 +13,7 @@ import com.myee.tarot.web.files.FileDTO;
 import com.myee.tarot.web.files.HotfixSetVo;
 import com.myee.tarot.web.files.HotfixVo;
 import com.myee.tarot.web.files.JSTreeDTO;
+import com.myee.tarot.web.util.StringUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -277,6 +278,9 @@ public class FilesController {
             }
             else {
                 storeIdStr = String.valueOf(storeId);
+            }
+            if(StringUtil.isNullOrEmpty(storeIdStr) || StringUtil.equals("null", StringUtil.toLowerCase(storeIdStr))) {
+                return AjaxResponse.failed(-1,"店铺ID不能为空");
             }
             File dest  = FileUtils.getFile(DOWNLOAD_HOME, storeIdStr, File.separator + path);
 

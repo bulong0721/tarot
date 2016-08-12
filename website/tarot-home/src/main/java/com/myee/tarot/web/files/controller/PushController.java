@@ -13,6 +13,8 @@ import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.resource.domain.PushResource;
+import com.myee.tarot.resource.service.PushResourceService;
 import com.myee.tarot.web.files.vo.FileItem;
 import com.myee.tarot.web.files.vo.PushDTO;
 import com.myee.tarot.web.util.StringUtil;
@@ -27,16 +29,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,6 +53,9 @@ public class PushController {
 
     @Autowired
     private ServerBootstrap serverBootstrap;
+
+    @Autowired
+    private PushResourceService pushResourceService;
 
     @RequestMapping(value = "admin/file/search", method = RequestMethod.POST)
     @ResponseBody
@@ -244,6 +246,11 @@ public class PushController {
     @RequestMapping(value = "admin/file/push", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse pushResource(@Valid @RequestBody PushResourceDTO pushResourceDTO) {
+        PushResourceDTO dto = new PushResourceDTO();
+        dto.setUniqueNo(pushResourceDTO.getUniqueNo());
+        dto.setAppId(pushResourceDTO.getAppId());
+        dto.setTimeout(pushResourceDTO.getTimeout());
+        dto.setStoragePath(pushResourceDTO.getStoragePath());
         AjaxResponse resp = new AjaxResponse();
         OrchidService eptService = null;
         if(pushResourceDTO == null
@@ -265,6 +272,20 @@ public class PushController {
         }
         ResponseData rd = null;
         try {
+            rd = eptService.pushResource(dto);
+            //入库
+            StringBuffer sb = new StringBuffer();
+            for (ResourceDTO resourceDTO : pushResourceDTO.getContent()) {
+                sb.append("name: " + resourceDTO.getName() + "url:" + resourceDTO.getUrl());
+            }
+            String content = sb.toString();
+            PushResource pushResource = new PushResource();
+            pushResource.setAppId(pushResourceDTO.getAppId());
+            pushResource.setContent(content);
+            pushResource.setStoragePath(pushResourceDTO.getStoragePath());
+            pushResource.setTimeout(pushResourceDTO.getTimeout());
+            pushResource.setUniqueNo(pushResourceDTO.getUniqueNo());
+            pushResourceService.update(pushResource);
             rd = eptService.pushResource(pushResourceDTO);
         } catch (Exception e) {
             return AjaxResponse.failed(-5, "客户端不存在或网络无法连接");
