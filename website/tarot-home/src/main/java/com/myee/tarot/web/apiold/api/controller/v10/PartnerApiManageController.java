@@ -24,6 +24,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +38,7 @@ import java.util.Date;
  * Version: 1.0
  * History: <p>如果有修改过程，请记录</P>
  */
-@Controller
+@RestController
 public class PartnerApiManageController extends BaseController {
 
     private Logger logger = LoggerFactory.getLogger(PartnerApiManageController.class);
@@ -85,8 +86,6 @@ public class PartnerApiManageController extends BaseController {
             if(result.getCode() != null && !result.getCode().equals("1000")){
                 return result;
             }
-
-            //用redis消息队列缓存请求
 
             Runnable task = AlidayuSmsClient.sendSMS(
                     IPUtils.getIpAddr(getRequest()),

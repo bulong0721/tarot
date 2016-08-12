@@ -36,6 +36,7 @@ public class SendRecord extends GenericEntity<Long, SendRecord> {
 	@Column(name = "CREATED")
 	private Date created;
 
+	@Transient //不持久化到数据库
 	private Long createdL;
 
 	@ManyToOne(fetch = FetchType.LAZY)

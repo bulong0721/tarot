@@ -72,8 +72,7 @@ public class AlidayuSmsClient {
 					final long et = System.currentTimeMillis();
 					final Date dt = new Date();
 //				int i = send(smsNum, tb.getName(), TemplateSMSType.getName(in.getTemplateID()));
-//					int i = send(smsNum, ip.getTable().getName(), templateNum,sign,commConfig);
-					int i = 0;//测试写入sendRecord
+					int i = send(smsNum, ip.getTable().getName(), templateNum,sign,commConfig);
 					//往数据库记录发送结果
 					SendRecord record = new SendRecord();
 					record.setStore(tb.getStore());
@@ -84,7 +83,7 @@ public class AlidayuSmsClient {
 					record.setDescription(MyArrayUtils.merge(smsNum, ",") + ",ip=" + ipAddress + ",tableId=" + ip.getTable().getId() + ",templateID=" + templateNum + ",st=" + st + ",et=" + et);
 					record.setCreated(dt);
 					sendRecordManageService.update(record);
-				} catch (ServiceException e) {
+				} catch (Exception e) {
 					logger.error("发送短信出错："+e.getMessage(), e);
 					e.printStackTrace();
 				}
@@ -126,7 +125,7 @@ public class AlidayuSmsClient {
 					record.setDescription(MyArrayUtils.merge(smsNum, ",") + ",ip=" + ip + ",templateID=" + templateNum + ",st=" + st + ",et=" + et);
 					record.setCreated(dt);
 					sendRecordManageService.update(record);
-				} catch (ServiceException e) {
+				} catch (Exception e) {
 					logger.error("发送短信出错："+e.getMessage(), e);
 					e.printStackTrace();
 				}
