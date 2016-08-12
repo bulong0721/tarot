@@ -1,11 +1,9 @@
-package com.myee.tarot.product.dao.impl;
+package com.myee.tarot.device.dao.impl;
 
-import com.myee.tarot.catalog.domain.ProductUsed;
 import com.myee.tarot.catalog.domain.ProductUsedAttribute;
 import com.myee.tarot.catalog.domain.QProductUsedAttribute;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
-import com.myee.tarot.product.dao.ProductUsedAttributeDao;
-import com.myee.tarot.product.dao.ProductUsedDao;
+import com.myee.tarot.device.dao.ProductUsedAttributeDao;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.JPQLQueryFactory;
 import com.querydsl.jpa.impl.JPAQuery;

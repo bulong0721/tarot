@@ -1,4 +1,4 @@
-package com.myee.tarot.product.dao.impl;
+package com.myee.tarot.device.dao.impl;
 
 import com.myee.tarot.catalog.domain.ProductUsed;
 import com.myee.tarot.catalog.domain.QProductUsed;
@@ -6,7 +6,7 @@ import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.StringUtil;
-import com.myee.tarot.product.dao.ProductUsedDao;
+import com.myee.tarot.device.dao.ProductUsedDao;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;

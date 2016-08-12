@@ -1,4 +1,4 @@
-package com.myee.tarot.product.dao;
+package com.myee.tarot.device.dao;
 
 import com.myee.tarot.catalog.domain.ProductUsed;
 import com.myee.tarot.catalog.domain.ProductUsedAttribute;

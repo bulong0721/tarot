@@ -1,4 +1,4 @@
-package com.myee.tarot.product.service;
+package com.myee.tarot.device.service;
 
 import com.myee.tarot.catalog.domain.ProductUsed;
 import com.myee.tarot.core.service.GenericEntityService;

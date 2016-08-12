@@ -1,12 +1,9 @@
-package com.myee.tarot.product.service.impl;
+package com.myee.tarot.device.service.impl;
 
-import com.myee.tarot.catalog.domain.ProductUsed;
 import com.myee.tarot.catalog.domain.ProductUsedAttribute;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
-import com.myee.tarot.product.dao.ProductUsedAttributeDao;
-import com.myee.tarot.product.dao.ProductUsedDao;
-import com.myee.tarot.product.service.ProductUsedAttributeService;
-import com.myee.tarot.product.service.ProductUsedService;
+import com.myee.tarot.device.dao.ProductUsedAttributeDao;
+import com.myee.tarot.device.service.ProductUsedAttributeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
