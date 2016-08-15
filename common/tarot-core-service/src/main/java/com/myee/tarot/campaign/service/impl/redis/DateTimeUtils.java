@@ -1,5 +1,6 @@
 package com.myee.tarot.campaign.service.impl.redis;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -33,6 +34,9 @@ public class DateTimeUtils {
     public static final String HOUR_START = " 00:00:00";
 
     private static Map<String, DateTimeFormatter> dateFormatCache = new ConcurrentHashMap<String, DateTimeFormatter>();
+
+    /**	yyyy-MM-dd_HH-mm-ss	用于文件名的格式化*/
+    public final static String PATTERN_NAME_DATETIME = "yyyy-MM-dd_HH-mm-ss";
 
     /**
      * 以yyyy-MM-dd HH:mm:ss形式返回当前时间的字符串
@@ -135,6 +139,11 @@ public class DateTimeUtils {
     public static void main(String[] args) {
         Date date = getDateByString("2016-5-30 23:30:34", "yyyy-MM-dd HH:mm:ss");
         System.out.println(date.getTime());
+    }
+
+    /**	返回yyyy-MM-dd_HH-mm-ss格式的字符串	*/
+    public static String getNormalNameDateTime() {
+        return DateFormatUtils.format(new Date(), PATTERN_NAME_DATETIME);
     }
 
     /**

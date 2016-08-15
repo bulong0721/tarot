@@ -20,14 +20,21 @@ public class PushResource extends GenericEntity<Long, PushResource> {
     private Long    id;
     @Column(name = "UNIQUE_NO")
     private String  uniqueNo;
+
     @Column(name = "APP_ID")
     private Integer    appId;
+
     @Column(name = "TIME_OUT")
     private Long  timeout;
+
     @Column(name = "STORAGE_PATH")
     private String  storagePath;
-    @Column(name="CONTENT")
+
+    @Column(name="CONTENT",columnDefinition="CLOB")
     private String content;
+
+    @Column(name = "IS_SUCCESS")
+    private String isSuccess;
 
     @Override
     public Long getId() {
@@ -77,5 +84,13 @@ public class PushResource extends GenericEntity<Long, PushResource> {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getIsSuccess() {
+        return isSuccess;
+    }
+
+    public void setIsSuccess(String isSuccess) {
+        this.isSuccess = isSuccess;
     }
 }

@@ -72,6 +72,13 @@
                 </ul>
             </li>
 
+            <li ng-class="{active: $state.includes('voiceLogManage')}">
+                <a href=""><i class="fa fa-lg fa-file-audio-o"></i> <span class="nav-label">语音管理</span> <span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level" ng-class="{in: $state.includes('voiceLogManage')}">
+                    <li ng-class="{active: $state.includes('voiceLogManage.voiceLog')}"><a ui-sref="voiceLogManage.voiceLog">语音日志</a></li>
+                </ul>
+            </li>
+
             <li ng-class="{active: $state.includes('user')}">
                 <a href="user.user_list"><i class="fa fa-lg fa-group"></i> <span class="nav-label">账号管理</span> <span
                         class="fa arrow"></span></a>

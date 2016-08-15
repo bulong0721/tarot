@@ -294,6 +294,26 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 }
             }
         })
+        .state('voiceLogManage', {
+            abstract: true,
+            url: "/voiceLogManage",
+            template: "<div ui-view></div>"
+        })
+        .state('voiceLogManage.voiceLog', {
+            url: "/voiceLog",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'voiceLogCtrl',
+            data: {
+                pageTitle: '语音管理',
+                subTitle: '语音日志',
+                datatable: 'assets/mvc/voicelog/view/voicelog_datatable.html',
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'voicelog', 'voiceLogCtrl.js');
+                }
+            }
+        })
         .state('user', {
             abstract: true,
             url: "/user",

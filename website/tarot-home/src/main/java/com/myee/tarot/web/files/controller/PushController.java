@@ -1,11 +1,11 @@
 package com.myee.tarot.web.files.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.myee.djinn.dto.PushResourceDTO;
-import com.myee.djinn.dto.ResourceDTO;
 import com.myee.djinn.dto.ResponseData;
 import com.myee.djinn.endpoint.OrchidService;
 import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
@@ -16,7 +16,6 @@ import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.resource.domain.PushResource;
 import com.myee.tarot.resource.service.PushResourceService;
 import com.myee.tarot.web.files.vo.FileItem;
-import com.myee.tarot.web.files.vo.PushDTO;
 import com.myee.tarot.web.util.StringUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
@@ -272,21 +271,15 @@ public class PushController {
         }
         ResponseData rd = null;
         try {
-            rd = eptService.pushResource(dto);
             //入库
-            StringBuffer sb = new StringBuffer();
-            for (ResourceDTO resourceDTO : pushResourceDTO.getContent()) {
-                sb.append("name: " + resourceDTO.getName() + "url:" + resourceDTO.getUrl());
-            }
-            String content = sb.toString();
+            rd = eptService.pushResource(pushResourceDTO);
             PushResource pushResource = new PushResource();
             pushResource.setAppId(pushResourceDTO.getAppId());
-            pushResource.setContent(content);
+            pushResource.setContent(JSONArray.toJSONString(pushResourceDTO.getContent()));
             pushResource.setStoragePath(pushResourceDTO.getStoragePath());
             pushResource.setTimeout(pushResourceDTO.getTimeout());
             pushResource.setUniqueNo(pushResourceDTO.getUniqueNo());
             pushResourceService.update(pushResource);
-            rd = eptService.pushResource(pushResourceDTO);
         } catch (Exception e) {
             return AjaxResponse.failed(-5, "客户端不存在或网络无法连接");
         }
