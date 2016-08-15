@@ -244,6 +244,20 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 }
             }
         })
+        .state('cater.tablePhone', {
+            url: "/tablePhone",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'tablePhoneMgrCtrl',
+            data: {
+                subTitle: '餐桌手机号',
+                datatable: 'assets/mvc/cater/view/tablePhone_datatable.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'cater', 'tablePhoneCtrl.js')
+                }
+            }
+        })
         .state('dataCenter', {
             abstract: true,
             url: "/dataCenter",
