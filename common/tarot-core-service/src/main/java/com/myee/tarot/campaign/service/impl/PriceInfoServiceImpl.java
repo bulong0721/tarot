@@ -147,12 +147,14 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
             }
             List<Integer> priceList = getPriceCountList(activePrices);
             activeActivity.setActivityStatus(Constants.ACTIVITY_ACTIVE);
+            activeActivity.setPriceList(JSON.toJSONString(priceList));
             merchantActivityService.update(activeActivity);
-            if(priceList.size()==0){
+            //不再使用redis
+            /*if(priceList.size()==0){
                 redisUtil.delete(Constants.PRICEDRAW + "_" + activeActivity.getStore().getId());
             }else {
                 redisUtil.set(Constants.PRICEDRAW + "_" + activeActivity.getStore().getId(),priceList,365,TimeUnit.DAYS);
-            }
+            }*/
         }
     }
 
