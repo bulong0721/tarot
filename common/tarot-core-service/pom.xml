@@ -77,6 +77,14 @@
             <!--<groupId>com.weibo</groupId>-->
             <!--<artifactId>motan-registry-zookeeper</artifactId>-->
         <!--</dependency>-->
+        <dependency>
+            <groupId>io.searchbox</groupId>
+            <artifactId>jest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
