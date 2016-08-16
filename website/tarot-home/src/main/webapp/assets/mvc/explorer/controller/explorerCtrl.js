@@ -150,7 +150,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
 
     //查询推送设备下拉框内容
     function getDeviceUsedList() {
-        var data = $resource("../deviceUsed/list").query();
+        var data = $resource("../device/used/list4Select").query();
         return data;
     }
 

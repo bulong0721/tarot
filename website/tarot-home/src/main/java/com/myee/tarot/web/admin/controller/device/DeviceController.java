@@ -126,24 +126,6 @@ public class DeviceController {
         return null;
     }
 
-    @RequestMapping(value = "deviceUsed/list", method = RequestMethod.GET)
-    @ResponseBody
-    public List deviceUsedList(HttpServletRequest request) {
-        AjaxResponse resp = new AjaxResponse();
-        try {
-            List<DeviceUsed> deviceUsedList = deviceUsedService.list();
-            for (DeviceUsed deviceUsed : deviceUsedList) {
-                Map entry = new HashMap();
-                entry.put("name",deviceUsed.getName());
-                entry.put("value",deviceUsed.getBoardNo());
-                resp.addDataEntry(entry);
-            }
-            return resp.getRows();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     @RequestMapping(value = "device/delete", method = RequestMethod.POST)
     @ResponseBody
@@ -259,6 +241,35 @@ public class DeviceController {
         return resp;
     }
 
+
+    @RequestMapping(value = "device/used/list4Select", method = RequestMethod.GET)
+    @ResponseBody
+    public List deviceUsedList(HttpServletRequest request) {
+        AjaxResponse resp = new AjaxResponse();
+        try {
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp.setErrorString("请先切换门店");
+                return null;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+
+            PageRequest pageRequest = new PageRequest();
+            pageRequest.setCount(-1);//不分页，查询所有结果
+            PageResult<DeviceUsed> pageList = deviceUsedService.pageByStore(merchantStore1.getId(), pageRequest);
+            List<DeviceUsed> deviceUsedList = pageList.getList();
+            for (DeviceUsed deviceUsed : deviceUsedList) {
+                Map entry = new HashMap();
+                entry.put("name",deviceUsed.getName());
+                entry.put("value",deviceUsed.getBoardNo());
+                resp.addDataEntry(entry);
+            }
+            return resp.getRows();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @RequestMapping(value = "device/used/update", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveUsedProduct(@Valid @RequestBody DeviceUsed deviceUsed,@RequestParam(value = "autoStart")Long autoStart,@RequestParam(value = "autoEnd")Long autoEnd, HttpServletRequest request) throws Exception {
@@ -274,7 +285,7 @@ public class DeviceController {
                 resp.setErrorString("结束编号不能小于开始编号");
                 return resp;
             }
-            if(deviceUsed.getBoardNo() == null || "".equals(deviceUsed.getBoardNo())){
+            if(StringUtil.isNullOrEmpty(deviceUsed.getBoardNo())){
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("主板编号不能为空");
                 return resp;
