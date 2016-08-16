@@ -1,9 +1,11 @@
 package com.myee.tarot.catering.domain;
 
+import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Created by Martin on 2016/4/11.
@@ -41,6 +43,13 @@ public class Table extends GenericEntity<Long, Table> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "STORE_ID")
     private MerchantStore store;
+
+    @ManyToMany(targetEntity = DeviceUsed.class, cascade = CascadeType.REFRESH)
+    @JoinTable(name = "CA_TABLE_DEV_XREF",
+            joinColumns = {@JoinColumn(name = "TABLE_ID", nullable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "DEVICE_USED_ID", nullable = false)}
+    )
+    protected List<DeviceUsed> deviceUsed;
 
     public String getDescription() {
         return description;
@@ -106,5 +115,13 @@ public class Table extends GenericEntity<Long, Table> {
 
     public void setStore(MerchantStore store) {
         this.store = store;
+    }
+
+    public List<DeviceUsed> getDeviceUsed() {
+        return deviceUsed;
+    }
+
+    public void setDeviceUsed(List<DeviceUsed> deviceUsed) {
+        this.deviceUsed = deviceUsed;
     }
 }

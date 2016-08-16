@@ -24,9 +24,7 @@ public class ProductUsedDaoImpl extends GenericEntityDaoImpl<Long, ProductUsed> 
         PageResult<ProductUsed> pageList = new PageResult<ProductUsed>();
         QProductUsed qProductUsed = QProductUsed.productUsed;
         JPQLQuery<ProductUsed> query = new JPAQuery(getEntityManager());
-        query.from(qProductUsed)
-                .leftJoin(qProductUsed.attributes)
-                .fetchJoin();
+        query.from(qProductUsed);
         if (!StringUtil.isBlank(pageRequest.getQueryName())) {
             query.where(qProductUsed.code.like("%" + pageRequest.getQueryName() + "%"));
         }
@@ -43,9 +41,7 @@ public class ProductUsedDaoImpl extends GenericEntityDaoImpl<Long, ProductUsed> 
         PageResult<ProductUsed> pageList = new PageResult<ProductUsed>();
         QProductUsed qProductUsed = QProductUsed.productUsed;
         JPQLQuery<ProductUsed> query = new JPAQuery(getEntityManager());
-        query.from(qProductUsed)
-                .leftJoin(qProductUsed.attributes)
-                .fetchJoin();
+        query.from(qProductUsed);
         query.where(qProductUsed.store.id.eq(id));
 
         if (!StringUtil.isBlank(pageRequest.getQueryName())) {
@@ -63,9 +59,7 @@ public class ProductUsedDaoImpl extends GenericEntityDaoImpl<Long, ProductUsed> 
     public List<ProductUsed> listByIDs(List<Long> idList) {
         QProductUsed qProductUsed = QProductUsed.productUsed;
         JPQLQuery<ProductUsed> query = new JPAQuery(getEntityManager());
-        query.from(qProductUsed)
-                .leftJoin(qProductUsed.attributes)
-                .fetchJoin();
+        query.from(qProductUsed);
         query.where(qProductUsed.id.in(idList));
         return query.fetch();
     }

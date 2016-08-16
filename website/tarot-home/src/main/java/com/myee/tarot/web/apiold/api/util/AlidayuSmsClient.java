@@ -1,13 +1,14 @@
 package com.myee.tarot.web.apiold.api.util;
 
 import com.myee.tarot.apiold.domain.SendRecord;
-import com.myee.tarot.apiold.domain.TablePhone;
 import com.myee.tarot.apiold.service.SendRecordService;
+import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.catering.service.TableService;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantService;
+import com.myee.tarot.web.util.ValidatorUtil;
 import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
@@ -47,7 +48,6 @@ public class AlidayuSmsClient {
 	 * @return
 	 */
 	public static Runnable sendSMS(final String ipAddress,
-							  final TablePhone ip,
 							  final Table tb,
 							  final SendRecordService sendRecordManageService,
 							  final String templateNum,
@@ -58,21 +58,26 @@ public class AlidayuSmsClient {
 			@Override
 			public void run() {
 				try {
+					List<DeviceUsed> deviceUsedList = tb.getDeviceUsed();
+					if(deviceUsedList == null || deviceUsedList.size() <= 0){
+						return;
+					}
 					List list = new ArrayList();
-					if(!StringUtils.isBlank(ip.getPhone())){
-                        list.add(ip.getPhone());
-                    }
-					if(!StringUtils.isBlank(ip.getPhone1())){
-                        list.add(ip.getPhone1());
-                    }
-					if(!StringUtils.isBlank(ip.getPhone2())){
-                        list.add(ip.getPhone2());
-                    }
+					for(DeviceUsed deviceUsed : deviceUsedList){
+						if(!StringUtils.isBlank(deviceUsed.getPhone()) && ValidatorUtil.isMobile(deviceUsed.getPhone())){//不为空且是手机号才添加
+							list.add(deviceUsed.getPhone());
+						}
+					}
+					if(list.size() <= 0){
+						return;
+					}
+
 					String[] smsNum = (String[])list.toArray(new String[list.size()]);
 					final long et = System.currentTimeMillis();
 					final Date dt = new Date();
-//				int i = send(smsNum, tb.getName(), TemplateSMSType.getName(in.getTemplateID()));
-					int i = send(smsNum, ip.getTable().getName(), templateNum,sign,commConfig);
+
+//					int i=0;//测试用
+					int i = send(smsNum, tb.getName(), templateNum,sign,commConfig);
 					//往数据库记录发送结果
 					SendRecord record = new SendRecord();
 					record.setStore(tb.getStore());
@@ -80,7 +85,7 @@ public class AlidayuSmsClient {
 					record.setFlag(i);
 					record.setPartner(0);//设置为0，非第三方发送
 					record.setTemplateNum(templateNum);
-					record.setDescription(MyArrayUtils.merge(smsNum, ",") + ",ip=" + ipAddress + ",tableId=" + ip.getTable().getId() + ",templateID=" + templateNum + ",st=" + st + ",et=" + et);
+					record.setDescription(MyArrayUtils.merge(smsNum, ",") + ",ip=" + ipAddress + ",tableId=" + tb.getId() + ",templateID=" + templateNum + ",st=" + st + ",et=" + et);
 					record.setCreated(dt);
 					sendRecordManageService.update(record);
 				} catch (Exception e) {

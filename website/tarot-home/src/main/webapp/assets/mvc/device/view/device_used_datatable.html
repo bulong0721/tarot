@@ -19,8 +19,9 @@
                     <th width="65" class="center">详细</th>
                     <th width="15%" class="center">名称</th>
                     <th width="5%" class="center">心跳</th>
-                    <th width="15%" class="center">主板编号</th>
+                    <th width="10%" class="center">主板编号</th>
                     <th width="10%" class="center">设备号</th>
+                    <th width="10%" class="center">手机号</th>
                     <th class="center">描述</th>
                     <th width="10%" class="center">类型</th>
                     <th width="65" class="center">关联</th>
@@ -29,7 +30,7 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td colspan="9" class="center" ng-if="$data.length<=0">没有查找到数据</td>
+                    <td colspan="10" class="center" ng-if="$data.length<=0">没有查找到数据</td>
                 </tr>
                 <tr ng-repeat-start="row in $data">
                     <td class="center"><a ng-click="row.showDetail=!row.showDetail"><i class="btn-icon fa fa-bars"></i></a></td>
@@ -37,6 +38,7 @@
                     <td>{{::row.heartbeat}}</td>
                     <td>{{::row.boardNo}}</td>
                     <td>{{::row.deviceNum}}</td>
+                    <td>{{::row.phone}}</td>
                     <td>{{::row.description}}</td>
                     <td>{{::row.device.name}}</td>
                     <td class="center">

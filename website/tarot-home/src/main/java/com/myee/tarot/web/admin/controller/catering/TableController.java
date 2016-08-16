@@ -1,9 +1,9 @@
 package com.myee.tarot.web.admin.controller.catering;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.myee.tarot.apiold.domain.TablePhone;
-import com.myee.tarot.apiold.service.TablePhoneService;
+import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.catering.domain.TableZone;
@@ -16,6 +16,7 @@ import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
+import com.myee.tarot.device.service.DeviceUsedService;
 import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.util.StringUtil;
@@ -52,7 +53,7 @@ public class TableController {
     private TableService tableService;
 
     @Autowired
-    private TablePhoneService tablePhoneService;
+    private DeviceUsedService deviceUsedService;
 
     @RequestMapping(value = "admin/catering/type/save", method = RequestMethod.POST)
     @ResponseBody
@@ -314,15 +315,7 @@ public class TableController {
 
             List<Table> typeList = pageList.getList();
             for (Table table : typeList) {
-                Map entry = new HashMap();
-                entry.put("id", table.getId());
-                entry.put("name", table.getName());
-                entry.put("description", table.getDescription());
-                entry.put("textId", table.getTextId());
-                entry.put("scanCode", table.getScanCode());
-                entry.put("tableType", new TypeDTO(table.getTableType()));
-                entry.put("tableZone", new ZoneDTO(table.getTableZone()));
-                resp.addDataEntry(entry);
+                resp.addDataEntry(objectToEntry(table));
             }
             resp.setRecordsTotal(pageList.getRecordsTotal());
             return resp;
@@ -332,130 +325,53 @@ public class TableController {
         }
     }
 
-
-    @RequestMapping(value = "admin/catering/tablePhone/save", method = RequestMethod.POST)
+    @RequestMapping(value = "admin/catering/table/bindDeviceUsed", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse addTablePhone(@RequestBody TablePhone tablePhone, HttpServletRequest request) throws Exception {
-        AjaxResponse resp = new AjaxResponse();
+    public AjaxResponse productUsedBindDeviceUsed(@RequestParam(value = "bindString") String bindString,@RequestParam(value = "tableId") Long tableId, HttpServletRequest request) {
         try {
-            if(tablePhone.getTable().getId() == null){
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "参数错误！");
+            AjaxResponse resp = new AjaxResponse();
+            List<Long> bindList = JSON.parseArray(bindString, Long.class);
+            Table table = tableService.findById(tableId);
+            if (table == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"参数不正确");
                 return resp;
             }
-            TablePhone tablePhone1 = tablePhoneService.findByTableId(tablePhone.getTable().getId());
-            if(tablePhone1 != null && tablePhone1.getId() != tablePhone.getId()){
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "重复的餐桌手机号！");
-                return resp;
-            }
+            List<DeviceUsed> deviceUsedList = deviceUsedService.listByIDs(bindList);
+            table.setDeviceUsed(deviceUsedList);
 
-
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"请先切换门店");
-                return resp;
-            }
-            Table table = tableService.findById(tablePhone.getTable().getId());
-            if(table == null){
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "餐桌不存在！");
-                return resp;
-            }
-            if(!validatePhone(tablePhone.getPhone())){
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "请输入正确的手机号！");
-                return resp;
-            }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
-            tablePhone.setStore(merchantStore1);
-            tablePhone = tablePhoneService.update(tablePhone);
-
-            tablePhone.getTable().setTableType(null);
-            tablePhone.getTable().setTableZone(null);
+            table = tableService.update(table);
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", tablePhone);
-        } catch (Exception e) {
-            e.printStackTrace();
-            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-            resp.setErrorString("出错");
+            resp.addEntry("updateResult", objectToEntry(table));
             return resp;
+        } catch (ServiceException e) {
+            e.printStackTrace();
         }
-        return resp;
+        return AjaxResponse.failed(-1);
     }
 
+    //把类转换成entry返回给前端，解耦和
+    private Map objectToEntry(Table table) {
+        Map entry = new HashMap();
+        entry.put("id", table.getId());
+        entry.put("name", table.getName());
+        entry.put("description", table.getDescription());
+        entry.put("textId", table.getTextId());
+        entry.put("scanCode", table.getScanCode());
+        if(table.getDeviceUsed() != null ){
+            for(DeviceUsed deviceUsed : table.getDeviceUsed()){
+                deviceUsed.setProductUsed(null);
+                deviceUsed.setAttributes(null);
+                deviceUsed.getDevice().setAttributes(null);
+            }
+        }
+        entry.put("deviceUsedList", table.getDeviceUsed());
+        entry.put("tableType", new TypeDTO(table.getTableType()));
+        entry.put("tableZone", new ZoneDTO(table.getTableZone()));
+        return entry;
+    }
     /**
-     * 当手机号为空或“”时，说明用户不填，也是可以的
-     * @param phone
-     * @return true验证通过，false验证失败
+     * options-------------------------------------------------------------------------------
      */
-    private boolean validatePhone(String phone) {
-        if(phone == null || phone.equals("")){
-            return true;
-        }
-
-        String phones[]= phone.split(",");
-        for(int i=0;i<phones.length;i++){
-            if(!ValidatorUtil.isMobile(phones[i])){
-                return false;
-            }
-
-        }
-        return true;
-    }
-
-    @RequestMapping(value = "admin/catering/tablePhone/delete", method = RequestMethod.POST)
-    @ResponseBody
-    public AjaxResponse delTablePhone(@RequestBody TablePhone tablePhone, HttpServletRequest request) throws Exception {
-        AjaxResponse resp = new AjaxResponse();
-        try {
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-                resp.setErrorString("请先切换门店");
-                return resp;
-            }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
-            if (tablePhone.getId() == null || StringUtil.isNullOrEmpty(tablePhone.getId().toString())) {
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-                resp.setErrorString("参数错误");
-                return resp;
-            }
-            TablePhone tablePhone1 = tablePhoneService.findById(tablePhone.getId());
-
-            tablePhoneService.delete(tablePhone1);
-            return AjaxResponse.success();
-        } catch (Exception e) {
-            e.printStackTrace();
-            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-            resp.setErrorString("出错");
-            return resp;
-        }
-    }
-
-    @RequestMapping(value = "admin/catering/tablePhone/paging", method = RequestMethod.GET)
-    public
-    @ResponseBody
-    AjaxPageableResponse pageTablePhones(Model model, HttpServletRequest request, PageRequest pageRequest) {
-        AjaxPageableResponse resp = new AjaxPageableResponse();
-        try {
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
-                resp.setErrorString("请先切换门店");
-                return resp;
-            }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
-            PageResult<TablePhone> pageList = tablePhoneService.pageByStore(merchantStore1.getId(), pageRequest);
-
-            List<TablePhone> tablePhoneList = pageList.getList();
-            for (TablePhone tablePhone : tablePhoneList) {
-                Map entry = new HashMap();
-                entry.put("id", tablePhone.getId());
-                entry.put("table", new TableDTO(tablePhone.getTable()));
-                entry.put("phone", tablePhone.getPhone());
-                resp.addDataEntry(entry);
-            }
-            resp.setRecordsTotal(pageList.getRecordsTotal());
-            return resp;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return resp;
-        }
-    }
-
     @RequestMapping(value = "admin/catering/table/options", method = RequestMethod.GET)
     public
     @ResponseBody

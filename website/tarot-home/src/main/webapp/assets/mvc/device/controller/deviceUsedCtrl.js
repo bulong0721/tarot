@@ -197,6 +197,16 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
             {key: 'deviceNum', type: 'c_input', templateOptions: {label: '设备号', placeholder: '设备号'}},
             {key: 'description', type: 'c_input', templateOptions: {label: '描述', placeholder: '描述'}},
             {
+                key: 'phone',
+                type: 'c_input',
+                templateOptions: {
+                    type: 'text',
+                    label: '手机号',
+                    placeholder: '请输入11位手机号',
+                    pattern:'^(1[3578][0-9]|14[0-7])[0-9]{8}$|(^((1[3578][0-9]|14[0-7])[0-9]{8},)*(1[3578][0-9]|14[0-7])[0-9]{8}$)'
+                }
+            },
+            {
                 key: 'device.id',
                 type: 'c_select',
                 className: 'c_select',

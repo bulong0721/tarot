@@ -62,6 +62,5 @@
 
         <class>com.myee.tarot.apiold.domain.AkSk</class>
         <class>com.myee.tarot.apiold.domain.SendRecord</class>
-        <class>com.myee.tarot.apiold.domain.TablePhone</class>
     </persistence-unit>
 </persistence>

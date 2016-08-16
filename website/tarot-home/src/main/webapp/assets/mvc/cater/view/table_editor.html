@@ -1,0 +1,63 @@
+<div ng-show="showInfoEditor">
+    <div class="panel-body">
+        <formly-form model="formData.model" fields="formData.fields" form="formData.form" options="formData.options">
+            <div class="text-center col-xs-8">
+                <button class="btn btn-primary" ng-click="processSubmit()"><i class="fa fa-sm fa-check"></i>&nbsp;提交</button>
+                <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
+            </div>
+        </formly-form>
+    </div>
+</div>
+<div ng-show="showBindEditor">
+    <uib-tabset type="bareheaded">
+        <uib-tab heading="绑定设备">
+            <div class="panel-body" >
+                <div class="col-xs-2">
+                </div>
+                <div class="col-xs-6">
+                    <formly-form model="formBindData.model" fields="formBindData.bindFields" form="formBindData.form" options="formBindData.options">
+                        <div class="row">
+                            <div style="font-weight: bold;">{{formBindData.model.bindShowName}}</div>
+                            <div class="col-xs-12" ng-model="showCase">
+                                <div class="ibox float-e-margins">
+                                    <p class="text-danger">请选择要关联的设备:</p>
+                                    <p><input type="text" placeholder="输入关键字以筛选" ng-model="nameFilter" class="form-control ng-pristine ng-valid ng-empty ng-touched"></p>
+                                    <table id="example" ng-table="tableBindOpts" class="table table-condensed table-striped table-bordered">
+                                        <thead>
+                                        <tr class="center">
+                                            <th width="5%" class="center"><input type="checkbox" ng-model="showCase.selectAll" ng-click="showCase.toggleAll(showCase.selectAll, showCase.selected)"></th>
+                                            <th width="20%" ng-show="false">id</th>
+                                            <th width="20%" class="center">关联设备名称</th>
+                                            <th width="20%" class="center">关联设备主板编号</th>
+                                            <th width="15%" class="center">关联设备号</th>
+                                            <th class="center">手机号</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td colspan="9" class="center" ng-if="$data.length<=0">没有查找到数据</td>
+                                        </tr>
+                                        <tr class="center" ng-repeat="row in $data | filter : nameFilter">
+                                            <td class="center"><input type="checkbox" ng-model="showCase.selected[row.id]" ng-click="showCase.toggleOne(showCase.selected)"></td>
+                                            <td ng-show="false">{{::row.id}}</td>
+                                            <td>{{::row.name}}</td>
+                                            <td>{{::row.boardNo}}</td>
+                                            <td>{{::row.deviceNum}}</td>
+                                            <td>{{::row.phone}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="text-center col-xs-8">
+                    <button class="btn btn-primary" ng-click="processBindSubmit()"><i class="fa fa-sm fa-check"></i>&nbsp;提交</button>
+                    <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
+                </div>
+                </formly-form>
+            </div>
+        </uib-tab>
+    </uib-tabset>
+</div>
+

@@ -27,8 +27,6 @@ public class DeviceUsedDaoImpl extends GenericEntityDaoImpl<Long, DeviceUsed> im
         QDeviceUsed qDeviceUsed = QDeviceUsed.deviceUsed;
         JPQLQuery<DeviceUsed> query = new JPAQuery(getEntityManager());
         query.from(qDeviceUsed)
-                .leftJoin(qDeviceUsed.attributes)
-                .fetchJoin()
                 .leftJoin(qDeviceUsed.device)
                 .fetchJoin();
         if(id != null) {
@@ -50,8 +48,6 @@ public class DeviceUsedDaoImpl extends GenericEntityDaoImpl<Long, DeviceUsed> im
         QDeviceUsed qDeviceUsed = QDeviceUsed.deviceUsed;
         JPQLQuery<DeviceUsed> query = new JPAQuery(getEntityManager());
         query.from(qDeviceUsed)
-                .leftJoin(qDeviceUsed.attributes)
-                .fetchJoin()
                 .leftJoin(qDeviceUsed.device)
                 .fetchJoin();
         query.where(qDeviceUsed.id.in(bindList));
@@ -68,8 +64,6 @@ public class DeviceUsedDaoImpl extends GenericEntityDaoImpl<Long, DeviceUsed> im
         QDeviceUsed qDeviceUsed = QDeviceUsed.deviceUsed;
         JPQLQuery<DeviceUsed> query = new JPAQuery(getEntityManager());
         query.from(qDeviceUsed)
-                .leftJoin(qDeviceUsed.attributes)
-                .fetchJoin()
                 .leftJoin(qDeviceUsed.device)
                 .fetchJoin();
         query.where(qDeviceUsed.boardNo.eq(mainBoardCode));

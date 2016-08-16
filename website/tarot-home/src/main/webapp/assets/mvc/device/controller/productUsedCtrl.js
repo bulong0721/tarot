@@ -54,7 +54,7 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
         vm.selectAll = true;
     }
 
-    //绑定产品相关业务逻辑-----------------------------
+    //绑定设备相关业务逻辑-----------------------------
     $scope.formBindData = {};
     $scope.showInfoEditor = false;
     $scope.showBindEditor = false;
@@ -63,7 +63,7 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
 
     $scope.goDeviceBindProductEditor = function (rowIndex) {
         initalBindProduct().then(function () {
-            //tables获取数据,获取该门店下设备可绑定的所有产品
+            //tables获取数据,获取该门店下可绑定的所有设备
             $scope.tableBindOpts = new NgTableParams({}, {
                 counts: [],
                 dataset: $scope.initalBindProductList

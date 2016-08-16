@@ -3,11 +3,9 @@ package com.myee.tarot.web.apiold.api.controller.v10;
 import com.google.gson.Gson;
 import com.myee.tarot.apiold.bean.DeadAuthInfo;
 import com.myee.tarot.apiold.domain.AkSk;
-import com.myee.tarot.apiold.domain.SendRecord;
-import com.myee.tarot.apiold.domain.TablePhone;
 import com.myee.tarot.apiold.service.AkSkService;
 import com.myee.tarot.apiold.service.SendRecordService;
-import com.myee.tarot.apiold.service.TablePhoneService;
+import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.catering.service.TableService;
 import com.myee.tarot.web.apiold.api.controller.BaseController;
@@ -29,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Info: 第三方合作方接口
@@ -50,9 +49,6 @@ public class PartnerApiManageController extends BaseController {
     private SendRecordService sendRecordManageService;
 
     @Autowired
-    private TablePhoneService tablePhoneManageService;
-
-    @Autowired
     private TableService tableManageService;
 
     @Autowired
@@ -71,17 +67,20 @@ public class PartnerApiManageController extends BaseController {
             if (!paraJude(templateId)) {
                 return ClientAjaxResult.failed("参数出错...");
             }
-            TablePhone tablePhone = new TablePhone();
-            tablePhone = tablePhoneManageService.findByTableId(tableId);
-            if(tablePhone == null){
-                return ClientAjaxResult.failed("参数出错...");
-            }
             Table table = tableManageService.findById(tableId);
             if(table == null){
                 return ClientAjaxResult.failed("参数出错...");
             }
             String templateNum = TemplateSMSType.getName(templateId);
-            String mobiles = tablePhone.getPhone() + tablePhone.getPhone1() + tablePhone.getPhone2();
+            String mobiles = "";
+            List<DeviceUsed> deviceUsedList = table.getDeviceUsed();
+            if(deviceUsedList != null && deviceUsedList.size() > 0){
+                for(DeviceUsed deviceUsed : deviceUsedList){
+                    if(StringUtils.isBlank(deviceUsed.getPhone())){
+                        mobiles += deviceUsed.getPhone();
+                    }
+                }
+            }
             ClientAjaxResult result =  this.checkArgsMyee(sendToken, mobiles, templateId, getRequest());
             if(result.getCode() != null && !result.getCode().equals("1000")){
                 return result;
@@ -89,7 +88,6 @@ public class PartnerApiManageController extends BaseController {
 
             Runnable task = AlidayuSmsClient.sendSMS(
                     IPUtils.getIpAddr(getRequest()),
-                    tablePhone,
                     table,
                     sendRecordManageService,
                     templateNum,

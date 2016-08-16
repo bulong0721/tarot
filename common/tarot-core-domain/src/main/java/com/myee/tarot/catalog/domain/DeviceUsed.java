@@ -35,6 +35,9 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
     @Column(name = "DESCRIPTION")
     protected String description;
 
+    @Column(name = "PHONE")
+    private String phone;
+
     @ManyToOne(targetEntity = MerchantStore.class, optional = false)
     @JoinColumn(name = "STORE_ID")
     protected MerchantStore store;
@@ -141,6 +144,14 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
 //    public Map<String, DeviceUsedAttribute> getDeviceUsedAttribute() {
 //        return deviceUsedAttribute;
 //    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
     public List<DeviceUsedAttribute> getAttributes() {
         return attributes;

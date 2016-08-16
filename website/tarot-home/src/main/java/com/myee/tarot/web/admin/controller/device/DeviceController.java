@@ -19,6 +19,7 @@ import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.device.service.ProductUsedAttributeService;
 import com.myee.tarot.device.service.ProductUsedService;
 import com.myee.tarot.web.util.StringUtil;
+import com.myee.tarot.web.util.ValidatorUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -235,7 +236,7 @@ public class DeviceController {
     @RequestMapping(value = "device/used/listByStoreId", method = RequestMethod.GET)
     public
     @ResponseBody
-    AjaxPageableResponse deviceUsedlistByStoreId( HttpServletRequest request, PageRequest pageRequest) {
+    AjaxPageableResponse deviceUsedListByStoreId( HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
             if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
@@ -278,6 +279,10 @@ public class DeviceController {
                 resp.setErrorString("主板编号不能为空");
                 return resp;
             }
+            if(deviceUsed.getPhone() != null && !validatePhone(deviceUsed.getPhone())){
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "请输入正确的手机号！");
+                return resp;
+            }
             MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
 
             List<Object> updateResult = new ArrayList<Object>();
@@ -312,6 +317,26 @@ public class DeviceController {
             resp = AjaxResponse.failed(-1);
         }
         return resp;
+    }
+
+    /**
+     * 当手机号为空或“”时，说明用户不填，也是可以的
+     * @param phone
+     * @return true验证通过，false验证失败
+     */
+    private boolean validatePhone(String phone) {
+        if(phone == null || phone.equals("")){
+            return true;
+        }
+
+        String phones[]= phone.split(",");
+        for(int i=0;i<phones.length;i++){
+            if(!ValidatorUtil.isMobile(phones[i])){
+                return false;
+            }
+
+        }
+        return true;
     }
 
     @RequestMapping(value = "device/used/bindProductUsed", method = RequestMethod.POST)
@@ -370,6 +395,7 @@ public class DeviceController {
         entry.put("boardNo",deviceUsed.getBoardNo());
         entry.put("deviceNum", deviceUsed.getDeviceNum());
         entry.put("description",deviceUsed.getDescription());
+        entry.put("phone",deviceUsed.getPhone());
 
         if(deviceUsed.getProductUsed() != null ){
             for(ProductUsed productUsed : deviceUsed.getProductUsed()){

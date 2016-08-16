@@ -7,9 +7,156 @@ angular.module('myee', [])
 /**
  * roleCtrl - controller
  */
-tableMgrCtrl.$inject = ['$scope', '$resource', 'cTables', 'cfromly'];
+tableMgrCtrl.$inject = ['$scope', '$resource', 'cTables', 'cfromly','Constants', 'NgTableParams', '$q','cAlerts'];
 
-function tableMgrCtrl($scope, $resource, cTables, cfromly) {
+function tableMgrCtrl($scope, $resource, cTables, cfromly,Constants,NgTableParams, $q,cAlerts) {
+
+    var iDatatable = 0, iEditor = 1;
+    //绑定产品相关参数
+    var vm = $scope.showCase = {};
+    vm.selected = [];
+    vm.selectAll = false;
+    vm.toggleAll = toggleAll;
+    vm.toggleOne = toggleOne;
+
+    function initalBindProduct() {
+        if ($scope.initalBindProductList) {//如果已经从后台读取过数据了，则不再访问后台获取列表
+            var deferred = $q.defer();
+            deferred.resolve($scope.initalBindProductList);
+            return deferred.promise;
+        } else {//第一次需要从后台读取列表，且只返回前10个数据
+            return $resource('../device/used/listByStoreId').get().$promise.then(function (data) {
+                //初始化showCase.selected数组，给全选框用，让它知道应该全选哪些
+                angular.forEach(data.rows, function (indexData, index, array) {
+                    //indexData等价于array[index]
+                    $scope.showCase.selected[indexData.id] = false;
+                });
+                $scope.initalBindProductList = data.rows;
+
+                return data.rows;
+            });
+        }
+    }
+
+    function toggleAll(selectAll, selectedItems) {
+        for (var id in selectedItems) {
+            if (selectedItems.hasOwnProperty(id)) {
+                selectedItems[id] = selectAll;
+            }
+        }
+    }
+
+    function toggleOne(selectedItems) {
+        for (var id in selectedItems) {
+            if (selectedItems.hasOwnProperty(id)) {
+                if (!selectedItems[id]) {
+                    vm.selectAll = false;
+                    return;
+                }
+            }
+        }
+        vm.selectAll = true;
+    }
+
+    //绑定设备相关业务逻辑-----------------------------
+    $scope.formBindData = {};
+    $scope.showInfoEditor = false;
+    $scope.showBindEditor = false;
+
+    $scope.showCase.currentRowIndex = 0;
+
+    $scope.goDeviceBindProductEditor = function (rowIndex) {
+        initalBindProduct().then(function () {
+            //tables获取数据,获取该门店下可绑定的所有设备
+            $scope.tableBindOpts = new NgTableParams({}, {
+                counts: [],
+                dataset: $scope.initalBindProductList
+            });
+
+            $scope.tableBindOpts.reload().then(function () {
+                $scope.addNew = true;
+
+                if ($scope.tableOpts && rowIndex > -1) {
+                    $scope.showCase.currentRowIndex = rowIndex;//记录当前选择的行，以备后续更新该行数据
+
+                    var data = $scope.tableOpts.data[rowIndex];
+                    $scope.formBindData.model = data;
+                    console.log(data)
+                    console.log(Constants.thisMerchantStore)
+                    $scope.formBindData.model.bindShowName = '餐桌名称:' + (data.name || "") + ' | 门店名称:' + (Constants.thisMerchantStore.name || "");
+
+                    //根据已关联的产品去勾选对应的checkbox
+                    $scope.showCase.selectAll = false;
+                    $scope.showCase.toggleAll(false, $scope.showCase.selected);//先取消所有checkbox的勾选状态
+                    for (var value in data.deviceUsedList) {
+                        //console.log("value"+value)
+                        var productId = data.deviceUsedList[value].id;
+                        $scope.showCase.selected[productId] = true;
+                        $scope.showCase.toggleOne($scope.showCase.selected);//判断全选框是否要被checked
+                    }
+
+                    $scope.addNew = false;
+                    $scope.rowIndex = rowIndex;
+                } else {
+                    $scope.formBindData.model = {};
+                }
+                $scope.activeTab = iEditor;
+                $scope.showInfoEditor = false;
+                $scope.showBindEditor = true;
+            });
+        });
+    };
+
+    $scope.processBindSubmit = function () {
+        var result = [];
+
+        angular.forEach($scope.showCase.selected, function (data, index, array) {
+            //data等价于array[index]
+            if (data == true) {
+                result.push(index);
+            }
+        });
+
+        $resource('../admin/catering/table/bindDeviceUsed').save({
+            'bindString': JSON.stringify(result),
+            'tableId': $scope.formBindData.model.id
+        }, {}, function (respSucc) {
+            if (0 != respSucc.status) {
+                $scope.toasterManage($scope.toastError,respSucc);
+                return;
+            }
+
+            //用js离线刷新表格数据
+            $scope.tableOpts.data[$scope.showCase.currentRowIndex].deviceUsedList = [];//先清空
+            angular.forEach($scope.showCase.selected, function (data, index, array) {
+                //data等价于array[index]
+                if (data == true) {
+                    var length = $scope.initalBindProductList.length;
+                    for (i = 0; i < length; i++) {
+                        var data2 = $scope.initalBindProductList[i];
+                        if (data2.id == index) {
+                            $scope.tableOpts.data[$scope.showCase.currentRowIndex].deviceUsedList.push({
+                                id: index,
+                                name: data2.name,
+                                boardNo: data2.boardNo,
+                                deviceNum: data2.deviceNum
+                            });
+                            break;
+                        }
+                    }
+                }
+            });
+
+            $scope.toasterManage($scope.toastOperationSucc);
+            $scope.goDataTable();
+        }, function (respFail) {
+            //console.log(respFail);
+            $scope.toasterManage($scope.toastError,respFail);
+        });
+    };
+
+    //其他业务逻辑----------------------------
+
     var typeOpts = $resource('../admin/catering/type/options').query();
     var zoneOpts = $resource('../admin/catering/zone/options').query();
 
@@ -71,41 +218,20 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly) {
 
     cTables.initNgMgrCtrl(mgrData, $scope);
 
-    $scope.insertAttr = function (product) {
-        if (!product.attributes) {
-            product.attributes = [];
+    $scope.goEditorCustom = function (rowIndex) {
+        $scope.goEditor(rowIndex);
+        if (Constants.thisMerchantStore) {
+            $scope.formData.model.store = {name: Constants.thisMerchantStore.name};
         }
-        product.attributes.push({name: '', value: '', editing: true});
+        $scope.showBindEditor = false;
+        $scope.showInfoEditor = true;
     };
 
-    $scope.updateAttr = function (product, attr) {
-        var xhr = $resource(mgrData.api.updateAttr);
-        xhr.save({id: product.id}, attr).$promise.then(function (result) {
-            if (0 != result.status) {
-                $scope.toasterManage($scope.toastError,result);
-                return;
-            }
-            $scope.toasterManage($scope.toastOperationSucc);
-            attr.editing = false;
-        });
+    //formly返回
+    $scope.goDataTable = function () {
+        $scope.activeTab = iDatatable;
+        $scope.showBindEditor = false;
+        $scope.showInfoEditor = false;
     };
 
-    $scope.deleteAttr = function (product, attr) {
-        cAlerts.confirm('确定删除?',function(){
-            //点击确定回调
-            var xhr = $resource(mgrData.api.deleteAttr);
-            xhr.save({id: product.id}, attr).$promise.then(function (result) {
-                if (0 != result.status) {
-                    $scope.toasterManage($scope.toastError,result);
-                    return;
-                }
-                $scope.toasterManage($scope.toastDeleteSucc);
-                var index = product.attributes.indexOf(attr);
-                product.attributes.splice(index, 1);
-            });
-        },function(){
-            //点击取消回调
-        });
-
-    };
 }

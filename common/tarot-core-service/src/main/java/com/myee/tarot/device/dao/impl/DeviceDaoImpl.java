@@ -21,9 +21,7 @@ public class DeviceDaoImpl extends GenericEntityDaoImpl<Long, Device> implements
         PageResult<Device> pageList = new PageResult<Device>();
         QDevice qDevice = QDevice.device;
         JPQLQuery<Device> query = new JPAQuery(getEntityManager());
-        query.from(qDevice)
-                .leftJoin(qDevice.attributes)
-                .fetchJoin();
+        query.from(qDevice);
 
         if(!StringUtil.isBlank(pageRequest.getQueryName())){
             query.where(qDevice.name.like("%" + pageRequest.getQueryName() + "%"));
