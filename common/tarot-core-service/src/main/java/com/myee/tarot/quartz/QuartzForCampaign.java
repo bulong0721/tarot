@@ -1,4 +1,4 @@
-package com.myee.tarot.web.quartz;
+package com.myee.tarot.quartz;
 
 import com.myee.tarot.campaign.service.PriceInfoService;
 import com.myee.tarot.core.exception.ServiceException;
@@ -22,7 +22,7 @@ public class QuartzForCampaign {
     @Autowired
     private PriceInfoService priceInfoService;
 
-    //@Scheduled(cron = "0/5 * *  * * ? ")//测试每隔1秒隔行一次
+    @Scheduled(cron = "0/5 * *  * * ? ")//测试每隔1秒隔行一次
     public void run(){
         System.out.println("Hello MyJob  " +
                 new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ").format(new Date()));

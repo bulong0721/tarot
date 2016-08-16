@@ -169,6 +169,23 @@ public class DateTimeUtils {
     }
 
     /**
+     * 获取当天开始时间
+     *
+     * @return
+     * @author jijun
+     * @date 2014年6月30日
+     */
+    public static Date startToday() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY,0);
+        calendar.set(Calendar.MINUTE,0);
+        calendar.set(Calendar.SECOND,0);
+        calendar.set(Calendar.MILLISECOND,0);
+        return calendar.getTime();
+    }
+
+
+    /**
      * 获取一天结束时间
      *
      * @param endDate 格式yyyy-MM-dd
