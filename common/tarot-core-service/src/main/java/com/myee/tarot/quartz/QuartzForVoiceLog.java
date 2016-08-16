@@ -39,7 +39,7 @@ public class QuartzForVoiceLog {
     @Autowired
     private ThreadPoolTaskExecutor taskExecutor;
 
-    @Scheduled(cron = "0 0 23 0 0 ? *")  //每天23PM跑定时任务语音日志放到Es并移动文件
+    @Scheduled(cron = "0 0 23 * * *")  //每天23PM跑定时任务语音日志放到Es并移动文件
     public void parseFileToDb() {
         //获取路径下所有的csv文件
         List<File> fileList = getFiles(new File(DOWNLOAD_HOME + File.separator + "voiceParser"));
