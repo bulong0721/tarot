@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Created by xiaoni on 2016/8/10.
+ * Created by Chay on 2016/8/10.
  */
 @Repository
 public class SendRecordDaoImpl extends GenericEntityDaoImpl<Long, SendRecord> implements SendRecordDao {

@@ -7,9 +7,9 @@ angular.module('myee', [])
 /**
  * roleCtrl - controller
  */
-tableMgrCtrl.$inject = ['$scope', '$resource', 'cTables', 'cfromly','Constants', 'NgTableParams', '$q','cAlerts'];
+tableMgrCtrl.$inject = ['$scope', '$resource', 'cTables', 'cfromly', 'Constants', 'NgTableParams', '$q', 'cAlerts'];
 
-function tableMgrCtrl($scope, $resource, cTables, cfromly,Constants,NgTableParams, $q,cAlerts) {
+function tableMgrCtrl($scope, $resource, cTables, cfromly, Constants, NgTableParams, $q, cAlerts) {
 
     var iDatatable = 0, iEditor = 1;
     //绑定产品相关参数
@@ -63,6 +63,7 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly,Constants,NgTableParam
     $scope.showInfoEditor = false;
     $scope.showBindEditor = false;
 
+
     $scope.showCase.currentRowIndex = 0;
 
     $scope.goDeviceBindProductEditor = function (rowIndex) {
@@ -81,8 +82,8 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly,Constants,NgTableParam
 
                     var data = $scope.tableOpts.data[rowIndex];
                     $scope.formBindData.model = data;
-                    console.log(data)
-                    console.log(Constants.thisMerchantStore)
+                    //console.log(data)
+                    //console.log(Constants.thisMerchantStore)
                     $scope.formBindData.model.bindShowName = '餐桌名称:' + (data.name || "") + ' | 门店名称:' + (Constants.thisMerchantStore.name || "");
 
                     //根据已关联的产品去勾选对应的checkbox
@@ -103,6 +104,7 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly,Constants,NgTableParam
                 $scope.activeTab = iEditor;
                 $scope.showInfoEditor = false;
                 $scope.showBindEditor = true;
+                //$scope.showBatchBindEditor = false;
             });
         });
     };
@@ -122,7 +124,7 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly,Constants,NgTableParam
             'tableId': $scope.formBindData.model.id
         }, {}, function (respSucc) {
             if (0 != respSucc.status) {
-                $scope.toasterManage($scope.toastError,respSucc);
+                $scope.toasterManage($scope.toastError, respSucc);
                 return;
             }
 
@@ -151,10 +153,56 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly,Constants,NgTableParam
             $scope.goDataTable();
         }, function (respFail) {
             //console.log(respFail);
-            $scope.toasterManage($scope.toastError,respFail);
+            $scope.toasterManage($scope.toastError, respFail);
         });
     };
 
+    //批量一对一绑定设备//20160817还没想好如何关联--------------------------------------
+    //var bindData = {
+    //    fields: [
+    //        {
+    //            key: 'startNo',
+    //            type: 'c_input',
+    //            templateOptions: {label: '开始编号', required: true, placeholder: '开始编号'},
+    //        },
+    //        {
+    //            key: 'endNo',
+    //            type: 'c_input',
+    //            templateOptions: {label: '结束编号', required: true, placeholder: '结束编号'},
+    //        },
+    //        {
+    //            key: 'startDevice',
+    //            type: 'c_input',
+    //            templateOptions: {label: '起始设备', required: true, placeholder: '起始编号'},
+    //        },
+    //        {
+    //            key: 'endDevice',
+    //            type: 'c_input',
+    //            templateOptions: {label: '结束编号', required: true, placeholder: '结束编号'},
+    //        }
+    //    ],
+    //    api: {
+    //        update: '../admin/catering/table/batchBindDeviceUsed',
+    //    }
+    //};
+    ////formly配置项
+    //$scope.formBatchBindData = {
+    //    fields: bindData.fields
+    //};
+    //$scope.formBatchBindData.bindShowName = "将按照序号顺序一对一关联";
+    //$scope.showBatchBindEditor = false;
+    //$scope.goBatchBindEditor = function (rowIndex) {
+    //    console.log(123)
+    //    console.log($scope.formBatchBindData)
+    //    $scope.activeTab = iEditor;
+    //    $scope.showInfoEditor = false;
+    //    $scope.showBindEditor = false;
+    //    $scope.showBatchBindEditor = true;
+    //};
+    //
+    //$scope.processBatchBindSubmit = function () {
+    //
+    //};
     //其他业务逻辑----------------------------
 
     var typeOpts = $resource('./catering/type/options').query();
@@ -174,8 +222,8 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly,Constants,NgTableParam
                 className: 'c_formly_line',
                 templateOptions: {
                     label: '餐桌码',
-                    placeholder: '输入000-200之间的3位数字',
-                    pattern:'(([01]{1}[0-9]{2})|([2]{1}[0]{2}))$'
+                    placeholder: '输入000-200之间的3位数字,批量添加时将自动+1递增',
+                    pattern: '(([01]{1}[0-9]{2})|([2]{1}[0]{2}))$'
                 }
             },
             {
@@ -208,6 +256,100 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly,Constants,NgTableParam
                 className: 'c_formly_line c_select',
                 templateOptions: {label: '区域', valueProp: 'id', options: zoneOpts, required: true, placeholder: '区域'}
             },
+            {
+                key: 'ifBatch',
+                type: 'c_input',
+                className: 'formly-min-checkbox',
+                templateOptions: {label: '批量新增餐桌', required: false, type: 'checkbox'},
+                defaultValue: false,//不初始化就报错，设为false也报错？？_加了hideExpression就不会报错了，奇怪？？
+                hideExpression: function ($viewValue, $modelValue, scope) {
+                    if (scope.model.id) {
+                        return true;   //修改时隐藏批量修改
+                    } else {
+                        return false;  //新增时显示批量修改
+                    }
+                }
+            },
+            {
+                key: 'startNo',
+                type: 'c_input',
+                templateOptions: {label: '餐桌开始编号', required: true, placeholder: '餐桌开始编号'},
+                hideExpression: '!model.ifBatch'
+            },
+            {
+                key: 'endNo',
+                type: 'c_input',
+                templateOptions: {label: '餐桌结束编号', required: true, placeholder: '餐桌结束编号'},
+                hideExpression: '!model.ifBatch'
+            },
+            {
+                key: 'ifBatchBind',
+                type: 'c_input',
+                className: 'formly-min-checkbox',
+                templateOptions: {label: '批量新增并关联设备', required: false, type: 'checkbox'},
+                defaultValue: false,//不初始化就报错，设为false也报错？？_加了hideExpression就不会报错了，奇怪？？
+                hideExpression: '!model.ifBatch'
+            },
+            {
+                key: 'startDeviceUsedNo',
+                type: 'c_input',
+                templateOptions: {label: '设备起始编号', required: true, placeholder: '设备起始编号'},
+                hideExpression: '!model.ifBatchBind || !model.ifBatch'
+            },
+            {
+                key: 'endDeviceUsedNo',
+                type: 'c_input',
+                templateOptions: {label: '设备结束编号', required: true, placeholder: '设备结束编号'},
+                hideExpression: '!model.ifBatchBind || !model.ifBatch'
+            },
+            {
+                key: 'dU.name',
+                type: 'c_input',
+                templateOptions: {label: '名称', required: true, placeholder: '名称'},
+                hideExpression: '!model.ifBatchBind || !model.ifBatch'
+            },
+            {
+                key: 'dU.heartbeat',
+                type: 'c_input',
+                templateOptions: {label: '心跳', placeholder: '心跳'},
+                hideExpression: '!model.ifBatchBind || !model.ifBatch'
+            },
+            {
+                key: 'dU.boardNo',
+                type: 'c_input',
+                templateOptions: {label: '主板编号', placeholder: '主板编号', required: true},
+                hideExpression: '!model.ifBatchBind || !model.ifBatch'
+            },
+            {
+                key: 'dU.deviceNum',
+                type: 'c_input',
+                templateOptions: {label: '设备号', placeholder: '设备号'},
+                hideExpression: '!model.ifBatchBind || !model.ifBatch'
+            },
+            {
+                key: 'dU.description',
+                type: 'c_input',
+                templateOptions: {label: '描述', placeholder: '描述'},
+                hideExpression: '!model.ifBatchBind || !model.ifBatch'
+            },
+            {
+                key: 'dU.phone',
+                type: 'c_input',
+                templateOptions: {
+                    type: 'text',
+                    label: '手机号',
+                    placeholder: '请输入11位手机号',
+                    pattern: '^(1[3578][0-9]|14[0-7])[0-9]{8}$|(^((1[3578][0-9]|14[0-7])[0-9]{8},)*(1[3578][0-9]|14[0-7])[0-9]{8}$)'
+                },
+                hideExpression: '!model.ifBatchBind || !model.ifBatch'
+            },
+            {
+                key: 'dU.device.id',
+                type: 'c_select',
+                className: 'c_select',
+                templateOptions: {label: '选择设备类型', required: true, options: getDeviceList()},
+                hideExpression: '!model.ifBatchBind || !model.ifBatch'
+            }
         ],
         api: {
             read: './catering/table/paging',
@@ -215,6 +357,11 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly,Constants,NgTableParam
             delete: './catering/table/delete'
         }
     };
+
+    function getDeviceList() {
+        var data = $resource("../device/list").query();
+        return data;
+    }
 
     cTables.initNgMgrCtrl(mgrData, $scope);
 
@@ -225,6 +372,45 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly,Constants,NgTableParam
         }
         $scope.showBindEditor = false;
         $scope.showInfoEditor = true;
+        //$scope.showBatchBindEditor = false;
+    };
+
+    //formly提交
+    $scope.processSubmit = function () {
+        var formly = $scope.formData;
+        if (formly.form.$valid) {
+            //formly.options.updateInitialValue();//这句会报错
+            console.log(formly.model.deviceUsed)
+            console.log(formly.model)
+            console.log(({deviceUsed:formly.model.deviceUsed? formly.model.deviceUsed : {name:""}}));
+            var xhr = $resource(mgrData.api.update);
+            xhr.save({
+                autoStart: formly.model.startNo ? formly.model.startNo : "",
+                autoEnd: formly.model.endNo ? formly.model.endNo : "",
+                autoDUStart: formly.model.startDeviceUsedNo ? formly.model.startDeviceUsedNo : "",
+                autoDUEnd: formly.model.endDeviceUsedNo ? formly.model.endDeviceUsedNo : "",
+                dUString:formly.model.dU? formly.model.dU : {}
+            }, formly.model).$promise.then(function saveSuccess(response) {
+                    if (0 != response.status) {
+                        $scope.toasterManage($scope.toastError, response);
+                        return;
+                    }
+                    //批量添加的数据添加到ngtables
+                    angular.forEach(response.dataMap.updateResult, function (indexData, index, array) {
+                        var data = indexData;
+                        if ($scope.rowIndex < 0) {
+                            $scope.tableOpts.data.splice(0, 0, data);
+                        } else {
+                            $scope.tableOpts.data.splice($scope.rowIndex, 1, data);
+                        }
+                    })
+
+                    $scope.toasterManage($scope.toastOperationSucc);
+                    $scope.goDataTable();
+                }, function saveFailed(response) {
+                    $scope.toasterManage($scope.toastError, response);
+                });
+        }
     };
 
     //formly返回
@@ -232,6 +418,7 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly,Constants,NgTableParam
         $scope.activeTab = iDatatable;
         $scope.showBindEditor = false;
         $scope.showInfoEditor = false;
+        //$scope.showBatchBindEditor = false;
     };
 
 }

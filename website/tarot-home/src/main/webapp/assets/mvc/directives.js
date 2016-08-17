@@ -146,7 +146,7 @@ function switchMerchant(Constants,$resource,$state,$rootScope,NgTableParams,toas
                             toaster.error({ body:"出错啦！"+resp.statusMessage});
                             return;
                         }
-                        console.log($rootScope.storeInfo.firstSwitch)
+                        //console.log($rootScope.storeInfo.firstSwitch)
                         if($rootScope.storeInfo.firstSwitch){//第一次不弹提示,把标记位改变
                             $rootScope.storeInfo.firstSwitch = false;
                         }

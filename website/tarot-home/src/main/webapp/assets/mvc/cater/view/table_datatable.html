@@ -1,4 +1,5 @@
 <a class="btn btn-sm btn-danger" ng-click="goEditorCustom()"><i class="ace-icon fa fa-plus bigger-120"></i>新增餐桌</a>
+<!--<a class="btn btn-sm btn-danger" ng-click="goBatchBindEditor()"><i class="ace-icon fa fa-link bigger-120"></i>批量关联</a>-->
 <div class="space-6"></div>
 <div class="alert alert-info">
     <div class="form-inline">
@@ -55,7 +56,7 @@
                             <tr class="center">
                                 <th width="20%" class="center">关联设备名称</th>
                                 <th width="20%" class="center">关联设备主板编号</th>
-                                <th class="center">关联设备号</th>
+                                <th width="20%" class="center">关联设备号</th>
                                 <th class="center">关联手机号</th>
                             </tr>
                             </thead>
@@ -64,10 +65,10 @@
                                 <td colspan="4" class="center" ng-if="row.deviceUsedList<=0">没有查找到数据</td>
                             </tr>
                             <tr class="center" ng-repeat="bind in row.deviceUsedList">
-                                <td class="center">{{::bind.name}}</td>
-                                <td class="center">{{::bind.boardNo}}</td>
-                                <td class="center">{{::bind.deviceNum}}</td>
-                                <td class="center">{{::bind.phone}}</td>
+                                <td>{{::bind.name}}</td>
+                                <td>{{::bind.boardNo}}</td>
+                                <td>{{::bind.deviceNum}}</td>
+                                <td>{{::bind.phone}}</td>
                             </tr>
                             </tbody>
                         </table>
