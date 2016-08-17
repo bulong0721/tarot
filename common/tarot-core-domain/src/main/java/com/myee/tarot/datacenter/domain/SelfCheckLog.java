@@ -37,7 +37,7 @@ public class SelfCheckLog extends GenericEntity<Long, SelfCheckLog> {
     @Column(name = "LENGTH")
     private Integer length;
 
-    @Column(name = "DATA", length = 20000)
+    @Column(name = "DATA", columnDefinition = "TEXT", nullable = true)
     private String data;
 
     @Column(name = "STORE_ID")
@@ -50,7 +50,7 @@ public class SelfCheckLog extends GenericEntity<Long, SelfCheckLog> {
     @JoinColumn(name = "STORE_ID", referencedColumnName = "STORE_ID", nullable = true, insertable = false, updatable = false)
     protected MerchantStore store;
 
-//    @ManyToOne(targetEntity = EventLevel.class, fetch = FetchType.LAZY)
+    //    @ManyToOne(targetEntity = EventLevel.class, fetch = FetchType.LAZY)
 //    @JoinColumn(name = "EVENT_LEVEL", referencedColumnName = "EVENT")
     @Column(name = "EVENT_LEVEL")
     protected String eventLevel;
