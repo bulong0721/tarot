@@ -115,7 +115,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
         .state('device.type', {
             url: "/type",
             templateUrl: "assets/mvc/desktop/view/manager.html",
-            controller: 'deviceCtrl',
+            controller: 'deviceTypeCtrl',
             data: {
                 pageTitle: '设备管理',
                 subTitle: '设备类型',
@@ -124,7 +124,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
-                    return ctrlManagerLoader($ocLazyLoad, 'device', 'deviceCtrl.js');
+                    return ctrlManagerLoader($ocLazyLoad, 'device', 'deviceTypeCtrl.js');
                 }
             }
         })

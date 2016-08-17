@@ -146,7 +146,7 @@ function switchMerchant(Constants,$resource,$state,$rootScope,NgTableParams,toas
                             toaster.error({ body:"出错啦！"+resp.statusMessage});
                             return;
                         }
-                        console.log($rootScope.storeInfo.firstSwitch)
+                        //console.log($rootScope.storeInfo.firstSwitch)
                         if($rootScope.storeInfo.firstSwitch){//第一次不弹提示,把标记位改变
                             $rootScope.storeInfo.firstSwitch = false;
                         }
@@ -251,7 +251,7 @@ function breadcrumb(){
 * */
 function alerts(){
     return {
-        template:'<div class="modal-header"> <h4 class="modal-title">{{title}}</h4> </div> <div class="modal-footer"> <button class="btn btn-primary" type="button" ng-click="ok()">确定</button> <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button> </div>',
+        template:'<div class="modal-header"> <h4 class="modal-title">{{title}}</h4> </div> <div class="modal-footer"> <button class="btn-xs btn-primary" type="button" ng-click="ok()">确定</button> <button class="btn-xs btn-warning" type="button" ng-click="cancel()">取消</button> </div>',
         link:function(scope,ele,attr){
             scope.title = attr.title;
         }

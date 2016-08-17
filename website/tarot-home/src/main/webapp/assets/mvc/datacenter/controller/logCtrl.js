@@ -12,7 +12,7 @@ logListCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables', 'cfromly',
 function logListCtrl($scope, $resource, Constants, cTables, cfromly, NgTableParams, $q) {
 
     $scope.moduleChange = function($viewValue) {
-        $resource('../admin/selfCheckLog/listFunction').query({moduleId:$viewValue== null ? '':$viewValue.value},{},function success(resp){
+        $resource('./selfCheckLog/listFunction').query({moduleId:$viewValue== null ? '':$viewValue.value},{},function success(resp){
             var length = resp.length;
             console.log(1111)
             $scope.functionNames.splice(0, $scope.functionNames.length);
@@ -27,7 +27,7 @@ function logListCtrl($scope, $resource, Constants, cTables, cfromly, NgTablePara
         fields: [
         ],
         api: {
-            read: '../admin/selfCheckLog/paging',
+            read: './selfCheckLog/paging',
         }
     };
 
@@ -47,7 +47,7 @@ function logListCtrl($scope, $resource, Constants, cTables, cfromly, NgTablePara
     /**
      * 下拉列表查询事件模块
      * **/
-    $resource('../admin/selfCheckLog/listModule').query({},{},function success(resp){
+    $resource('./selfCheckLog/listModule').query({},{},function success(resp){
         var length = resp.length;
         $scope.moduleNames.splice(0, $scope.moduleNames.length);
         for (var j = 0; j < length; j++) {
@@ -59,7 +59,7 @@ function logListCtrl($scope, $resource, Constants, cTables, cfromly, NgTablePara
     /**
      * 下拉列表查询功能模块
      * **/
-    $resource('../admin/selfCheckLog/listFunction').query({},{},function success(resp){
+    $resource('./selfCheckLog/listFunction').query({},{},function success(resp){
         var length = resp.length;
         $scope.functionNames.splice(0, $scope.functionNames.length);
         for (var j = 0; j < length; j++) {

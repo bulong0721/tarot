@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/cache
+         http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+
+    <bean id="atomic-cache" class="org.apache.ignite.configuration.CacheConfiguration" abstract="true">
+        <property name="cacheMode" value="PARTITIONED"/>
+        <property name="atomicityMode" value="ATOMIC"/>
+        <property name="writeSynchronizationMode" value="FULL_SYNC"/>
+    </bean>
+    <!-- Basic configuration for transactional cache. -->
+    <bean id="transactional-cache" class="org.apache.ignite.configuration.CacheConfiguration" abstract="true">
+        <property name="cacheMode" value="PARTITIONED"/>
+        <property name="atomicityMode" value="TRANSACTIONAL"/>
+        <property name="writeSynchronizationMode" value="FULL_SYNC"/>
+    </bean>
+
+    <bean name="ignite.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
+        <property name="peerClassLoadingEnabled" value="true"/>
+        <property name="clientMode" value="true"/>
+        <property name="discoverySpi">
+            <bean class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">
+                <property name="ipFinder">
+                    <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder">
+                        <property name="addresses">
+                            <value>172.16.1.49</value>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <property name="cacheConfiguration">
+            <list>
+
+            </list>
+        </property>
+    </bean>
+
+    <bean id="cacheManager" class="org.apache.ignite.cache.spring.SpringCacheManager">
+        <property name="configuration" ref="ignite.cfg" />
+        <property name="dynamicCacheConfiguration">
+            <bean class="org.apache.ignite.configuration.CacheConfiguration">
+                <property name="cacheMode" value="REPLICATED"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- Enable annotation-driven caching. -->
+    <cache:annotation-driven/>
+</beans>

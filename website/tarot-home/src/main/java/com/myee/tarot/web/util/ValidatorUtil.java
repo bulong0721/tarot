@@ -182,6 +182,26 @@ public class ValidatorUtil {
 		return false;
 	}
 
+	/**
+	 * 验证手机号是否是多个逗号隔开的，无空格。当手机号为空或“”时，说明用户不填，也是可以的。
+	 * @param phone
+	 * @return true验证通过，false验证失败
+	 */
+	public static boolean isMultiMobile(String phone) {
+		if(phone == null || phone.equals("")){
+			return true;
+		}
+
+		String phones[]= phone.split(",");
+		for(int i=0;i<phones.length;i++){
+			if(!ValidatorUtil.isMobile(phones[i])){
+				return false;
+			}
+
+		}
+		return true;
+	}
+
 	/**	是否邮编	*/
 	public static boolean isZip(String s) {
 		if (s != null) {

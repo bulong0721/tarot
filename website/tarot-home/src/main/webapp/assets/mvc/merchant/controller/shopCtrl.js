@@ -233,7 +233,7 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
                     var length = $scope.initalBindProductList.length;
                     for (i = 0; i < length; i++) {
                         var data2 = $scope.initalBindProductList[i];
-                        console.log(data2)
+                        //console.log(data2)
                         if (data2.id == index) {
                             $scope.tableOpts.data[$scope.showCase.currentRowIndex].bindStores.push({
                                 id: index,

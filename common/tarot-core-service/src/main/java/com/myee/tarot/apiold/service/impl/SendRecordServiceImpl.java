@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Created by xiaoni on 2016/8/10.
+ * Created by Chay on 2016/8/10.
  */
 @Service
 public class SendRecordServiceImpl extends GenericEntityServiceImpl<Long, SendRecord> implements SendRecordService {

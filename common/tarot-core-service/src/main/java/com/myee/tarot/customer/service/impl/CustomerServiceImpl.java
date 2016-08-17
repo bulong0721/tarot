@@ -22,7 +22,7 @@ public class CustomerServiceImpl extends GenericEntityServiceImpl<Long, Customer
     }
 
     @Override
-    public Customer getByUsername(String username, boolean b) {
-        return null;
+    public Customer getByUsername(String username) {
+        return customerDao.getByUsername(username);
     }
 }

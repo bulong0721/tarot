@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>木爷终端管理系统 | 登录</title>
+    <title>木爷终端管理系统 | 管理员登录</title>
     <link href="assets/plugins/bootstrap/bootstrap.min.css" rel="stylesheet">
     <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="assets/plugins/animate.css" rel="stylesheet">

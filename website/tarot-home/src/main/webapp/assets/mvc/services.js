@@ -5,10 +5,10 @@ function constServiceCtor($resource, $q) {
     var vm = this;
 
     //获取产品类型
-    vm.productOpts = $resource('../product/type/productOpts').query();
+    vm.productOpts = $resource('./product/type/productOpts').query();
 
     //从后台拿商户类型
-    vm.merchantType = $resource('../admin/merchant/typeList4Select').query();
+    vm.merchantType = $resource('./merchant/typeList4Select').query();
 
     //切换商户
     //vm.thisMerchant = {};
@@ -27,7 +27,7 @@ function constServiceCtor($resource, $q) {
     vm.thisMerchantStore = {};
     vm.getSwitchMerchantStore = function () {
         var deferred = $q.defer();
-        $resource('../admin/merchantStore/getSwitch').get({}, function (resp) {
+        $resource('./merchantStore/getSwitch').get({}, function (resp) {
             if (resp.rows.length > 0) {
                 vm.thisMerchantStore = resp.rows[0];
             }
@@ -37,13 +37,13 @@ function constServiceCtor($resource, $q) {
     }
 
     //从后台拿到省列表
-    vm.provinces = $resource('../admin/province/list4Select').query();
+    vm.provinces = $resource('./province/list4Select').query();
 
     //根据省从后台拿市列表
     vm.citys = [];
     vm.getCitysByProvince = function (provinceId) {
         if (provinceId) {
-            $resource('../admin/city/listByProvince').get({id: provinceId}, function (resp) {
+            $resource('./city/listByProvince').get({id: provinceId}, function (resp) {
                 var length = resp.rows.length;
                 if (length > 0) {
                     vm.citys.splice(0, vm.citys.length);
@@ -59,7 +59,7 @@ function constServiceCtor($resource, $q) {
     vm.districts = [];
     vm.getDistrictsByCity = function (cityId) {
         if (cityId) {
-            $resource('../admin/district/listByCity').get({id: cityId}, function (resp) {
+            $resource('./district/listByCity').get({id: cityId}, function (resp) {
                 var length = resp.rows.length;
                 if (length > 0) {
                     vm.districts.splice(0, vm.districts.length);

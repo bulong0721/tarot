@@ -9,7 +9,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;
 
 /**
- * Created by xiaoni on 2016/8/10.
+ * Created by Chay on 2016/8/10.
  */
 @Repository
 public class AkSkDaoImpl extends GenericEntityDaoImpl<Long, AkSk> implements AkSkDao {

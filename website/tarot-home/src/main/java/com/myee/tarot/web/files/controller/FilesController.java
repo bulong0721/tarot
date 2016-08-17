@@ -5,21 +5,21 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.myee.tarot.admin.domain.AdminUser;
-import com.myee.djinn.dto.ResponseData;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.files.FileDTO;
 import com.myee.tarot.web.files.HotfixSetVo;
 import com.myee.tarot.web.files.HotfixVo;
-import com.myee.tarot.web.files.JSTreeDTO;
+import com.myee.tarot.web.files.TreeFileItem;
 import com.myee.tarot.web.util.StringUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -27,9 +27,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.*;
 
 /**
@@ -37,6 +35,8 @@ import java.util.*;
  */
 @Controller
 public class FilesController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FilesController.class);
 
     @Value("${cleverm.push.dirs}")
     private String DOWNLOAD_HOME;
@@ -75,8 +75,8 @@ public class FilesController {
 
     @RequestMapping(value = "admin/files/list")
     @ResponseBody
-    public List<JSTreeDTO> processListFiles(HttpServletRequest request, HttpServletResponse response) {
-        List<JSTreeDTO> tree = Lists.newArrayList();
+    public List<TreeFileItem> processListFiles(HttpServletRequest request, HttpServletResponse response) {
+        List<TreeFileItem> tree = Lists.newArrayList();
         String id = request.getParameter(RESOURCE_PARAM_ID);
         File dir = null;
         if (id.equals("#")) {
@@ -97,7 +97,7 @@ public class FilesController {
             if (dto.isLeaf()) {
                 continue;
             }
-            JSTreeDTO jt = new JSTreeDTO();
+            TreeFileItem jt = new TreeFileItem();
             jt.setId(dto.getId());
             jt.setChildren(!dto.isLeaf());
             jt.setText(dto.getName());
@@ -125,7 +125,7 @@ public class FilesController {
     @ResponseBody
     public AjaxResponse listFiles(HttpServletRequest request, HttpServletResponse response) {
         AjaxResponse resp = new AjaxResponse();
-        List<JSTreeDTO> tree = Lists.newArrayList();
+        List<TreeFileItem> tree = Lists.newArrayList();
         String id = request.getParameter(RESOURCE_PARAM_ID);
         if(id == null ){
             return AjaxResponse.failed(-1);
@@ -150,7 +150,7 @@ public class FilesController {
             if (!dto.isLeaf()) {
                 continue;
             }
-            JSTreeDTO jt = new JSTreeDTO();
+            TreeFileItem jt = new TreeFileItem();
             jt.setId(dto.getId());
             jt.setChildren(!dto.isLeaf());
             jt.setText(dto.getName());
@@ -173,7 +173,7 @@ public class FilesController {
      */
     @RequestMapping(value = "admin/files/change")
     @ResponseBody
-    public JSTreeDTO changeFile(HttpServletRequest request, HttpServletResponse response) {
+    public TreeFileItem changeFile(HttpServletRequest request, HttpServletResponse response) {
         AjaxResponse resp = new AjaxResponse();
         String operation = request.getParameter(RESOURCE_PARAM_OPERATION);
         String id = request.getParameter(RESOURCE_PARAM_ID);
@@ -198,7 +198,7 @@ public class FilesController {
 //                    }
 //                }
                 if (isNew) {
-                    return new JSTreeDTO(file.getPath());
+                    return new TreeFileItem(file.getPath());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -212,12 +212,12 @@ public class FilesController {
                     return null;
                 }
 
-                boolean isCopy = copyToRecycle(file);//复制文件到回收站
+                boolean isCopy = moveToRecycle(file);//复制文件到回收站
                 if(isCopy){ //复制成功后执行删除
                     boolean isDelete = delete(file);
 
                     if (isDelete) {
-                        JSTreeDTO tree = new JSTreeDTO();
+                        TreeFileItem tree = new TreeFileItem();
                         tree.setStatus("OK");
                         return tree;
                     }
@@ -238,10 +238,10 @@ public class FilesController {
                         isRename = file.renameTo(newFile);
                     }
                     if (isRename) {
-                        return new JSTreeDTO(newFile.getPath());
+                        return new TreeFileItem(newFile.getPath());
                     }
                 } else {
-                    return new JSTreeDTO(newFile.getPath());
+                    return new TreeFileItem(newFile.getPath());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -292,7 +292,7 @@ public class FilesController {
                 String fileName = file.getFileItem().getName();
                 dest = FileUtils.getFile(dest.getPath(), File.separator + fileName);
                 file.transferTo(dest);
-                JSTreeDTO jt = new JSTreeDTO();
+                TreeFileItem jt = new TreeFileItem();
                 jt.setId(dest.getPath());
                 jt.setChildren(false);
                 jt.setText(fileName);
@@ -325,7 +325,7 @@ public class FilesController {
     @ResponseBody
     public HotfixSetVo packResource(String pushRes, boolean compress,HttpServletRequest request) {
         HotfixSetVo hotfixSetVo = new HotfixSetVo();
-        List<JSTreeDTO> resList = JSON.parseArray(pushRes, JSTreeDTO.class);
+        List<TreeFileItem> resList = JSON.parseArray(pushRes, TreeFileItem.class);
         Set<HotfixVo> hotfixSet = Sets.newHashSet();
         hotfixSetVo.setPublisher(currentUser(request).getName());
         if (compress) {
@@ -336,29 +336,29 @@ public class FilesController {
             File zipFile = new File(basePath);
             zipFile.mkdirs(); //建立压缩文件根目录
             if(null != resList){
-                for (JSTreeDTO jsTreeDTO : resList) {
+                for (TreeFileItem treeFileItem : resList) {
                     //用gz压缩文件:gz里面的文件名也会变成md5的名字，不太友好
-                    /*fileName = CryptoUtil.md5(jsTreeDTO.getText()) + ".gz";
+                    /*fileName = CryptoUtil.md5(treeFileItem.getText()) + ".gz";
                     gzFile = FileUtils.getFile(basePath, fileName);
-                    File source = FileUtils.getFile(jsTreeDTO.getId());
+                    File source = FileUtils.getFile(treeFileItem.getId());
                     if(!gzFile.exists()){//如果压缩文件不存在，则执行压缩
                         GZipUtil.doCompressFile(source,gzFile);
                     }*/
                     //用zip压缩文件，源文件的文件名不能包含空格
-//                    fileName = CryptoUtil.md5(jsTreeDTO.getText()) + ".zip";
+//                    fileName = CryptoUtil.md5(treeFileItem.getText()) + ".zip";
 //                    zipFile = FileUtils.getFile(basePath, fileName);
 //                    if(!zipFile.exists()){//如果压缩文件不存在，则执行压缩
-//                        ZipUtil.compress(jsTreeDTO.getId(),jsTreeDTO.getText(), zipFile.getPath());
+//                        ZipUtil.compress(treeFileItem.getId(),treeFileItem.getText(), zipFile.getPath());
 //                    }
 //                    hotfixSet.add(new HotfixVo(fileName, getGzipUrl(zipFile), null, true));//将压缩文件信息写入接口返回信息中
                 }
             }
         } else {
             if (resList != null && resList.size() > 0) {
-                for (JSTreeDTO jsTreeDTO : resList) {
-                    if (RESOURCE_TYPE_FILE == jsTreeDTO.getType()) {
-                        String targetDir = jsTreeDTO.getId();
-                        hotfixSet.add(new HotfixVo(jsTreeDTO.getText(), getDownloadPath(jsTreeDTO.getId(),true), targetDir, false));
+                for (TreeFileItem treeFileItem : resList) {
+                    if (RESOURCE_TYPE_FILE == treeFileItem.getType()) {
+                        String targetDir = treeFileItem.getId();
+                        hotfixSet.add(new HotfixVo(treeFileItem.getText(), getDownloadPath(treeFileItem.getId(),true), targetDir, false));
                     }
                 }
             }
@@ -405,21 +405,21 @@ public class FilesController {
                 }
                 return true;
             } else {
-                System.out.println("所删除的文件不存在！" + '\n');
+                LOGGER.error("所删除的文件不存在！" + '\n');
                 return false;
             }
         } catch (Exception e) {
-            System.out.print("unable to delete the folder!");
+            LOGGER.error("unable to delete the folder!");
         }
         return false;
     }
 
     /**
-     * 复制文件至回收站
+     * 移到文件至回收站
      * @param file
      * @return
      */
-    public boolean copyToRecycle(File file) {
+    public boolean moveToRecycle(File file) {
         try {
             if (file.exists()) {
                 String tempFilePath = file.getPath().replaceAll("\\\\", "/");//把路径中的反斜杠替换成斜杠
@@ -437,17 +437,17 @@ public class FilesController {
                 } else if (file.isDirectory()) {
                     File files[] = file.listFiles();
                     for (int i = 0; i < files.length; i++) {
-                        copyToRecycle(files[i]);
+                        moveToRecycle(files[i]);
                     }
                 }
                 return true;
             } else {
-                System.out.println("所删除的文件不存在！" + '\n');
+                LOGGER.error("所删除的文件不存在！" + '\n');
                 return false;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.print("unable to delete the folder!");
+            LOGGER.error("unable to delete the folder!");
         }
         return false;
     }
