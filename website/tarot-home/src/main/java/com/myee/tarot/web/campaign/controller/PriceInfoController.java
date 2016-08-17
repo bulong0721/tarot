@@ -4,6 +4,7 @@ import com.myee.tarot.campaign.domain.MerchantPrice;
 import com.myee.tarot.campaign.domain.PriceInfo;
 import com.myee.tarot.campaign.service.MerchantActivityService;
 import com.myee.tarot.campaign.service.PriceInfoService;
+import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
 import com.myee.tarot.campaign.service.impl.redis.RedisUtil;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
@@ -15,6 +16,7 @@ import com.myee.tarot.merchant.domain.MerchantStore;
 import me.chanjar.weixin.common.util.StringUtils;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
+import org.elasticsearch.search.aggregations.support.format.ValueFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Time;
 import java.util.*;
 
 /**
@@ -220,7 +223,7 @@ public class PriceInfoController {
     private boolean compareTime(PriceInfo info){
         Date startDate = info.getPriceStartDate();
         Date endDate = info.getPriceEndDate();
-        Date now = new Date();
+        Date now = DateTimeUtils.startToday();
         int start = startDate.compareTo(now);
         int end = endDate.compareTo(now);
         if(start<=0 && end>=0){

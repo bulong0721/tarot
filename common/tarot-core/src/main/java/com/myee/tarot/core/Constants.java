@@ -69,4 +69,8 @@ public class Constants {
 
 	public final static String PRICEDRAW = "PRICEDRAW";
 
+	public final static String VOICELOGBAK = "voicelogbak"; //存放语音日志备份
+
+	public final static String VOICELOG = "voicelog"; //存放所有语音日志
+
 }

@@ -84,7 +84,7 @@ public class StringUtil {
      * @return
      */
     public static boolean isBlank(String text) {
-        return (null == text || text.length() == 0);
+        return (null == text || text.trim().length() == 0);
     }
 
     /**

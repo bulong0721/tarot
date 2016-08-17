@@ -11,7 +11,10 @@
 
     <mvc:view-controller path="/" view-name="redirect:/shop/home"/>
 
-    <context:component-scan base-package="com.myee.tarot.web"/>
+    <context:component-scan base-package="com.myee.tarot">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Component" />
+    </context:component-scan>
 
     <mvc:interceptors>
         <!-- Changes the locale when a 'locale' request parameter is sent; e.g. /?locale=de -->

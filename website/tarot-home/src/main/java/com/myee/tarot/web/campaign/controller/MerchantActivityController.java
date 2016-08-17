@@ -9,6 +9,7 @@ import com.myee.tarot.campaign.domain.bean.RedisKeyConstants;
 import com.myee.tarot.campaign.service.MerchantActivityService;
 import com.myee.tarot.campaign.service.MerchantPriceService;
 import com.myee.tarot.campaign.service.ModeSwitchService;
+import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
 import com.myee.tarot.campaign.service.impl.redis.RedisUtil;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
@@ -25,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -59,11 +62,29 @@ public class MerchantActivityController {
             //json转化为对象
             MerchantActivity merchantActivity = JSON.parseObject(activityJson, MerchantActivity.class);
             AjaxResponse resp = new AjaxResponse();
+            //先判断商户的ID是否存在
             if(merchantActivity.getStore()==null|| merchantActivity.getStore().getId()==null){
                 resp.setErrorString("发起商户的ID不能为空");
                 resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 return resp;
             }
+            //再判断 奖券使用有效期  前台必定只会传一个price
+            MerchantPrice checkPrice = merchantActivity.getPrices().get(0);
+            Date startDate = checkPrice.getStartDate();
+            Date endDate = checkPrice.getEndDate();
+            Date startToday = DateTimeUtils.startToday();
+            if(startDate.compareTo(startToday) < 0){   //开始时间小于当天开始时间
+                resp.setErrorString("有效期开始日期不得小于当天日期");
+                resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                return resp;
+            }else {
+                if(endDate.compareTo(startDate) < 0){  //有效期结束时间不能小于开始时间
+                    resp.setErrorString("有效期结束时间不能小于开始时间");
+                    resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                    return resp;
+                }
+            }
+            //多种情况的添加或修改逻辑
             boolean exist = false;
             Long storeId = merchantActivity.getStore().getId();
             MerchantActivity existActivity =  merchantActivityService.findStoreActivity(storeId);
@@ -85,7 +106,7 @@ public class MerchantActivityController {
                     price.setActivity(merchantActivity);
                 }
             }
-            MerchantActivity activity = new MerchantActivity();
+            MerchantActivity activity = null;
             if(exist){
                 //id存在
                 Long priceId = merchantActivity.getPrices().get(0).getId();
@@ -96,17 +117,18 @@ public class MerchantActivityController {
                         for (MerchantPrice price : existPrices) {
                             if(price.getId() == priceId){
                                 //redis放缓存
-                                price.setName(prices.get(0).getName());
-                                price.setDescription(prices.get(0).getDescription());
-                                price.setStartDate(prices.get(0).getStartDate());
-                                price.setEndDate(prices.get(0).getEndDate());
-                                price.setTotal(prices.get(0).getTotal());
-                                findPrice.setName(prices.get(0).getName());
+                                MerchantPrice getPrice = prices.get(0);
+                                price.setName(getPrice.getName());
+                                price.setDescription(getPrice.getDescription());
+                                price.setStartDate(getPrice.getStartDate());
+                                price.setEndDate(getPrice.getEndDate());
+                                price.setTotal(getPrice.getTotal());
                                 //修改参数
-                                findPrice.setDescription(prices.get(0).getDescription());
-                                findPrice.setStartDate(prices.get(0).getStartDate());
-                                findPrice.setEndDate(prices.get(0).getEndDate());
-                                findPrice.setTotal(prices.get(0).getTotal());
+                                findPrice.setName(getPrice.getName());
+                                findPrice.setDescription(getPrice.getDescription());
+                                findPrice.setStartDate(getPrice.getStartDate());
+                                findPrice.setEndDate(getPrice.getEndDate());
+                                findPrice.setTotal(getPrice.getTotal());
                                 MerchantPrice updatePrice = merchantPriceService.update(findPrice);
                                 break;
                             }
@@ -305,6 +327,8 @@ public class MerchantActivityController {
         }
         return priceList;
     }
+
+
 
 
 }
