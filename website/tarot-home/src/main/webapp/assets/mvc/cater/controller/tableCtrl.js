@@ -117,7 +117,7 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly,Constants,NgTableParam
             }
         });
 
-        $resource('../admin/catering/table/bindDeviceUsed').save({
+        $resource('./catering/table/bindDeviceUsed').save({
             'bindString': JSON.stringify(result),
             'tableId': $scope.formBindData.model.id
         }, {}, function (respSucc) {
@@ -157,8 +157,8 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly,Constants,NgTableParam
 
     //其他业务逻辑----------------------------
 
-    var typeOpts = $resource('../admin/catering/type/options').query();
-    var zoneOpts = $resource('../admin/catering/zone/options').query();
+    var typeOpts = $resource('./catering/type/options').query();
+    var zoneOpts = $resource('./catering/zone/options').query();
 
     var mgrData = {
         fields: [
@@ -210,9 +210,9 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly,Constants,NgTableParam
             },
         ],
         api: {
-            read: '../admin/catering/table/paging',
-            update: '../admin/catering/table/save',
-            delete: '../admin/catering/table/delete'
+            read: './catering/table/paging',
+            update: './catering/table/save',
+            delete: './catering/table/delete'
         }
     };
 

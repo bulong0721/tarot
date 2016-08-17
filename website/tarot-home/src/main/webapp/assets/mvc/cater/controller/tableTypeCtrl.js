@@ -28,9 +28,9 @@ function tableTypeMgrCtrl($scope, cTables,cfromly) {
             }
         ],
         api: {
-            read: '../admin/catering/type/paging',
-            update: '../admin/catering/type/save',
-            delete: '../admin/catering/type/delete'
+            read: './catering/type/paging',
+            update: './catering/type/save',
+            delete: './catering/type/delete'
         }
     };
 

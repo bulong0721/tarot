@@ -18,4 +18,14 @@ public class CustomerController {
     public String displayDashboard(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         return "shop/home";
     }
+
+    @RequestMapping(value = {"shop/denied.html"}, method = RequestMethod.GET)
+    public String displayDenied(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return "shop/denied";
+    }
+
+    @RequestMapping(value = {"shop/unauthorized.html"}, method = RequestMethod.GET)
+    public String displayUnauthorized(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return "shop/unauthorized";
+    }
 }

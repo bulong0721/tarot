@@ -55,7 +55,7 @@ public class TableController {
     @Autowired
     private DeviceUsedService deviceUsedService;
 
-    @RequestMapping(value = "admin/catering/type/save", method = RequestMethod.POST)
+    @RequestMapping(value = {"admin/catering/type/save", "shop/catering/type/save"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse addTableType(@RequestBody TableType type, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -81,7 +81,7 @@ public class TableController {
         return resp;
     }
 
-    @RequestMapping(value = "admin/catering/type/delete", method = RequestMethod.POST)
+    @RequestMapping(value = {"admin/catering/type/delete", "shop/catering/type/delete"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse delTableType(@RequestBody TableType type, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -109,7 +109,7 @@ public class TableController {
         }
     }
 
-    @RequestMapping(value = "admin/catering/type/paging", method = RequestMethod.GET)
+    @RequestMapping(value = {"admin/catering/type/paging", "shop/catering/type/paging"}, method = RequestMethod.GET)
     public
     @ResponseBody
     AjaxPageableResponse pageTypes(Model model, HttpServletRequest request, PageRequest pageRequest) {
@@ -134,7 +134,7 @@ public class TableController {
         return resp;
     }
 
-    @RequestMapping(value = "admin/catering/zone/save", method = RequestMethod.POST)
+    @RequestMapping(value = {"admin/catering/zone/save", "shop/catering/zone/save"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse addTableZone(@RequestBody TableZone zone, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -159,7 +159,7 @@ public class TableController {
         return resp;
     }
 
-    @RequestMapping(value = "admin/catering/zone/delete", method = RequestMethod.POST)
+    @RequestMapping(value = {"admin/catering/zone/delete", "shop/catering/zone/delete"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse delTableZone(@RequestBody TableZone zone, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -187,7 +187,7 @@ public class TableController {
         }
     }
 
-    @RequestMapping(value = "admin/catering/zone/paging", method = RequestMethod.GET)
+    @RequestMapping(value = {"admin/catering/zone/paging", "shop/catering/zone/paging"}, method = RequestMethod.GET)
     public
     @ResponseBody
     AjaxPageableResponse pageZones(Model model, HttpServletRequest request, PageRequest pageRequest) {
@@ -218,7 +218,7 @@ public class TableController {
         }
     }
 
-    @RequestMapping(value = "admin/catering/table/save", method = RequestMethod.POST)
+    @RequestMapping(value = {"admin/catering/table/save", "shop/catering/table/save"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse addTable(@RequestBody Table table, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -272,7 +272,7 @@ public class TableController {
         }
     }
 
-    @RequestMapping(value = "admin/catering/table/delete", method = RequestMethod.POST)
+    @RequestMapping(value = {"admin/catering/table/delete", "shop/catering/table/delete"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse delTable(@RequestBody Table table, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -300,7 +300,7 @@ public class TableController {
         }
     }
 
-    @RequestMapping(value = "admin/catering/table/paging", method = RequestMethod.GET)
+    @RequestMapping(value = {"admin/catering/table/paging", "shop/catering/table/paging"}, method = RequestMethod.GET)
     public
     @ResponseBody
     AjaxPageableResponse pageTables(Model model, HttpServletRequest request, PageRequest pageRequest) {
@@ -325,7 +325,7 @@ public class TableController {
         }
     }
 
-    @RequestMapping(value = "admin/catering/table/bindDeviceUsed", method = RequestMethod.POST)
+    @RequestMapping(value = {"admin/catering/table/bindDeviceUsed", "shop/catering/table/bindDeviceUsed"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse productUsedBindDeviceUsed(@RequestParam(value = "bindString") String bindString,@RequestParam(value = "tableId") Long tableId, HttpServletRequest request) {
         try {
@@ -372,7 +372,7 @@ public class TableController {
     /**
      * options-------------------------------------------------------------------------------
      */
-    @RequestMapping(value = "admin/catering/table/options", method = RequestMethod.GET)
+    @RequestMapping(value = {"admin/catering/table/options", "shop/catering/table/options"}, method = RequestMethod.GET)
     public
     @ResponseBody
     List<TableDTO> tableOptions(Model model, HttpServletRequest request) {
@@ -408,7 +408,7 @@ public class TableController {
         });
     }
 
-    @RequestMapping(value = "admin/catering/zone/options", method = RequestMethod.GET)
+    @RequestMapping(value = {"admin/catering/zone/options", "shop/catering/zone/options"}, method = RequestMethod.GET)
     public
     @ResponseBody
     List<ZoneDTO> zoneOptions(Model model, HttpServletRequest request) {

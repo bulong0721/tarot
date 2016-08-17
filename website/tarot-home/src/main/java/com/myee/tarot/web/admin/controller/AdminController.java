@@ -15,7 +15,17 @@ import javax.servlet.http.HttpServletResponse;
 public class AdminController {
 
     @RequestMapping(value = {"admin/home.html", "admin/", "admin"}, method = RequestMethod.GET)
-    public String displayDashboard(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public String displayDashboard(HttpServletRequest request, HttpServletResponse response) throws Exception {
         return "admin/home";
+    }
+
+    @RequestMapping(value = {"admin/denied.html"}, method = RequestMethod.GET)
+    public String displayDenied(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return "admin/denied";
+    }
+
+    @RequestMapping(value = {"admin/unauthorized.html"}, method = RequestMethod.GET)
+    public String displayUnauthorized(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return "admin/unauthorized";
     }
 }

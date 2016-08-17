@@ -20,7 +20,7 @@ import java.util.List;
  */
 @Service
 public class CustomerDetailsServiceImpl implements UserDetailsService, TransactionalAspectAware {
-    static final String[] DEFAULT_PERMISSIONS = {"ROLE_AUTH", "ROLE_AUTH_CUSTOMER"};
+    static final String[] DEFAULT_PERMISSIONS = {"ROLE_AUTH_CUSTOMER"};
     @Autowired
     protected CustomerService customerServiceService;
 

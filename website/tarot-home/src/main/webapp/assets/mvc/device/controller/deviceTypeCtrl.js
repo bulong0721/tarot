@@ -1,11 +1,11 @@
 angular.module('myee', [])
-    .controller('deviceCtrl', deviceCtrl);
+    .controller('deviceTypeCtrl', deviceTypeCtrl);
 
 /**
  * deviceCtrl - controller
  */
-deviceCtrl.$inject = ['$scope','$resource', 'Constants','cTables','cfromly','cAlerts'];
-function deviceCtrl($scope,$resource, Constants,cTables,cfromly,cAlerts) {
+deviceTypeCtrl.$inject = ['$scope','$resource', 'Constants','cTables','cfromly','cAlerts'];
+function deviceTypeCtrl($scope,$resource, Constants,cTables,cfromly,cAlerts) {
 
     var mgrData = {
         fields: [
@@ -14,11 +14,11 @@ function deviceCtrl($scope,$resource, Constants,cTables,cfromly,cAlerts) {
             {key: 'description', type: 'c_input',templateOptions: {label: '描述', placeholder: '描述'}}
         ],
         api: {
-            read: '../device/paging',
-            update: '../device/update',
-            delete: '../device/delete',
-            updateAttr: '../device/attribute/save',
-            deleteAttr: '../device/attribute/delete',
+            read: './device/paging',
+            update: './device/update',
+            delete: './device/delete',
+            updateAttr: './device/attribute/save',
+            deleteAttr: './device/attribute/delete',
         }
     };
     cTables.initNgMgrCtrl(mgrData, $scope);
