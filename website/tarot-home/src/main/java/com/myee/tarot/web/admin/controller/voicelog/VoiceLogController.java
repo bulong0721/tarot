@@ -1,15 +1,17 @@
 package com.myee.tarot.web.admin.controller.voicelog;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
 import com.myee.tarot.catalog.domain.VoiceLog;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
+import com.myee.tarot.device.service.impl.elasticSearch.ESUtils;
 import com.myee.tarot.web.util.StringUtil;
 import com.opencsv.CSVWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,39 +41,8 @@ public class VoiceLogController {
     @Value("${cleverm.push.http}")
     private String DOWNLOAD_HTTP;
 
-//    /**
-//     * 删除
-//     * @param log
-//     * @return
-//     */
-//    @RequestMapping(value = "voiceLog/delete", method = RequestMethod.POST)
-//    @ResponseBody
-//    public AjaxResponse delete(VoiceLog log) {
-//        boolean flag = VoiceLogUtil.delete(log);
-//        if(flag) {
-//            return AjaxResponse.success("删除成功!");
-//        } else {
-//            return AjaxResponse.failed(-1, "删除失败");
-//        }
-//    }
-//
-//    /**
-//     * 查询
-//     * @return
-//     */
-//    @RequestMapping(value = "voiceLog/search", method = RequestMethod.POST)
-//    @ResponseBody
-//    public AjaxPageableResponse search(@RequestParam(value = "time", required = false) Date time,
-//                                       @RequestParam(value = "type", required = false) String type,
-//                                       @RequestParam(value = "keyword", required = false) String keyword, PageRequest pageRequest) {
-//        AjaxPageableResponse resp = new AjaxPageableResponse();
-//        pageRequest.setCount(-1);//不分页，查询所有结果
-//        PageResult<VoiceLog> pageList = VoiceLogUtil.search(time, type, keyword);
-//        List<VoiceLog> voiceLogList = pageList.getList();
-//        resp.addEntry("voiceLogList", voiceLogList);
-//        resp.setRecordsTotal(pageList.getRecordsTotal());
-//        return resp;
-//    }
+    @Autowired
+    private ESUtils esUtils;
 
     /**
      * 下载
@@ -150,40 +121,21 @@ public class VoiceLogController {
 
     @RequestMapping(value = "voiceLog/paging", method = RequestMethod.GET)
     @ResponseBody
-    public AjaxPageableResponse pageDevice(Model model, HttpServletRequest request, PageRequest pageRequest) {
+    public AjaxPageableResponse pageDevice(@RequestParam(value = "startDate", required = false) Date startDate,
+                                           @RequestParam(value = "endDate", required = false) Date endDate,
+                                           @RequestParam(value = "type", required = false) String type,
+                                           @RequestParam(value = "keyword", required = false) String keyword, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
-        try {
-            List<VoiceLog> voiceLogList = Lists.newArrayList();
-            for (int i = 0; i < 20; i++) {
-                VoiceLog voiceLog = new VoiceLog();
-                voiceLog.setNum(Long.valueOf(i));
-                voiceLog.setDateTime(new SimpleDateFormat("yyyy-MM-dd hh:MM:ss").format(new Date()));
-                voiceLog.setType("脱口秀");
-                voiceLog.setCookieListen("测试听");
-                voiceLog.setCookieSpeak("测试说");
-                voiceLog.setStoreName("店铺" + i);
-                voiceLogList.add(voiceLog);
-            }
-            for (VoiceLog voiceLog : voiceLogList) {
-                resp.addDataEntry(objectToEntry(voiceLog));
-            }
-            resp.setRecordsTotal(20);
-        } catch (Exception e) {
-            logger.error("Error while paging products", e);
-        }
+        pageRequest.setCount(-1);//不分页，查询所有结果
+        Map<String, String> queries = Maps.newHashMap();
+        /*queries.put("startDate",startDate);
+        queries.put("endDate",endDate);*/
+        queries.put("type", type);
+        queries.put("cookieListen", keyword);
+        List<VoiceLog> voiceLogList = esUtils.searchPageQueries("log", "voiceLog", queries, 1, 10, VoiceLog.class);
+        resp.addEntry("voiceLogList", voiceLogList);
+        resp.setRecordsTotal(voiceLogList.size());
         return resp;
-    }
-
-    //把类转换成entry返回给前端，解耦和
-    private Map objectToEntry(VoiceLog voiceLog) {
-        Map entry = new HashMap();
-        entry.put("num",voiceLog.getNum());
-        entry.put("time",voiceLog.getDateTime());
-        entry.put("storeName",voiceLog.getStoreName());
-        entry.put("type",voiceLog.getType());
-        entry.put("cookyListen",voiceLog.getCookieListen());
-        entry.put("cookySpeak",voiceLog.getCookieSpeak());
-        return entry;
     }
 
     private void writeCsvFile(CSVWriter writer, VoiceLog log, Integer i) {
