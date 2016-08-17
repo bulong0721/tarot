@@ -25,6 +25,6 @@ public class CustomerRoleServiceImpl extends GenericEntityServiceImpl<Long, Cust
 
     @Override
     public List<CustomerRole> listByCustomerId(Long customerId) {
-        return null;
+        return customerRoleDao.listByCustomerId(customerId);
     }
 }

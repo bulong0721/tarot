@@ -46,15 +46,19 @@ public class Customer extends GenericEntity<Long, Customer> {
     @Column(name = "CHALLENGE_ANSWER")
     protected String challengeAnswer;
 
+    @Basic
     @Column(name = "PASSWORD_CHANGE_REQUIRED")
     protected boolean passwordChangeRequired = false;
 
+    @Basic
     @Column(name = "RECEIVE_EMAIL")
     protected boolean receiveEmail = true;
 
+    @Basic
     @Column(name = "IS_REGISTERED")
     protected boolean registered = false;
 
+    @Basic
     @Column(name = "DEACTIVATED")
     protected boolean deactivated = false;
 

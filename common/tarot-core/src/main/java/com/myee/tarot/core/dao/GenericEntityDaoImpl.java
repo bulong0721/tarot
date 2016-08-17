@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @param <T> entity type
+ * @param <K> entity type
  */
 public abstract class GenericEntityDaoImpl<K extends Serializable & Comparable<K>, E extends GenericEntity<K, ?>>
         extends GenericJpaDaoSupport

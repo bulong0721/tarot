@@ -20,7 +20,7 @@ import java.util.List;
  */
 @Service
 public class CustomerDetailsServiceImpl implements UserDetailsService, TransactionalAspectAware {
-
+    static final String[] DEFAULT_PERMISSIONS = {"ROLE_AUTH", "ROLE_AUTH_CUSTOMER"};
     @Autowired
     protected CustomerService customerServiceService;
 
@@ -30,7 +30,7 @@ public class CustomerDetailsServiceImpl implements UserDetailsService, Transacti
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-        Customer customer = customerServiceService.getByUsername(username, false);
+        Customer customer = customerServiceService.getByUsername(username);
         if (customer == null) {
             throw new UsernameNotFoundException("The customer was not found");
         }
@@ -52,6 +52,10 @@ public class CustomerDetailsServiceImpl implements UserDetailsService, Transacti
 
         if (!roleUserFound) {
             grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        }
+
+        for (String perm : DEFAULT_PERMISSIONS) {
+            grantedAuthorities.add(new SimpleGrantedAuthority(perm));
         }
 
         return grantedAuthorities;
