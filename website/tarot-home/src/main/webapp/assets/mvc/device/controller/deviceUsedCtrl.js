@@ -21,7 +21,7 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
             deferred.resolve($scope.initalBindProductList);
             return deferred.promise;
         } else {//第一次需要从后台读取列表，且只返回前10个数据
-            return $resource('../product/used/listByStoreId').get().$promise.then(function (data) {
+            return $resource('./product/used/listByStoreId').get().$promise.then(function (data) {
                 //初始化showCase.selected数组，给全选框用，让它知道应该全选哪些
                 angular.forEach(data.rows, function (indexData, index, array) {
                     //indexData等价于array[index]
@@ -111,7 +111,7 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
             }
         });
 
-        $resource('../device/used/bindProductUsed').save({
+        $resource('./device/used/bindProductUsed').save({
             'bindString': JSON.stringify(result),
             'deviceUsedId': $scope.formBindData.model.id
         }, {}, function (respSucc) {
@@ -153,7 +153,7 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
 
 
     function getDeviceList() {
-        var data = $resource("../device/list").query();
+        var data = $resource("./device/list").query();
         return data;
     }
 
@@ -215,11 +215,11 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
 
         ],
         api: {
-            read: '../device/used/paging',
-            update: '../device/used/update',
-            delete: '../device/used/delete',
-            updateAttr: '../device/used/attribute/save',
-            deleteAttr: '../device/used/attribute/delete',
+            read: './device/used/paging',
+            update: './device/used/update',
+            delete: './device/used/delete',
+            updateAttr: './device/used/attribute/save',
+            deleteAttr: './device/used/attribute/delete',
         }
     };
     cTables.initNgMgrCtrl(mgrData, $scope);

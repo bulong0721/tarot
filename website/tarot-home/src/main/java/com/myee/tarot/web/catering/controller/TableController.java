@@ -12,7 +12,6 @@ import com.myee.tarot.catering.service.TableService;
 import com.myee.tarot.catering.service.TableTypeService;
 import com.myee.tarot.catering.service.TableZoneService;
 import com.myee.tarot.core.Constants;
-import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
@@ -448,7 +447,7 @@ public class TableController {
             resp = AjaxResponse.success();
             resp.addEntry("updateResult", objectToEntry(table));
             return resp;
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return AjaxResponse.failed(-1);

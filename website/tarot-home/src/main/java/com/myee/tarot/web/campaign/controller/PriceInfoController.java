@@ -7,7 +7,6 @@ import com.myee.tarot.campaign.service.PriceInfoService;
 import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
 import com.myee.tarot.campaign.service.impl.redis.RedisUtil;
 import com.myee.tarot.core.Constants;
-import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
@@ -58,7 +57,7 @@ public class PriceInfoController {
                                               @RequestParam("keyId")String keyId){
         try {
            return priceInfoService.savePriceInfo(keyId,storeId);
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return AjaxResponse.failed(-1);

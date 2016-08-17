@@ -12,7 +12,6 @@ import com.myee.tarot.campaign.service.ModeSwitchService;
 import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
 import com.myee.tarot.campaign.service.impl.redis.RedisUtil;
 import com.myee.tarot.core.Constants;
-import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantStoreService;
@@ -156,7 +155,7 @@ public class MerchantActivityController {
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
             resp.addEntry("result", activity);
             return resp;
-        } catch (ServiceException e){
+        } catch (Exception e){
             e.printStackTrace();
         }
         return AjaxResponse.failed(-1);
@@ -307,7 +306,7 @@ public class MerchantActivityController {
             }
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
             return resp;
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return AjaxResponse.failed(-1);

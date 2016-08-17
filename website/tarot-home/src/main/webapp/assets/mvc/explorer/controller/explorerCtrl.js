@@ -150,7 +150,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
 
     //查询推送设备下拉框内容
     function getDeviceUsedList() {
-        var data = $resource("../device/used/list4Select").query();
+        var data = $resource("./device/used/list4Select").query();
         return data;
     }
 
@@ -211,7 +211,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
             }
         ],
         api: {
-            //read: '../device/used/paging',
+            //read: './device/used/paging',
             push: '../admin/file/push',
             download: '../admin/file/download',
             delete: '../admin/file/delete',
@@ -326,7 +326,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
         api: {
             getContent: '../admin/content/get',
             create: '../admin/file/create',
-            //delete: '../device/used/delete',
+            //delete: './device/used/delete',
         }
     };
     //formly配置项push
