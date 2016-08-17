@@ -25,7 +25,7 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly, Constants, NgTablePar
             deferred.resolve($scope.initalBindProductList);
             return deferred.promise;
         } else {//第一次需要从后台读取列表，且只返回前10个数据
-            return $resource('../device/used/listByStoreId').get().$promise.then(function (data) {
+            return $resource('./device/used/listByStoreId').get().$promise.then(function (data) {
                 //初始化showCase.selected数组，给全选框用，让它知道应该全选哪些
                 angular.forEach(data.rows, function (indexData, index, array) {
                     //indexData等价于array[index]
@@ -359,7 +359,7 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly, Constants, NgTablePar
     };
 
     function getDeviceList() {
-        var data = $resource("../device/list").query();
+        var data = $resource("./device/list").query();
         return data;
     }
 

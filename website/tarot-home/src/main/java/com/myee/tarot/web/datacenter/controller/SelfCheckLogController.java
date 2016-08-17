@@ -1,8 +1,6 @@
 package com.myee.tarot.web.datacenter.controller;
 
-import com.myee.djinn.dto.ResponseData;
 import com.myee.tarot.core.Constants;
-import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.datacenter.domain.EventLevel;

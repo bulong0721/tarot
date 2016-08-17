@@ -6,7 +6,6 @@ import com.google.common.collect.Lists;
 import com.myee.tarot.catalog.domain.*;
 import com.myee.tarot.catalog.type.ProductType;
 import com.myee.tarot.core.Constants;
-import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
@@ -96,15 +95,16 @@ public class DeviceController {
     @ResponseBody
     public AjaxResponse updateDevice(@Valid @RequestBody Device device, HttpServletRequest request) {
         try {
-            AjaxResponse resp = new AjaxResponse();
+            AjaxResponse resp ;
             device = deviceService.update(device);
             resp = AjaxResponse.success();
             resp.addEntry("updateResult", objectToEntry(device));
             return resp;
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            return AjaxResponse.failed(-1,"失败");
         }
-        return AjaxResponse.failed(-1);
+
     }
 
     @RequestMapping(value = {"admin/device/list", "shop/device/list"}, method = RequestMethod.GET)
@@ -131,7 +131,7 @@ public class DeviceController {
     @ResponseBody
     public AjaxResponse deleteDevice(@Valid @RequestBody Device device, HttpServletRequest request) {
         try {
-            AjaxResponse resp = new AjaxResponse();
+            AjaxResponse resp ;
             if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
@@ -143,16 +143,17 @@ public class DeviceController {
             Device deviceUsed1 = deviceService.findById(device.getId());
             deviceService.delete(deviceUsed1);
             return AjaxResponse.success();
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            return AjaxResponse.failed(-1,"在其他地方被使用，无法删除");
         }
-        return AjaxResponse.failed(-1);
+
     }
 
     @RequestMapping(value = {"admin/device/attribute/save", "shop/device/attribute/save"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveAttribute(@ModelAttribute Device device, @Valid @RequestBody DeviceAttribute attribute, HttpServletRequest request) throws Exception {
-        AjaxResponse resp = new AjaxResponse();
+        AjaxResponse resp ;
         DeviceAttribute entity = attribute;
         if (null != attribute.getId()) {
             entity = deviceAttributeService.findById(attribute.getId());
@@ -245,7 +246,7 @@ public class DeviceController {
     @RequestMapping(value = {"admin/device/used/list4Select", "shop/device/used/list4Select"}, method = RequestMethod.GET)
     @ResponseBody
     public List deviceUsedList(HttpServletRequest request) {
-        AjaxResponse resp = new AjaxResponse();
+        AjaxResponse resp = new AjaxResponse() ;
         try {
             if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
                 resp.setErrorString("请先切换门店");
@@ -273,7 +274,7 @@ public class DeviceController {
     @RequestMapping(value = {"admin/device/used/update", "shop/device/used/update"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveUsedProduct(@Valid @RequestBody DeviceUsed deviceUsed,@RequestParam(value = "autoStart")Long autoStart,@RequestParam(value = "autoEnd")Long autoEnd, HttpServletRequest request) throws Exception {
-        AjaxResponse resp = new AjaxResponse();
+        AjaxResponse resp ;
         try {
             if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -333,38 +334,18 @@ public class DeviceController {
 
             resp = AjaxResponse.success();
             resp.addEntry("updateResult", updateResult);
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            resp = AjaxResponse.failed(-1);
+            resp = AjaxResponse.failed(-1,"失败");
         }
         return resp;
     }
-
-//    /**
-//     * 当手机号为空或“”时，说明用户不填，也是可以的
-//     * @param phone
-//     * @return true验证通过，false验证失败
-//     */
-//    private boolean validatePhone(String phone) {
-//        if(phone == null || phone.equals("")){
-//            return true;
-//        }
-//
-//        String phones[]= phone.split(",");
-//        for(int i=0;i<phones.length;i++){
-//            if(!ValidatorUtil.isMobile(phones[i])){
-//                return false;
-//            }
-//
-//        }
-//        return true;
-//    }
 
     @RequestMapping(value = {"admin/device/used/bindProductUsed", "shop/device/used/bindProductUsed"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse deviceUsedBindProductUsed(@RequestParam(value = "bindString") String bindString,@RequestParam(value = "deviceUsedId") Long deviceUsedId, HttpServletRequest request) {
         try {
-            AjaxResponse resp = new AjaxResponse();
+            AjaxResponse resp ;
             List<Long> bindList = JSON.parseArray(bindString, Long.class);
             DeviceUsed deviceUsed = deviceUsedService.findById(deviceUsedId);
             if (deviceUsed == null) {
@@ -379,17 +360,18 @@ public class DeviceController {
             resp = AjaxResponse.success();
             resp.addEntry("updateResult", objectToEntry(deviceUsed));
             return resp;
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            return AjaxResponse.failed(-1,"失败");
         }
-        return AjaxResponse.failed(-1);
+
     }
 
     @RequestMapping(value = {"admin/device/used/delete", "shop/device/used/delete"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse deleteDeviceUsed(@Valid @RequestBody DeviceUsed deviceUsed, HttpServletRequest request) {
         try {
-            AjaxResponse resp = new AjaxResponse();
+            AjaxResponse resp ;
             if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
@@ -401,10 +383,10 @@ public class DeviceController {
             DeviceUsed deviceUsed1 = deviceUsedService.findById(deviceUsed.getId());
             deviceUsedService.delete(deviceUsed1);
             return AjaxResponse.success();
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            return AjaxResponse.failed(-1,"在其他地方被使用，无法删除");
         }
-        return AjaxResponse.failed(-1);
     }
 
     //把类转换成entry返回给前端，解耦和
@@ -457,7 +439,7 @@ public class DeviceController {
     @RequestMapping(value = {"admin/device/used/attribute/save", "shop/device/used/attribute/save"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveAttribute(@ModelAttribute DeviceUsed deviceUsed, @Valid @RequestBody DeviceUsedAttribute attribute, HttpServletRequest request) throws Exception {
-        AjaxResponse resp = new AjaxResponse();
+        AjaxResponse resp ;
         DeviceUsedAttribute entity = attribute;
         if (null != attribute.getId()) {
             entity = deviceUsedAttributeService.findById(attribute.getId());
@@ -590,7 +572,7 @@ public class DeviceController {
     @RequestMapping(value = {"admin/product/used/save", "shop/product/used/save"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveUsedProduct(@Valid @RequestBody ProductUsed productUsed,@RequestParam(value = "autoStart")Long autoStart,@RequestParam(value = "autoEnd")Long autoEnd, HttpServletRequest request) throws Exception {
-        AjaxResponse resp = new AjaxResponse();
+        AjaxResponse resp ;
         try {
             if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -622,9 +604,9 @@ public class DeviceController {
 
             resp = AjaxResponse.success();
             resp.addEntry("updateResult", updateResult);
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            resp = AjaxResponse.failed(-1);
+            resp = AjaxResponse.failed(-1,"失败");
         }
         return resp;
     }
@@ -633,7 +615,7 @@ public class DeviceController {
     @ResponseBody
     public AjaxResponse productUsedBindDeviceUsed(@RequestParam(value = "bindString") String bindString,@RequestParam(value = "productUsedId") Long productUsedId, HttpServletRequest request) {
         try {
-            AjaxResponse resp = new AjaxResponse();
+            AjaxResponse resp ;
             List<Long> bindList = JSON.parseArray(bindString, Long.class);
             ProductUsed productUsed = productUsedService.findById(productUsedId);
             if (productUsed == null) {
@@ -648,17 +630,18 @@ public class DeviceController {
             resp = AjaxResponse.success();
             resp.addEntry("updateResult", objectToEntry(productUsed));
             return resp;
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            return AjaxResponse.failed(-1,"失败");
         }
-        return AjaxResponse.failed(-1);
+
     }
 
     @RequestMapping(value = {"admin/product/used/delete", "shop/product/used/delete"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse deleteProductUsed(@Valid @RequestBody ProductUsed productUsed, HttpServletRequest request) {
         try {
-            AjaxResponse resp = new AjaxResponse();
+            AjaxResponse resp ;
             if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
@@ -670,10 +653,11 @@ public class DeviceController {
             ProductUsed productUsed1 = productUsedService.findById(productUsed.getId());
             productUsedService.delete(productUsed1);
             return AjaxResponse.success();
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            return AjaxResponse.failed(-1,"在其他地方被使用，无法删除");
         }
-        return AjaxResponse.failed(-1);
+
     }
 
     //把类转换成entry返回给前端，解耦和
@@ -707,7 +691,7 @@ public class DeviceController {
     @RequestMapping(value = {"admin/product/attribute/save", "shop/product/attribute/save"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveAttribute(@ModelAttribute ProductUsed product, @Valid @RequestBody ProductUsedAttribute attribute, HttpServletRequest request) throws Exception {
-        AjaxResponse resp = new AjaxResponse();
+        AjaxResponse resp ;
         ProductUsedAttribute entity = attribute;
         if (null != attribute.getId()) {
             entity = productUsedAttributeService.findById(attribute.getId());

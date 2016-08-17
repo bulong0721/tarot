@@ -1,7 +1,6 @@
 package com.myee.tarot.web.campaign.controller;
 
 import com.myee.tarot.core.Constants;
-import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.campaign.domain.MerchantPrice;
 import com.myee.tarot.campaign.service.MerchantPriceService;
@@ -41,7 +40,7 @@ public class MerchantPriceController {
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
             resp.addEntry("result",price);
             return resp;
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return AjaxResponse.failed(-1);
@@ -63,7 +62,7 @@ public class MerchantPriceController {
                 merchantPriceService.update(price);
                 return AjaxResponse.success();
             }
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return AjaxResponse.failed(-1);
