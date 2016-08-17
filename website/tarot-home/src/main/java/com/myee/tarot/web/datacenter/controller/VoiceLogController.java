@@ -65,21 +65,6 @@ public class VoiceLogController {
 //            PageResult<VoiceLog> pageList = VoiceLogUtil.search(time, type, keyword);
 //            List<VoiceLog> voiceLogList = pageList.getList();
             List<VoiceLog> voiceLogList = new ArrayList<>();
-            for(Integer j = 0; j < 10; j++) {
-                VoiceLog voiceLog = new VoiceLog();
-                if (j%2 == 0) {
-                    voiceLog.setType("聊天");
-                } else {
-                    voiceLog.setType("脱口秀");
-                }
-                voiceLog.setNum(Long.valueOf(j));
-                voiceLog.setCookieListen("wowowo" + j);
-                voiceLog.setCookieSpeak("我勒个去" + j);
-                voiceLog.setStoreId(100L);
-                voiceLog.setStoreName("店铺100" + j);
-                voiceLog.setDateTime(new SimpleDateFormat("yyyy-MM-dd hh:MM:ss").format(new Date()));
-                voiceLogList.add(voiceLog);
-            }
             String fileParentPath = DOWNLOAD_HOME + File.separator + "temp";
             String fileFullName = DOWNLOAD_HOME + File.separator + "temp" + File.separator + "语音日志" + DateTimeUtils.getNormalNameDateTime() + ".csv";
             File tempFilePath = new File(fileParentPath);
@@ -100,9 +85,22 @@ public class VoiceLogController {
                     "种类",
                     "商铺"
             });
-            for (int i = 0; i < voiceLogList.size(); i++) {
+            for(Integer j = 0; j < 10; j++) {
+                VoiceLog voiceLog = new VoiceLog();
+                if (j%2 == 0) {
+                    voiceLog.setVoiceType("聊天");
+                } else {
+                    voiceLog.setVoiceType("脱口秀");
+                }
+                voiceLog.setNum(Long.valueOf(j));
+                voiceLog.setCookieListen("wowowo" + j);
+                voiceLog.setCookieSpeak("我勒个去" + j);
+                voiceLog.setStoreId(100L);
+                voiceLog.setStoreName("店铺100" + j);
+                voiceLog.setDateTime(new SimpleDateFormat("yyyy-MM-dd hh:MM:ss").format(new Date()));
+                voiceLogList.add(voiceLog);
                 //写csv文件
-                writeCsvFile(writer, voiceLogList.get(i), i);
+                writeCsvFile(writer, voiceLogList.get(j), j);
             }
             fileName = DOWNLOAD_HTTP + File.separator + "temp" + File.separator + "语音日志" + DateTimeUtils.getNormalNameDateTime() + ".csv";
         } catch (Exception e) {
@@ -123,19 +121,33 @@ public class VoiceLogController {
     @ResponseBody
     public AjaxPageableResponse pageDevice(@RequestParam(value = "startDate", required = false) Date startDate,
                                            @RequestParam(value = "endDate", required = false) Date endDate,
-                                           @RequestParam(value = "type", required = false) String type,
+                                           @RequestParam(value = "voiceType", required = false) String type,
                                            @RequestParam(value = "keyword", required = false) String keyword, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         pageRequest.setCount(-1);//不分页，查询所有结果
         Map<String, String> queries = Maps.newHashMap();
         /*queries.put("startDate",startDate);
         queries.put("endDate",endDate);*/
-        queries.put("type", type);
+        queries.put("voiceType", type);
         queries.put("cookieListen", keyword);
         List<VoiceLog> voiceLogList = esUtils.searchPageQueries("log", "voiceLog", queries, 1, 10, VoiceLog.class);
-        resp.addEntry("voiceLogList", voiceLogList);
+        for (VoiceLog voiceLog : voiceLogList) {
+            resp.addDataEntry(objectToEntry(voiceLog));
+        }
         resp.setRecordsTotal(voiceLogList.size());
         return resp;
+    }
+
+    //把类转换成entry返回给前端，解耦和
+    private Map objectToEntry(VoiceLog voiceLog) {
+        Map entry = new HashMap();
+        entry.put("num", voiceLog.getNum());
+        entry.put("dateTime",voiceLog.getDateTime());
+        entry.put("storeName",voiceLog.getStoreName());
+        entry.put("voiceType",voiceLog.getVoiceType());
+        entry.put("cookyListen", voiceLog.getCookieListen());
+        entry.put("cookySpeak", voiceLog.getCookieSpeak());
+        return entry;
     }
 
     private void writeCsvFile(CSVWriter writer, VoiceLog log, Integer i) {
@@ -144,7 +156,7 @@ public class VoiceLogController {
                 StringUtil.nullToString(log.getDateTime()),
                 StringUtil.nullToString(log.getCookieListen()),
                 StringUtil.nullToString(log.getCookieSpeak()),
-                StringUtil.nullToString(log.getType()),
+                StringUtil.nullToString(log.getVoiceType()),
                 StringUtil.nullToString(log.getStoreName())
         });
     }

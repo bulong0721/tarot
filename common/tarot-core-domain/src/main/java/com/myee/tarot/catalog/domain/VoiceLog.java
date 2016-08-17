@@ -15,7 +15,7 @@ public class VoiceLog {
 
     private String cookieSpeak;
 
-    private String type;
+    private String voiceType;
 
     protected Long storeId;
 
@@ -47,12 +47,12 @@ public class VoiceLog {
         this.cookieSpeak = cookieSpeak;
     }
 
-    public String getType() {
-        return type;
+    public String getVoiceType() {
+        return voiceType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setVoiceType(String voiceType) {
+        this.voiceType = voiceType;
     }
 
     public Long getStoreId() {

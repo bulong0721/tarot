@@ -1,5 +1,6 @@
 package com.myee.tarot.quartz;
 
+import com.google.common.collect.Lists;
 import com.myee.tarot.catalog.domain.VoiceLog;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.StringUtil;
@@ -12,13 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
-
 import java.io.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,56 +33,49 @@ public class QuartzForVoiceLog {
     @Autowired
     private ESUtils esUtils;
 
-//    @Scheduled(cron = "0 0/1 * * * *")  //每天23PM跑定时任务语音日志放到Es并移动文件
+    @Scheduled(cron = "0 23 * * * *")  //每天23PM跑定时任务语音日志放到Es并移动文件
     public void parseFileToDb() {
         //获取路径下所有的csv文件
         File[] fileArr = getFiles(new File(DOWNLOAD_HOME + File.separator + Constants.VOICELOG));
         //解析文件List入库
-        for (File file : fileArr) {
-            uploadCSV(file);
-        }
+        uploadCSV(fileArr);
     }
 
     /**
      * 导入csv数据到数据库
      *
-     * @param file
+     * @param fileArr
      * @return
      */
-    public void uploadCSV(File file) {
+    public void uploadCSV(File[] fileArr) {
         try {
-            final File fileOne = file;
-            if (file.exists()) {
-                //异步插入数据库
-                //用线程池代替原来的new Thread方法
-                taskExecutor.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileOne), "GBK"));
-                            CSVReader csvReader = new CSVReader(br);
-                            String[] strs = csvReader.readNext();//读一行，第一行是抬头，暂时没用
-                            List<String[]> list = csvReader.readAll();//读剩下全部
-                            if (list != null) {
-                                for (int i = 0; i < list.size(); i++) {
-                                    String[] ss = list.get(i);
-                                    VoiceLog voiceLog = new VoiceLog();
-                                    if (!StringUtil.isBlank(ss[0]) && !StringUtil.isBlank(ss[4])) {
-                                        voiceLog.setDateTime(ss[0] + " " + ss[4]);//日期-时间
-                                    }
-                                    voiceLog.setCookieListen(ss[1] == null ? null : ss[1]);//Cooky- Listen
-                                    voiceLog.setCookieSpeak(ss[2] == null ? null : ss[2].toString());//Cooky- Speak
-                                    voiceLog.setType(ss[3] == null ? null : ss[3].toString().equals("聊天")? "1" : "2");
-                                    esUtils.addDomain("log", "voiceLog", voiceLog);
-                                }
+            for (final File file : fileArr) {
+                if (file.exists()) {
+                    BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "GBK"));
+                    CSVReader csvReader = new CSVReader(br);
+                    String[] strs = csvReader.readNext();//读一行，第一行是抬头，暂时没用
+                    List<String[]> list = csvReader.readAll();//读剩下全部
+                    List<VoiceLog> voiceLogList = Lists.newArrayList();
+                    if (list != null) {
+                        for (int i = 0; i < list.size(); i++) {
+                            String[] ss = list.get(i);
+                            VoiceLog voiceLog = new VoiceLog();
+                            if (!StringUtil.isBlank(ss[0]) && !StringUtil.isBlank(ss[4])) {
+                                voiceLog.setDateTime(ss[0] + " " + ss[4]);//日期-时间
                             }
-                            csvReader.close();
-                            moveToRecycle(fileOne);
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                            voiceLog.setCookieListen(ss[1] == null ? null : ss[1]);//Cooky- Listen
+                            voiceLog.setCookieSpeak(ss[2] == null ? null : ss[2].toString());//Cooky- Speak
+                            voiceLog.setVoiceType(ss[3] == null ? null : ss[3].toString().equals("聊天") ? "1" : "2");
+                            voiceLog.setStoreId(ss[5] == null ? null : Long.valueOf(ss[5]));
+                            voiceLog.setStoreName(ss[6] == null ? null : ss[6].toString());
+                            voiceLog.setNum(Long.valueOf(i + 1));
+                            voiceLogList.add(voiceLog);
                         }
+                        esUtils.bulkAddList("log", "voiceLog", voiceLogList);
                     }
-                });
+                    csvReader.close();
+                    moveToRecycle(file);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -145,5 +133,4 @@ public class QuartzForVoiceLog {
             }
         }
     }
-
 }

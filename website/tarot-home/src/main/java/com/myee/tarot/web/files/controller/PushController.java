@@ -10,6 +10,7 @@ import com.myee.djinn.dto.ResponseData;
 import com.myee.djinn.endpoint.OrchidService;
 import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
 import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
@@ -81,9 +82,9 @@ public class PushController {
     public AjaxPageableResponse createResource(@RequestParam(value = "file", required = false) CommonsMultipartFile file, @RequestParam("entityText") String entityText, HttpServletRequest request) {
         MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
         JSONObject jsonObject = JSON.parseObject(entityText);
-        if("/".equals(jsonObject.getString("salt"))){
+        if ("/".equals(jsonObject.getString("salt"))) {
             jsonObject.remove("salt");
-            jsonObject.put("salt",store.getId());
+            jsonObject.put("salt", store.getId());
         }
         FileItem vo = JSON.parseObject(jsonObject.toJSONString(), FileItem.class);
         Long orgID = vo.getSalt();
@@ -92,18 +93,18 @@ public class PushController {
         try {
             File dest = FileUtils.getFile(DOWNLOAD_HOME, Long.toString(orgID), vo.getPath()); //新增文件父路径
             String currPath = vo.getCurrPath() == null ? "" : vo.getCurrPath();
-            if(dest.exists() && dest.isFile() && !StringUtil.isNullOrEmpty(vo.getContent(), true)){  //如果文件已经存在，则为编辑模式,
+            if (dest.exists() && dest.isFile() && !StringUtil.isNullOrEmpty(vo.getContent(), true)) {  //如果文件已经存在，则为编辑模式,
                 editorModel = true;
                 //删除原文件，创建一个新的文件，将内容写入
                 String name = vo.getName();
-                String path = dest.getAbsolutePath().substring(0,dest.getAbsolutePath().lastIndexOf(File.separator));
+                String path = dest.getAbsolutePath().substring(0, dest.getAbsolutePath().lastIndexOf(File.separator));
                 dest.delete();
                 File desFile = new File(path + File.separator + name);
                 desFile.createNewFile();
                 FileUtils.writeStringToFile(desFile, vo.getContent());
                 dest = new File(path);  //用于查找文件
             }
-            if (!editorModel &&!dest.exists())   //新增文件夹和文件需要检测文件夹是否存在
+            if (!editorModel && !dest.exists())   //新增文件夹和文件需要检测文件夹是否存在
                 dest.mkdirs();
             if (!editorModel && file != null && !file.isEmpty()) {  //文件上传
                 String fileName = file.getFileItem().getName();
@@ -143,7 +144,7 @@ public class PushController {
         if (!store.getId().equals(orgID)) {
             message = "不允许删除别的店铺下的资源";
             return AjaxResponse.failed(-1, message);
-        }  else {
+        } else {
             File resFile = getResFile(orgID, path);
             if (resFile.isDirectory()) {
                 try {
@@ -160,7 +161,7 @@ public class PushController {
                     FileUtils.deleteQuietly(resFile);
                     message = "删除成功!";
                 }
-                if(path.lastIndexOf(File.separator) != -1) {
+                if (path.lastIndexOf(File.separator) != -1) {
                     File parentPathFile = getResFile(orgID, path.substring(0, path.lastIndexOf(File.separator)));
                     listFiles(parentPathFile, resMap, store.getId(), store.getId());
                 }
@@ -198,7 +199,7 @@ public class PushController {
         } catch (IOException ie) {
             LOGGER.error("读取文件错误", ie);
             return AjaxResponse.failed(-4, "读取文件错误");
-        }finally {
+        } finally {
             map.put("message", value);
             ajaxResponse.addDataEntry(map);
         }
@@ -252,10 +253,10 @@ public class PushController {
         dto.setStoragePath(pushResourceDTO.getStoragePath());
         AjaxResponse resp = new AjaxResponse();
         OrchidService eptService = null;
-        if(pushResourceDTO == null
+        if (pushResourceDTO == null
                 || StringUtil.isNullOrEmpty(pushResourceDTO.getUniqueNo())
                 || pushResourceDTO.getAppId() == null
-                || pushResourceDTO.getAppId() == 0){
+                || pushResourceDTO.getAppId() == 0) {
             return AjaxResponse.failed(-1, "数据有误");
         }
         try {
@@ -266,28 +267,35 @@ public class PushController {
         if (eptService == null) {
             return AjaxResponse.failed(-3, "获取接口出错");
         }
-        if(pushResourceDTO.getContent() == null || pushResourceDTO.getContent().size() <= 0){
+        if (pushResourceDTO.getContent() == null || pushResourceDTO.getContent().size() <= 0) {
             return AjaxResponse.failed(-4, "推送内容为空或格式错误");
         }
         ResponseData rd = null;
+        PushResource pushResource = new PushResource();
         try {
             //入库
             rd = eptService.pushResource(pushResourceDTO);
-            PushResource pushResource = new PushResource();
             pushResource.setAppId(pushResourceDTO.getAppId());
             pushResource.setContent(JSONArray.toJSONString(pushResourceDTO.getContent()));
             pushResource.setStoragePath(pushResourceDTO.getStoragePath());
             pushResource.setTimeout(pushResourceDTO.getTimeout());
             pushResource.setUniqueNo(pushResourceDTO.getUniqueNo());
-            pushResourceService.update(pushResource);
+            if (rd != null && rd.isSuccess()) {
+                pushResource.setSuccess(true);
+                pushResourceService.update(pushResource);
+                return AjaxResponse.success("推送成功");
+            } else {
+                pushResource.setSuccess(false);
+                pushResourceService.update(pushResource);
+                return AjaxResponse.failed(-6, "发送失败，客户端出错");
+            }
+        } catch (ServiceException e) {
+            e.printStackTrace();
         } catch (Exception e) {
+            e.printStackTrace();
             return AjaxResponse.failed(-5, "客户端不存在或网络无法连接");
         }
-        if (rd != null && rd.isSuccess()) {
-            return AjaxResponse.success("推送成功");
-        } else {
-            return AjaxResponse.failed(-6, "发送失败，客户端出错");
-        }
+        return null;
     }
 
     @RequestMapping(value = "admin/table/push", method = RequestMethod.POST)

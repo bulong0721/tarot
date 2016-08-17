@@ -17,24 +17,24 @@ public class PushResource extends GenericEntity<Long, PushResource> {
     @Column(name = "PUSH_RESOURCE_ID", unique = true, nullable = false)
     @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", pkColumnValue = "PUSH_RESOURCE_SEQ_NEXT_VAL", valueColumnName = "SEQ_COUNT", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
-    private Long    id;
+    private Long id;
     @Column(name = "UNIQUE_NO")
-    private String  uniqueNo;
+    private String uniqueNo;
 
     @Column(name = "APP_ID")
-    private Integer    appId;
+    private Integer appId;
 
     @Column(name = "TIME_OUT")
-    private Long  timeout;
+    private Long timeout;
 
     @Column(name = "STORAGE_PATH")
-    private String  storagePath;
+    private String storagePath;
 
-    @Column(name="CONTENT",columnDefinition="CLOB")
+    @Column(name="CONTENT", columnDefinition="TEXT", nullable=true)
     private String content;
 
-    @Column(name = "IS_SUCCESS")
-    private String isSuccess;
+    @Column(name = "SUCCESS")
+    private Boolean success;
 
     @Override
     public Long getId() {
@@ -86,11 +86,11 @@ public class PushResource extends GenericEntity<Long, PushResource> {
         this.content = content;
     }
 
-    public String getIsSuccess() {
-        return isSuccess;
+    public Boolean getSuccess() {
+        return success;
     }
 
-    public void setIsSuccess(String isSuccess) {
-        this.isSuccess = isSuccess;
+    public void setSuccess(Boolean success) {
+        this.success = success;
     }
 }
