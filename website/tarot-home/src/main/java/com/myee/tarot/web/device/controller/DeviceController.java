@@ -280,6 +280,16 @@ public class DeviceController {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
+            if(deviceUsed.getDevice().getId() == null || StringUtil.isNullOrEmpty(String.valueOf(deviceUsed.getDevice().getId()))){
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"设备类型不能为空");
+                return resp;
+            }
+            Device device = deviceService.findById(deviceUsed.getDevice().getId());
+            if(device == null){
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"设备类型错误");
+                return resp;
+            }
+            deviceUsed.setDevice(device);
             if(autoEnd != null && autoStart !=null && autoEnd < autoStart){
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("结束编号不能小于开始编号");
@@ -290,7 +300,7 @@ public class DeviceController {
                 resp.setErrorString("主板编号不能为空");
                 return resp;
             }
-            if(deviceUsed.getPhone() != null && !validatePhone(deviceUsed.getPhone())){
+            if(deviceUsed.getPhone() != null && !ValidatorUtil.isMultiMobile(deviceUsed.getPhone())){
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "请输入正确的手机号！");
                 return resp;
             }
@@ -330,25 +340,25 @@ public class DeviceController {
         return resp;
     }
 
-    /**
-     * 当手机号为空或“”时，说明用户不填，也是可以的
-     * @param phone
-     * @return true验证通过，false验证失败
-     */
-    private boolean validatePhone(String phone) {
-        if(phone == null || phone.equals("")){
-            return true;
-        }
-
-        String phones[]= phone.split(",");
-        for(int i=0;i<phones.length;i++){
-            if(!ValidatorUtil.isMobile(phones[i])){
-                return false;
-            }
-
-        }
-        return true;
-    }
+//    /**
+//     * 当手机号为空或“”时，说明用户不填，也是可以的
+//     * @param phone
+//     * @return true验证通过，false验证失败
+//     */
+//    private boolean validatePhone(String phone) {
+//        if(phone == null || phone.equals("")){
+//            return true;
+//        }
+//
+//        String phones[]= phone.split(",");
+//        for(int i=0;i<phones.length;i++){
+//            if(!ValidatorUtil.isMobile(phones[i])){
+//                return false;
+//            }
+//
+//        }
+//        return true;
+//    }
 
     @RequestMapping(value = "device/used/bindProductUsed", method = RequestMethod.POST)
     @ResponseBody

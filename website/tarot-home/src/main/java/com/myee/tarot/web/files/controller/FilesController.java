@@ -15,6 +15,8 @@ import com.myee.tarot.web.files.TreeFileItem;
 import com.myee.tarot.web.util.StringUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +35,8 @@ import java.util.*;
  */
 @Controller
 public class FilesController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FilesController.class);
 
     @Value("${cleverm.push.dirs}")
     private String DOWNLOAD_HOME;
@@ -208,7 +212,7 @@ public class FilesController {
                     return null;
                 }
 
-                boolean isCopy = copyToRecycle(file);//复制文件到回收站
+                boolean isCopy = moveToRecycle(file);//复制文件到回收站
                 if(isCopy){ //复制成功后执行删除
                     boolean isDelete = delete(file);
 
@@ -401,21 +405,21 @@ public class FilesController {
                 }
                 return true;
             } else {
-                System.out.println("所删除的文件不存在！" + '\n');
+                LOGGER.error("所删除的文件不存在！" + '\n');
                 return false;
             }
         } catch (Exception e) {
-            System.out.print("unable to delete the folder!");
+            LOGGER.error("unable to delete the folder!");
         }
         return false;
     }
 
     /**
-     * 复制文件至回收站
+     * 移到文件至回收站
      * @param file
      * @return
      */
-    public boolean copyToRecycle(File file) {
+    public boolean moveToRecycle(File file) {
         try {
             if (file.exists()) {
                 String tempFilePath = file.getPath().replaceAll("\\\\", "/");//把路径中的反斜杠替换成斜杠
@@ -433,17 +437,17 @@ public class FilesController {
                 } else if (file.isDirectory()) {
                     File files[] = file.listFiles();
                     for (int i = 0; i < files.length; i++) {
-                        copyToRecycle(files[i]);
+                        moveToRecycle(files[i]);
                     }
                 }
                 return true;
             } else {
-                System.out.println("所删除的文件不存在！" + '\n');
+                LOGGER.error("所删除的文件不存在！" + '\n');
                 return false;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.print("unable to delete the folder!");
+            LOGGER.error("unable to delete the folder!");
         }
         return false;
     }

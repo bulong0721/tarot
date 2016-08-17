@@ -77,8 +77,8 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
 
                     var data = $scope.tableOpts.data[rowIndex];
                     $scope.formBindData.model = data;
-                    console.log(data)
-                    console.log(Constants.thisMerchantStore)
+                    //console.log(data)
+                    //console.log(Constants.thisMerchantStore)
                     $scope.formBindData.model.bindShowName = '设备组名称:' + (data.name || "") + ' | 门店名称:' + (Constants.thisMerchantStore.name || "") + ' | 设备组编号:' + (data.boardNo || "") + ' | 设备组版本:' + (data.deviceNum || "");
 
                     //根据已关联的产品去勾选对应的checkbox
