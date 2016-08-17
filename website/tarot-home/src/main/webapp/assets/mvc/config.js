@@ -293,11 +293,11 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             data: {
                 pageTitle: '语音管理',
                 subTitle: '语音日志',
-                datatable: 'assets/mvc/voicelog/view/voicelog_datatable.html',
+                datatable: 'assets/mvc/datacenter/view/voicelog_datatable.html',
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
-                    return ctrlManagerLoader($ocLazyLoad, 'voicelog', 'voiceLogCtrl.js');
+                    return ctrlManagerLoader($ocLazyLoad, 'datacenter', 'voiceLogCtrl.js');
                 }
             }
         })
