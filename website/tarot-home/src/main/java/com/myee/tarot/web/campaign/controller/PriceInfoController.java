@@ -1,6 +1,5 @@
 package com.myee.tarot.web.campaign.controller;
 
-import com.myee.tarot.campaign.domain.MerchantPrice;
 import com.myee.tarot.campaign.domain.PriceInfo;
 import com.myee.tarot.campaign.service.MerchantActivityService;
 import com.myee.tarot.campaign.service.PriceInfoService;
@@ -15,7 +14,6 @@ import com.myee.tarot.merchant.domain.MerchantStore;
 import me.chanjar.weixin.common.util.StringUtils;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
-import org.elasticsearch.search.aggregations.support.format.ValueFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Time;
 import java.util.*;
 
 /**
@@ -158,7 +155,7 @@ public class PriceInfoController {
             MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
             PriceInfo priceInfo = priceInfoService.priceCheckCode(merchantStore1.getId(), checkCode.toUpperCase());
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
-            if(priceInfo!=null){
+            if(priceInfo!= null){
                 //判断状态
                 int status = priceInfo.getStatus();
                 if(status==Constants.PRICEINFO_EXPIRE){
@@ -166,20 +163,30 @@ public class PriceInfoController {
                 }else if(status==Constants.PRICEINFO_USED){
                     resp.setErrorString("该奖券已被使用");
                 }else{
-                    //验证通过后
-                    resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
-                    resp.addDataEntry(objectToEntry(priceInfo));
-                    priceInfo.setStatus(Constants.PRICEINFO_USED);
-                    priceInfo.setCheckDate(new Date());
-                    priceInfoService.update(priceInfo);
+                    //再次判断是否过期
+                    Date endDate = priceInfo.getPriceEndDate();
+                    Date nowDate = DateTimeUtils.startToday();
+                    if(endDate.compareTo(nowDate) < 0){
+                        priceInfo.setStatus(Constants.PRICEINFO_EXPIRE);
+                        resp.setErrorString("该奖券已过期");
+                    }else {
+                        //验证通过后
+                        resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
+                        resp.addDataEntry(objectToEntry(priceInfo));
+                        priceInfo.setStatus(Constants.PRICEINFO_USED);
+                        priceInfo.setCheckDate(new Date());
+                    }
                 }
+                priceInfoService.update(priceInfo);
+                return resp;
             }else{
                 resp.setErrorString("此验证码该店无效");
+                return resp;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return resp;
+        return AjaxResponse.failed(-1);
     }
 
     /**

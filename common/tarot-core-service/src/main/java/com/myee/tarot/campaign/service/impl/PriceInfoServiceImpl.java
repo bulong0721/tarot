@@ -2,18 +2,18 @@ package com.myee.tarot.campaign.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
+import com.myee.tarot.campaign.dao.PriceInfoDao;
 import com.myee.tarot.campaign.domain.MerchantActivity;
 import com.myee.tarot.campaign.domain.MerchantPrice;
-import com.myee.tarot.campaign.domain.ModeSwitch;
+import com.myee.tarot.campaign.domain.PriceInfo;
 import com.myee.tarot.campaign.service.MerchantActivityService;
 import com.myee.tarot.campaign.service.ModeSwitchService;
+import com.myee.tarot.campaign.service.PriceInfoService;
+import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
 import com.myee.tarot.campaign.service.impl.redis.RedisUtil;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
-import com.myee.tarot.campaign.dao.PriceInfoDao;
-import com.myee.tarot.campaign.domain.PriceInfo;
-import com.myee.tarot.campaign.service.PriceInfoService;
 import com.myee.tarot.core.util.AutoNumUtil;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Administrator on 2016/7/14.
@@ -141,7 +140,13 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
             List<MerchantPrice> activePrices = Lists.newArrayList();
             List<MerchantPrice> prices = activeActivity.getPrices();
             for (MerchantPrice price : prices) {
-                if(price.getActiveStatus() == Constants.PRICE_START){
+                // 奖券过期判断
+                Date endDate = price.getEndDate();
+                Date startToday = DateTimeUtils.startToday();
+                if(endDate.compareTo(startToday) < 0){
+                    price.setActiveStatus(Constants.PRICE_END);
+                }
+                if(price.getActiveStatus() == Constants.PRICE_START) {
                     activePrices.add(price);
                 }
             }
