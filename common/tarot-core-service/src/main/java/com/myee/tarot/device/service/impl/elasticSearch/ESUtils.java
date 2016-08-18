@@ -1,5 +1,6 @@
 package com.myee.tarot.device.service.impl.elasticSearch;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestClientFactory;
@@ -8,9 +9,6 @@ import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.core.*;
 import io.searchbox.params.Parameters;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,12 +65,16 @@ public class ESUtils {
     /**
      * 创建es news索引 bulk批量添加 List
      */
-    public void bulkAddList(String index, String type, List addList) {
+    public <T> void bulkAddList(String index, String type, List<T> addList) {
         LOGGER.info("开始批量添加索引");
         long start = System.currentTimeMillis();
         try {
+            List<Index> indexes = Lists.newArrayList();
+            for (T t: addList) {
+                indexes.add(new Index.Builder(t).build());
+            }
             // Bulk 两个参数1:索引名称2:类型名称(用文章(article)做类型名称)
-            Bulk bulk = new Bulk.Builder().defaultIndex(index).defaultType(type).addAction(addList).build();
+            Bulk bulk = new Bulk.Builder().defaultIndex(index).defaultType(type).addAction(indexes).build();
             jestClient.execute(bulk);
         } catch (Exception e) {
             LOGGER.error("批量添加出现异常");
@@ -102,33 +104,6 @@ public class ESUtils {
     }
 
     /**
-     * 搜索关键字
-     * 默认搜索前10条记录
-     *
-     * @param param
-     * @return
-     */
-    public <T> List<T> searchSource(String index, String type, String queryTitle, String param, Class<T> clazz) {
-        try {
-            LOGGER.info("搜索开始");
-            long start = System.currentTimeMillis();
-            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-            if (StringUtils.isNotBlank(queryTitle)) {
-                searchSourceBuilder.query(QueryBuilders.matchQuery(queryTitle, param));
-            }
-            Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(index).addType(type).build();
-            JestResult result = jestClient.execute(search);
-            long end = System.currentTimeMillis();
-            LOGGER.info("搜索共用时间 -->> " + (end - start) + " 毫秒");
-            return result.getSourceAsObjectList(clazz);
-        } catch (Exception e) {
-            LOGGER.error("搜索出现异常");
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
      * 分页查询 使用 from to  可用 存在性能问题？深度查询效率会变慢
      *
      * @param index
@@ -146,12 +121,20 @@ public class ESUtils {
             LOGGER.info("搜索开始");
             int fromNum = pageSize * (pageNum - 1);
             long start = System.currentTimeMillis();
-            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-            if (StringUtils.isNotBlank(queryTitle)) {
-                searchSourceBuilder.query(QueryBuilders.matchQuery(queryTitle, param));
+            //采用自行拼接json
+            String query = "";
+            if(StringUtils.isNotBlank(queryTitle)){
+                query = "{\n" +
+                        "    \"query\": {\n" +
+                        "          \"match\" : {\n" +
+                        "              \""+queryTitle+"\" : {\n" +
+                        "                    \"query\" : \""+ param +"\"\n" +
+                        "              }\n" +
+                        "          }\n" +
+                        "    }\n" +
+                        "}";
             }
-            searchSourceBuilder.from(fromNum).size(pageSize);
-            Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(index).addType(type).build();
+            Search search = new Search.Builder(query).addIndex(index).addType(type).setParameter(Parameters.FROM, fromNum).setParameter(Parameters.SIZE, pageSize).build();
             JestResult result = jestClient.execute(search);
             long end = System.currentTimeMillis();
             LOGGER.info("搜索共用时间 -->> " + (end - start) + " 毫秒");
@@ -164,7 +147,7 @@ public class ESUtils {
     }
 
     /**
-     * 多个查询条件 分页
+     * 多个查询条件 bool Must联合 分页
      *
      * @param index
      * @param type
@@ -180,12 +163,30 @@ public class ESUtils {
             LOGGER.info("搜索开始");
             int fromNum = pageSize * (pageNum - 1);
             long start = System.currentTimeMillis();
-            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-            for (String key : queries.keySet()) {
-                searchSourceBuilder.query(QueryBuilders.matchQuery(key, queries.get(key)));
+            String query = "";
+            if(queries != null && queries.size() != 0){
+                for (String s : queries.keySet()) {
+                }
+                query=   "{\n" +
+                        "    \"query\": {\n" +
+                        "      \"bool\": {\n" +
+                        "        \"must\": [\n" +
+                        "          { \"match\" : {\n" +
+                        "              \"hobby\" : {\n" +
+                        "                    \"query\" : \"呵呵\"\n" +
+                        "              }\n" +
+                        "          }},\n" +
+                        "          {\"match\" : {\n" +
+                        "               \"name\" : {\n" +
+                        "                    \"query\" : \"陈\"\n" +
+                        "              }\n" +
+                        "          }}\n" +
+                        "        ]\n" +
+                        "      }\n" +
+                        "    }\n" +
+                        "}";
             }
-            searchSourceBuilder.from(fromNum).size(pageSize);
-            Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(index).addType(type).build();
+            Search search = new Search.Builder(query).addIndex(index).addType(type).setParameter(Parameters.FROM, fromNum).setParameter(Parameters.SIZE, pageSize).build();
             JestResult result = jestClient.execute(search);
             long end = System.currentTimeMillis();
             LOGGER.info("搜索共用时间 -->> " + (end - start) + " 毫秒");
@@ -237,8 +238,8 @@ public class ESUtils {
 
     public SearchResult startScroll(String index, String type, int pageSize) {
         try {
-            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-            Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(index).addType(type).setParameter(Parameters.SIZE, pageSize).setParameter(Parameters.SCROLL, "3m").build();
+            //SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+            Search search = new Search.Builder("").addIndex(index).addType(type).setParameter(Parameters.SIZE, pageSize).setParameter(Parameters.SCROLL, "3m").build();
             SearchResult result = jestClient.execute(search);
             return result;
         } catch (Exception e) {
@@ -257,6 +258,5 @@ public class ESUtils {
         }
         return null;
     }
-
 
 }
