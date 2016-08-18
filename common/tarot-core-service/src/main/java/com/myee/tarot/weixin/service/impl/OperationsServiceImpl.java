@@ -46,8 +46,8 @@ import java.util.*;
  * Created by Martin on 2016/1/27.
  */
 @Service
-public class OperationsManager extends RedisOperation implements OperationsService {
-    private static Logger logger = LoggerFactory.getLogger(OperationsManager.class);
+public class OperationsServiceImpl extends RedisOperation implements OperationsService {
+    private static Logger logger = LoggerFactory.getLogger(OperationsServiceImpl.class);
 
     @Value("${cleverm.push.dirs}")
     private String DOWNLOAD_HOME;
@@ -57,7 +57,7 @@ public class OperationsManager extends RedisOperation implements OperationsServi
     private WxWaitTokenDao waitTokenDao;
 
     @Autowired
-    public OperationsManager(RedisTemplate redisTemplate) {
+    public OperationsServiceImpl(RedisTemplate redisTemplate) {
         super(redisTemplate);
     }
 

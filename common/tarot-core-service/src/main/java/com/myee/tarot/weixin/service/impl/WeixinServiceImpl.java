@@ -26,15 +26,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
  * Created by Martin on 2016/1/19.
  */
 @Service
-public class WeixinManager extends RedisOperation implements WeixinService {
-    private static final Logger logger = LoggerFactory.getLogger(WeixinManager.class);
+public class WeixinServiceImpl extends RedisOperation implements WeixinService {
+    private static final Logger logger = LoggerFactory.getLogger(WeixinServiceImpl.class);
 
     @Autowired
     private TableTypeDao     tableTypeDao;
@@ -50,7 +49,7 @@ public class WeixinManager extends RedisOperation implements WeixinService {
     static Integer iCount = 0;
 
     @Autowired
-    public WeixinManager(RedisTemplate redisTemplate) {
+    public WeixinServiceImpl(RedisTemplate redisTemplate) {
         super(redisTemplate);
     }
 

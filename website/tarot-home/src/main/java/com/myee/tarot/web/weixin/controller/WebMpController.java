@@ -11,7 +11,7 @@ import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.weixin.domain.ClientAjaxResult;
 import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.myee.tarot.weixin.service.WeixinService;
-import com.myee.tarot.weixin.service.impl.OperationsManager;
+import com.myee.tarot.weixin.service.impl.OperationsServiceImpl;
 import com.myee.tarot.weixin.service.impl.RedisKeys;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.WxJsapiSignature;
@@ -55,7 +55,7 @@ public class WebMpController {
     @Autowired
     private   WxMpMessageRouter wxMpMessageRouter;
     @Autowired
-    private OperationsManager manager;
+    private OperationsServiceImpl manager;
     @Autowired
     private PriceInfoService priceInfoService;
     @Autowired
