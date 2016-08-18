@@ -317,11 +317,19 @@ function cfromlyService(formlyConfig, $window, toaster, $filter) {
             el.on("change", function (changeEvent) {
                 var file = changeEvent.target.files[0],
                     name = file.name.replace(/.+\./, "");
-                scope.model.name = file.name;
-                if (scope.name && $filter('inputType')(name, scope.name) < 0) {
+                if(file.size > 100000000){
+                    toaster.error({body: "上传文件超过大小限制(100M)！"});
+                    if(angular.element('#file')[0]){
+                        angular.element('#file')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
+                    }
+                }else if (scope.name && $filter('inputType')(name, scope.name) < 0) {
                     toaster.error({body: "请上传png,jpg,gif,bmp图片格式！"});
+                    if(angular.element('#file')[0]){
+                        angular.element('#file')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
+                    }
                 } else {
                     if (file) {
+                        scope.model.name = file.name;
                         var fd = new FormData();
                         fd.append('file', file);
                         scope.$emit('fileToUpload', fd);

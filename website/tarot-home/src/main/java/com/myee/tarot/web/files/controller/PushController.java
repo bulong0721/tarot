@@ -16,6 +16,7 @@ import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.resource.domain.PushResource;
 import com.myee.tarot.resource.service.PushResourceService;
+import com.myee.tarot.web.files.FileType;
 import com.myee.tarot.web.files.vo.FileItem;
 import com.myee.tarot.web.util.StringUtil;
 import org.apache.commons.codec.binary.Base64;
@@ -183,13 +184,19 @@ public class PushController {
         if (orgID != fileItem.getSalt()) {
             return AjaxResponse.failed(-1, "文件不属于该店铺，不能修改");
         }
-        File resFile = getResFile(orgID, fileItem.getPath());
-        if (!resFile.exists()) {
-            return AjaxResponse.failed(-2, "文件不存在");
-        }
-        if (resFile.length() > 4096L) {
-            return AjaxResponse.failed(-3, "超过文本读取大小限制。");
-        }
+		String fileName = fileItem.getName();
+		String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+		File resFile = getResFile(orgID, fileItem.getPath());
+		String type = FileType.getFileType(resFile.getAbsolutePath());
+		if (!resFile.exists()) {
+			return AjaxResponse.failed(-2, "文件不存在");
+		}
+		if((null != type && !type.matches(Constants.ALLOW_EDITOR_TEXT))|| !suffix.matches(Constants.ALLOW_EDITOR_TEXT)){
+			return AjaxResponse.failed(-5,"不支持该格式文件在线编辑。");
+		}
+		if (resFile.length() > 4096L) {
+			return AjaxResponse.failed(-3, "超过文本读取大小限制(4K)。");
+		}
         String value = "";
         try {
             value = FileUtils.readFileToString(resFile, "utf-8");

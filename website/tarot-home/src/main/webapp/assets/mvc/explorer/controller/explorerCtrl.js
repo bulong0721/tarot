@@ -95,6 +95,9 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                         type:data.type,
                         editorModel:1
                     }
+                    if(angular.element('#file')[0]){
+                        angular.element('#file')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
+                    }
                     $scope.current = data;
                     $scope.flag1  = true;
                 },
@@ -246,7 +249,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 id: 'name',
                 key: 'name',
                 type: 'c_input',
-                templateOptions: { label: '节点名称', placeholder: '节点名称'},
+                templateOptions: { label: '文件名称', placeholder: '文件名称'},
                 expressionProperties: {
                     'templateOptions.required': 'model.ifEditor' // disabled when ifEditor is false
                 }
@@ -260,7 +263,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                         attribute: 'maxlength'
                     }
                 },
-                templateOptions: { label: '节点路径', placeholder: '节点路径(长度小于50)',maxlen:50},
+                templateOptions: { label: '文件路径', placeholder: '文件路径(长度小于50)',maxlen:50},
                 expressionProperties: {
                     'templateOptions.required': 'model.type==0?true:false' ,// disabled when ifEditor is true
                     'templateOptions.disabled': 'model.editorModel==1?true:false' //编辑模式不能修改节点路径
@@ -271,7 +274,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 key: 'type',
                 type: 'c_select',
                 className: 'c_select',
-                templateOptions: { required: true, label: '节点类型',  options: nodeTypes },
+                templateOptions: { required: true, label: '文件类型',  options: nodeTypes },
                 expressionProperties: {
                     'templateOptions.disabled': 'model.editorModel==1?true:false' //编辑模式不能修改节点类型
                 }
@@ -281,7 +284,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 key: 'file',
                 type: 'upload',
                 name:'',
-                templateOptions: {required: false,type: 'file', label: '节点文件' },
+                templateOptions: {required: false,type: 'file', label: '上传文件' },
                 hideExpression: function ($viewValue, $modelValue, scope) {
                     return scope.model.type == 0?true:false;//true新增文件夹时隐藏文件内容输入框 false新增时显示批量修改
                 }

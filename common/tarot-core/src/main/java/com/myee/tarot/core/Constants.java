@@ -73,4 +73,6 @@ public class Constants {
 
 	public final static String VOICELOG = "voicelog"; //存放所有语音日志
 
+	public static final String ALLOW_EDITOR_TEXT = "((txt)|(csv)|(log)|(xml)|(html)|(htm)|(js)|(css))";	//只允许编辑的文本格式（正则）
+
 }
