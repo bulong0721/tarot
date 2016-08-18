@@ -9,8 +9,8 @@ import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.domain.QMerchantStore;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.List;
  */
 @Repository
 public class MerchantStoreDaoImpl extends GenericEntityDaoImpl<Long, MerchantStore> implements MerchantStoreDao {
-    public static Log log = LogFactory.getLog(MerchantDaoImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MerchantDaoImpl.class);
 
 //    @Override
 //    public Long getCountById(Long id) {
@@ -34,18 +34,18 @@ public class MerchantStoreDaoImpl extends GenericEntityDaoImpl<Long, MerchantSto
 //    }
 
     @Override
-    public Long getCountById(Long merchantStoreId, Long merchantId){
+    public Long getCountById(Long merchantStoreId, Long merchantId) {
         QMerchantStore qMerchantStore = QMerchantStore.merchantStore;
         JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
         query.from(qMerchantStore);
-        if(merchantStoreId != null){
+        if (merchantStoreId != null) {
             query.where(qMerchantStore.id.eq(merchantStoreId));
         }
-        if(merchantId != null){
+        if (merchantId != null) {
             query.where(qMerchantStore.merchant.id.eq(merchantId));
         }
 
-        log.info(query.fetchCount());
+        LOGGER.info("总条数=>",query.fetchCount());
 
         return query.fetchCount();
     }
@@ -55,10 +55,10 @@ public class MerchantStoreDaoImpl extends GenericEntityDaoImpl<Long, MerchantSto
         QMerchantStore qMerchantStore = QMerchantStore.merchantStore;
         JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
         query.from(qMerchantStore);
-        if(merchantStoreId != null){
+        if (merchantStoreId != null) {
             query.where(qMerchantStore.id.eq(merchantStoreId));
         }
-        log.info(query.fetchCount());
+        LOGGER.info("总条数=>",query.fetchCount());
         return query.fetchFirst();
     }
 
@@ -67,19 +67,19 @@ public class MerchantStoreDaoImpl extends GenericEntityDaoImpl<Long, MerchantSto
         QMerchantStore qMerchantStore = QMerchantStore.merchantStore;
         JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
         query.from(qMerchantStore);
-        if(merchantId != null){
+        if (merchantId != null) {
             query.where(qMerchantStore.merchant.id.eq(merchantId));
         }
-        log.info(query.fetchCount());
+        LOGGER.info("总条数=>",query.fetchCount());
         return query.fetch();
     }
 
     @Override
-    public MerchantStore getByCode(String storeCode){
+    public MerchantStore getByCode(String storeCode) {
         QMerchantStore qMerchantStore = QMerchantStore.merchantStore;
         JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
         query.from(qMerchantStore);
-        if(storeCode != null){
+        if (storeCode != null) {
             query.where(qMerchantStore.merchantStore.code.eq(storeCode));
         }
         return query.fetchFirst();
@@ -98,7 +98,7 @@ public class MerchantStoreDaoImpl extends GenericEntityDaoImpl<Long, MerchantSto
 //    }
 
     @Override
-    public PageResult<MerchantStore> pageListByMerchant(Long id ,PageRequest pageRequest ) {
+    public PageResult<MerchantStore> pageListByMerchant(Long id, PageRequest pageRequest) {
         PageResult<MerchantStore> pageList = new PageResult<MerchantStore>();
         QMerchantStore qMerchantStore = QMerchantStore.merchantStore;
         JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
@@ -106,11 +106,11 @@ public class MerchantStoreDaoImpl extends GenericEntityDaoImpl<Long, MerchantSto
         if (!StringUtil.isBlank(pageRequest.getQueryName())) {
             query.where(qMerchantStore.name.like("%" + pageRequest.getQueryName() + "%"));
         }
-        if(id != null) {
+        if (id != null) {
             query.where(qMerchantStore.merchant.id.eq(id));
         }
         pageList.setRecordsTotal(query.from(qMerchantStore).fetchCount());
-        if( pageRequest.getCount() > 0){
+        if (pageRequest.getCount() > 0) {
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
         pageList.setList(query.fetch());

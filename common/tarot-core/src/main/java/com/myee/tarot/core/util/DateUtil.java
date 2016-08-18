@@ -21,6 +21,8 @@ public class DateUtil {
 
     private final static String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
+    private final static String DATETIME_FORMAT_SLASH = "yyyy/MM/dd HH:mm:ss";
+
     public static String generateTimeStamp() {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmSS");
         return format.format(new Date());
@@ -105,6 +107,12 @@ public class DateUtil {
 
     public static Date getDate(String date) throws Exception {
         DateFormat myDateFormat = new SimpleDateFormat(Constants.DEFAULT_DATE_FORMAT);
+        return myDateFormat.parse(date);
+    }
+
+
+    public static Date getDateTime(String date) throws Exception {
+        DateFormat myDateFormat = new SimpleDateFormat(DATETIME_FORMAT_SLASH);
         return myDateFormat.parse(date);
     }
 

@@ -6,6 +6,8 @@ import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.datacenter.dao.SelfCheckLogDao;
 import com.myee.tarot.datacenter.domain.SelfCheckLog;
 import com.myee.tarot.datacenter.service.SelfCheckLogService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SelfCheckLogServiceImpl extends GenericEntityServiceImpl<Long, SelfCheckLog> implements SelfCheckLogService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SelfCheckLogServiceImpl.class);
 
     private SelfCheckLogDao selfCheckLogDao;
 

@@ -1,11 +1,14 @@
 package com.myee.tarot.web.datacenter.controller;
 
+import com.google.common.collect.Maps;
 import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
 import com.myee.tarot.catalog.domain.VoiceLog;
-import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
+import com.myee.tarot.core.web.EntityQueryDto;
 import com.myee.tarot.device.service.impl.elasticSearch.ESUtils;
 import com.myee.tarot.web.util.StringUtil;
 import com.opencsv.CSVWriter;
@@ -14,11 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -46,6 +48,7 @@ public class VoiceLogController {
 
     /**
      * 下载
+     *
      * @param whereRequest
      * @param request
      * @return
@@ -80,9 +83,9 @@ public class VoiceLogController {
                     "种类",
                     "商铺"
             });
-            for(Integer j = 0; j < 10; j++) {
+            for (Integer j = 0; j < 10; j++) {
                 VoiceLog voiceLog = new VoiceLog();
-                if (j%2 == 0) {
+                if (j % 2 == 0) {
                     voiceLog.setVoiceType("聊天");
                 } else {
                     voiceLog.setVoiceType("脱口秀");
@@ -91,7 +94,7 @@ public class VoiceLogController {
                 voiceLog.setCookieSpeak("我勒个去" + j);
                 voiceLog.setStoreId(100L);
                 voiceLog.setStoreName("店铺100" + j);
-                voiceLog.setDateTime(new SimpleDateFormat("yyyy-MM-dd hh:MM:ss").format(new Date()));
+                voiceLog.setDateTimeStr(new SimpleDateFormat("yyyy-MM-dd hh:MM:ss").format(new Date()));
                 voiceLogList.add(voiceLog);
                 //写csv文件
                 writeCsvFile(writer, voiceLogList.get(j), j);
@@ -113,28 +116,49 @@ public class VoiceLogController {
 
     @RequestMapping(value = "voiceLog/paging", method = RequestMethod.GET)
     @ResponseBody
-    public AjaxPageableResponse pageDevice(WhereRequest whereRequest, PageRequest pageRequest) {
+    public AjaxPageableResponse pageDevice(WhereRequest whereRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
-        pageRequest.setCount(-1);//不分页，查询所有结果
-//        Map<String, String> queries = Maps.newHashMap();
-        /*queries.put("startDate",startDate);
-        queries.put("endDate",endDate);*/
-//        queries.put("voiceType", type);
-//        queries.put("cookieListen", keyword);
-        List<VoiceLog> voiceLogList = esUtils.searchPageSource("log4", "voiceLog4", StringUtil.isNullOrEmpty(whereRequest.getKeyword())? null : "cookieSpeak", whereRequest.getKeyword(), 1, 10, VoiceLog.class);
-        for (VoiceLog voiceLog : voiceLogList) {
+        Map<String, EntityQueryDto> queries = Maps.newHashMap();
+        if (whereRequest.getBeginDate().equals(null) && whereRequest.getEndDate().equals(null)
+                && StringUtil.isNullOrEmpty(whereRequest.getKeyword()) && StringUtil.isNullOrEmpty(whereRequest.getVoiceLogType())) {
+            queries = null;
+        } else {
+            EntityQueryDto beginDateDto = new EntityQueryDto();
+            beginDateDto.setFieldValue(whereRequest.getBeginDate());
+            beginDateDto.setQueryPattern(Constants.ES_QUERY_PATTERN_MUST);
+
+            EntityQueryDto endDateDto = new EntityQueryDto();
+            endDateDto.setFieldValue(whereRequest.getEndDate());
+            endDateDto.setQueryPattern(Constants.ES_QUERY_PATTERN_MUST);
+
+            EntityQueryDto keywordDto = new EntityQueryDto();
+            keywordDto.setFieldValue(whereRequest.getKeyword());
+            keywordDto.setQueryPattern(Constants.ES_QUERY_PATTERN_SHOULD);
+
+            EntityQueryDto voiceLogTypeDto = new EntityQueryDto();
+            voiceLogTypeDto.setFieldValue(whereRequest.getVoiceLogType());
+            voiceLogTypeDto.setQueryPattern(Constants.ES_QUERY_PATTERN_MUST);
+
+            queries.put("beginDate", beginDateDto);
+            queries.put("endDate", endDateDto);
+            queries.put("voiceType", voiceLogTypeDto);
+            queries.put("cookieListen", keywordDto);
+            queries.put("cookieSpeak", keywordDto);
+        }
+        PageResult<VoiceLog> voiceLogList = esUtils.searchPageQueries("log5", "voiceLog5", queries, whereRequest.getPage(), whereRequest.getCount(), VoiceLog.class);
+        for (VoiceLog voiceLog : voiceLogList.getList()) {
             resp.addDataEntry(objectToEntry(voiceLog));
         }
-        resp.setRecordsTotal(voiceLogList.size());
+        resp.setRecordsTotal(voiceLogList.getRecordsTotal());
         return resp;
     }
 
     //把类转换成entry返回给前端，解耦和
     private Map objectToEntry(VoiceLog voiceLog) {
         Map entry = new HashMap();
-        entry.put("dateTime",voiceLog.getDateTime());
-        entry.put("storeName",voiceLog.getStoreName());
-        entry.put("voiceType",voiceLog.getVoiceType());
+        entry.put("dateTime", voiceLog.getDateTime());
+        entry.put("storeName", voiceLog.getStoreName());
+        entry.put("voiceType", voiceLog.getVoiceType());
         entry.put("cookyListen", voiceLog.getCookieListen());
         entry.put("cookySpeak", voiceLog.getCookieSpeak());
         return entry;

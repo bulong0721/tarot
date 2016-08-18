@@ -6,6 +6,8 @@ import com.myee.tarot.datacenter.domain.EventModule;
 import com.myee.tarot.datacenter.domain.QEventModule;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.List;
  */
 @Repository
 public class ModuleLogDaoImpl extends GenericEntityDaoImpl<Long, EventModule> implements ModuleLogDao {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModuleLogDaoImpl.class);
 
     @Override
     public List getModuleList() {

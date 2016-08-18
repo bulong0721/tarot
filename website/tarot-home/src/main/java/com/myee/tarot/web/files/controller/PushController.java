@@ -61,12 +61,6 @@ public class PushController {
     @RequestMapping(value = "admin/file/search", method = RequestMethod.POST)
     @ResponseBody
     public AjaxPageableResponse searchResource(@RequestParam("node") String parentNode, HttpServletRequest request) {
-//        if ("/".equals(parentNode)) {
-//            FileItem root = new FileItem();
-//            root.setPath("/");
-////            root.setResTypeName("目录");
-//            return new AjaxPageableResponse(Arrays.<Object>asList(root));
-//        }
         MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
         File template = getResFile(100L, parentNode);
         Map<String, FileItem> resMap = Maps.newLinkedHashMap();
@@ -184,19 +178,19 @@ public class PushController {
         if (orgID != fileItem.getSalt()) {
             return AjaxResponse.failed(-1, "文件不属于该店铺，不能修改");
         }
-		String fileName = fileItem.getName();
-		String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
-		File resFile = getResFile(orgID, fileItem.getPath());
-		String type = FileType.getFileType(resFile.getAbsolutePath());
-		if (!resFile.exists()) {
-			return AjaxResponse.failed(-2, "文件不存在");
-		}
-		if((null != type && !type.matches(Constants.ALLOW_EDITOR_TEXT))|| !suffix.matches(Constants.ALLOW_EDITOR_TEXT)){
-			return AjaxResponse.failed(-5,"不支持该格式文件在线编辑。");
-		}
-		if (resFile.length() > 4096L) {
-			return AjaxResponse.failed(-3, "超过文本读取大小限制(4K)。");
-		}
+        String fileName = fileItem.getName();
+        String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+        File resFile = getResFile(orgID, fileItem.getPath());
+        String type = FileType.getFileType(resFile.getAbsolutePath());
+        if (!resFile.exists()) {
+            return AjaxResponse.failed(-2, "文件不存在");
+        }
+        if ((null != type && !type.matches(Constants.ALLOW_EDITOR_TEXT)) || !suffix.matches(Constants.ALLOW_EDITOR_TEXT)) {
+            return AjaxResponse.failed(-5, "不支持该格式文件在线编辑。");
+        }
+        if (resFile.length() > 4096L) {
+            return AjaxResponse.failed(-3, "超过文本读取大小限制(4K)。");
+        }
         String value = "";
         try {
             value = FileUtils.readFileToString(resFile, "utf-8");
@@ -212,10 +206,10 @@ public class PushController {
 
     @RequestMapping(value = "admin/file/download", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse exportResource(@RequestParam("salt") Long orgID, @RequestParam("path") String path, HttpServletRequest request, HttpServletResponse response) {
+    public AjaxResponse exportResource(@RequestParam("salt") Long orgID, @RequestParam("path") String path) {
         String url = DOWNLOAD_HTTP + orgID.toString() + File.separator + path;
         AjaxResponse ajaxResponse = new AjaxResponse().success();
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = Maps.newHashMap();
         map.put("url", url);
         ajaxResponse.addDataEntry(map);
         return ajaxResponse;
@@ -226,7 +220,6 @@ public class PushController {
             return;
         }
         String prefix = FilenameUtils.concat(DOWNLOAD_HOME, Long.toString(orgID));
-//        String prefixHttp = FilenameUtils.concat(DOWNLOAD_HTTP, Long.toString(orgID));
         for (File file : parentFile.listFiles()) {
             FileItem fileItem = FileItem.toResourceModel(file, orgID, storeId);
             fileItem.setPath((trimStart(fileItem.getPath(), prefix)).replace(Constants.BACKSLASH, Constants.SLASH));

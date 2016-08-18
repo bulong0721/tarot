@@ -1,5 +1,7 @@
 package com.myee.tarot.catalog.domain;
 
+import com.myee.tarot.core.util.DateUtil;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -9,7 +11,7 @@ import java.util.Date;
 @Entity
 public class VoiceLog {
 
-    protected String dateTime;
+    private String dateTimeStr;
 
     private String cookieListen;
 
@@ -21,12 +23,14 @@ public class VoiceLog {
 
     protected String storeName;
 
-    public String getDateTime() {
-        return dateTime;
+    private Date dateTime;
+
+    public String getDateTimeStr() {
+        return dateTimeStr;
     }
 
-    public void setDateTime(String dateTime) {
-        this.dateTime = dateTime;
+    public void setDateTimeStr(String dateTimeStr) {
+        this.dateTimeStr = dateTimeStr;
     }
 
     public String getCookieListen() {
@@ -67,5 +71,13 @@ public class VoiceLog {
 
     public void setStoreName(String storeName) {
         this.storeName = storeName;
+    }
+
+    public Date getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(Date dateTime) {
+        this.dateTime = dateTime;
     }
 }

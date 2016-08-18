@@ -67,6 +67,10 @@ public class Constants {
 	public final static int WECHAT_OPEN = 0; //开启
 	public final static int WECHAT_CLOSE = 1;  //关闭
 
+	//ES查询模式0:must, 1:should
+	public final static int ES_QUERY_PATTERN_MUST = 0;
+	public final static int ES_QUERY_PATTERN_SHOULD = 1;
+
 	public final static String PRICEDRAW = "PRICEDRAW";
 
 	public final static String VOICELOGBAK = "voicelogbak"; //存放语音日志备份
@@ -74,5 +78,9 @@ public class Constants {
 	public final static String VOICELOG = "voicelog"; //存放所有语音日志
 
 	public static final String ALLOW_EDITOR_TEXT = "((txt)|(csv)|(log)|(xml)|(html)|(htm)|(js)|(css))";	//只允许编辑的文本格式（正则）
+
+	public final static String MY_LOTTERY_LIST_URL = "http://www.myee7.com/tarot_test/customerClient/index.html";
+
+	public final static String MY_LOTTERY_DETAIL_URL = "http://www.myee7.com/tarot_test/customerClient/index.html#!/myCouponView/";
 
 }

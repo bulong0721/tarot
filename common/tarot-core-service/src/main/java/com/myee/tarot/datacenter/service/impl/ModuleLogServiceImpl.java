@@ -4,6 +4,8 @@ import com.myee.tarot.core.service.GenericEntityServiceImpl;
 import com.myee.tarot.datacenter.dao.ModuleLogDao;
 import com.myee.tarot.datacenter.service.ModuleLogService;
 import com.myee.tarot.datacenter.domain.EventModule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ import java.util.List;
  */
 @Service
 public class ModuleLogServiceImpl extends GenericEntityServiceImpl<Long, EventModule> implements ModuleLogService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModuleLogServiceImpl.class);
 
     private ModuleLogDao moduleLogDao;
 

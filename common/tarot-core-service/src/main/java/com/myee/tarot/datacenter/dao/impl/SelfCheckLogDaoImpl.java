@@ -10,6 +10,8 @@ import com.myee.tarot.datacenter.domain.QSelfCheckLog;
 import com.myee.tarot.datacenter.domain.SelfCheckLog;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
@@ -19,6 +21,8 @@ import java.util.Map;
  */
 @Repository
 public class SelfCheckLogDaoImpl extends GenericEntityDaoImpl<Long, SelfCheckLog> implements SelfCheckLogDao {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SelfCheckLogDaoImpl.class);
 
     @Override
     public void uploadSelfCheckLog(SelfCheckLog selfCheckLog) {

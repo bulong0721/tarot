@@ -3,6 +3,7 @@ package com.myee.tarot.device.service.impl.elasticSearch;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.web.EntityQueryDto;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.JestResult;
@@ -164,13 +165,13 @@ public class ESUtils {
      * @param <T>
      * @return
      */
-    public <T> PageResult<T> searchPageQueries(String index, String type, Map<String, String> queries, int pageNum, int pageSize, Class<T> clazz) {
+    public <T> PageResult<T> searchPageQueries(String index, String type, Map<String, EntityQueryDto> queries, int pageNum, int pageSize, Class<T> clazz) {
         try {
             LOGGER.info("搜索开始");
             PageResult<T> pageResult =  new PageResult<>();
             int fromNum = pageSize * (pageNum - 1);
             long start = System.currentTimeMillis();
-            StringBuffer query = new StringBuffer();
+            StringBuffer query = new StringBuffer("");
             if(queries != null && queries.size() != 0){
                 query.append("{\n" +
                         "    \"query\": {\n" +
