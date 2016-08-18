@@ -2,6 +2,7 @@ package com.myee.tarot.device.service.impl.elasticSearch;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.myee.tarot.core.util.PageResult;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.JestResult;
@@ -116,9 +117,10 @@ public class ESUtils {
      * @param <T>
      * @return
      */
-    public <T> List<T> searchPageSource(String index, String type, String queryTitle, String param, int pageNum, int pageSize, Class<T> clazz) {
+    public <T> PageResult<T> searchPageSource(String index, String type, String queryTitle, String param, int pageNum, int pageSize, Class<T> clazz) {
         try {
             LOGGER.info("搜索开始");
+            PageResult<T> pageResult =  new PageResult<>();
             int fromNum = pageSize * (pageNum - 1);
             long start = System.currentTimeMillis();
             //采用自行拼接json
@@ -134,11 +136,15 @@ public class ESUtils {
                         "    }\n" +
                         "}";
             }
+            Search searchAllCount = new Search.Builder(query).addIndex(index).addType(type).build();
+            SearchResult countResult = jestClient.execute(searchAllCount);
+            pageResult.setRecordsTotal(countResult.getTotal());
             Search search = new Search.Builder(query).addIndex(index).addType(type).setParameter(Parameters.FROM, fromNum).setParameter(Parameters.SIZE, pageSize).build();
             JestResult result = jestClient.execute(search);
+            pageResult.setList(result.getSourceAsObjectList(clazz));
             long end = System.currentTimeMillis();
             LOGGER.info("搜索共用时间 -->> " + (end - start) + " 毫秒");
-            return result.getSourceAsObjectList(clazz);
+            return pageResult;
         } catch (Exception e) {
             LOGGER.error("搜索出现异常");
             e.printStackTrace();
@@ -158,39 +164,40 @@ public class ESUtils {
      * @param <T>
      * @return
      */
-    public <T> List<T> searchPageQueries(String index, String type, Map<String, String> queries, int pageNum, int pageSize, Class<T> clazz) {
+    public <T> PageResult<T> searchPageQueries(String index, String type, Map<String, String> queries, int pageNum, int pageSize, Class<T> clazz) {
         try {
             LOGGER.info("搜索开始");
+            PageResult<T> pageResult =  new PageResult<>();
             int fromNum = pageSize * (pageNum - 1);
             long start = System.currentTimeMillis();
-            String query = "";
+            StringBuffer query = new StringBuffer();
             if(queries != null && queries.size() != 0){
-                for (String s : queries.keySet()) {
-                }
-                query=   "{\n" +
+                query.append("{\n" +
                         "    \"query\": {\n" +
                         "      \"bool\": {\n" +
-                        "        \"must\": [\n" +
-                        "          { \"match\" : {\n" +
-                        "              \"hobby\" : {\n" +
-                        "                    \"query\" : \"呵呵\"\n" +
-                        "              }\n" +
-                        "          }},\n" +
-                        "          {\"match\" : {\n" +
-                        "               \"name\" : {\n" +
-                        "                    \"query\" : \"陈\"\n" +
-                        "              }\n" +
-                        "          }}\n" +
-                        "        ]\n" +
+                        "        \"must\": [\n" );
+                for (String key : queries.keySet()) {
+                    query.append( "          { \"match\" : {\n" +
+                            "              \""+key+"\" : {\n" +
+                            "                    \"query\" : \""+queries.get(key)+"\"\n" +
+                            "              }\n" +
+                            "          }}," );
+                }
+                query.deleteCharAt(query.length()-1);
+                query.append( "        ]\n" +
                         "      }\n" +
                         "    }\n" +
-                        "}";
+                        "}");
             }
-            Search search = new Search.Builder(query).addIndex(index).addType(type).setParameter(Parameters.FROM, fromNum).setParameter(Parameters.SIZE, pageSize).build();
+            Search searchAllCount = new Search.Builder(query.toString()).addIndex(index).addType(type).build();
+            SearchResult countResult = jestClient.execute(searchAllCount);
+            pageResult.setRecordsTotal(countResult.getTotal());
+            Search search = new Search.Builder(query.toString()).addIndex(index).addType(type).setParameter(Parameters.FROM, fromNum).setParameter(Parameters.SIZE, pageSize).build();
             JestResult result = jestClient.execute(search);
+            pageResult.setList(result.getSourceAsObjectList(clazz));
             long end = System.currentTimeMillis();
             LOGGER.info("搜索共用时间 -->> " + (end - start) + " 毫秒");
-            return result.getSourceAsObjectList(clazz);
+            return pageResult;
         } catch (Exception e) {
             LOGGER.error("搜索出现异常");
             e.printStackTrace();

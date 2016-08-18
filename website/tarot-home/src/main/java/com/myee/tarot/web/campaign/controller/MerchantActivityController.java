@@ -112,9 +112,14 @@ public class MerchantActivityController {
                 if(priceId!= null){
                     MerchantPrice findPrice = merchantPriceService.findById(priceId);
                     if(findPrice!=null){
+                        //标记是否有已激活的奖券被修改
+                        boolean flag = false;
                         //修改
                         for (MerchantPrice price : existPrices) {
                             if(price.getId() == priceId){
+                                if(price.getActiveStatus() == Constants.PRICE_START){
+                                    flag = true;
+                                }
                                 //redis放缓存
                                 MerchantPrice getPrice = prices.get(0);
                                 price.setName(getPrice.getName());
@@ -134,6 +139,19 @@ public class MerchantActivityController {
                         }
                         existActivity.setPrices(existPrices);
                         activity = existActivity;
+                        //修改重置抽奖规则表
+                        if(flag){
+                            List<MerchantPrice> activePrice = Lists.newArrayList();
+                            for (MerchantPrice existPrice : existPrices) {
+                                if(existPrice.getActiveStatus() == Constants.PRICE_START){
+                                    activePrice.add(existPrice);
+                                }
+                            }
+                            List<Integer> newPriceList = getPriceCountList(activePrice);
+                            existActivity.setActivityStatus(Constants.ACTIVITY_ACTIVE);
+                            existActivity.setPriceList(JSON.toJSONString(newPriceList));
+                            merchantActivityService.update(existActivity);
+                        }
                     }else{
                         //去除id
                         prices.get(0).setId(null);
