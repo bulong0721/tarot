@@ -28,9 +28,6 @@ public class QuartzForVoiceLog {
     private String DOWNLOAD_HOME;
 
     @Autowired
-    private ThreadPoolTaskExecutor taskExecutor;
-
-    @Autowired
     private ESUtils esUtils;
 
     @Scheduled(cron = "0 23 * * * *")  //每天23PM跑定时任务语音日志放到Es并移动文件
@@ -51,30 +48,33 @@ public class QuartzForVoiceLog {
         try {
             for (final File file : fileArr) {
                 if (file.exists()) {
-                    BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "GBK"));
-                    CSVReader csvReader = new CSVReader(br);
-                    String[] strs = csvReader.readNext();//读一行，第一行是抬头，暂时没用
-                    List<String[]> list = csvReader.readAll();//读剩下全部
-                    List<VoiceLog> voiceLogList = Lists.newArrayList();
-                    if (list != null) {
-                        for (int i = 0; i < list.size(); i++) {
-                            String[] ss = list.get(i);
-                            VoiceLog voiceLog = new VoiceLog();
-                            if (!StringUtil.isBlank(ss[0]) && !StringUtil.isBlank(ss[4])) {
-                                voiceLog.setDateTime(ss[0] + " " + ss[4]);//日期-时间
+                    try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "GBK"))) {
+                        try (CSVReader csvReader = new CSVReader(br)) {
+                            String[] strs = csvReader.readNext();//读一行，第一行是抬头，暂时没用
+                            List<String[]> list = csvReader.readAll();//读剩下全部
+                            List<VoiceLog> voiceLogList = Lists.newArrayList();
+                            if (list != null) {
+                                for (int i = 0; i < list.size(); i++) {
+                                    String[] ss = list.get(i);
+                                    VoiceLog voiceLog = new VoiceLog();
+                                    if (!StringUtil.isBlank(ss[0]) && !StringUtil.isBlank(ss[4])) {
+                                        voiceLog.setDateTime(ss[0] + " " + ss[4]);//日期-时间
+                                    }
+                                    voiceLog.setCookieListen(ss[1] == null ? null : ss[1]);//Cooky- Listen
+                                    voiceLog.setCookieSpeak(ss[2] == null ? null : ss[2].toString());//Cooky- Speak
+                                    voiceLog.setVoiceType(ss[3] == null ? null : ss[3].toString().equals("聊天") ? "1" : "2");
+                                    voiceLog.setStoreId(ss[5] == null ? null : Long.valueOf(ss[5]));
+                                    voiceLog.setStoreName(ss[6] == null ? null : ss[6].toString());
+                                    voiceLog.setNum(Long.valueOf(i + 1));
+                                    voiceLogList.add(voiceLog);
+                                }
+                                esUtils.bulkAddList("log", "voiceLog", voiceLogList);
                             }
-                            voiceLog.setCookieListen(ss[1] == null ? null : ss[1]);//Cooky- Listen
-                            voiceLog.setCookieSpeak(ss[2] == null ? null : ss[2].toString());//Cooky- Speak
-                            voiceLog.setVoiceType(ss[3] == null ? null : ss[3].toString().equals("聊天") ? "1" : "2");
-                            voiceLog.setStoreId(ss[5] == null ? null : Long.valueOf(ss[5]));
-                            voiceLog.setStoreName(ss[6] == null ? null : ss[6].toString());
-                            voiceLog.setNum(Long.valueOf(i + 1));
-                            voiceLogList.add(voiceLog);
+                            csvReader.close();
+                            moveToRecycle(file);
                         }
-                        esUtils.bulkAddList("log", "voiceLog", voiceLogList);
                     }
-                    csvReader.close();
-                    moveToRecycle(file);
+                    ;
                 }
             }
         } catch (Exception e) {

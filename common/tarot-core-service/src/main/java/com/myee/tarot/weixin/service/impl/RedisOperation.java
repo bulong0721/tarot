@@ -153,7 +153,7 @@ public abstract class RedisOperation {
         } catch (Throwable e) {
             logger.error("hget key:" + redisKey + " error:", e);
         }
-        return null;
+        return Maps.newHashMap();
     }
 
     protected <T> void hsetall(String redisKey, Map<String, T> map) {

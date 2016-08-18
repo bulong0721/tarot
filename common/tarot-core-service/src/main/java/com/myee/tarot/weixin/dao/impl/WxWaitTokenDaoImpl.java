@@ -72,7 +72,7 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
     }
 
     @Override
-    public WxWaitToken selectTokenByIc(String identityCode, Long beginTime, Long endTime) {
+    public WxWaitToken selectTokenByIdentityCode(String identityCode, Long beginTime, Long endTime) {
         QWxWaitToken qrWaitToken = QWxWaitToken.wxWaitToken;
         JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
         query.from(qrWaitToken);

@@ -1,6 +1,6 @@
 package com.myee.tarot.web.apiold.util;
 
-import com.myee.tarot.web.util.DateUtil;
+import com.myee.tarot.core.util.DateUtil;
 
 import java.util.Date;
 

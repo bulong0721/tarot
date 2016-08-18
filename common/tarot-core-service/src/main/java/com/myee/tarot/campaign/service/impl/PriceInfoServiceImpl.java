@@ -14,10 +14,7 @@ import com.myee.tarot.campaign.service.impl.redis.RedisUtil;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
-import com.myee.tarot.core.util.AutoNumUtil;
-import com.myee.tarot.core.util.PageRequest;
-import com.myee.tarot.core.util.PageResult;
-import com.myee.tarot.core.util.TimeUtil;
+import com.myee.tarot.core.util.*;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +27,7 @@ import java.util.Random;
  * Created by Administrator on 2016/7/14.
  */
 @Service
-public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceInfo> implements PriceInfoService{
+public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceInfo> implements PriceInfoService {
 
     @Autowired
     private PriceInfoDao priceInfoDao;
@@ -45,7 +42,7 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
     private ModeSwitchService modeSwitchService;
 
     @Autowired
-    private PriceInfoServiceImpl(PriceInfoDao priceInfoDao){
+    private PriceInfoServiceImpl(PriceInfoDao priceInfoDao) {
         super(priceInfoDao);
         this.priceInfoDao = priceInfoDao;
     }
@@ -56,7 +53,7 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
     }
 
     @Override
-    public PageResult<PriceInfo> pageList(Long storeId,PageRequest pageRequest) {
+    public PageResult<PriceInfo> pageList(Long storeId, PageRequest pageRequest) {
         return priceInfoDao.pageList(storeId, pageRequest);
     }
 
@@ -67,16 +64,16 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
 
     @Override
     public boolean findByStoreIdAndKeyIdToday(Long storeId, String keyId) {
-        List<PriceInfo> priceInfo = priceInfoDao.findByStoreIdAndKeyId(storeId,keyId);
+        List<PriceInfo> priceInfo = priceInfoDao.findByStoreIdAndKeyId(storeId, keyId);
         List<PriceInfo> onlyInfo = Lists.newArrayList();
         for (PriceInfo info : priceInfo) {
             Date getDate = info.getGetDate();
-            boolean flag = TimeUtil.whetherToday(getDate);
-            if(flag){
+            boolean flag = DateUtil.whetherToday(getDate);
+            if (flag) {
                 onlyInfo.add(info);
             }
         }
-        return onlyInfo!=null&&onlyInfo.size()==1 ? false : true;
+        return onlyInfo != null && onlyInfo.size() == 1 ? false : true;
     }
 
     @Override
@@ -98,17 +95,17 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
         }*/
         PriceInfo priceInfo = new PriceInfo();
         priceInfo.setKeyId(keyId);
-        priceInfo.setCheckCode(AutoNumUtil.getCode( 6, 3).toUpperCase()); //设置6位随机数
+        priceInfo.setCheckCode(AutoNumUtil.getCode(6, 3).toUpperCase()); //设置6位随机数
         priceInfo.setStatus(Constants.PRICEINFO_UNUSED);
         priceInfo.setGetDate(new Date());
         MerchantActivity activity = merchantActivityService.findStoreActivity(storeId);
         // 从redis中获取抽奖规则list,判定list是否为空，为空后直接修改活动状态，直接为结束
         //List<Integer> priceList = redisUtil.getList(Constants.PRICEDRAW + "_"+ storeId,Integer.class);
         //改从数据库直接获取
-        List<Integer> priceList = JSON.parseArray(activity.getPriceList(),Integer.class);
-        if(priceList==null||priceList.size()==0){
+        List<Integer> priceList = JSON.parseArray(activity.getPriceList(), Integer.class);
+        if (priceList == null || priceList.size() == 0) {
             // MerchantActivity merchantActivity = merchantActivityService.findStoreActivity(storeId);
-            if(activity.getActivityStatus() != Constants.ACITIVITY_END){
+            if (activity.getActivityStatus() != Constants.ACITIVITY_END) {
                 activity.setActivityStatus(Constants.ACITIVITY_END);
                 merchantActivityService.update(activity);
             }
@@ -116,7 +113,7 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
             return resp;
         }
-        PriceInfo info = getRandomPrice(priceInfo,priceList,activity.getPrices());
+        PriceInfo info = getRandomPrice(priceInfo, priceList, activity.getPrices());
         // 更新redis的list
         /*if(priceList.size()==0){
             redisUtil.delete(Constants.PRICEDRAW + "_" + storeId);
@@ -143,10 +140,10 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
                 // 奖券过期判断
                 Date endDate = price.getEndDate();
                 Date startToday = DateTimeUtils.startToday();
-                if(endDate.compareTo(startToday) < 0){
+                if (endDate.compareTo(startToday) < 0) {
                     price.setActiveStatus(Constants.PRICE_END);
                 }
-                if(price.getActiveStatus() == Constants.PRICE_START) {
+                if (price.getActiveStatus() == Constants.PRICE_START) {
                     activePrices.add(price);
                 }
             }
@@ -165,23 +162,23 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
 
     @Override
     public PriceInfo findByIdAndKeyId(Long id, String keyId) {
-        return priceInfoDao.findByIdAndKeyId(id,keyId);
+        return priceInfoDao.findByIdAndKeyId(id, keyId);
     }
 
-    public PriceInfo getRandomPrice(PriceInfo basePriceInfo,List<Integer> priceList,List<MerchantPrice> prices){
+    public PriceInfo getRandomPrice(PriceInfo basePriceInfo, List<Integer> priceList, List<MerchantPrice> prices) {
         Random random = new Random();
         int index = random.nextInt(priceList.size());
         int priceInt = priceList.get(index);
         List<MerchantPrice> activePrices = Lists.newArrayList();
         for (MerchantPrice price : prices) {
-            if(price.getActiveStatus()==Constants.PRICE_START){
+            if (price.getActiveStatus() == Constants.PRICE_START) {
                 activePrices.add(price);
             }
         }
         int compare = 0;
         for (MerchantPrice activePrice : activePrices) {
-            compare+=activePrice.getTotal();
-            if(priceInt<= compare){
+            compare += activePrice.getTotal();
+            if (priceInt <= compare) {
                 MerchantPrice getPrice = activePrice;
                 basePriceInfo.setPriceName(getPrice.getName());
                 basePriceInfo.setPriceLogo(getPrice.getLogoUrl());
@@ -197,7 +194,8 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
     }
 
     //重新分配奖券list
-    public List<Integer> getPriceCountList(List<MerchantPrice> prices){;
+    public List<Integer> getPriceCountList(List<MerchantPrice> prices) {
+        ;
         List<Integer> priceList = Lists.newArrayList();
         int totalAll = 0;
         for (MerchantPrice price : prices) {

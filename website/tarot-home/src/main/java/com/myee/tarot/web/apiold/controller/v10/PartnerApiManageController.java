@@ -11,7 +11,7 @@ import com.myee.tarot.catering.service.TableService;
 import com.myee.tarot.web.apiold.controller.BaseController;
 import com.myee.tarot.apiold.eum.TemplateSMSType;
 import com.myee.tarot.web.apiold.util.*;
-import com.myee.tarot.web.util.DateUtil;
+import com.myee.tarot.core.util.DateUtil;
 import com.myee.tarot.weixin.domain.ClientAjaxResult;
 import me.chanjar.weixin.common.util.StringUtils;
 import org.slf4j.Logger;

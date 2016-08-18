@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public interface WeixinService {
 
-    Collection<ShopDetail> allStoreOfClient(Long clientId, Long orgId);
+    Collection<ShopDetail> allStoreOfClient(Long clientId);
 
     ShopDetail storeOfClient(long clientId, long storeId);
 
@@ -35,14 +35,14 @@ public interface WeixinService {
      * @param orgID
      * @return
      */
-    Map<String,Object> selectTokensByInfo(String openId, Long orgID, Long tableTypeId);
+    Map<String,Object> selectAllTokens(String openId, Long orgID, Long tableTypeId);
 
     /**
      * 根据identityCode查询最新进展
      * @param identityCode
      * @return
      */
-    Map<String,Object> selectLatestDevelopmentsByIc(String identityCode);
+    Map<String,Object> selectProgressByIdentityCode(String identityCode);
 
     /**
      * 按openId和状态去数据库里查找Token

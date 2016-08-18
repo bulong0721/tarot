@@ -154,12 +154,10 @@ public class PushController {
                     return AjaxResponse.failed(-2, message);
                 }
             }
-            boolean isCopy = copyToRecycle(resFile);//复制文件到回收站
-            if (isCopy) { //复制成功后执行删除
-                message = "删除成功!";
+            boolean isMove = moveToRecycle(resFile);//移动文件到回收站
+            if (isMove) { //移动成功后执行删除
                 if (resFile.exists()) {
                     FileUtils.deleteQuietly(resFile);
-                    message = "删除成功!";
                 }
                 if (path.lastIndexOf(File.separator) != -1) {
                     File parentPathFile = getResFile(orgID, path.substring(0, path.lastIndexOf(File.separator)));
@@ -185,7 +183,6 @@ public class PushController {
         if (orgID != fileItem.getSalt()) {
             return AjaxResponse.failed(-1, "文件不属于该店铺，不能修改");
         }
-
         File resFile = getResFile(orgID, fileItem.getPath());
         if (!resFile.exists()) {
             return AjaxResponse.failed(-2, "文件不存在");
@@ -298,71 +295,39 @@ public class PushController {
         return null;
     }
 
-    @RequestMapping(value = "admin/table/push", method = RequestMethod.POST)
-    @ResponseBody
-    public AjaxResponse pushTable(String tableStr, String mbNum) {
-        String tableStrTest = "{\"id\":1,\"tableZone\":{\"id\":1,\"name\":\"A区\"},\"description\":\"测试2\",\"name\":\"测试1\",\"tableType\":{\"id\":2,\"name\":\"大桌1\"}}";
-        String mbNumStr = "Gaea-23#";
-        mbNum = mbNumStr;
-        OrchidService eptService = null;
-        ResponseData rd = null;
-        AjaxResponse resp = new AjaxResponse();
-        try {
-//            eptService = serverBootstrap.getClient(OrchidService.class, mbNum);
-            String pushTableStr = JSONObject.toJSONString(tableStrTest);
-//            rd = eptService.sendNotification(pushTableStr);
-            if (rd != null) {
-                resp = AjaxResponse.success();
-            } else {
-                resp = AjaxResponse.failed(-1);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return resp;
-    }
-
     final static Charset charset = Charset.forName("UTF8");
 
-    static String toClientUUID(long shopId) {
-        String rawId = String.format("shopId:%08d", shopId);
-        return Base64.encodeBase64String(rawId.getBytes(charset));
-    }
-
     /**
-     * 复制文件至回收站
+     * 移动文件至回收站
      *
      * @param file
      * @return
      */
-    public boolean copyToRecycle(File file) {
+    public boolean moveToRecycle(File file) {
         try {
-            if (file.exists()) {
+            if (file.exists() && file.isFile()) {
                 String tempFilePath = file.getPath().replaceAll("\\\\", "/");//把路径中的反斜杠替换成斜杠
                 String tempDownloadPath = DOWNLOAD_HOME.replaceAll("\\\\", "/") + "/";//准备用于替换成url的下载文件夹路径
                 String tempTargetPath = (DOWNLOAD_HOME + File.separator + "deleted" + File.separator).replaceAll("\\\\", "/");
                 String targetPath = tempFilePath.replaceAll(tempDownloadPath, tempTargetPath);
-                if (file.isFile()) {
-                    // Destination directory
-                    File dir = new File(targetPath);
-                    File parentPath = new File(dir.getParent());
-                    parentPath.mkdirs();
-                    // Move file to new directory
-                    boolean success = file.renameTo(dir);
-                } else if (file.isDirectory()) {
-                    File files[] = file.listFiles();
-                    for (int i = 0; i < files.length; i++) {
-                        copyToRecycle(files[i]);
-                    }
-                }
+                // Destination directory
+                File dir = new File(targetPath);
+                File parentPath = new File(dir.getParent());
+                parentPath.mkdirs();
+                // Move file to new directory
+                boolean success = file.renameTo(dir);
                 return true;
             } else {
-                System.out.println("所删除的文件不存在！" + '\n');
+                File files[] = file.listFiles();
+                for (int i = 0; i < files.length; i++) {
+                    moveToRecycle(files[i]);
+                }
+                LOGGER.info("所删除的文件不存在！" + '\n');
                 return false;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.print("unable to delete the folder!");
+            LOGGER.info("unable to delete the folder!");
         }
         return false;
     }

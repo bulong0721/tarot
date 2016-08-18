@@ -63,7 +63,7 @@ public class MerchantStoreDaoImpl extends GenericEntityDaoImpl<Long, MerchantSto
     }
 
     @Override
-    public List<MerchantStore> findByClientId(Long merchantId) {
+    public List<MerchantStore> selectAllByMerchantId(Long merchantId) {
         QMerchantStore qMerchantStore = QMerchantStore.merchantStore;
         JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
         query.from(qMerchantStore);

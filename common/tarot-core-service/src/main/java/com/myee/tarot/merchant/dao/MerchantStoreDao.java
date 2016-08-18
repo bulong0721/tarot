@@ -22,7 +22,7 @@ public interface MerchantStoreDao extends GenericEntityDao<Long, MerchantStore> 
 
     public MerchantStore findOne(Long shopId);
 
-    public List<MerchantStore> findByClientId(Long clientId);
+    public List<MerchantStore> selectAllByMerchantId(Long merchantId);
 
     MerchantStore getByCode(String storeCode);
 }
