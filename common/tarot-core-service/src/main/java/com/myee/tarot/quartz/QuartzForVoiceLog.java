@@ -22,7 +22,7 @@ import java.util.List;
 @Component
 public class QuartzForVoiceLog {
 
-    private static final Logger logger = LoggerFactory.getLogger(QuartzForVoiceLog.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuartzForVoiceLog.class);
 
     @Value("${cleverm.push.dirs}")
     private String DOWNLOAD_HOME;
@@ -30,7 +30,7 @@ public class QuartzForVoiceLog {
     @Autowired
     private ESUtils esUtils;
 
-    @Scheduled(cron = "0 23 * * * *")  //每天23PM跑定时任务语音日志放到Es并移动文件
+//    @Scheduled(cron = "* 0/2 * * * ? ")  //每天23PM跑定时任务语音日志放到Es并移动文件
     public void parseFileToDb() {
         //获取路径下所有的csv文件
         File[] fileArr = getFiles(new File(DOWNLOAD_HOME + File.separator + Constants.VOICELOG));
@@ -65,10 +65,9 @@ public class QuartzForVoiceLog {
                                     voiceLog.setVoiceType(ss[3] == null ? null : ss[3].toString().equals("聊天") ? "1" : "2");
                                     voiceLog.setStoreId(ss[5] == null ? null : Long.valueOf(ss[5]));
                                     voiceLog.setStoreName(ss[6] == null ? null : ss[6].toString());
-                                    voiceLog.setNum(Long.valueOf(i + 1));
                                     voiceLogList.add(voiceLog);
                                 }
-                                esUtils.bulkAddList("log", "voiceLog", voiceLogList);
+                                esUtils.bulkAddList("log4", "voiceLog4", voiceLogList);
                             }
                             csvReader.close();
                             moveToRecycle(file);
@@ -79,7 +78,7 @@ public class QuartzForVoiceLog {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -125,7 +124,10 @@ public class QuartzForVoiceLog {
             if (!dirNew.getParentFile().exists()) {
                 dirNew.getParentFile().mkdirs();
             }
-            file.renameTo(dirNew);
+            boolean flag = file.renameTo(dirNew);
+            if(flag == false) {
+                LOGGER.info("同名文件已经存在,移动失败!");
+            }
         } else if (file.isDirectory()) {
             File files[] = file.listFiles();
             for (int i = 0; i < files.length; i++) {

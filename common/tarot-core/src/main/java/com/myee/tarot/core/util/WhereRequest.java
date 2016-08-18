@@ -21,6 +21,10 @@ public class WhereRequest extends PageRequest {
 
     private Date endDate;
 
+    private String keyword;
+
+    private String voiceLogType;
+
     public String getEventLevel() {
         return eventLevel;
     }
@@ -67,5 +71,21 @@ public class WhereRequest extends PageRequest {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public String getVoiceLogType() {
+        return voiceLogType;
+    }
+
+    public void setVoiceLogType(String voiceLogType) {
+        this.voiceLogType = voiceLogType;
     }
 }

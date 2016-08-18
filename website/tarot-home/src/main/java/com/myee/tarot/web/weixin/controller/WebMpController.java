@@ -44,7 +44,7 @@ import java.util.*;
 @Controller
 @RequestMapping("weixin/wxmp")
 public class WebMpController {
-    private static final Logger logger = LoggerFactory.getLogger(WebMpController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebMpController.class);
     private static final String wpSite = "http://www.myee7.com/tarot_test";
     @Autowired
     private   WxMpService       wxMpService;
@@ -68,7 +68,7 @@ public class WebMpController {
     @ResponseBody
     public void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-        logger.info("微信公众号请求信息");
+        LOGGER.info("微信公众号请求信息");
         req.setCharacterEncoding("utf-8");
         resp.setCharacterEncoding("utf-8");
         resp.setContentType("text/html;charset=utf-8");
@@ -82,7 +82,7 @@ public class WebMpController {
 
         // 默认返回的文本消息内容
         String respContent = "请求处理异常，请稍候尝试！";
-
+        Map map = Maps.newHashMap();
         try {
             if (!wxMpService.checkSignature(timestamp, nonce, signature)) {
                 out.print("非法请求");
@@ -99,12 +99,12 @@ public class WebMpController {
                     String redisKeyOfUcdScId = RedisKeys.getIdentityCode(Long.valueOf(merchantStoreId));
                     String identityCode = manager.getIdentityCode(redisKeyOfUcdScId);
                     //将该二维码绑定扫码的微信OpenId
-                    Map<String,Object> msgMap = new HashMap<String,Object>();
+                    Map<String,Object> msgMap = Maps.newHashMap();
                     if(wxService.bondQrCodeByScan(identityCode, inMessage.getFromUserName())) {
-                        msgMap = checkLatestDevelopments(identityCode);
+                        msgMap = checkProgressByIdentityCode(identityCode);
                         int i = wxService.modifyWaitingInfo(Long.parseLong(msgMap.get("waitedTableCount").toString()),identityCode,Long.valueOf(msgMap.get("timeTook").toString()), Long.parseLong(msgMap.get("predictWaitingTime").toString()));
                         if(i != 1) {
-                            logger.error("修改排号信息失败!");
+                            LOGGER.error("修改排号信息失败!");
                         }
                     } else {
                         msgMap.put("valid", "该唯一码已过期或无效，查询进度失败!");
@@ -116,7 +116,6 @@ public class WebMpController {
                     Long storeId = Long.valueOf(inMessage.getEventKey().substring(1, inMessage.getEventKey().length()));
                     AjaxResponse aResp = priceInfoService.savePriceInfo(inMessage.getFromUserName(), storeId);
                     PriceInfo priceInfo = (PriceInfo) aResp.getDataMap().get("result");
-                    Map map = new HashMap();
                     if(priceInfo != null) {
                         Date startDate = priceInfo.getPrice().getStartDate();
                         Date endDate = priceInfo.getPrice().getEndDate();
@@ -138,7 +137,6 @@ public class WebMpController {
                     Long storeId = Long.valueOf(inMessage.getEventKey().substring(1, inMessage.getEventKey().length()));
                     AjaxResponse aResp = priceInfoService.savePriceInfo(inMessage.getFromUserName(), storeId);
                     PriceInfo priceInfo = (PriceInfo) aResp.getDataMap().get("result");
-                    Map map = new HashMap();
                     if (priceInfo != null) {
                         Date startDate = priceInfo.getPrice().getStartDate();
                         Date endDate = priceInfo.getPrice().getEndDate();
@@ -157,7 +155,7 @@ public class WebMpController {
 
                 //点击事件
                 if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent()!= null && inMessage.getEvent().equals(WxConsts.EVT_CLICK)) {
-                    Map<String,Object> map = checkLatestDevelopments(inMessage.getFromUserName(), WaitTokenState.WAITING.getValue());
+                    map = checkProgressByOpenIdState(inMessage.getFromUserName(), WaitTokenState.WAITING.getValue());
                     inMessage.setMap(map);
                 }
 
@@ -168,22 +166,20 @@ public class WebMpController {
                         String redisKeyOfUcdScId = RedisKeys.getIdentityCode(Long.valueOf(merchantStoreId));
                         String identityCode = manager.getIdentityCode(redisKeyOfUcdScId);
                         //将该二维码绑定扫码的微信OpenId
-                        Map<String,Object> msgMap = new HashMap<String,Object>();
                         if(wxService.bondQrCodeByScan(identityCode, inMessage.getFromUserName())) {
-                            msgMap = checkLatestDevelopments(identityCode);
-                            int i = wxService.modifyWaitingInfo(Long.parseLong(msgMap.get("waitedTableCount").toString()),identityCode,Long.valueOf(msgMap.get("timeTook").toString()), Long.parseLong(msgMap.get("predictWaitingTime").toString()));
+                            map = checkProgressByIdentityCode(identityCode);
+                            int i = wxService.modifyWaitingInfo(Long.parseLong(map.get("waitedTableCount").toString()),identityCode,Long.valueOf(map.get("timeTook").toString()), Long.parseLong(map.get("predictWaitingTime").toString()));
                             if(i != 1) {
-                                logger.error("修改排号信息失败!");
+                                LOGGER.error("修改排号信息失败!");
                             }
                         } else {
-                            msgMap.put("vaild","该唯一码已过期或无效，查询进度失败!");
+                            map.put("vaild","该唯一码已过期或无效，查询进度失败!");
                         }
-                        inMessage.setMap(msgMap);
+                        inMessage.setMap(map);
                     } else {
                         Long storeId = Long.valueOf(inMessage.getEventKey().substring(9, inMessage.getEventKey().length()));
                         AjaxResponse aResp = priceInfoService.savePriceInfo(inMessage.getFromUserName(), storeId);
                         PriceInfo priceInfo = (PriceInfo) aResp.getDataMap().get("result");
-                        Map map = new HashMap();
                         if(priceInfo != null) {
                             Date startDate = priceInfo.getPrice().getStartDate();
                             Date endDate = priceInfo.getPrice().getEndDate();
@@ -207,7 +203,7 @@ public class WebMpController {
 
             //直接输唯一码
             if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.CUSTOM_MSG_TEXT) && inMessage.getContent() != null && inMessage.getContent().matches(pattern)) {
-                Map<String,Object> msgMap = checkLatestDevelopments(inMessage.getContent());
+                Map<String,Object> msgMap = checkProgressByIdentityCode(inMessage.getContent());
                 if (msgMap == null) {
                     msgMap = Maps.newHashMap();
                 }
@@ -222,7 +218,7 @@ public class WebMpController {
                 WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage);
                 out.write(outMessage.toEncryptedXml(wxMpConfigStorage));
             } else {
-                logger.error("不可识别的加密类型");
+                LOGGER.error("不可识别的加密类型");
                 out.write("不可识别的加密类型");
             }
         } catch (Exception e) {
@@ -278,7 +274,7 @@ public class WebMpController {
      * @return
      **/
 
-    private Map<String,Object> checkLatestDevelopments(String openId, Integer state) {
+    private Map<String,Object> checkProgressByOpenIdState(String openId, Integer state) {
         //按openId和状态去数据库里查找最新的扫码绑定排位号
         WxWaitToken myWt = wxService.selectTokensByOpenIdState(openId,state);
         //如果找到了，说明是可以通过点击按钮方式直接查询
@@ -297,7 +293,7 @@ public class WebMpController {
      * @return
      * */
 
-    private Map<String,Object> checkLatestDevelopments(String identityCode) {
+    private Map<String,Object> checkProgressByIdentityCode(String identityCode) {
         Map<String,Object> latestDevInfo = wxService.selectProgressByIdentityCode(identityCode);
         return latestDevInfo;
     }
@@ -341,7 +337,7 @@ public class WebMpController {
             wxMpService.menuCreate(menu);
 
         } catch (WxErrorException e) {
-            logger.error(e.toString());
+            LOGGER.error(e.toString());
         }
         return ClientAjaxResult.success("菜单创建成功！");
     }
@@ -355,7 +351,7 @@ public class WebMpController {
             ticket = wxMpService.qrCodeCreateTmpTicket(shopId.intValue(), 604800);
             Long endTime = System.currentTimeMillis();
             Long time = endTime - startTime;
-            logger.info("生成二维码接口时间消耗:" + time + "毫秒");
+            LOGGER.info("生成二维码接口时间消耗:" + time + "毫秒");
         } catch (WxErrorException e) {
             e.printStackTrace();
         }

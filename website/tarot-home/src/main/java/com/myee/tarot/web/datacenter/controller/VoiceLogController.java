@@ -1,9 +1,9 @@
 package com.myee.tarot.web.datacenter.controller;
 
-import com.google.common.collect.Maps;
 import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
 import com.myee.tarot.catalog.domain.VoiceLog;
 import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.device.service.impl.elasticSearch.ESUtils;
@@ -33,7 +33,7 @@ import java.util.*;
 @Controller
 public class VoiceLogController {
 
-    private static final Logger logger = LoggerFactory.getLogger(VoiceLogController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VoiceLogController.class);
 
     @Value("${cleverm.push.dirs}")
     private String DOWNLOAD_HOME;
@@ -46,18 +46,13 @@ public class VoiceLogController {
 
     /**
      * 下载
-     * @param startDate
-     * @param endDate
-     * @param type
-     * @param keyword
+     * @param whereRequest
+     * @param request
      * @return
      */
     @RequestMapping(value = "voiceLog/download", method = {RequestMethod.POST})
     @ResponseBody
-    public AjaxResponse download(@RequestParam(value = "startDate", required = false) String startDate,
-                                 @RequestParam(value = "endDate", required = false) String endDate,
-                                 @RequestParam(value = "type", required = false) String type,
-                                 @RequestParam(value = "keyword", required = false) String keyword, HttpServletRequest request) {
+    public AjaxResponse download(WhereRequest whereRequest, HttpServletRequest request) {
         CSVWriter writer = null;
         AjaxResponse resp = new AjaxResponse();
         String fileName = null;
@@ -92,7 +87,6 @@ public class VoiceLogController {
                 } else {
                     voiceLog.setVoiceType("脱口秀");
                 }
-                voiceLog.setNum(Long.valueOf(j));
                 voiceLog.setCookieListen("wowowo" + j);
                 voiceLog.setCookieSpeak("我勒个去" + j);
                 voiceLog.setStoreId(100L);
@@ -119,18 +113,15 @@ public class VoiceLogController {
 
     @RequestMapping(value = "voiceLog/paging", method = RequestMethod.GET)
     @ResponseBody
-    public AjaxPageableResponse pageDevice(@RequestParam(value = "startDate", required = false) Date startDate,
-                                           @RequestParam(value = "endDate", required = false) Date endDate,
-                                           @RequestParam(value = "voiceType", required = false) String type,
-                                           @RequestParam(value = "keyword", required = false) String keyword, PageRequest pageRequest) {
+    public AjaxPageableResponse pageDevice(WhereRequest whereRequest, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         pageRequest.setCount(-1);//不分页，查询所有结果
-        Map<String, String> queries = Maps.newHashMap();
+//        Map<String, String> queries = Maps.newHashMap();
         /*queries.put("startDate",startDate);
         queries.put("endDate",endDate);*/
-        queries.put("voiceType", type);
-        queries.put("cookieListen", keyword);
-        List<VoiceLog> voiceLogList = esUtils.searchPageQueries("log", "voiceLog", queries, 1, 10, VoiceLog.class);
+//        queries.put("voiceType", type);
+//        queries.put("cookieListen", keyword);
+        List<VoiceLog> voiceLogList = esUtils.searchPageSource("log4", "voiceLog4", StringUtil.isNullOrEmpty(whereRequest.getKeyword())? null : "cookieSpeak", whereRequest.getKeyword(), 1, 10, VoiceLog.class);
         for (VoiceLog voiceLog : voiceLogList) {
             resp.addDataEntry(objectToEntry(voiceLog));
         }
@@ -141,7 +132,6 @@ public class VoiceLogController {
     //把类转换成entry返回给前端，解耦和
     private Map objectToEntry(VoiceLog voiceLog) {
         Map entry = new HashMap();
-        entry.put("num", voiceLog.getNum());
         entry.put("dateTime",voiceLog.getDateTime());
         entry.put("storeName",voiceLog.getStoreName());
         entry.put("voiceType",voiceLog.getVoiceType());

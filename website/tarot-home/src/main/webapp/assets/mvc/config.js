@@ -281,17 +281,12 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 }
             }
         })
-        .state('voiceLogManage', {
-            abstract: true,
-            url: "/voiceLogManage",
-            template: "<div ui-view></div>"
-        })
-        .state('voiceLogManage.voiceLog', {
+        .state('dataCenter.voiceLog', {
             url: "/voiceLog",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'voiceLogCtrl',
             data: {
-                pageTitle: '语音管理',
+                pageTitle: '数据中心',
                 subTitle: '语音日志',
                 datatable: 'assets/mvc/datacenter/view/voicelog_datatable.html',
             },

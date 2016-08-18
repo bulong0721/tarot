@@ -21,8 +21,6 @@ public class VoiceLog {
 
     protected String storeName;
 
-    private Long num;
-
     public String getDateTime() {
         return dateTime;
     }
@@ -69,13 +67,5 @@ public class VoiceLog {
 
     public void setStoreName(String storeName) {
         this.storeName = storeName;
-    }
-
-    public Long getNum() {
-        return num;
-    }
-
-    public void setNum(Long num) {
-        this.num = num;
     }
 }
