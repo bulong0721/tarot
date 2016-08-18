@@ -37,6 +37,8 @@ public class DateTimeUtils {
 
     /**	yyyy-MM-dd_HH-mm-ss	用于文件名的格式化*/
     public final static String PATTERN_NAME_DATETIME = "yyyy-MM-dd_HH-mm-ss";
+    /**	yyyyMMddHHmmss	*/
+    public final static String PATTERN_SHORTDATETIME = "yyyyMMddHHmmss";
 
     /**
      * 以yyyy-MM-dd HH:mm:ss形式返回当前时间的字符串
@@ -272,6 +274,28 @@ public class DateTimeUtils {
         now.setTime(d);
         now.add(Calendar.DATE, days);
         return now.getTime();
+    }
+
+    /**	返回yyyyMMddHHmmss格式的字符串	*/
+    public static String toShortDateTime(Date dateTime) {
+        if(dateTime == null){
+            return null;
+        }
+        return DateFormatUtils.format(dateTime, PATTERN_SHORTDATETIME);
+    }
+
+    /**	返回yyyyMMddHHmmss格式的长整型	*/
+    public static Long toShortDateTimeL(Date dateTime) {
+        String dateStr = toShortDateTime(dateTime);
+        if(dateTime == null){
+            return null;
+        }
+        return Long.valueOf(dateStr);
+    }
+
+    /** 返回yyyyMMddHHmmss格式的长整型 */
+    public static Long getShortDateTimeL() {
+        return toShortDateTimeL(new Date());
     }
 
 }

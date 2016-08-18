@@ -62,5 +62,6 @@
 
         <class>com.myee.tarot.apiold.domain.AkSk</class>
         <class>com.myee.tarot.apiold.domain.SendRecord</class>
+        <class>com.myee.tarot.apiold.domain.Evaluation</class>
     </persistence-unit>
 </persistence>
