@@ -446,8 +446,8 @@ public class WeixinManager extends RedisOperation implements WeixinService {
     }
 
     @Override
-    public List<WxWaitToken> selectWaitList(String openId, Map<String,Date> map) {
-        List<WxWaitToken> list = waitTokenDao.selectWait(openId, map.get("bTime").getTime() / 1000, map.get("eTime").getTime() / 1000);
+    public List<WxWaitToken> selectWaitList(String openId, Date startDate, Date endDate) {
+        List<WxWaitToken> list = waitTokenDao.selectWait(openId, startDate.getTime() / 1000, endDate.getTime() / 1000);
         return list;
     }
 

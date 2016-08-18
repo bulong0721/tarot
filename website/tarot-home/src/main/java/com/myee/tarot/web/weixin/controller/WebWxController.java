@@ -1,11 +1,11 @@
 package com.myee.tarot.web.weixin.controller;
 
 import com.myee.djinn.dto.*;
+import com.myee.tarot.core.util.DateUtil;
 import com.myee.tarot.web.util.PageResult;
 import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.myee.tarot.weixin.domain.SingleResult;
 import com.myee.tarot.weixin.service.WeixinService;
-import com.myee.tarot.weixin.util.TimeUtil;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.mp.api.WxMpService;
 import org.slf4j.Logger;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -37,9 +36,9 @@ public class WebWxController {
 
     @RequestMapping("shop_list")
     @ResponseBody
-    public PageResult<ShopSummary> shopList(String secret, Long orgId, String ifPaged, Integer pageNo, Integer pageSize) {
+    public PageResult<ShopSummary> shopList(String secret, String ifPaged, Integer pageNo, Integer pageSize) {
         Long clientId = getClientId(secret);
-        Collection<ShopDetail> storeDetails = weixinService.allStoreOfClient(clientId, orgId);
+        Collection<ShopDetail> storeDetails = weixinService.allStoreOfClient(clientId);
         List<ShopDetail> list = new ArrayList<ShopDetail>();
         Iterator<ShopDetail> it = storeDetails.iterator();
         while (it.hasNext()) {
@@ -105,8 +104,10 @@ public class WebWxController {
     @RequestMapping("wait_list")
     @ResponseBody
     public PageResult<WaitToken> waitList(String secret, String openId, String ifPaged, Integer pageNo, Integer pageSize) {
-        Map<String,Date> map = TimeUtil.getAfterDate(new Date());
-        List<WxWaitToken> list = weixinService.selectWaitList(openId, map);
+        Date date = new Date();
+        Date startDate = DateUtil.getZeroClockOfDate(date);
+        Date endDate = DateUtil.getNextDayOfDate(date, 2, 30, 0);
+        List<WxWaitToken> list = weixinService.selectWaitList(openId, startDate, endDate);
         return new PageResult(1L, list);
     }
 

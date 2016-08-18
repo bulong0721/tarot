@@ -1,5 +1,6 @@
 package com.myee.tarot.web.weixin.controller;
 
+import com.google.common.collect.Maps;
 import com.myee.djinn.dto.WaitTokenState;
 import com.myee.tarot.campaign.domain.PriceInfo;
 import com.myee.tarot.campaign.service.PriceInfoService;
@@ -81,13 +82,6 @@ public class WebMpController {
 
         // 默认返回的文本消息内容
         String respContent = "请求处理异常，请稍候尝试！";
-
-//        try {
-//            String shortUrl = wxMpService.shortUrl("https://mp.weixin.qq.com/misc/getqrcode?fakeid=3012749102%26token=367458522%26style=1");
-//            System.out.println("shortUrl->" + shortUrl);
-//        } catch (WxErrorException e) {
-//            e.printStackTrace();
-//        }
 
         try {
             if (!wxMpService.checkSignature(timestamp, nonce, signature)) {
@@ -215,7 +209,7 @@ public class WebMpController {
             if(inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.CUSTOM_MSG_TEXT) && inMessage.getContent() != null && inMessage.getContent().matches(pattern)) {
                 Map<String,Object> msgMap = checkLatestDevelopments(inMessage.getContent());
                 if (msgMap == null) {
-                    msgMap = new HashMap<String,Object>();
+                    msgMap = Maps.newHashMap();
                 }
                 inMessage.setMap(msgMap);
             }
@@ -257,18 +251,6 @@ public class WebMpController {
         return wxMpService.createJsapiSignature(url);
     }
 
-//    @RequestMapping(value = "fromWxAuth")
-//    public String fromWxAuth(String code, String page, String args) {
-////        if ("myPrize".equalsIgnoreCase(page)) {
-////            return "redirect:/api/info/getInfoByStatusAndKeyId?code=" + code + args +"=1";
-////        } else if ("contact".equalsIgnoreCase(page)) {
-////            return "redirect:/weixin.html#/contact?code=" + code;
-////        }
-////        return "redirect:http://www.qq.com";
-//        System.out.println("hahahaha-code:" + code);
-//        return "http://www.myee7.com/?code=" + code;
-//    }
-
     /**
      *
      * @param type
@@ -302,7 +284,7 @@ public class WebMpController {
         //如果找到了，说明是可以通过点击按钮方式直接查询
         Map<String,Object> msgMap = new HashMap<String,Object>();
         if (myWt != null) {
-            msgMap = wxService.selectTokensByInfo(openId, myWt.getMerchantStoreId() ,myWt.getTableId());
+            msgMap = wxService.selectAllTokens(openId, myWt.getMerchantStoreId(), myWt.getTableId());
         } else {
             msgMap.put("valid","您尚未绑定二维码，请扫码绑定!");
         }
@@ -316,7 +298,7 @@ public class WebMpController {
      * */
 
     private Map<String,Object> checkLatestDevelopments(String identityCode) {
-        Map<String,Object> latestDevInfo = wxService.selectLatestDevelopmentsByIc(identityCode);
+        Map<String,Object> latestDevInfo = wxService.selectProgressByIdentityCode(identityCode);
         return latestDevInfo;
     }
 
@@ -374,20 +356,9 @@ public class WebMpController {
             Long endTime = System.currentTimeMillis();
             Long time = endTime - startTime;
             logger.info("生成二维码接口时间消耗:" + time + "毫秒");
-//            File file = wxMpService.qrCodePicture(ticket);
-//            File directory = new File(DOWNLOAD_HOME + File.separator + "qrcode");
-//            try {
-//                FileUtils.copyFileToDirectory(file, directory);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
         } catch (WxErrorException e) {
             e.printStackTrace();
         }
         return ticket;
-    }
-
-    public void setWxMpMessageRouter(WxMpMessageRouter wxMpMessageRouter) {
-        this.wxMpMessageRouter = wxMpMessageRouter;
     }
 }

@@ -54,7 +54,7 @@ public interface WeixinService {
 
     boolean bondQrCodeByScan(String identityCode, String openId);
 
-    List<WxWaitToken> selectWaitList(String openId, Map<String, Date> map);
+    List<WxWaitToken> selectWaitList(String openId, Date startDate, Date endDate);
 
     int modifyWaitingInfo(Long waitedCount, String identityCode, Long date, Long predictWaitingTime);
 
