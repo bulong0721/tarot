@@ -64,7 +64,7 @@ public class VoiceLogController {
         try {
 //            PageResult<VoiceLog> pageList = VoiceLogUtil.search(time, type, keyword);
 //            List<VoiceLog> voiceLogList = pageList.getList();
-            List<VoiceLog> voiceLogList = new ArrayList<>();
+            List<VoiceLog> voiceLogList = new ArrayList<VoiceLog>();
             String fileParentPath = DOWNLOAD_HOME + File.separator + "temp";
             String fileFullName = DOWNLOAD_HOME + File.separator + "temp" + File.separator + "语音日志" + DateTimeUtils.getNormalNameDateTime() + ".csv";
             File tempFilePath = new File(fileParentPath);
