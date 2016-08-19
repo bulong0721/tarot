@@ -323,25 +323,16 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
     private void assignVal(int status, String queueStatus) {
         if (status == 1) {
             queueStatus = "排队中";
-        } else {
-            if (status == 2) {
-                queueStatus = "就餐中";
-            } else {
-                if (status == 3) {
-                    queueStatus = "已过号";
-                } else {
-                    if (status == 4) {
-                        queueStatus = "已取消";
-                    } else {
-                        if (status == 6) {
-                            queueStatus = "已发送";
-                        } else {
-                            queueStatus = "未发送";
-                        }
-                    }
-                }
-            }
-        }
+        } else if (status == 2){
+            queueStatus = "就餐中";
+        } else if(status == 3) {
+            queueStatus = "已过号";
+        } else if (status == 4) {
+            queueStatus = "已取消";
+        } else if (status == 6) {
+            queueStatus = "已发送";
+        } else
+            queueStatus = "未发送";
     }
 
     /*
