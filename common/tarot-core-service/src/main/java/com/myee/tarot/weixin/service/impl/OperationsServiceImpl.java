@@ -366,13 +366,6 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
     public ResponseData getWaitTokenInfo(Long tableTypeId) {
         return null;
     }
-
-   /* @Override
-    public ResponseData getWaitTokenInfo(int tableTypeId) {
-        //TODO 不用云端实现
-        return null;
-    }*/
-
     /**
      * @param jsonArgs
      * @return
