@@ -38,10 +38,6 @@
         </dependency>
         <dependency>
             <groupId>me.chanjar</groupId>
-            <artifactId>weixin-java-cp</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>me.chanjar</groupId>
             <artifactId>weixin-java-mp</artifactId>
         </dependency>
         <dependency>

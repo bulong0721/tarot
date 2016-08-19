@@ -243,12 +243,6 @@ public class PushController {
     @RequestMapping(value = "admin/file/push", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse pushResource(@Valid @RequestBody PushResourceDTO pushResourceDTO) {
-        PushResourceDTO dto = new PushResourceDTO();
-        dto.setUniqueNo(pushResourceDTO.getUniqueNo());
-        dto.setAppId(pushResourceDTO.getAppId());
-        dto.setTimeout(pushResourceDTO.getTimeout());
-        dto.setStoragePath(pushResourceDTO.getStoragePath());
-        AjaxResponse resp = new AjaxResponse();
         OrchidService eptService = null;
         if (pushResourceDTO == null
                 || StringUtil.isNullOrEmpty(pushResourceDTO.getUniqueNo())
