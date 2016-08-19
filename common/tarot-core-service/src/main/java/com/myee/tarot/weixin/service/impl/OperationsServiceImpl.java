@@ -9,6 +9,7 @@ import com.myee.djinn.dto.DrawToken;
 import com.myee.djinn.dto.ResponseData;
 import com.myee.djinn.dto.WaitToken;
 import com.myee.djinn.dto.WaitTokenState;
+import com.myee.djinn.rpc.RemoteException;
 import com.myee.djinn.server.operations.OperationsService;
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catering.domain.TableType;
@@ -82,7 +83,12 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
      * @param waitToken
      **/
 
-    @Override
+	@Override
+	public ResponseData isConnection() throws RemoteException {
+		return  ResponseData.success();
+	}
+
+	@Override
     public ResponseData take(WaitToken waitToken) {
         //排号Key
         String redisKeyOfShopTb = RedisKeys.waitOfTableType(waitToken.getShopId(), waitToken.getTableTypeId());
