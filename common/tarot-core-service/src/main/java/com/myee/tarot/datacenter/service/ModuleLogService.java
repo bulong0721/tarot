@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface ModuleLogService  extends GenericEntityService<Long, EventModule> {
 
-    public List getModuleList();
+    public List listGroupByModuleId();
 
-    public List getFunctionListByModule(Integer moduleId);
+    public List listByModuleId(Integer moduleId);
 }

@@ -28,12 +28,12 @@ public class ModuleLogServiceImpl extends GenericEntityServiceImpl<Long, EventMo
     }
 
     @Override
-    public List getModuleList() {
-        return moduleLogDao.getModuleList();
+    public List listGroupByModuleId() {
+        return moduleLogDao.listGroupByModuleId();
     }
 
     @Override
-    public List getFunctionListByModule(Integer moduleId) {
-        return moduleLogDao.getFunctionListByModule(moduleId);
+    public List listByModuleId(Integer moduleId) {
+        return moduleLogDao.listByModuleId(moduleId);
     }
 }

@@ -119,7 +119,7 @@ public class VoiceLogController {
     public AjaxPageableResponse pageDevice(WhereRequest whereRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         Map<String, EntityQueryDto> queries = Maps.newHashMap();
-        if (whereRequest.getBeginDate().equals(null) && whereRequest.getEndDate().equals(null)
+        if (whereRequest.getBeginDate() == null && whereRequest.getEndDate() == null
                 && StringUtil.isNullOrEmpty(whereRequest.getKeyword()) && StringUtil.isNullOrEmpty(whereRequest.getVoiceLogType())) {
             queries = null;
         } else {

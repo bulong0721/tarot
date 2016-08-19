@@ -33,7 +33,7 @@ public class SelfCheckLogServiceImpl extends GenericEntityServiceImpl<Long, Self
     }
 
     @Override
-    public PageResult<SelfCheckLog> pageAll(WhereRequest whereRequest) {
+    public PageResult<SelfCheckLog> page(WhereRequest whereRequest) {
         return selfCheckLogDao.pageAll(whereRequest);
     }
 }

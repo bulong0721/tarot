@@ -24,7 +24,7 @@ public class WaitTokenDaoImpl  extends GenericEntityDaoImpl<Long, WxWaitToken> i
     private static final Logger LOGGER = LoggerFactory.getLogger(WaitTokenDaoImpl.class);
 
     @Override
-    public PageResult<WxWaitToken> pageWaitToken(WhereRequest whereRequest) {
+    public PageResult<WxWaitToken> page(WhereRequest whereRequest) {
         PageResult<WxWaitToken> pageList = new PageResult<WxWaitToken>();
         QWxWaitToken qWxWaitToken = QWxWaitToken.wxWaitToken;
         JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());

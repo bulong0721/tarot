@@ -13,5 +13,5 @@ import java.util.List;
  */
 public interface WaitTokenService extends GenericEntityService<Long, WxWaitToken> {
 
-    PageResult<WxWaitToken> pageWaitToken(WhereRequest whereRequest);
+    PageResult<WxWaitToken> page(WhereRequest whereRequest);
 }

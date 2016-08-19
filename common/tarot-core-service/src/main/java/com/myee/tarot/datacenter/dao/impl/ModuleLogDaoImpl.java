@@ -21,7 +21,7 @@ public class ModuleLogDaoImpl extends GenericEntityDaoImpl<Long, EventModule> im
     private static final Logger LOGGER = LoggerFactory.getLogger(ModuleLogDaoImpl.class);
 
     @Override
-    public List getModuleList() {
+    public List listGroupByModuleId() {
         QEventModule qEventModule = QEventModule.eventModule;
         JPQLQuery<EventModule> query = new JPAQuery(getEntityManager());
         query.from(qEventModule).groupBy(qEventModule.moduleId);
@@ -29,7 +29,7 @@ public class ModuleLogDaoImpl extends GenericEntityDaoImpl<Long, EventModule> im
     }
 
     @Override
-    public List<EventModule> getFunctionListByModule(Integer moduleId) {
+    public List<EventModule> listByModuleId(Integer moduleId) {
         QEventModule qEventModule = QEventModule.eventModule;
         JPQLQuery<EventModule> query = new JPAQuery(getEntityManager());
         query.from(qEventModule);

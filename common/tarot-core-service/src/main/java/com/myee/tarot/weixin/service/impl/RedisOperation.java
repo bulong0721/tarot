@@ -205,7 +205,7 @@ public abstract class RedisOperation {
      * @param key
      * @return
      */
-    public List<String> getListAll(String key) {
+    public List<String> list(String key) {
         ListOperations<String,String> listOpt = redisTemplate.opsForList();
         return listOpt.range(key,0,listOpt.size(key));
     }

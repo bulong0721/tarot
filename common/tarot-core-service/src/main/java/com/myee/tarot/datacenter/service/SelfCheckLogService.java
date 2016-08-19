@@ -12,5 +12,5 @@ public interface SelfCheckLogService extends GenericEntityService<Long, SelfChec
 
     public void uploadSelfCheckLog(SelfCheckLog selfCheckLog);
 
-    PageResult<SelfCheckLog> pageAll(WhereRequest whereRequest);
+    PageResult<SelfCheckLog> page(WhereRequest whereRequest);
 }

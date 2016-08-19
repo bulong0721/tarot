@@ -72,7 +72,7 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
     }
 
     @Override
-    public WxWaitToken selectTokenByIdentityCode(String identityCode, Long beginTime, Long endTime) {
+    public WxWaitToken getByIdentityCode(String identityCode, Long beginTime, Long endTime) {
         QWxWaitToken qrWaitToken = QWxWaitToken.wxWaitToken;
         JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
         query.from(qrWaitToken);
@@ -88,7 +88,7 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
     }
 
     @Override
-    public List<WxWaitToken> selectAllTokenByInfo(Long clientId, Long orgId, Long tableTypeId, Integer state) {
+    public List<WxWaitToken> listByConditions(Long clientId, Long orgId, Long tableTypeId, Integer state) {
         QWxWaitToken qrWaitToken = QWxWaitToken.wxWaitToken;
         JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
         query.from(qrWaitToken);
@@ -109,29 +109,7 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
     }
 
     @Override
-    public List<WxWaitToken> selectAllTokenOpenIdNotNull(Long clientId, Long orgId, Long tableTypeId, Integer state) {
-        QWxWaitToken qrWaitToken = QWxWaitToken.wxWaitToken;
-        JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
-        query.from(qrWaitToken);
-        if (orgId != null) {
-            query.where(qrWaitToken.merchantStoreId.eq(orgId));
-        }
-        if(tableTypeId != null) {
-            query.where(qrWaitToken.tableTypeId.eq(tableTypeId));
-        }
-        if(clientId != null) {
-            query.where(qrWaitToken.merchantId.eq(clientId));
-        }
-        if(state != null) {
-            query.where(qrWaitToken.state.eq(state));
-        }
-        query.where(qrWaitToken.openId.isNotEmpty());
-        log.info("the result counts: " + query.fetchCount());
-        return query.fetch();
-    }
-
-    @Override
-    public WxWaitToken selectAllTokenByOpenIdState(String openId, Integer state) {
+    public WxWaitToken getByCondition(String openId, Integer state) {
         QWxWaitToken qrWaitToken = QWxWaitToken.wxWaitToken;
         JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
         query.from(qrWaitToken);

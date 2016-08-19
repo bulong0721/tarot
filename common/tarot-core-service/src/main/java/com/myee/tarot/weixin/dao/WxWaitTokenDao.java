@@ -15,13 +15,11 @@ public interface WxWaitTokenDao extends GenericEntityDao<Long, WxWaitToken> {
 
     public Integer modifyWaitingInfo(Long waitedCount, String identityCode, Long date, Long predictWaitingTime);
 
-    public WxWaitToken selectTokenByIdentityCode(String identityCode, Long beginTime, Long endTime);
+    public WxWaitToken getByIdentityCode(String identityCode, Long beginTime, Long endTime);
 
-    public List<WxWaitToken> selectAllTokenByInfo(Long clientId, Long orgId, Long tableTypeId, Integer state);
+    public List<WxWaitToken> listByConditions(Long clientId, Long orgId, Long tableTypeId, Integer state);
 
-    public List<WxWaitToken> selectAllTokenOpenIdNotNull(Long clientId, Long orgId, Long tableTypeId, Integer state);
-
-    public WxWaitToken selectAllTokenByOpenIdState(String openId, Integer state);
+    public WxWaitToken getByCondition(String openId, Integer state);
 
     public List<WxWaitToken> selectWait(String openId, Long bTime, Long eTime);
 

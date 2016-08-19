@@ -277,11 +277,11 @@ public class WebMpController {
      **/
     private Map<String, Object> checkProgressByOpenIdState(String openId, Integer state) {
         //按openId和状态去数据库里查找最新的扫码绑定排位号
-        WxWaitToken myWt = wxService.selectTokensByOpenIdState(openId, state);
+        WxWaitToken myWt = wxService.getByOpenId(openId, state);
         //如果找到了，说明是可以通过点击按钮方式直接查询
         Map<String, Object> msgMap = new HashMap<String, Object>();
         if (myWt != null) {
-            msgMap = wxService.selectAllTokens(openId, myWt.getMerchantStoreId(), myWt.getTableId());
+            msgMap = wxService.mapProgressByOpenId(openId, myWt.getMerchantStoreId(), myWt.getTableId());
         } else {
             msgMap.put("valid", "您尚未绑定二维码，请扫码绑定!");
         }
@@ -295,7 +295,7 @@ public class WebMpController {
      * @return
      */
     private Map<String, Object> checkProgressByIdentityCode(String identityCode) {
-        Map<String, Object> progressInfo = wxService.selectProgressByIdentityCode(identityCode);
+        Map<String, Object> progressInfo = wxService.mapProgressByIdentityCode(identityCode);
         return progressInfo;
     }
 

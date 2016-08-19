@@ -20,9 +20,9 @@ public interface MerchantStoreDao extends GenericEntityDao<Long, MerchantStore> 
 
     Long getCountById(Long merchantStoreId, Long merchantId);
 
-    public MerchantStore findOne(Long shopId);
+    public MerchantStore findById(Long merchanStoreId);
 
-    public List<MerchantStore> selectAllByMerchantId(Long merchantId);
+    public List<MerchantStore> listByMerchantId(Long merchantId);
 
     MerchantStore getByCode(String storeCode);
 }

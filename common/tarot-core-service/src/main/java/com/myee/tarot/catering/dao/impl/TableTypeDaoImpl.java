@@ -50,7 +50,7 @@ public class TableTypeDaoImpl extends GenericEntityDaoImpl<Long, TableType> impl
     }
 
     @Override
-    public List<TableType> findAllByMerchantStoreId(Long merchantStoreId) {
+    public List<TableType> listByMerchantStoreId(Long merchantStoreId) {
         return null;
     }
 }

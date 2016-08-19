@@ -15,9 +15,9 @@ import java.util.Map;
  */
 public interface WeixinService {
 
-    Collection<ShopDetail> allStoreOfClient(Long clientId);
+    Collection<ShopDetail> listByMerchantId(Long merchantId);
 
-    ShopDetail storeOfClient(long clientId, long storeId);
+    ShopDetail getByMerchantStoreId(long clientId, long storeId);
 
     WaitToken waitOfTableType(long tableTypeId, String token, Long shopId);
 
@@ -27,7 +27,7 @@ public interface WeixinService {
 
     void dequeue(long tableTypeId, String token, Long clientId, Long shopId);
 
-    DrawToken drawOfStore(long storeId, String token);
+    DrawToken getByMerchantStoreId(long storeId, String token);
 
     /**
      * 查看最新进展，根据clientId,和orgId，openId查询最新进展
@@ -35,14 +35,14 @@ public interface WeixinService {
      * @param orgID
      * @return
      */
-    Map<String,Object> selectAllTokens(String openId, Long orgID, Long tableTypeId);
+    Map<String,Object> mapProgressByOpenId(String openId, Long orgID, Long tableTypeId);
 
     /**
      * 根据identityCode查询最新进展
      * @param identityCode
      * @return
      */
-    Map<String,Object> selectProgressByIdentityCode(String identityCode);
+    Map<String,Object> mapProgressByIdentityCode(String identityCode);
 
     /**
      * 按openId和状态去数据库里查找Token
@@ -50,11 +50,11 @@ public interface WeixinService {
      * @param state
      * @return
      */
-    WxWaitToken selectTokensByOpenIdState(String openId, Integer state);
+    WxWaitToken getByOpenId(String openId, Integer state);
 
     boolean bondQrCodeByScan(String identityCode, String openId);
 
-    List<WxWaitToken> selectWaitList(String openId, Date startDate, Date endDate);
+    List<WxWaitToken> listByOpenId(String openId, Date startDate, Date endDate);
 
     int modifyWaitingInfo(Long waitedCount, String identityCode, Long date, Long predictWaitingTime);
 

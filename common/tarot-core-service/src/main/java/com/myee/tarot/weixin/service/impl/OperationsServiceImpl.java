@@ -168,7 +168,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
                 backStatus = waitTokenDao.updateState(stateValue, waitToken.getClientId(), waitToken.getShopId(), waitToken.getToken(), sortedTokens.get(0).getTimeTook(), new Date().getTime() / 1000);
             }
         } else { //如果redis里没有数据，从MySql里同步
-            List<WxWaitToken> tokenList = waitTokenDao.selectAllTokenByInfo(waitToken.getClientId(), waitToken.getShopId(), waitToken.getTableTypeId(), WaitTokenState.WAITING.getValue());
+            List<WxWaitToken> tokenList = waitTokenDao.listByConditions(waitToken.getClientId(), waitToken.getShopId(), waitToken.getTableTypeId(), WaitTokenState.WAITING.getValue());
             List<WxWaitToken> sortedTokens = orderingByTook2.sortedCopy(tokenList);
             List<WaitToken> sortedTokensW = Lists.newArrayList();
             for (int i = 0; i < sortedTokens.size(); i++) {
@@ -196,17 +196,17 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
             for (WaitToken w : afterMap.values()) {
                 if (w.getOpenId() != null && w.getOpenId().trim().length() > 0) {
                     //比较token查询进展
-                    Map<String, Object> msgMap = selectProgressByIdentityCode(w.getIdentityCode());
+                    Map<String, Object> msgMap = mapProgressByIdentityCode(w.getIdentityCode());
                     msgMap.put("openId", w.getOpenId());
                     openIdList.add(msgMap);
                 }
             }
         } else {
-            List<WxWaitToken> rwList = waitTokenDao.selectAllTokenOpenIdNotNull(waitToken.getClientId(), waitToken.getShopId(), waitToken.getTableTypeId(), WaitTokenState.WAITING.getValue());
+            List<WxWaitToken> rwList = waitTokenDao.listByConditions(waitToken.getClientId(), waitToken.getShopId(), waitToken.getTableTypeId(), WaitTokenState.WAITING.getValue());
             for (WxWaitToken rw : rwList) {
                 if (rw.getOpenId() != null && rw.getOpenId().trim().length() > 0) {
                     //比较token查询进展
-                    Map<String, Object> msgMap = selectProgressByIdentityCode(rw.getIdentityCode());
+                    Map<String, Object> msgMap = mapProgressByIdentityCode(rw.getIdentityCode());
                     msgMap.put("openId", rw.getOpenId());
                     openIdList.add(msgMap);
                 }
@@ -236,7 +236,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
         }
     }
 
-    public Map<String, Object> selectProgressByIdentityCode(String identityCode) {
+    public Map<String, Object> mapProgressByIdentityCode(String identityCode) {
         //先到Redis里去找，通过identityCode获取当时保存token的redisKey
         String redisKey2Find = getSimple(identityCode).toString();
         Map<String, WaitToken> waitTokenMap = hgetall(redisKey2Find, WaitToken.class);
@@ -278,10 +278,10 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
             Long bTimeLong = startDate.getTime() / 1000;
             Long eTimeLong = endDate.getTime() / 1000;
             //再到MYSQL去找,用identityCode找到对应的clientId,orgId,和token，
-            WxWaitToken wtoken = waitTokenDao.selectTokenByIdentityCode(identityCode, bTimeLong, eTimeLong);
+            WxWaitToken wtoken = waitTokenDao.getByIdentityCode(identityCode, bTimeLong, eTimeLong);
             if (wtoken != null) {
                 //根据clientId和orgId和tableId，找到该餐馆的某餐桌类型等待的token
-                List<WxWaitToken> tokenList = waitTokenDao.selectAllTokenByInfo(wtoken.getMerchantId(), wtoken.getMerchantStoreId(), wtoken.getTableId(), WaitTokenState.WAITING.getValue());
+                List<WxWaitToken> tokenList = waitTokenDao.listByConditions(wtoken.getMerchantId(), wtoken.getMerchantStoreId(), wtoken.getTableId(), WaitTokenState.WAITING.getValue());
                 for (WxWaitToken wt : tokenList) {
                     waitNumSet.add(Integer.parseInt(wt.getToken().substring(1, 3)));
                     if (identityCode.equals(wt.getIdentityCode())) {

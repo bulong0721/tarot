@@ -28,7 +28,7 @@ public class WaitTokenServiceImpl extends GenericEntityServiceImpl<Long, WxWaitT
     }
 
     @Override
-    public PageResult<WxWaitToken> pageWaitToken(WhereRequest whereRequest) {
-        return waitTokenDao.pageWaitToken(whereRequest);
+    public PageResult<WxWaitToken> page(WhereRequest whereRequest) {
+        return waitTokenDao.page(whereRequest);
     }
 }
