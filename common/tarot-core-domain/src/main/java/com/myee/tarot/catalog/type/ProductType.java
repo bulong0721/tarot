@@ -14,7 +14,8 @@ public class ProductType implements GenericEnumType, Comparable<ProductType>, Se
 
     private static final ProductType COOKIE = new ProductType("COOKIE", "大学士");
     private static final ProductType LITTLE_GIRL = new ProductType("LITTLE_GIRL", "小女生");
-    private static final ProductType POINT_PEN = new ProductType("POINT_PEN", "美味点点笔");
+//    private static final ProductType POINT_PEN = new ProductType("POINT_PEN", "美味点点笔");
+    private static final ProductType POINT_PEN = new ProductType("POINT_PEN", "小超人");
 
     private String type;
     private String friendlyType;

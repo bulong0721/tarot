@@ -21,7 +21,7 @@ public class SendRecord extends GenericEntity<Long, SendRecord> {
 	@JoinColumn(name = "TABLE_ID")
 	private Table table;
 
-	@Column(name = "FLAG")
+	@Column(name = "FLAG",length = 1)
 	private Integer flag;
 
 	@Column(name = "TEMPLATENUM")
@@ -33,6 +33,7 @@ public class SendRecord extends GenericEntity<Long, SendRecord> {
 	@Column(name = "PARTNER")
 	private Integer partner;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATED")
 	private Date created;
 

@@ -43,13 +43,14 @@ public class Evaluation extends GenericEntity<Long, Evaluation> {
 	@Column(name = "TIMESECOND")
 	private Long timeSecond;//提交时间，格式yyyyMMddHHmmss
 
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATED")
 	private Date created;
 
 	@Transient //不持久化到数据库
 	private Long createdL;
 
-	@Column(name = "ACTIVE")
+	@Column(name = "ACTIVE", columnDefinition = "INT",length = 1)
 	private int active;
 
 	public Evaluation(){

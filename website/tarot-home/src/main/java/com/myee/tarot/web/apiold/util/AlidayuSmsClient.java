@@ -26,7 +26,8 @@ public class AlidayuSmsClient {
 	private static String HTTP_API_URL = "http://gw.api.taobao.com/router/rest";//通用接口
 	private static String API_APPKEY = "23294088";//key
 	private static String API_SECRET = "d74e55c6f848475eef5ca6cc867c8ec6";//secret
-	private static String SIGN_NAME = "美味点点笔";//签名,在签名中声明的签名名称
+//	private static String SIGN_NAME = "美味点点笔";//签名,在签名中声明的签名名称
+	private static String SIGN_NAME = "小超人";//签名,在签名中声明的签名名称
 	private static String SMS_TYPE = "normal";//短信类型,短信固定不需要变化
 	private static String SEND_PARAM = "table";//短信类型,在模板里声明的参数名称
 
