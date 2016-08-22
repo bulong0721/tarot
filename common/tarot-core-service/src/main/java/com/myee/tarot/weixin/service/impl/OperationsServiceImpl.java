@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
-import com.myee.djinn.dto.DrawToken;
-import com.myee.djinn.dto.ResponseData;
-import com.myee.djinn.dto.WaitToken;
-import com.myee.djinn.dto.WaitTokenState;
+import com.myee.djinn.dto.*;
 import com.myee.djinn.rpc.RemoteException;
 import com.myee.djinn.server.operations.OperationsService;
 import com.myee.tarot.catalog.domain.DeviceUsed;
@@ -428,7 +425,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
     }
 
     @Override
-    public ResponseData sendResourceToCloud(boolean flag, Long orgId, String resourceType, String filePath) {
+    public ResponseData sendResourceToCloud(boolean flag, Long orgId, UploadFileType resourceType, String filePath) {
         return null;
     }
 
