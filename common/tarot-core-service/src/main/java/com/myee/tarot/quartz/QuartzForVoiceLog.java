@@ -35,9 +35,9 @@ public class QuartzForVoiceLog {
 //    @Scheduled(cron = "* 0/2 * * * ? ")  //每天23PM跑定时任务语音日志放到Es并移动文件
     public void parseFileToDb() {
         //获取路径下所有的csv文件
-        File[] fileArr = getFiles(new File(DOWNLOAD_HOME + File.separator + Constants.VOICELOG));
+        File[] fileArr = getFiles(new File(DOWNLOAD_HOME + File.separator + Constants.ADMIN_PACK + File.separator + Constants.VOICELOG));
         //解析文件List入库
-        uploadCSV(fileArr);
+        importCsvDataToEs(fileArr);
     }
 
     /**
@@ -46,7 +46,7 @@ public class QuartzForVoiceLog {
      * @param fileArr
      * @return
      */
-    public void uploadCSV(File[] fileArr) {
+    public void importCsvDataToEs(File[] fileArr) {
         try {
             for (final File file : fileArr) {
                 if (file.exists()) {
@@ -70,7 +70,7 @@ public class QuartzForVoiceLog {
                                 voiceLog.setStoreName(ss[6] == null ? null : ss[6].toString());
                                 voiceLogList.add(voiceLog);
                             }
-//                            esUtils.bulkAddList("log5", "voiceLog5", voiceLogList);
+                            esUtils.bulkAddList("log6", "voiceLog6", voiceLogList);
                             csvReader.close();
                             moveToRecycle(file);
                         }
@@ -120,9 +120,9 @@ public class QuartzForVoiceLog {
      */
     public void moveToRecycle(File file) {
         if (file.exists() && file.isFile()) {
-            String storeId = Long.valueOf(file.getName().substring(0, 5)).toString();
+            String storeId = file.getName().substring(0, file.getName().indexOf("_"));
             // Destination directory
-            File dirNew = new File(DOWNLOAD_HOME + File.separator + storeId + File.separator + Constants.VOICELOGBAK + File.separator + file.getName().substring(5));
+            File dirNew = new File(DOWNLOAD_HOME + File.separator + storeId + File.separator + Constants.VOICELOG_BAK + File.separator + file.getName().substring(file.getName().indexOf("_")+1));
             if (!dirNew.getParentFile().exists()) {
                 dirNew.getParentFile().mkdirs();
             }
