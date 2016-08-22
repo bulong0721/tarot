@@ -170,7 +170,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
             hsetSimple(rwToken.getId().toString(), redisKey, endDate);
             hset(redisKey.trim(), rwToken.getId().toString(), waitToken, endDate);
             //去查询进展
-            Map<String,Object> msgMap = mapProgressByIdentityCode(waitToken.getIdentityCode());
+            Map<String,Object> msgMap = listProgressByIdentityCode(waitToken.getIdentityCode());
             int i = waitTokenDao.modifyWaitingInfo(Long.parseLong(msgMap.get("waitedTableCount").toString()), waitToken.getIdentityCode(), Long.valueOf(msgMap.get("timeTook").toString()), Long.parseLong(msgMap.get("predictWaitingTime").toString()));
             if(i !=1) {
                 logger.error("修改等位状态失败!");
@@ -238,7 +238,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
      * @return
      */
     @Override
-    public Map<String,Object> mapProgressByOpenId(String openId, Long orgID, Long tableTypeId) {
+    public Map<String,Object> listProgressByOpenId(String openId, Long orgID, Long tableTypeId) {
         String redisKeyOpenIdRef = RedisKeys.openIdToTableType(orgID, openId);
         String redisKey2Find = (String) getSimple(redisKeyOpenIdRef);
         Map<String, WaitToken> waitTokenMap = hgetall(redisKey2Find, WaitToken.class);
@@ -300,7 +300,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
      * @return
      */
     @Override
-    public Map<String,Object> mapProgressByIdentityCode(String identityCode) {
+    public Map<String,Object> listProgressByIdentityCode(String identityCode) {
         //先到Redis里去找，通过identityCode获取当时保存token的redisKey
         String redisKey = getSimple(identityCode).toString();
         Date date = new Date();

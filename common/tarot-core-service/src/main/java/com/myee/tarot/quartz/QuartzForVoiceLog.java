@@ -70,7 +70,7 @@ public class QuartzForVoiceLog {
                                 voiceLog.setStoreName(ss[6] == null ? null : ss[6].toString());
                                 voiceLogList.add(voiceLog);
                             }
-                            esUtils.bulkAddList("log5", "voiceLog5", voiceLogList);
+//                            esUtils.bulkAddList("log5", "voiceLog5", voiceLogList);
                             csvReader.close();
                             moveToRecycle(file);
                         }

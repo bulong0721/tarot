@@ -35,14 +35,14 @@ public interface WeixinService {
      * @param orgID
      * @return
      */
-    Map<String,Object> mapProgressByOpenId(String openId, Long orgID, Long tableTypeId);
+    Map<String,Object> listProgressByOpenId(String openId, Long orgID, Long tableTypeId);
 
     /**
      * 根据identityCode查询最新进展
      * @param identityCode
      * @return
      */
-    Map<String,Object> mapProgressByIdentityCode(String identityCode);
+    Map<String,Object> listProgressByIdentityCode(String identityCode);
 
     /**
      * 按openId和状态去数据库里查找Token

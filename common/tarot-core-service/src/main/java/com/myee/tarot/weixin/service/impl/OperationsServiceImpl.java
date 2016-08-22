@@ -202,7 +202,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
             for (WaitToken w : afterMap.values()) {
                 if (w.getOpenId() != null && w.getOpenId().trim().length() > 0) {
                     //比较token查询进展
-                    Map<String, Object> msgMap = mapProgressByIdentityCode(w.getIdentityCode());
+                    Map<String, Object> msgMap = listProgressByIdentityCode(w.getIdentityCode());
                     msgMap.put("openId", w.getOpenId());
                     openIdList.add(msgMap);
                 }
@@ -212,7 +212,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
             for (WxWaitToken rw : rwList) {
                 if (rw.getOpenId() != null && rw.getOpenId().trim().length() > 0) {
                     //比较token查询进展
-                    Map<String, Object> msgMap = mapProgressByIdentityCode(rw.getIdentityCode());
+                    Map<String, Object> msgMap = listProgressByIdentityCode(rw.getIdentityCode());
                     msgMap.put("openId", rw.getOpenId());
                     openIdList.add(msgMap);
                 }
@@ -242,7 +242,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
         }
     }
 
-    public Map<String, Object> mapProgressByIdentityCode(String identityCode) {
+    public Map<String, Object> listProgressByIdentityCode(String identityCode) {
         //先到Redis里去找，通过identityCode获取当时保存token的redisKey
         String redisKey2Find = getSimple(identityCode).toString();
         Map<String, WaitToken> waitTokenMap = hgetall(redisKey2Find, WaitToken.class);
