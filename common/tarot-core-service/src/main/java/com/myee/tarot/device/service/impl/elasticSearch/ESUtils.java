@@ -129,17 +129,21 @@ public class ESUtils {
             if(StringUtils.isNotBlank(queryTitle)){
                 query = "{\n" +
                         "    \"query\": {\n" +
+                        "    \"filtered\": {\n" +
+                        "    \"filter\": {\n" +
                         "          \"match\" : {\n" +
                         "              \""+queryTitle+"\" : {\n" +
                         "                    \"query\" : \""+ param +"\"\n" +
                         "              }\n" +
                         "          }\n" +
+                        "      }\n" +
+                        "      }\n" +
                         "    }\n" +
                         "}";
             }
             Search searchAllCount = new Search.Builder(query).addIndex(index).addType(type).build();
             SearchResult countResult = jestClient.execute(searchAllCount);
-            pageResult.setRecordsTotal(countResult.getTotal());
+            pageResult.setRecordsTotal(countResult.getTotal()== null ? 0:countResult.getTotal());
             Search search = new Search.Builder(query).addIndex(index).addType(type).setParameter(Parameters.FROM, fromNum).setParameter(Parameters.SIZE, pageSize).build();
             JestResult result = jestClient.execute(search);
             pageResult.setList(result.getSourceAsObjectList(clazz));
@@ -171,28 +175,63 @@ public class ESUtils {
             PageResult<T> pageResult =  new PageResult<>();
             int fromNum = pageSize * (pageNum - 1);
             long start = System.currentTimeMillis();
-            StringBuffer query = new StringBuffer("");
+            StringBuffer query = new StringBuffer();
             if(queries != null && queries.size() != 0){
                 query.append("{\n" +
                         "    \"query\": {\n" +
+                        "    \"filtered\": {\n" +
+                        "    \"filter\": {\n" +
                         "      \"bool\": {\n" +
-                        "        \"must\": [\n" );
+                        "        \"should\": [\n");
                 for (String key : queries.keySet()) {
-                    query.append( "          { \"match\" : {\n" +
-                            "              \""+key+"\" : {\n" +
-                            "                    \"query\" : \""+queries.get(key)+"\"\n" +
-                            "              }\n" +
-                            "          }}," );
+                    if(queries.get(key).getQueryPattern() == 0){
+                        query.append( "          { \"match\" : {\n" +
+                                "              \""+key+"\" : {\n" +
+                                "                    \"query\" : \""+queries.get(key).getFieldValue().toString()+"\"\n" +
+                                "              }\n" +
+                                "          }}," );
+                    }
                 }
                 query.deleteCharAt(query.length()-1);
-                query.append( "        ]\n" +
+                query.append("        ],\n" +
+                        "        \"must\": [\n");
+                for (String key : queries.keySet()) {
+                    if(queries.get(key).getQueryPattern() == 1){
+                        //特定为时间选择做的query
+                        if(key.equals("startDate")){
+                            query.append( "          { \"range\" : {\n" +
+                                    "              \"date\" : {\n" +
+                                    "                    \"gte\" : \""+ queries.get(key).getFieldValue() +"\"\n" +
+                                    "              }\n" +
+                                    "          }}," );
+                        }else if(key.equals("endDate")){
+                            query.append( "          { \"range\" : {\n" +
+                                    "              \"date\" : {\n" +
+                                    "                    \"lte\" : \""+ queries.get(key).getFieldValue() +"\"\n" +
+                                    "              }\n" +
+                                    "          }}," );
+
+                        }else{
+                            query.append( "          { \"match\" : {\n" +
+                                    "              \"" + key + "\" : {\n" +
+                                    "                    \"query\" : \""+ queries.get(key).getFieldValue().toString() +"\"\n" +
+                                    "              }\n" +
+                                    "          }}," );
+                        }
+                    }
+                }
+                query.deleteCharAt(query.length()-1);
+                query.append("        ]\n" +
+                        "      }\n" +
+                        "      }\n" +
                         "      }\n" +
                         "    }\n" +
                         "}");
             }
+            LOGGER.info("查询语句为"+query.toString());
             Search searchAllCount = new Search.Builder(query.toString()).addIndex(index).addType(type).build();
             SearchResult countResult = jestClient.execute(searchAllCount);
-            pageResult.setRecordsTotal(countResult.getTotal());
+            pageResult.setRecordsTotal(countResult.getTotal()== null ? 0:countResult.getTotal());
             Search search = new Search.Builder(query.toString()).addIndex(index).addType(type).setParameter(Parameters.FROM, fromNum).setParameter(Parameters.SIZE, pageSize).build();
             JestResult result = jestClient.execute(search);
             pageResult.setList(result.getSourceAsObjectList(clazz));

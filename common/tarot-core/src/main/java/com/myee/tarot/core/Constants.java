@@ -73,9 +73,13 @@ public class Constants {
 
 	public final static String PRICEDRAW = "PRICEDRAW";
 
-	public final static String VOICELOGBAK = "voicelogbak"; //存放语音日志备份
+	public final static String VOICELOG_BAK = "voicelogbak"; //存放语音日志备份
 
 	public final static String VOICELOG = "voicelog"; //存放所有语音日志
+
+	public final static String ADMIN_PACK = "100";//店铺100
+
+	public final static String WAITTOKEN_BAK = "waittokenbak";//存放排号数据备份
 
 	public static final String ALLOW_EDITOR_TEXT = "((txt)|(csv)|(log)|(xml)|(html)|(htm)|(js)|(css))";	//只允许编辑的文本格式（正则）
 
