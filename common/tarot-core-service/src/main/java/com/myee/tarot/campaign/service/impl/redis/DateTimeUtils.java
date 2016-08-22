@@ -39,6 +39,8 @@ public class DateTimeUtils {
     public final static String PATTERN_NAME_DATETIME = "yyyy-MM-dd_HH-mm-ss";
     /**	yyyyMMddHHmmss	*/
     public final static String PATTERN_SHORTDATETIME = "yyyyMMddHHmmss";
+    /** yyyy-MM-dd'T'HH:mm:ssZ **/
+    public final static String PATTREN_ES_SEARCH = "yyyy-MM-dd'T'HH:mm:ssZ";
 
     /**
      * 以yyyy-MM-dd HH:mm:ss形式返回当前时间的字符串
@@ -140,6 +142,8 @@ public class DateTimeUtils {
 
     public static void main(String[] args) {
         Date date = getDateByString("2016-5-30 23:30:34", "yyyy-MM-dd HH:mm:ss");
+        String string = toESString(date);
+        System.out.println(string);
         System.out.println(date.getTime());
     }
 
@@ -284,6 +288,14 @@ public class DateTimeUtils {
         return DateFormatUtils.format(dateTime, PATTERN_SHORTDATETIME);
     }
 
+    /**	返回yyyyMMddHHmmss格式的字符串	*/
+    public static String toESString(Date dateTime) {
+        if(dateTime == null){
+            return null;
+        }
+        return DateFormatUtils.format(dateTime, PATTREN_ES_SEARCH);
+    }
+
     /**	返回yyyyMMddHHmmss格式的长整型	*/
     public static Long toShortDateTimeL(Date dateTime) {
         String dateStr = toShortDateTime(dateTime);
@@ -297,5 +309,8 @@ public class DateTimeUtils {
     public static Long getShortDateTimeL() {
         return toShortDateTimeL(new Date());
     }
+
+
+
 
 }
