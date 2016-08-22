@@ -104,6 +104,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
         WxWaitToken wxWaitToken = null;
         try {
             myticket = wxMpService.qrCodeCreateTmpTicket(Integer.parseInt(waitToken.getSceneId()), 2592000);
+            wxWaitToken = waitTokenDao.update(WeixinServiceImpl.convertTo(waitToken, date.getTime() / 1000));
         } catch (WxErrorException e) {
             e.printStackTrace();
         }
@@ -171,7 +172,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
                 backStatus = waitTokenDao.updateState(stateValue, waitToken.getClientId(), waitToken.getShopId(), waitToken.getToken(), sortedTokens.get(0).getTimeTook(), new Date().getTime() / 1000);
             }
         } else { //如果redis里没有数据，从MySql里同步
-            List<WxWaitToken> tokenList = waitTokenDao.listByConditions(waitToken.getClientId(), waitToken.getShopId(), waitToken.getTableTypeId(), WaitTokenState.WAITING.getValue());
+            List<WxWaitToken> tokenList = waitTokenDao.listByConditions(waitToken.getShopId(), waitToken.getTableTypeId(), WaitTokenState.WAITING.getValue());
             List<WxWaitToken> sortedTokens = orderingByTook2.sortedCopy(tokenList);
             List<WaitToken> sortedTokensW = Lists.newArrayList();
             for (int i = 0; i < sortedTokens.size(); i++) {
@@ -180,9 +181,8 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
                 w.setToken(wwToken.getToken());
                 w.setTimeTook(wwToken.getTimeTook().getTime());
                 w.setTableId(wwToken.getTableId());
-                w.setClientId(wwToken.getMerchantId());
                 w.setOpenId(wwToken.getOpenId());
-                w.setShopId(wwToken.getMerchantStoreId());
+                w.setShopId(wwToken.getStore().getId());
                 w.setIdentityCode(wwToken.getIdentityCode());
                 sortedTokensW.add(w);
                 hset(redisKey, w.getToken(), w, DateUtil.getNextDayOfDate(date, 2, 30, 0));
@@ -205,7 +205,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
                 }
             }
         } else {
-            List<WxWaitToken> rwList = waitTokenDao.listByConditions(waitToken.getClientId(), waitToken.getShopId(), waitToken.getTableTypeId(), WaitTokenState.WAITING.getValue());
+            List<WxWaitToken> rwList = waitTokenDao.listByConditions(waitToken.getShopId(), waitToken.getTableTypeId(), WaitTokenState.WAITING.getValue());
             for (WxWaitToken rw : rwList) {
                 if (rw.getOpenId() != null && rw.getOpenId().trim().length() > 0) {
                     //比较token查询进展
@@ -284,13 +284,13 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
             WxWaitToken wtoken = waitTokenDao.getByIdentityCode(identityCode, bTimeLong, eTimeLong);
             if (wtoken != null) {
                 //根据clientId和orgId和tableId，找到该餐馆的某餐桌类型等待的token
-                List<WxWaitToken> tokenList = waitTokenDao.listByConditions(wtoken.getMerchantId(), wtoken.getMerchantStoreId(), wtoken.getTableId(), WaitTokenState.WAITING.getValue());
+                List<WxWaitToken> tokenList = waitTokenDao.listByConditions(wtoken.getStore().getId(), wtoken.getTableId(), WaitTokenState.WAITING.getValue());
                 for (WxWaitToken wt : tokenList) {
                     waitNumSet.add(Integer.parseInt(wt.getToken().substring(1, 3)));
                     if (identityCode.equals(wt.getIdentityCode())) {
                         userNum = Integer.parseInt(wt.getToken().substring(1, 3));
                         timeTook = wt.getTimeTook().getTime();
-                        shopName = merchantStoreService.findById(wt.getMerchantStoreId()).getName();
+                        shopName = merchantStoreService.findById(wt.getStore().getId()).getName();
                         assignVal(wt.getState(), queueStatus);
                     }
                 }
