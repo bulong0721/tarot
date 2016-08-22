@@ -425,7 +425,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
     }
 
     @Override
-    public ResponseData sendResourceToCloud(boolean flag, Long orgId, UploadFileType resourceType, String filePath) {
+    public ResponseData sendResourceToCloud(Long orgId, UploadFileType resourceType, String filePath) {
         return null;
     }
 
