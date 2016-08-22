@@ -249,10 +249,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 id: 'name',
                 key: 'name',
                 type: 'c_input',
-                templateOptions: { label: '文件名称', placeholder: '文件名称'},
-                expressionProperties: {
-                    'templateOptions.required': 'model.ifEditor' // disabled when ifEditor is false
-                }
+                templateOptions: { required:true, label: '文件名称', placeholder: '文件名称'},
             },
             {
                 id: 'currPath',
@@ -264,9 +261,11 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     }
                 },
                 templateOptions: { label: '文件路径', placeholder: '文件路径(长度小于50)',maxlen:50},
+                hideExpression: function ($viewValue, $modelValue, scope) {
+                    return scope.model.type == 0?true:false;//true新增文件夹时隐藏文件路径，默认路径和名称相同
+                },
                 expressionProperties: {
-                    'templateOptions.required': 'model.type==0?true:false' ,// disabled when ifEditor is true
-                    'templateOptions.disabled': 'model.editorModel==1?true:false' //编辑模式不能修改节点路径
+                    'templateOptions.disabled': 'model.editorModel==1?true:false', //编辑模式不能修改节点路径
                 }
             },
             {
@@ -401,10 +400,10 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 var parentPath = $scope.current.path == '/'?"":$scope.current.path;
                 $scope.current.children.push({
                     name:$scope.formDataEditor.model.name,
-                    path:parentPath+"/"+$scope.formDataEditor.model.currPath,
+                    path:parentPath+"/"+$scope.formDataEditor.model.name,
                     salt:$scope.current.salt,
                     storeId:$scope.current.storeId,
-                    url:$scope.current.url+"/"+$scope.formDataEditor.model.currPath,
+                    url:$scope.current.url+"/"+$scope.formDataEditor.model.name,
                     size:0,
                     modified:new Date(),
                     children:[],
