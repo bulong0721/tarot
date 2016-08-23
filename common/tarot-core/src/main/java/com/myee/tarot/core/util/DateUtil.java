@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 
 public class DateUtil {
@@ -22,6 +23,13 @@ public class DateUtil {
     private final static String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     private final static String DATETIME_FORMAT_SLASH = "yyyy/MM/dd HH:mm:ss";
+
+    public static java.text.DateFormat dateTimeMISFormat = null;
+    // 默认显示日期时间的格式 精确到毫秒
+    public static final String DATATIMEF_STR_MIS = "yyyyMMddHHmmssSSS";
+    static {
+        dateTimeMISFormat = new SimpleDateFormat(DATATIMEF_STR_MIS);
+    }
 
     public static String generateTimeStamp() {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmSS");
@@ -229,5 +237,20 @@ public class DateUtil {
             return false;
         }
 
+    }
+
+    /**
+     * 获取订单编号
+     * 点点笔通用生成规则
+     * @return
+     */
+    public static String getOrderNum() {
+        Calendar nowCalendar = Calendar.getInstance(Locale.CHINESE);
+        nowCalendar.setTime(DateUtil.now());
+        return dateTimeMISFormat.format(nowCalendar.getTime())+RandomUtil.threeRandom();
+    }
+
+    public static Date now() {
+        return Calendar.getInstance(Locale.CHINESE).getTime();
     }
 }
