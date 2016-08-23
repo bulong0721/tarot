@@ -1,5 +1,6 @@
 package com.myee.tarot.apiold.domain;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -10,7 +11,7 @@ import java.util.List;
  * Version: 1.0
  * History: <p>如果有修改过程，请记录</P>
  */
-public class BaseDataInfo {
+public class BaseDataInfo implements Serializable {
 
     private long timestamp;    //更新时间戳
     private List list;

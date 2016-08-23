@@ -1,4 +1,4 @@
-package com.myee.tarot.web.util;
+package com.myee.tarot.core.web;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;

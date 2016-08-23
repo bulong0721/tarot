@@ -2,9 +2,12 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:cache="http://www.springframework.org/schema/cache"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
          http://www.springframework.org/schema/beans
          http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/util
+         http://www.springframework.org/schema/util/spring-util-4.1.xsd
          http://www.springframework.org/schema/cache
          http://www.springframework.org/schema/cache/spring-cache.xsd">
 
@@ -22,14 +25,16 @@
     </bean>
 
     <bean name="ignite.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
-        <property name="peerClassLoadingEnabled" value="true"/>
+        <property name="gridName" value="tarot_grid" />
         <property name="clientMode" value="true"/>
         <property name="discoverySpi">
             <bean class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">
                 <property name="ipFinder">
                     <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder">
                         <property name="addresses">
-                            <value>172.16.1.49</value>
+                            <list>
+                                <value>172.16.0.15</value>
+                            </list>
                         </property>
                     </bean>
                 </property>
@@ -37,13 +42,21 @@
         </property>
         <property name="cacheConfiguration">
             <list>
-
+                <bean parent="atomic-cache">
+                    <property name="name" value="campaign.store.activity"/>
+                </bean>
             </list>
         </property>
     </bean>
 
-    <bean id="cacheManager" class="org.apache.ignite.cache.spring.SpringCacheManager">
-        <property name="configuration" ref="ignite.cfg" />
+
+
+    <bean id="ignite" class="org.apache.ignite.IgniteSpringBean" scope="singleton">
+        <property name="configuration" ref="ignite.cfg"/>
+    </bean>
+
+    <bean id="cacheManager" class="org.apache.ignite.cache.spring.SpringCacheManager" depends-on="ignite">
+        <property name="gridName" value="tarot_grid"/>
         <property name="dynamicCacheConfiguration">
             <bean class="org.apache.ignite.configuration.CacheConfiguration">
                 <property name="cacheMode" value="REPLICATED"/>
@@ -51,6 +64,7 @@
         </property>
     </bean>
 
-    <!-- Enable annotation-driven caching. -->
+    <!--Enable annotation-driven caching.-->
     <cache:annotation-driven/>
+
 </beans>

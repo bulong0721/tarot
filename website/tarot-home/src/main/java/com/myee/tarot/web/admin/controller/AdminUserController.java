@@ -6,6 +6,8 @@ import com.myee.tarot.admin.service.RoleService;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.profile.domain.Role;
+import org.apache.ignite.Ignite;
+import org.apache.ignite.IgniteCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +37,9 @@ public class AdminUserController {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private Ignite ignite;
 
     @RequestMapping(value = "admin/users/save", method = RequestMethod.POST)
     @ResponseBody
@@ -60,6 +66,8 @@ public class AdminUserController {
     public
     @ResponseBody
     AjaxPageableResponse pageUsers(Model model, HttpServletRequest request) {
+        IgniteCache<Integer, String> cache = ignite.getOrCreateCache("test");
+        cache.put(1, "Martin.xu" + new Date().getTime());
         AjaxPageableResponse resp = new AjaxPageableResponse();
         List<AdminUser> userList = userService.list();
         for (AdminUser user : userList) {
@@ -81,13 +89,14 @@ public class AdminUserController {
     public
     @ResponseBody
     AjaxPageableResponse pageRoles(Model model, HttpServletRequest request) {
+        IgniteCache<Integer, String> cache = ignite.getOrCreateCache("test");
         AjaxPageableResponse resp = new AjaxPageableResponse();
-        List<Role> roleList = roleService.list();
+        List<Role> roleList = roleService.listAll();
         for (Role role : roleList) {
             Map entry = new HashMap();
             entry.put("id", role.getId());
             entry.put("roleName", role.getRoleName());
-            entry.put("description", role.getDescription());
+            entry.put("description", cache.get(1));
             resp.addDataEntry(entry);
         }
         return resp;

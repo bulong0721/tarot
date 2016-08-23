@@ -5,16 +5,16 @@ import com.google.common.collect.Lists;
 import com.myee.tarot.campaign.domain.MerchantActivity;
 import com.myee.tarot.campaign.domain.MerchantPrice;
 import com.myee.tarot.campaign.domain.ModeSwitch;
-import com.myee.tarot.campaign.domain.bean.RedisKeyConstants;
 import com.myee.tarot.campaign.service.MerchantActivityService;
 import com.myee.tarot.campaign.service.MerchantPriceService;
 import com.myee.tarot.campaign.service.ModeSwitchService;
 import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
-import com.myee.tarot.campaign.service.impl.redis.RedisUtil;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantStoreService;
+import com.myee.tarot.uitl.CacheUtil;
+import org.apache.ignite.Ignite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +24,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.cache.Cache;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Administrator on 2016/7/11.
@@ -43,11 +42,11 @@ public class MerchantActivityController {
     @Autowired
     private MerchantPriceService merchantPriceService;
     @Autowired
-    private RedisUtil redisUtil;
-    @Autowired
     private ModeSwitchService modeSwitchService;
     @Autowired
     private MerchantStoreService merchantStoreService;
+    @Autowired
+    private Ignite ignite;
 
     /**
      * 添加个新的奖券活动 传过来
@@ -169,7 +168,8 @@ public class MerchantActivityController {
                 activity = merchantActivityService.update(merchantActivity);
             }
             //添加或更新的时候，修改redis对应的商户的活动List
-            redisUtil.set(RedisKeyConstants.STORE_ACTIVITY + "_" + storeId, activity);
+            CacheUtil.activityCache(ignite).put(storeId, activity);
+//            redisUtil.set(RedisKeyConstants.STORE_ACTIVITY + "_" + storeId, activity);
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
             resp.addEntry("result", activity);
             return resp;
@@ -214,10 +214,11 @@ public class MerchantActivityController {
     public AjaxResponse findStoreActivity(@RequestParam("storeId")Long storeId){
         try {
             AjaxResponse response = new AjaxResponse();
-            MerchantActivity result = redisUtil.get(RedisKeyConstants.STORE_ACTIVITY + "_" + storeId, MerchantActivity.class);
+            Cache<Long, MerchantActivity> activeCache = CacheUtil.activityCache(ignite);
+            MerchantActivity result = activeCache.get(storeId);
             if(result == null){
                 result = merchantActivityService.findStoreActivity(storeId);
-                redisUtil.set(RedisKeyConstants.STORE_ACTIVITY + "_" + storeId ,result);
+                activeCache.put(storeId, result);
             }
             response.addEntry("result", result);
             return response;
