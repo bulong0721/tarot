@@ -67,9 +67,9 @@ public class Constants {
 	public final static int WECHAT_OPEN = 0; //开启
 	public final static int WECHAT_CLOSE = 1;  //关闭
 
-	//ES查询模式0:must, 1:should
-	public final static int ES_QUERY_PATTERN_MUST = 0;
-	public final static int ES_QUERY_PATTERN_SHOULD = 1;
+	//ES查询模式 0:should  1:must
+	public final static int ES_QUERY_PATTERN_SHOULD = 0;
+	public final static int ES_QUERY_PATTERN_MUST = 1;
 
 	public final static String PRICEDRAW = "PRICEDRAW";
 

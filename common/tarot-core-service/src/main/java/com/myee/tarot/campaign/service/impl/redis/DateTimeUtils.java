@@ -5,6 +5,8 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -140,13 +142,6 @@ public class DateTimeUtils {
         return null;
     }
 
-    public static void main(String[] args) {
-        Date date = getDateByString("2016-5-30 23:30:34", "yyyy-MM-dd HH:mm:ss");
-        String string = toESString(date);
-        System.out.println(string);
-        System.out.println(date.getTime());
-    }
-
     /**	返回yyyy-MM-dd_HH-mm-ss格式的字符串	*/
     public static String getNormalNameDateTime() {
         return DateFormatUtils.format(new Date(), PATTERN_NAME_DATETIME);
@@ -160,6 +155,17 @@ public class DateTimeUtils {
      */
     public static Date getDateByString(String dateTimeString) {
         return getDateByString(dateTimeString, DEFAULT_DATE_FORMAT_PATTERN_FULL);
+    }
+
+    public static Date getDateByStringEs(String dateStr) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
+        Date date = null;//注意是空格+UTC
+        try {
+            date = format.parse(dateStr.replace("Z", " UTC"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
     }
 
     /**

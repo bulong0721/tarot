@@ -1,6 +1,8 @@
 package com.myee.tarot.weixin.dao.impl;
 
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
+import com.myee.tarot.merchant.domain.Merchant;
+import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.weixin.dao.WxWaitTokenDao;
 import com.myee.tarot.weixin.domain.QWxWaitToken;
 import com.myee.tarot.weixin.domain.WxWaitToken;
@@ -24,8 +26,9 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
     @Override
     public Integer updateState(Integer state, Long orgId, Long clientId, String token, Long timeTook, Long updateTime) {
         WxWaitToken rWaitToken = new WxWaitToken();
-        rWaitToken.setMerchantStoreId(orgId);
-        rWaitToken.setMerchantId(clientId);
+        MerchantStore merchantStore = new MerchantStore();
+        merchantStore.setId(orgId);
+        rWaitToken.setStore(merchantStore);
         rWaitToken.setToken(token);
         rWaitToken.setTimeTook(new Date(timeTook));
         rWaitToken = getWaitTokenByProp(rWaitToken);
@@ -88,18 +91,15 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
     }
 
     @Override
-    public List<WxWaitToken> listByConditions(Long clientId, Long orgId, Long tableTypeId, Integer state) {
+    public List<WxWaitToken> listByConditions(Long orgId, Long tableTypeId, Integer state) {
         QWxWaitToken qrWaitToken = QWxWaitToken.wxWaitToken;
         JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
         query.from(qrWaitToken);
         if (orgId != null) {
-            query.where(qrWaitToken.merchantStoreId.eq(orgId));
+            query.where(qrWaitToken.store.id.eq(orgId));
         }
         if(tableTypeId != null) {
             query.where(qrWaitToken.tableTypeId.eq(tableTypeId));
-        }
-        if(clientId != null) {
-            query.where(qrWaitToken.merchantId.eq(clientId));
         }
         if(state != null) {
             query.where(qrWaitToken.state.eq(state));
@@ -159,12 +159,9 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
         QWxWaitToken qrWaitToken = QWxWaitToken.wxWaitToken;
         JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
         query.from(qrWaitToken);
-        if(rWaitToken.getMerchantStoreId() != null){
-            query.where(qrWaitToken.merchantStoreId.eq(rWaitToken.getMerchantStoreId()));
-        }
-        if(rWaitToken.getMerchantId() != null){
-            query.where(qrWaitToken.merchantId.eq(rWaitToken.getMerchantId()));
-        }
+        if(rWaitToken.getStore().getId() != null){
+            query.where(qrWaitToken.store.id.eq(rWaitToken.getStore().getId()));
+    }
         if(rWaitToken.getToken() != null){
             query.where(qrWaitToken.token.eq(rWaitToken.getToken()));
         }

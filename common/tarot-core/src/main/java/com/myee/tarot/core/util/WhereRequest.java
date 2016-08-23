@@ -17,9 +17,9 @@ public class WhereRequest extends PageRequest {
 
     private String waitState;
 
-    private Date beginDate;
+    private String beginDate;
 
-    private Date endDate;
+    private String endDate;
 
     private String keyword;
 
@@ -57,19 +57,19 @@ public class WhereRequest extends PageRequest {
         this.waitState = waitState;
     }
 
-    public Date getBeginDate() {
+    public String getBeginDate() {
         return beginDate;
     }
 
-    public void setBeginDate(Date beginDate) {
+    public void setBeginDate(String beginDate) {
         this.beginDate = beginDate;
     }
 
-    public Date getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
 

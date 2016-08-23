@@ -124,11 +124,11 @@ public class VoiceLogController {
             queries = null;
         } else {
             EntityQueryDto beginDateDto = new EntityQueryDto();
-            beginDateDto.setFieldValue(whereRequest.getBeginDate());
+            beginDateDto.setFieldValue(DateTimeUtils.toESString(DateTimeUtils.getDateByStringEs(whereRequest.getBeginDate())));
             beginDateDto.setQueryPattern(Constants.ES_QUERY_PATTERN_MUST);
 
             EntityQueryDto endDateDto = new EntityQueryDto();
-            endDateDto.setFieldValue(whereRequest.getEndDate());
+            endDateDto.setFieldValue(DateTimeUtils.toESString(DateTimeUtils.getDateByStringEs(whereRequest.getEndDate())));
             endDateDto.setQueryPattern(Constants.ES_QUERY_PATTERN_MUST);
 
             EntityQueryDto keywordDto = new EntityQueryDto();
@@ -139,13 +139,21 @@ public class VoiceLogController {
             voiceLogTypeDto.setFieldValue(whereRequest.getVoiceLogType());
             voiceLogTypeDto.setQueryPattern(Constants.ES_QUERY_PATTERN_MUST);
 
-            queries.put("beginDate", beginDateDto);
-            queries.put("endDate", endDateDto);
-            queries.put("voiceType", voiceLogTypeDto);
-            queries.put("cookieListen", keywordDto);
-            queries.put("cookieSpeak", keywordDto);
+            if(beginDateDto.getFieldValue()!=null) {
+                queries.put("beginDate", beginDateDto);
+            }
+            if (endDateDto.getFieldValue()!=null) {
+                queries.put("endDate", endDateDto);
+            }
+            if(voiceLogTypeDto.getFieldValue() !=null) {
+                queries.put("voiceType", voiceLogTypeDto);
+            }
+            if(keywordDto.getFieldValue() != null) {
+                queries.put("cookieListen", keywordDto);
+                queries.put("cookieSpeak", keywordDto);
+            }
         }
-        PageResult<VoiceLog> voiceLogList = esUtils.searchPageQueries("log5", "voiceLog5", queries, whereRequest.getPage(), whereRequest.getCount(), VoiceLog.class);
+        PageResult<VoiceLog> voiceLogList = esUtils.searchPageQueries("log6", "voiceLog6", queries, whereRequest.getPage(), whereRequest.getCount(), VoiceLog.class);
         for (VoiceLog voiceLog : voiceLogList.getList()) {
             resp.addDataEntry(objectToEntry(voiceLog));
         }
@@ -156,9 +164,9 @@ public class VoiceLogController {
     //把类转换成entry返回给前端，解耦和
     private Map objectToEntry(VoiceLog voiceLog) {
         Map entry = new HashMap();
-        entry.put("dateTime", voiceLog.getDateTime());
+        entry.put("dateTimeStr", voiceLog.getDateTimeStr());
         entry.put("storeName", voiceLog.getStoreName());
-        entry.put("voiceType", voiceLog.getVoiceType());
+        entry.put("voiceType", voiceLog.getVoiceType().equals("1")? "聊天" : "脱口秀");
         entry.put("cookyListen", voiceLog.getCookieListen());
         entry.put("cookySpeak", voiceLog.getCookieSpeak());
         return entry;

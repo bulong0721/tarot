@@ -17,7 +17,7 @@ public interface WxWaitTokenDao extends GenericEntityDao<Long, WxWaitToken> {
 
     public WxWaitToken getByIdentityCode(String identityCode, Long beginTime, Long endTime);
 
-    public List<WxWaitToken> listByConditions(Long clientId, Long orgId, Long tableTypeId, Integer state);
+    public List<WxWaitToken> listByConditions(Long orgId, Long tableTypeId, Integer state);
 
     public WxWaitToken getByCondition(String openId, Integer state);
 

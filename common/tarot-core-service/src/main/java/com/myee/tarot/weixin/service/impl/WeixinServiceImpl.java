@@ -12,6 +12,7 @@ import com.myee.tarot.catering.dao.TableTypeDao;
 import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.core.util.DateUtil;
 import com.myee.tarot.merchant.dao.MerchantStoreDao;
+import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.weixin.dao.WFeedBackDao;
 import com.myee.tarot.weixin.dao.WxWaitTokenDao;
@@ -201,16 +202,19 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
 
     static WxWaitToken convertTo(WaitToken waitToken, Long date) {
         WxWaitToken entity = new WxWaitToken();
+        MerchantStore merchantStore = new MerchantStore();
+        merchantStore.setId(100L);
         entity.setTableId(waitToken.getTableId());
         entity.setTableTypeId(waitToken.getTableTypeId());
         entity.setComment(waitToken.getComment());
         entity.setChannelType("weixin");
         entity.setDinerId(100L);
+        entity.setStore(merchantStore);
         entity.setIdentityCode(waitToken.getIdentityCode());
         entity.setOpenId(waitToken.getOpenId());
         entity.setToken(waitToken.getToken());
-        entity.setMerchantId(waitToken.getClientId());
-        entity.setMerchantStoreId(waitToken.getShopId());
+//        entity.setMerchantId(waitToken.getClientId());
+//        entity.setMerchantStoreId(waitToken.getShopId());
         entity.setDinnerCount(waitToken.getDinnerCount());
         Date dt = new Date(date * 1000);
         entity.setTimeTook(dt);
@@ -328,7 +332,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
                         Long eTimeLong = endDate.getTime();
                         WxWaitToken wxWaitToken = waitTokenDao.getByIdentityCode(identityCode, bTimeLong, eTimeLong);
                         //根据merchanStoreId查询merchanStoreName
-                        MerchantStore merchantStore = merchantStoreDao.findById(wxWaitToken.getMerchantStoreId());
+                        MerchantStore merchantStore = merchantStoreDao.findById(wxWaitToken.getStore().getId());
                         shopName = merchantStore.getName();
                         tokenNum = wt.getToken();
                         timeTook = wt.getTimeTook();
@@ -346,7 +350,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
             WxWaitToken wtoken = waitTokenDao.getByIdentityCode(identityCode, bTimeLong, eTimeLong);
             if (wtoken != null) {
                 //根据clientId和orgId和tableId，找到该餐馆的某餐桌类型等待的token
-                List<WxWaitToken> tokenList = waitTokenDao.listByConditions(wtoken.getMerchantId(), wtoken.getMerchantStoreId(), wtoken.getTableId(), WaitTokenState.WAITING.getValue());
+                List<WxWaitToken> tokenList = waitTokenDao.listByConditions(wtoken.getStore().getId(), wtoken.getTableId(), WaitTokenState.WAITING.getValue());
                 List<WxWaitToken> sortedTokens = orderingByTook2.sortedCopy(tokenList);
                 for (WxWaitToken wt : sortedTokens) {
                     if (!wt.getIdentityCode().equals(identityCode)) {
@@ -355,7 +359,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
                         assignVal(wt.getState(), queueStatus);
                         timeTook = wt.getTimeTook().getTime();
                         //根据merchanStoreId查询merchanStoreName
-                        MerchantStore merchantStore = merchantStoreDao.findById(wt.getMerchantStoreId());
+                        MerchantStore merchantStore = merchantStoreDao.findById(wt.getStore().getId());
                         shopName = merchantStore.getName();
                         break;
                     }

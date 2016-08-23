@@ -74,8 +74,7 @@ public class WaitTokenController {
         entry.put("state", new WxWaitTokenState().getWxWaitTokenState(wxWaitToken.getState()+""));
         entry.put("waitedCount", wxWaitToken.getWaitedCount());
         entry.put("predictWaitingTime",wxWaitToken.getPredictWaitingTime());
-        entry.put("clientID", wxWaitToken.getMerchantId());
-        entry.put("orgID",wxWaitToken.getMerchantStoreId());
+        entry.put("orgID",wxWaitToken.getStore().getId());
         entry.put("updated",wxWaitToken.getUpdated());
         return entry;
     }

@@ -281,7 +281,7 @@ public class WebMpController {
         //如果找到了，说明是可以通过点击按钮方式直接查询
         Map<String, Object> msgMap = new HashMap<String, Object>();
         if (myWt != null) {
-            msgMap = wxService.listProgressByOpenId(openId, myWt.getMerchantStoreId(), myWt.getTableId());
+            msgMap = wxService.listProgressByOpenId(openId, myWt.getStore().getId(), myWt.getTableId());
         } else {
             msgMap.put("valid", "您尚未绑定二维码，请扫码绑定!");
         }

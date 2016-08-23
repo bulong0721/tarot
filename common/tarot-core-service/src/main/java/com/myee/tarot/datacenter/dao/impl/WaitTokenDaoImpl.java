@@ -1,5 +1,6 @@
 package com.myee.tarot.datacenter.dao.impl;
 
+import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.StringUtil;
@@ -32,11 +33,11 @@ public class WaitTokenDaoImpl  extends GenericEntityDaoImpl<Long, WxWaitToken> i
         if(!StringUtil.isBlank(whereRequest.getWaitState())){
             query.where(qWxWaitToken.state.eq(Integer.parseInt(whereRequest.getWaitState())));
         }
-        if(null !=whereRequest.getBeginDate()){
-            query.where(qWxWaitToken.created.before(whereRequest.getBeginDate()));
+        if(null != whereRequest.getBeginDate()){
+            query.where(qWxWaitToken.created.before(DateTimeUtils.getDateByString(whereRequest.getBeginDate())));
         }
         if(null != whereRequest.getEndDate()){
-            query.where(qWxWaitToken.created.after(whereRequest.getBeginDate()));
+            query.where(qWxWaitToken.created.after(DateTimeUtils.getDateByString(whereRequest.getBeginDate())));
         }
         pageList.setRecordsTotal(query.from(qWxWaitToken).fetchCount());
         if( whereRequest.getCount() > 0){
