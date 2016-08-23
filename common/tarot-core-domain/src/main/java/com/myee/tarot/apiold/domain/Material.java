@@ -57,11 +57,6 @@ public class Material extends GenericEntity<Long, Material> {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATED")
 	private Date created;
-	@Column(name = "UPDATED_BY")
-	private long updatedBy;
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "UPDATED")
-	private Date updated;
 
 	public Material(){
 
@@ -209,19 +204,4 @@ public class Material extends GenericEntity<Long, Material> {
 		this.created = created;
 	}
 
-	public long getUpdatedBy() {
-		return updatedBy;
-	}
-
-	public void setUpdatedBy(long updatedBy) {
-		this.updatedBy = updatedBy;
-	}
-
-	public Date getUpdated() {
-		return updated;
-	}
-
-	public void setUpdated(Date updated) {
-		this.updated = updated;
-	}
 }

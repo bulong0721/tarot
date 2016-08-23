@@ -43,8 +43,8 @@
         methods :{
         	save(){
         		let v = this.v;
-		    	if(!v.endDate || !v.startDate || !v.name){
-		    		Toast('请完整设置规则,再提交');
+		    	if(!v || !v.name || !v.endDate || !v.startDate){
+		    		Toast('请按照规则填写，并提交');
 		    		return false;
 		    	}else{
 		    		let des = [];
@@ -71,7 +71,7 @@
 					}
 
 					if(v.startDate>v.endDate){
-						Toast('结束日期必须大于开始日期');
+						Toast('结束日期不能小于开始日期');
 						return;
 					}
 
@@ -79,9 +79,9 @@
 						//res.status == 0?Toast('添加成功'):Toast('添加失败');
 						if(res.status == 0){
 							this.$route.router.go('/');
-							Toast('添加成功')
+							Toast(data.prices[0].id?'修改成功':'添加成功');
 						}else{
-							Toast('添加失败')
+							Toast(data.prices[0].id?res.statusMessage:'添加失败');
 						}
 					});
 		    	}

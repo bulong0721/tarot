@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * History: <p>如果有修改过程，请记录</P>
  */
 @Controller
-@Scope("prototype")
+//@Scope("prototype")
 public class ForwardManageController extends BaseController {
 
     private Logger logger = LoggerFactory.getLogger(ForwardManageController.class);

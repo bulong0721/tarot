@@ -31,7 +31,7 @@ import java.util.List;
  * History: <p>如果有修改过程，请记录</P>
  */
 @RestController
-@Scope("prototype")
+//@Scope("prototype")
 @RequestMapping("/api/v10/menu")
 public class MenuManageController extends BaseController {
 

@@ -160,12 +160,15 @@ public class PriceInfoController {
                 }else if(status==Constants.PRICEINFO_USED){
                     resp.setErrorString("该奖券已被使用");
                 }else{
-                    //再次判断是否过期
+                    //再次判断是否过期或是否未在使用期内
+                    Date startDate = priceInfo.getPriceStartDate();
                     Date endDate = priceInfo.getPriceEndDate();
                     Date nowDate = DateTimeUtils.startToday();
                     if(endDate.compareTo(nowDate) < 0){
                         priceInfo.setStatus(Constants.PRICEINFO_EXPIRE);
                         resp.setErrorString("该奖券已过期");
+                    }else if(startDate.compareTo(nowDate) > 0 ){
+                        resp.setErrorString("该奖券不在兑换时间内");
                     }else {
                         //验证通过后
                         resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
@@ -224,12 +227,10 @@ public class PriceInfoController {
     }
 
     private boolean compareTime(PriceInfo info){
-        Date startDate = info.getPriceStartDate();
         Date endDate = info.getPriceEndDate();
         Date now = DateTimeUtils.startToday();
-        int start = startDate.compareTo(now);
         int end = endDate.compareTo(now);
-        if(start<=0 && end>=0){
+        if(end >= 0){
             return true;
         }else{
             return false;

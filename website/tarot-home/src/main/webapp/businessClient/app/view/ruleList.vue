@@ -47,11 +47,13 @@
 	  	route: {
 		    data({next }){
 				resource.post(this,'api/activity/findStoreActivity',{storeId:this.storeId}).then((res) => {
-					let r = res.dataMap.result.prices;
-					if(r && r.length>0){
-						next({
-							rulelist:r
-						});
+					if(res.dataMap.result){
+						let r = res.dataMap.result.prices;
+						if(r && r.length>0){
+							next({
+								rulelist:r
+							});
+						}
 					}
 				});
 		    }

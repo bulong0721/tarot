@@ -31,7 +31,7 @@ import java.util.*;
  * History: <p>如果有修改过程，请记录</P>
  */
 @RestController
-@Scope("prototype")
+//@Scope("prototype")
 public class TableInfoController extends BaseController {
 
     private Logger logger = LoggerFactory.getLogger(TableInfoController.class);

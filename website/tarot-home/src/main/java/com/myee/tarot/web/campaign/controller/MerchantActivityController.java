@@ -26,8 +26,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.cache.Cache;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Administrator on 2016/7/11.
@@ -121,11 +123,11 @@ public class MerchantActivityController {
                                 }
                                 //redis放缓存
                                 MerchantPrice getPrice = prices.get(0);
-                                price.setName(getPrice.getName());
+                                /*price.setName(getPrice.getName());
                                 price.setDescription(getPrice.getDescription());
                                 price.setStartDate(getPrice.getStartDate());
                                 price.setEndDate(getPrice.getEndDate());
-                                price.setTotal(getPrice.getTotal());
+                                price.setTotal(getPrice.getTotal());*/
                                 //修改参数
                                 findPrice.setName(getPrice.getName());
                                 findPrice.setDescription(getPrice.getDescription());
@@ -170,6 +172,7 @@ public class MerchantActivityController {
             //添加或更新的时候，修改redis对应的商户的活动List
             CacheUtil.activityCache(ignite).put(storeId, activity);
 //            redisUtil.set(RedisKeyConstants.STORE_ACTIVITY + "_" + storeId, activity);
+            // redisUtil.set(RedisKeyConstants.STORE_ACTIVITY + "_" + storeId, activity);
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
             resp.addEntry("result", activity);
             return resp;
