@@ -2,6 +2,7 @@ package com.myee.tarot.weixin.domain;
 
 
 import com.myee.tarot.core.GenericEntity;
+import com.myee.tarot.merchant.domain.MerchantStore;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -16,11 +17,11 @@ public class WxWaitToken extends GenericEntity<Long, WxWaitToken> {
     @Column(name = "CA_WAIT_TOKEN_ID", unique = true, nullable = false)
     @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "CA_WAIT_TOKEN_SEQ_NEXT_VAL", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
-    private Long   id;
+    private Long id;
     @Column(name = "CA_TABLE_ID")
-    private Long   tableId;
+    private Long tableId;
     @Column(name = "TABLE_TYPE_ID")
-    private Long   tableTypeId;
+    private Long tableTypeId;
     @Column(name = "TOKEN")
     private String token;
     @Column(name = "CHANNEL_TYPE")
@@ -28,33 +29,28 @@ public class WxWaitToken extends GenericEntity<Long, WxWaitToken> {
     @Column(name = "COMMENT")
     private String comment;
     @Column(name = "CA_DINER_ID")
-    private Long   dinerId;
+    private Long dinerId;
     @Column(name = "TIME_TOOK")
     private Date timeTook;
     @Column(name = "OPEN_ID")
     private String openId;
     @Column(name = "IDENTITY_CODE")
-    private  String identityCode;
+    private String identityCode;
     @Column(name = "STATE")
-    private  int state;
+    private int state;
     @Column(name = "WAITED_COUNT")
     private Long waitedCount;
     @Column(name = "PREDICT_WAITING_TIME")
     private Long predictWaitingTime;
-    @Column(name = "MERCHANT_ID") //clientId
-    private Long merchantId;
-    @Column(name = "MERCHANT_STORE_ID") //orgID
-    private Long merchantStoreId;
+    @ManyToOne(targetEntity = MerchantStore.class, optional = false)
+    @JoinColumn(name = "STORE_ID")
+    protected MerchantStore store;
     @Column(name = "ACTIVE")
     private boolean active = true;
-    @Column(name = "UPDATED")
-    private Date updated;
-    @Column(name = "UPDATED_BY")
-    private Long updatedBy;
     @Column(name = "CREATED")
     private Date created;
-    @Column(name = "CREATED_BY")
-    private Long createdBy;
+    @Column(name = "UPDATED")
+    private Date updated;
     @Column(name = "DINNER_COUNT")
     private int dinnerCount;
 
@@ -146,21 +142,6 @@ public class WxWaitToken extends GenericEntity<Long, WxWaitToken> {
         this.predictWaitingTime = predictWaitingTime;
     }
 
-    public Long getMerchantId() {
-        return merchantId;
-    }
-
-    public void setMerchantId(Long merchantId) {
-        this.merchantId = merchantId;
-    }
-
-    public Long getMerchantStoreId() {
-        return merchantStoreId;
-    }
-
-    public void setMerchantStoreId(Long merchantStoreId) {
-        this.merchantStoreId = merchantStoreId;
-    }
 
     public boolean isActive() {
         return active;
@@ -176,30 +157,6 @@ public class WxWaitToken extends GenericEntity<Long, WxWaitToken> {
 
     public void setUpdated(Date updated) {
         this.updated = updated;
-    }
-
-    public Long getUpdatedBy() {
-        return updatedBy;
-    }
-
-    public void setUpdatedBy(Long updatedBy) {
-        this.updatedBy = updatedBy;
-    }
-
-    public Date getCreated() {
-        return created;
-    }
-
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    public Long getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(Long createdBy) {
-        this.createdBy = createdBy;
     }
 
     public int getDinnerCount() {
@@ -226,5 +183,21 @@ public class WxWaitToken extends GenericEntity<Long, WxWaitToken> {
     @Override
     public void setId(Long id) {
 
+    }
+
+    public MerchantStore getStore() {
+        return store;
+    }
+
+    public void setStore(MerchantStore store) {
+        this.store = store;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
     }
 }
