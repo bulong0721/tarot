@@ -140,7 +140,7 @@ public class VoiceLogController {
             voiceLogTypeDto.setQueryPattern(Constants.ES_QUERY_PATTERN_MUST);
 
             if(beginDateDto.getFieldValue()!=null) {
-                queries.put("beginDate", beginDateDto);
+                queries.put("startDate", beginDateDto);
             }
             if (endDateDto.getFieldValue()!=null) {
                 queries.put("endDate", endDateDto);

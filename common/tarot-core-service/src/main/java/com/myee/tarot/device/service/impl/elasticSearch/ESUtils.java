@@ -29,7 +29,7 @@ public class ESUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ESUtils.class);
     //后期通过spring配置获取
-   // private static JestClient jestClient = InitES.jestClient();
+//    private static JestClient jestClient = InitES.jestClient();
 
     @Value("${es_http_url}")
     private String connectionUrl;
@@ -200,13 +200,13 @@ public class ESUtils {
                         //特定为时间选择做的query
                         if(key.equals("startDate")){
                             query.append( "          { \"range\" : {\n" +
-                                    "              \"date\" : {\n" +
+                                    "              \"dateTime\" : {\n" +
                                     "                    \"gte\" : \""+ queries.get(key).getFieldValue() +"\"\n" +
                                     "              }\n" +
                                     "          }}," );
                         }else if(key.equals("endDate")){
                             query.append( "          { \"range\" : {\n" +
-                                    "              \"date\" : {\n" +
+                                    "              \"dateTime\" : {\n" +
                                     "                    \"lte\" : \""+ queries.get(key).getFieldValue() +"\"\n" +
                                     "              }\n" +
                                     "          }}," );
@@ -305,5 +305,4 @@ public class ESUtils {
         }
         return null;
     }
-
 }
