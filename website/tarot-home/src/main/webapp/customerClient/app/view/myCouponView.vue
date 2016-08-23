@@ -2,15 +2,15 @@
 	<div class="couponView">
 		<div class="cw_main">
 			<span class="cw_logo" ><img :src="logo" /></span>
-			<span class="cw_tit">{{view.price.name}}</span>
+			<span class="cw_tit">{{view.priceName}}</span>
 			<span class="cw_cop">优惠码：{{view.checkCode}}</span>
 			<div class="line">
 				<span></span>
 				<span></span>
 			</div>
 			<p>
-				<span v-for="d in view.price.description | des_br" >{{($index+1)+'.'+d}}</span>
-				<span>{{view.price.description | des_br 'true'}}.有效期{{view.price.startDate}} ~ {{view.price.endDate}}</span>
+				<span v-for="d in des" >{{$index+1}}.{{d.n}}</span>
+				<span>{{view.priceDescription | des_br 'true'}}.使用效期：{{view.priceStartDate}} ~ {{view.priceEndDate}}</span>
 			</p>
 		</div>
 	</div>
@@ -21,8 +21,13 @@
 		route: {
 			data({to,next}){
 				resource.post(this,'api/info/getPrice',{id:to.params.id,keyId:to.params.keyId}).then((res) => {
+					let view = res.dataMap.result,_des = view.priceDescription.split('<br />'),tmp=[];
+					for(var key in _des){
+						tmp.push({n:_des[key]})
+					}
 					next({
-						view: res.dataMap.result
+						view: view,
+						des:tmp
 					});
 				})
 			}
@@ -30,7 +35,8 @@
 	  	data(){
 		    return {
 		    	logo: './dist/img/logo.jpg',
-		    	view:{}
+		    	view:{},
+		    	des:{}
 		    }
 	  	}
 	}
