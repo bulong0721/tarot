@@ -5,11 +5,10 @@ angular.module('myee', [])
  * voiceLogCtrl - controller
  * @type {string[]}
  */
-voiceLogCtrl.$inject = ['$scope', '$resource', '$filter', 'cTables','Constants','cAlerts','toaster'];
-function voiceLogCtrl($scope, $resource, $filter,cTables,Constants,cAlerts,toaster) {
+voiceLogCtrl.$inject = ['$scope', '$resource', '$filter', 'cTables', 'Constants', 'cAlerts', 'toaster'];
+function voiceLogCtrl($scope, $resource, $filter, cTables, Constants, cAlerts, toaster) {
     var mgrData = {
-        fields: [
-        ],
+        fields: [],
         api: {
             read: '../voiceLog/paging',
             download: '../voiceLog/download'
@@ -17,82 +16,27 @@ function voiceLogCtrl($scope, $resource, $filter,cTables,Constants,cAlerts,toast
     };
     cTables.initNgMgrCtrl(mgrData, $scope);
 
-    $scope.download = function (data1,data2,data3,data4) {
-        $resource(mgrData.api.download).save({startDate: data1, endDate: data2, type: data3, keyword: data4}, {}).$promise.then(function success(resp){
-            window.location.href = resp.dataMap.filePath;
-        });
+    $scope.download = function () {
+        var beginTime = timeConverter(new Date($scope.where.beginDate));
+        var endTime = timeConverter(new Date($scope.where.endDate));
+        window.location.href = mgrData.api.download + "?" + ($scope.where.beginDate == undefined ? "beginDate=" : "beginDate=" + beginTime)
+            + ($scope.where.endDate == undefined ? "&endDate=" : "&endDate=" + endTime)
+            + ($scope.where.voiceLogType == undefined ? "&voiceLogType=" : "&voiceLogType=" + $scope.where.voiceLogType)
+            + ($scope.where.keyword == undefined ? "&keyword=" : "&keyword=" + $scope.where.keyword);
     }
 
-    /*$scope.treeColumns = [
-        {
-            displayName: '序号',
-            columnWidth: '5%',
-            cellTemplate: '<span>{{cellTemplateScope.text(row.branch)}}</span>',
-            cellTemplateScope: {
-                text: function(data) {
-                    return data.rowNum;
-                }
-            }
-        },
-        {
-            displayName: '日期-时间',
-            columnWidth: '25%',
-            cellTemplate: '<span>{{cellTemplateScope.text(row.branch)}}</span>',
-            cellTemplateScope: {
-                format: function (data) {
-                    if (!data.modified) return "-";
-                    return $filter('date')(new Date(data.modified), 'yyyy-MM-dd HH:mm:ss');
-                }
-            }
-        },
-        {
-            displayName: 'Cooky- Listen',
-            columnWidth: '25%',
-            cellTemplate: '<span>{{cellTemplateScope.text(row.branch)}}</span>',
-            cellTemplateScope: {
-                text: function(data) {
-                    return data.listen;
-                }
-            }
-        },
-        {
-            displayName: 'Cooky- Speak',
-            columnWidth: '25%',
-            cellTemplate: '<span>{{cellTemplateScope.text(row.branch)}}</span>',
-            cellTemplateScope: {
-                text: function(data) {
-                    return data.speak;
-                }
-            }
-        },
-        {
-            displayName: '种类',
-            columnWidth: '10%',
-            cellTemplate: '<span>{{cellTemplateScope.text(row.branch)}}</span>',
-            cellTemplateScope: {
-                text: function(data) {
-                    return data.type;
-                }
-            }
-        },
-        {
-            displayName: '操作',
-            columnWidth: '150',
-            cellTemplate: '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-download" ng-click="cellTemplateScope.download(row.branch)"></i></a>',
-            cellTemplateScope: {
-                download: function (data) {
-                    window.location.href = data.url;
-                }
-            }
-        }
-    ];*/
+    function timeConverter(time) {
+        var month = time.getMonth()+1;
+        var timeAvailable = time.getFullYear() + "-" + month + "-" + time.getDate() + " 00:00:00";
+        return timeAvailable;
+    }
 
-    $scope.today = function() {
+    $scope.today = function () {
         $scope.dt = new Date();
     };
     //$scope.today();
 
-    $scope.clear = function() {
+    $scope.clear = function () {
         $scope.dt = null;
     };
 
@@ -117,22 +61,22 @@ function voiceLogCtrl($scope, $resource, $filter,cTables,Constants,cAlerts,toast
         return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
     }
 
-    $scope.toggleMin = function() {
+    $scope.toggleMin = function () {
         $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
         $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
     };
 
     $scope.toggleMin();
 
-    $scope.open1 = function() {
+    $scope.open1 = function () {
         $scope.popup1.opened = true;
     };
 
-    $scope.open2 = function() {
+    $scope.open2 = function () {
         $scope.popup2.opened = true;
     };
 
-    $scope.setDate = function(year, month, day) {
+    $scope.setDate = function (year, month, day) {
         $scope.where.startDate = new Date(year, month, day);
         $scope.where.endDate = new Date(year, month, day);
     };
@@ -168,10 +112,10 @@ function voiceLogCtrl($scope, $resource, $filter,cTables,Constants,cAlerts,toast
         var date = data.date,
             mode = data.mode;
         if (mode === 'day') {
-            var dayToCheck = new Date(date).setHours(0,0,0,0);
+            var dayToCheck = new Date(date).setHours(0, 0, 0, 0);
 
             for (var i = 0; i < $scope.events.length; i++) {
-                var currentDay = new Date($scope.events[i].date).setHours(0,0,0,0);
+                var currentDay = new Date($scope.events[i].date).setHours(0, 0, 0, 0);
 
                 if (dayToCheck === currentDay) {
                     return $scope.events[i].status;

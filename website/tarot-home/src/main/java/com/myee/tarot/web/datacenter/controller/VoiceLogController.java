@@ -7,7 +7,6 @@ import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
-import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.core.web.EntityQueryDto;
 import com.myee.tarot.device.service.impl.elasticSearch.ESUtils;
 import com.myee.tarot.web.util.StringUtil;
@@ -21,12 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.text.SimpleDateFormat;
+import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -46,35 +42,49 @@ public class VoiceLogController {
     @Autowired
     private ESUtils esUtils;
 
+    private static EntityQueryDto beginDateDto = new EntityQueryDto();
+    private static EntityQueryDto endDateDto = new EntityQueryDto();
+    private static EntityQueryDto keywordDto = new EntityQueryDto();
+    private static EntityQueryDto voiceLogTypeDto = new EntityQueryDto();
+
     /**
      * 下载
      *
      * @param whereRequest
-     * @param request
      * @return
      */
-    @RequestMapping(value = "voiceLog/download", method = {RequestMethod.POST})
+    @RequestMapping(value = "voiceLog/download")
     @ResponseBody
-    public AjaxResponse download(WhereRequest whereRequest, HttpServletRequest request) {
+    public void download(WhereRequest whereRequest, HttpServletResponse resp) {
         CSVWriter writer = null;
-        AjaxResponse resp = new AjaxResponse();
-        String fileName = null;
+        Map<String, EntityQueryDto> queries = Maps.newHashMap();
+        if (!StringUtil.isNullOrEmpty(whereRequest.getBeginDate())) {
+            beginDateDto.setFieldValue(DateTimeUtils.toESString(DateTimeUtils.getDateByString(whereRequest.getBeginDate())));
+            beginDateDto.setQueryPattern(Constants.ES_QUERY_PATTERN_MUST);
+            queries.put("startDate", beginDateDto);
+        }
+        if (!StringUtil.isNullOrEmpty(whereRequest.getEndDate())) {
+            endDateDto.setFieldValue(DateTimeUtils.toESString(DateTimeUtils.getDateByString(whereRequest.getEndDate())));
+            endDateDto.setQueryPattern(Constants.ES_QUERY_PATTERN_MUST);
+            queries.put("endDate", endDateDto);
+        }
+        if (!StringUtil.isNullOrEmpty(whereRequest.getKeyword())) {
+            keywordDto.setFieldValue(whereRequest.getKeyword());
+            keywordDto.setQueryPattern(Constants.ES_QUERY_PATTERN_SHOULD);
+            queries.put("cookieListen", keywordDto);
+            queries.put("cookieSpeak", keywordDto);
+        }
+        if (!StringUtil.isNullOrEmpty(whereRequest.getVoiceLogType())) {
+            voiceLogTypeDto.setFieldValue(whereRequest.getVoiceLogType());
+            voiceLogTypeDto.setQueryPattern(Constants.ES_QUERY_PATTERN_MUST);
+            queries.put("voiceType", voiceLogTypeDto);
+        }
         try {
-//            PageResult<VoiceLog> pageList = VoiceLogUtil.search(time, type, keyword);
-//            List<VoiceLog> voiceLogList = pageList.getList();
-            List<VoiceLog> voiceLogList = new ArrayList<VoiceLog>();
-            String fileParentPath = DOWNLOAD_HOME + File.separator + "temp";
-            String fileFullName = DOWNLOAD_HOME + File.separator + "temp" + File.separator + "语音日志" + DateTimeUtils.getNormalNameDateTime() + ".csv";
-            File tempFilePath = new File(fileParentPath);
-            if (!tempFilePath.isDirectory()) {
-                //创建目录
-                tempFilePath.mkdirs();
-            }
-            File tempFile = new File(fileFullName);
-            tempFile.createNewFile();
-            //用GBK等中文字符集，下载文件后用excel打开不会乱码。用无BOM编码的utf-8字符集，excel乱码，txt不乱码。
-            OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(tempFile.getPath()), "gb2312");
-            writer = new CSVWriter(osw, ',');
+            PageResult<VoiceLog> voiceLogPageResult = esUtils.searchPageQueries("log6", "voiceLog6", queries, 1, 10000, VoiceLog.class);//默认上限查询10000条数据
+            List<VoiceLog> voiceLogList = voiceLogPageResult.getList();
+            resp.setHeader("Content-type", "text/csv;charset=gb2312");
+            resp.addHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(DateTimeUtils.getNormalNameDateTime() + "语音日志.csv", "utf8"));
+            writer = new CSVWriter(resp.getWriter());
             writer.writeNext(new String[]{
                     "序号",
                     "日期",
@@ -83,25 +93,12 @@ public class VoiceLogController {
                     "种类",
                     "商铺"
             });
-            for (Integer j = 0; j < 10; j++) {
-                VoiceLog voiceLog = new VoiceLog();
-                if (j % 2 == 0) {
-                    voiceLog.setVoiceType("聊天");
-                } else {
-                    voiceLog.setVoiceType("脱口秀");
-                }
-                voiceLog.setCookieListen("wowowo" + j);
-                voiceLog.setCookieSpeak("我勒个去" + j);
-                voiceLog.setStoreId(100L);
-                voiceLog.setStoreName("店铺100" + j);
-                voiceLog.setDateTimeStr(new SimpleDateFormat("yyyy-MM-dd hh:MM:ss").format(new Date()));
-                voiceLogList.add(voiceLog);
+            for (int i = 0; i < voiceLogList.size(); i++) {
                 //写csv文件
-                writeCsvFile(writer, voiceLogList.get(j), j);
+                writeCsvFile(writer, voiceLogList.get(i), i);
             }
-            fileName = DOWNLOAD_HTTP + File.separator + "temp" + File.separator + "语音日志" + DateTimeUtils.getNormalNameDateTime() + ".csv";
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         } finally {
             if (writer != null) {
                 try {
@@ -110,8 +107,6 @@ public class VoiceLogController {
                 }
             }
         }
-        resp.addEntry("filePath", fileName);
-        return resp;
     }
 
     @RequestMapping(value = "voiceLog/paging", method = RequestMethod.GET)
@@ -119,40 +114,28 @@ public class VoiceLogController {
     public AjaxPageableResponse pageDevice(WhereRequest whereRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         Map<String, EntityQueryDto> queries = Maps.newHashMap();
-        if (whereRequest.getBeginDate() == null && whereRequest.getEndDate() == null
-                && StringUtil.isNullOrEmpty(whereRequest.getKeyword()) && StringUtil.isNullOrEmpty(whereRequest.getVoiceLogType())) {
-            queries = null;
-        } else {
-            EntityQueryDto beginDateDto = new EntityQueryDto();
+        if (!StringUtil.isNullOrEmpty(whereRequest.getBeginDate())) {
             beginDateDto.setFieldValue(DateTimeUtils.toESString(DateTimeUtils.getDateByStringEs(whereRequest.getBeginDate())));
             beginDateDto.setQueryPattern(Constants.ES_QUERY_PATTERN_MUST);
-
-            EntityQueryDto endDateDto = new EntityQueryDto();
+            queries.put("startDate", beginDateDto);
+        }
+        if (!StringUtil.isNullOrEmpty(whereRequest.getEndDate())) {
             endDateDto.setFieldValue(DateTimeUtils.toESString(DateTimeUtils.getDateByStringEs(whereRequest.getEndDate())));
             endDateDto.setQueryPattern(Constants.ES_QUERY_PATTERN_MUST);
-
-            EntityQueryDto keywordDto = new EntityQueryDto();
+            queries.put("endDate", endDateDto);
+        }
+        if (!StringUtil.isNullOrEmpty(whereRequest.getKeyword())) {
             keywordDto.setFieldValue(whereRequest.getKeyword());
             keywordDto.setQueryPattern(Constants.ES_QUERY_PATTERN_SHOULD);
-
-            EntityQueryDto voiceLogTypeDto = new EntityQueryDto();
+            queries.put("cookieListen", keywordDto);
+            queries.put("cookieSpeak", keywordDto);
+        }
+        if (!StringUtil.isNullOrEmpty(whereRequest.getVoiceLogType())) {
             voiceLogTypeDto.setFieldValue(whereRequest.getVoiceLogType());
             voiceLogTypeDto.setQueryPattern(Constants.ES_QUERY_PATTERN_MUST);
-
-            if(beginDateDto.getFieldValue()!=null) {
-                queries.put("startDate", beginDateDto);
-            }
-            if (endDateDto.getFieldValue()!=null) {
-                queries.put("endDate", endDateDto);
-            }
-            if(voiceLogTypeDto.getFieldValue() !=null) {
-                queries.put("voiceType", voiceLogTypeDto);
-            }
-            if(keywordDto.getFieldValue() != null) {
-                queries.put("cookieListen", keywordDto);
-                queries.put("cookieSpeak", keywordDto);
-            }
+            queries.put("voiceType", voiceLogTypeDto);
         }
+
         PageResult<VoiceLog> voiceLogList = esUtils.searchPageQueries("log6", "voiceLog6", queries, whereRequest.getPage(), whereRequest.getCount(), VoiceLog.class);
         for (VoiceLog voiceLog : voiceLogList.getList()) {
             resp.addDataEntry(objectToEntry(voiceLog));
@@ -166,7 +149,7 @@ public class VoiceLogController {
         Map entry = new HashMap();
         entry.put("dateTimeStr", voiceLog.getDateTimeStr());
         entry.put("storeName", voiceLog.getStoreName());
-        entry.put("voiceType", voiceLog.getVoiceType().equals("1")? "聊天" : "脱口秀");
+        entry.put("voiceType", voiceLog.getVoiceType().equals("1") ? "聊天" : "脱口秀");
         entry.put("cookyListen", voiceLog.getCookieListen());
         entry.put("cookySpeak", voiceLog.getCookieSpeak());
         return entry;
@@ -175,7 +158,7 @@ public class VoiceLogController {
     private void writeCsvFile(CSVWriter writer, VoiceLog log, Integer i) {
         writer.writeNext(new String[]{
                 i + 1 + "",
-                StringUtil.nullToString(log.getDateTime()),
+                StringUtil.nullToString(log.getDateTimeStr()),
                 StringUtil.nullToString(log.getCookieListen()),
                 StringUtil.nullToString(log.getCookieSpeak()),
                 StringUtil.nullToString(log.getVoiceType()),

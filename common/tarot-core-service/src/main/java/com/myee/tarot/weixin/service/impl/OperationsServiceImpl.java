@@ -132,15 +132,6 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
         }
     });
 
-    private Ordering<WxWaitToken> orderingByTook2 = Ordering.from(new Comparator<WxWaitToken>() {
-        @Override
-        public int compare(WxWaitToken o1, WxWaitToken o2) {
-            Long o1TimeTook1 = new Long(o1.getTimeTook().getTime());
-            Long o1TimeTook2 = new Long(o2.getTimeTook().getTime());
-            return o1TimeTook1.compareTo(o1TimeTook2);
-        }
-    });
-
     /*
      * 就餐
      *
@@ -173,11 +164,10 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
             }
         } else { //如果redis里没有数据，从MySql里同步
             List<WxWaitToken> tokenList = waitTokenDao.listByConditions(waitToken.getShopId(), waitToken.getTableTypeId(), WaitTokenState.WAITING.getValue());
-            List<WxWaitToken> sortedTokens = orderingByTook2.sortedCopy(tokenList);
             List<WaitToken> sortedTokensW = Lists.newArrayList();
-            for (int i = 0; i < sortedTokens.size(); i++) {
+            for (int i = 0; i < tokenList.size(); i++) {
                 WaitToken w = new WaitToken();
-                WxWaitToken wwToken = sortedTokens.get(i);
+                WxWaitToken wwToken = tokenList.get(i);
                 w.setToken(wwToken.getToken());
                 w.setTimeTook(wwToken.getTimeTook().getTime());
                 w.setTableId(wwToken.getTableId());
@@ -264,7 +254,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
                     waitToken = wt.getToken();
                     timeTook = wt.getTimeTook();
                     shopName = wt.getClientName();
-                    assignVal(wt.getWaitStatus(), queueStatus);
+                    queueStatus = assignVal(wt.getWaitStatus());
                 }
             }
             for (int i : waitNumSet) {
@@ -291,7 +281,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
                         userNum = Integer.parseInt(wt.getToken().substring(1, 3));
                         timeTook = wt.getTimeTook().getTime();
                         shopName = merchantStoreService.findById(wt.getStore().getId()).getName();
-                        assignVal(wt.getState(), queueStatus);
+                        queueStatus = assignVal(wt.getState());
                     }
                 }
                 for (int i : waitNumSet) {
@@ -317,19 +307,21 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
         latestDevInfo.put("queryTime", DateUtil.formatDateTime(date));
     }
 
-    private void assignVal(int status, String queueStatus) {
+    private String assignVal(int status) {
+        String str = "";
         if (status == 1) {
-            queueStatus = "排队中";
+            str = "排队中";
         } else if (status == 2){
-            queueStatus = "就餐中";
+            str = "就餐中";
         } else if(status == 3) {
-            queueStatus = "已过号";
+            str = "已过号";
         } else if (status == 4) {
-            queueStatus = "已取消";
+            str = "已取消";
         } else if (status == 6) {
-            queueStatus = "已发送";
+            str = "已发送";
         } else
-            queueStatus = "未发送";
+            str = "未发送";
+        return str;
     }
 
     /*

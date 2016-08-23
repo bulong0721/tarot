@@ -262,7 +262,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
             if (openId.equals(waitToken.getOpenId())) {
                 tokenNum = waitToken.getToken();
                 userNum = Integer.parseInt(waitToken.getToken().substring(1, 3));
-                assignVal(waitToken.getWaitStatus(), queueStatus);
+                queueStatus = assignVal(waitToken.getWaitStatus());
             }
         }
         for (int i : waitNumSet) {
@@ -283,7 +283,8 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
         latestDevInfo.put("queryTime", DateUtil.formatDateTime(date));
     }
 
-    private void assignVal(int status, String queueStatus) {
+    private String assignVal(int status) {
+        String queueStatus = "";
         if (status == 1) {
             queueStatus = "排队中";
         } else if (status == 2){
@@ -296,6 +297,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
             queueStatus = "已发送";
         } else
             queueStatus = "未发送";
+        return queueStatus;
     }
 
     /**
@@ -336,7 +338,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
                         shopName = merchantStore.getName();
                         tokenNum = wt.getToken();
                         timeTook = wt.getTimeTook();
-                        assignVal(wt.getWaitStatus(), queueStatus);
+                        queueStatus = assignVal(wt.getWaitStatus());
                         break;
                     }
                 }
@@ -356,7 +358,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
                     if (!wt.getIdentityCode().equals(identityCode)) {
                         index++;
                     } else {
-                        assignVal(wt.getState(), queueStatus);
+                        queueStatus = assignVal(wt.getState());
                         timeTook = wt.getTimeTook().getTime();
                         //根据merchanStoreId查询merchanStoreName
                         MerchantStore merchantStore = merchantStoreDao.findById(wt.getStore().getId());

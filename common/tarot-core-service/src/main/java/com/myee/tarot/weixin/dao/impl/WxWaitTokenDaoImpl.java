@@ -11,7 +11,6 @@ import com.querydsl.jpa.impl.JPAQuery;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
-
 import java.util.Date;
 import java.util.List;
 
@@ -104,6 +103,7 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
         if(state != null) {
             query.where(qrWaitToken.state.eq(state));
         }
+        query.orderBy(qrWaitToken.timeTook.asc());
         log.info("the result counts: " + query.fetchCount());
         return query.fetch();
     }
