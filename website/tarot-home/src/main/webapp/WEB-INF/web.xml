@@ -2,21 +2,8 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>
-            classpath:spring/spring-context.xml
-            /WEB-INF/spring/appServlet/tarot-properties.xml
-            /WEB-INF/spring/appServlet/tarot-security.xml
-        </param-value>
-    </context-param>
     <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
-    <listener>
-        <listener-class>
-            org.springframework.web.context.request.RequestContextListener
-        </listener-class>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
     </listener>
     <servlet>
         <servlet-name>appServlet</servlet-name>
@@ -25,6 +12,8 @@
             <param-name>contextConfigLocation</param-name>
             <param-value>
                 classpath:spring/spring-context.xml
+                /WEB-INF/spring/appServlet/tarot-cache.xml
+                /WEB-INF/spring/appServlet/tarot-security.xml
                 /WEB-INF/spring/appServlet/servlet-context.xml
             </param-value>
         </init-param>

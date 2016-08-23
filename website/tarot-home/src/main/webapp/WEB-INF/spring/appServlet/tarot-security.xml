@@ -24,7 +24,7 @@
     </beans:bean>
 
     <beans:bean id="adminAccessDenied"
-                class="com.myee.tarot.web.util.AdminAccessDeniedHandler">
+                class="com.myee.tarot.core.web.AdminAccessDeniedHandler">
         <beans:property name="accessDeniedUrl" value="/admin/denied.html"/>
     </beans:bean>
 

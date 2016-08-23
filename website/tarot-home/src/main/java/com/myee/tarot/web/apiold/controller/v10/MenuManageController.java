@@ -4,10 +4,11 @@ import com.myee.tarot.apiold.domain.MenuInfo;
 import com.myee.tarot.apiold.service.MenuService;
 import com.myee.tarot.apiold.view.MenuDataInfo;
 import com.myee.tarot.apiold.view.MenuInfoView;
-import com.myee.tarot.campaign.service.impl.redis.RedisUtil;
 import com.myee.tarot.web.apiold.controller.BaseController;
+import com.myee.tarot.uitl.CacheUtil;
 import com.myee.tarot.weixin.domain.ClientAjaxResult;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ignite.Ignite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.cache.Cache;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Info: 商户菜品管理接口
@@ -39,7 +40,7 @@ public class MenuManageController extends BaseController {
     @Autowired
     private MenuService menuManageService;
     @Autowired
-    private RedisUtil redisUtil;
+    private Ignite ignite;
 
 
     /**
@@ -58,7 +59,8 @@ public class MenuManageController extends BaseController {
             if (StringUtils.isNotEmpty(shopId)) {
                 id = Long.parseLong(shopId);
             }
-            MenuDataInfo shopMenu = redisUtil.get("shop:menu:info:" + shopId, MenuDataInfo.class);
+            Cache<String, MenuDataInfo> menuInfoCache = CacheUtil.menuInfoCache(ignite);
+            MenuDataInfo shopMenu = menuInfoCache.get(shopId);
             if (shopMenu != null) {
                 if (timestamp == shopMenu.getTimestamp()) {
                     shopMenu.setList(null);
@@ -80,7 +82,7 @@ public class MenuManageController extends BaseController {
                     shopMenu.setList(list);
                 }
                 shopMenu.setTimestamp(new Date().getTime());
-                redisUtil.set("shop:menu:info:" + shopId, shopMenu, 365, TimeUnit.DAYS);
+                menuInfoCache.put(shopId, shopMenu);
             }
 
             return ClientAjaxResult.success(shopMenu);

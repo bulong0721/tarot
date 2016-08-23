@@ -23,8 +23,21 @@
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
+    <!-- 注册中心配置 使用不同注册中心需要依赖对应的jar包。如果不使用注册中心，可以把check属性改为false，忽略注册失败。-->
+    <!--<motan:registry regProtocol="local" name="registry" />-->
+    <!--<motan:registry regProtocol="consul" name="registry" address="127.0.0.1:8500"/>-->
+    <motan:registry regProtocol="zookeeper" name="registry" default="true" address="172.16.0.15:2181" connectTimeout="2000"/>
 
-    <!-- motan协议配置 -->
+    <!-- 协议配置。为防止多个业务配置冲突，推荐使用id表示具体协议。-->
+    <motan:protocol id="demoMotan" default="true" name="motan" />
+
+    <!-- 通用配置，多个rpc服务使用相同的基础配置. group和module定义具体的服务池。export格式为“protocol id:提供服务的端口”-->
+    <motan:basicService export="demoMotan:8071" accessLog="false" shareChannel="true" registry="registry" id="basicService"/>
+
+    <context:component-scan base-package="com.myee.tarot.*.service.impl">
+        <context:include-filter type="annotation" expression="com.weibo.api.motan.config.springsupport.annotation.MotanService" />
+    </context:component-scan>
+
     <motan:protocol default="true" name="motan" haStrategy="failover" loadbalance="roundrobin" maxClientConnection="10"
                     minClientConnection="2"/>
 
@@ -32,8 +45,5 @@
     <motan:basicReferer protocol="motan" registry="registry"
                         id="clientBasicRef" throwException="false" check="false"/>
 
-    <!-- 具体referer配置。使用方通过beanid使用服务接口类 -->
-    <motan:referer id="motanTableService"
-                   interface="com.myee.tarot.catering.service.TableService"
-                   connectTimeout="300" requestTimeout="300" basicReferer="clientBasicRef"/>
+    <motan:annotation />
 </beans>

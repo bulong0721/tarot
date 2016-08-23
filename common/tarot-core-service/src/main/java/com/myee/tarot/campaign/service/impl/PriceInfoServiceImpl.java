@@ -10,7 +10,6 @@ import com.myee.tarot.campaign.service.MerchantActivityService;
 import com.myee.tarot.campaign.service.ModeSwitchService;
 import com.myee.tarot.campaign.service.PriceInfoService;
 import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
-import com.myee.tarot.campaign.service.impl.redis.RedisUtil;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
@@ -34,9 +33,6 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
 
     @Autowired
     private MerchantActivityService merchantActivityService;
-
-    @Autowired
-    private RedisUtil redisUtil;
 
     @Autowired
     private ModeSwitchService modeSwitchService;

@@ -25,21 +25,17 @@
         http://www.springframework.org/schema/task/spring-task-3.0.xsd ">
 
     <context:annotation-config/>
-    <context:component-scan base-package="com.myee.tarot.*.service.impl" />
+    <context:component-scan base-package="com.myee.tarot.*.service.impl"/>
     <context:component-scan base-package="com.myee.tarot.*.dao.impl"/>
     <!-- datasource -->
     <import resource="classpath:/spring/datasource-c3p0.xml"/>
 
     <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-        <property name="corePoolSize" value="5" />
-        <property name="maxPoolSize" value="10" />
-        <property name="queueCapacity" value="50" />
+        <property name="corePoolSize" value="5"/>
+        <property name="maxPoolSize" value="10"/>
+        <property name="queueCapacity" value="50"/>
     </bean>
-    <task:annotation-driven executor="taskExecutor" />
-
-    <!--&lt;!&ndash; motan &ndash;&gt;-->
-    <!--<import resource="classpath:/spring/tarot-motan-server.xml"/>-->
-    <!--<import resource="classpath:/spring/tarot-motan-client.xml"/>-->
+    <task:annotation-driven executor="taskExecutor"/>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceUnitName" value="sm-unit"/>
@@ -71,14 +67,14 @@
     <bean class="org.springframework.orm.hibernate4.HibernateExceptionTranslator"/>
 
     <bean id="wxMpService" class="me.chanjar.weixin.mp.api.WxMpServiceImpl">
-        <property name="wxMpConfigStorage" ref="wxMpConfigStorage" />
+        <property name="wxMpConfigStorage" ref="wxMpConfigStorage"/>
     </bean>
 
     <bean id="wxMpConfigStorage" class="me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage" scope="singleton">
-        <property name="appId" value="wxe67244505b4041b6" />
-        <property name="secret" value="ae3b4cd8a550fab663c90ab16d548579" />
-        <property name="token" value="clever" />
-        <property name="aesKey" value="DKigNihAx9rcVHKJvc9D6xBnXCFHTUe4MnTBw01bLM7" />
+        <property name="appId" value="wxe67244505b4041b6"/>
+        <property name="secret" value="ae3b4cd8a550fab663c90ab16d548579"/>
+        <property name="token" value="clever"/>
+        <property name="aesKey" value="DKigNihAx9rcVHKJvc9D6xBnXCFHTUe4MnTBw01bLM7"/>
     </bean>
 
     <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" scope="singleton">
@@ -97,7 +93,7 @@
     </bean>
 
     <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
-        <property name="connectionFactory"   ref="connectionFactory" />
+        <property name="connectionFactory" ref="connectionFactory"/>
     </bean>
 
     <!-- Définition de la gestion des transactions -->

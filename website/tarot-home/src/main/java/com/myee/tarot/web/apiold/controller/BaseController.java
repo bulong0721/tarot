@@ -1,6 +1,5 @@
 package com.myee.tarot.web.apiold.controller;
 
-import com.myee.tarot.campaign.service.impl.redis.RedisUtil;
 import com.myee.tarot.web.apiold.util.CommConfig;
 import com.myee.tarot.apiold.view.MobileClient;
 import org.apache.commons.lang3.StringUtils;
@@ -16,9 +15,6 @@ import javax.servlet.http.HttpSession;
 
 //@Scope("prototype")
 public class BaseController {
-
-	@Autowired
-	private RedisUtil redisUtil;
 
     @Autowired
     private CommConfig commConfig;
