@@ -122,11 +122,11 @@ public class MerchantActivityController {
                                 }
                                 //redis放缓存
                                 MerchantPrice getPrice = prices.get(0);
-                                price.setName(getPrice.getName());
+                                /*price.setName(getPrice.getName());
                                 price.setDescription(getPrice.getDescription());
                                 price.setStartDate(getPrice.getStartDate());
                                 price.setEndDate(getPrice.getEndDate());
-                                price.setTotal(getPrice.getTotal());
+                                price.setTotal(getPrice.getTotal());*/
                                 //修改参数
                                 findPrice.setName(getPrice.getName());
                                 findPrice.setDescription(getPrice.getDescription());
@@ -169,7 +169,7 @@ public class MerchantActivityController {
                 activity = merchantActivityService.update(merchantActivity);
             }
             //添加或更新的时候，修改redis对应的商户的活动List
-            redisUtil.set(RedisKeyConstants.STORE_ACTIVITY + "_" + storeId, activity);
+            // redisUtil.set(RedisKeyConstants.STORE_ACTIVITY + "_" + storeId, activity);
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
             resp.addEntry("result", activity);
             return resp;
@@ -214,11 +214,7 @@ public class MerchantActivityController {
     public AjaxResponse findStoreActivity(@RequestParam("storeId")Long storeId){
         try {
             AjaxResponse response = new AjaxResponse();
-            MerchantActivity result = redisUtil.get(RedisKeyConstants.STORE_ACTIVITY + "_" + storeId, MerchantActivity.class);
-            if(result == null){
-                result = merchantActivityService.findStoreActivity(storeId);
-                redisUtil.set(RedisKeyConstants.STORE_ACTIVITY + "_" + storeId ,result);
-            }
+            MerchantActivity result = merchantActivityService.findStoreActivity(storeId);
             response.addEntry("result", result);
             return response;
         } catch (Exception e) {
