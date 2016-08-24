@@ -261,7 +261,7 @@ public class PushController {
         if (pushResourceDTO.getContent() == null || pushResourceDTO.getContent().size() <= 0) {
             return AjaxResponse.failed(-4, "推送内容为空或格式错误");
         }
-        ResponseData rd = null;
+        Boolean rd = false;
         PushResource pushResource = new PushResource();
         try {
             //入库
@@ -271,7 +271,7 @@ public class PushController {
             pushResource.setStoragePath(pushResourceDTO.getStoragePath());
             pushResource.setTimeout(pushResourceDTO.getTimeout());
             pushResource.setUniqueNo(pushResourceDTO.getUniqueNo());
-            if (rd != null && rd.isSuccess()) {
+            if (rd != null && rd) {
                 pushResource.setSuccess(true);
                 pushResourceService.update(pushResource);
                 return AjaxResponse.success("推送成功");

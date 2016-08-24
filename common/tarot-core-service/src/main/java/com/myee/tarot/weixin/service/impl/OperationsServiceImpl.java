@@ -81,12 +81,17 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
      **/
 
 	@Override
-	public ResponseData isConnection() throws RemoteException {
-		return  ResponseData.success();
+	public ResponseData execute(Map<String, Object> map) throws RemoteException {
+		return null;
 	}
 
 	@Override
-    public ResponseData take(WaitToken waitToken) {
+	public boolean isConnection() throws RemoteException {
+		return  true;
+	}
+
+	@Override
+    public String take(WaitToken waitToken) {
         //排号Key
         String redisKeyOfShopTb = RedisKeys.waitOfTableType(waitToken.getShopId(), waitToken.getTableTypeId());
         //唯一码-SeceneId对应Key
@@ -109,9 +114,9 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
             e.printStackTrace();
         }
         if (wxWaitToken != null && wxWaitToken.getId() != null) {
-            return ResponseData.successData(myticket.getUrl()); //返回二维码图片的短连接
+            return myticket.getUrl(); //返回二维码图片的短连接
         } else {
-            return ResponseData.errorData("fail");
+            return "fail";
         }
     }
 
@@ -121,7 +126,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
      * */
 
     @Override
-    public ResponseData skip(WaitToken waitToken) {
+    public boolean skip(WaitToken waitToken) {
         return statusChange(WaitTokenState.SKIP.getValue(), waitToken);
     }
 
@@ -139,7 +144,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
      * @param tableId
       */
     @Override
-    public ResponseData repast(WaitToken waitToken, long tableId) {
+    public boolean repast(WaitToken waitToken, long tableId) {
         return statusChange(WaitTokenState.REPASTING.getValue(), waitToken);
     }
 
@@ -150,7 +155,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
      * @return
      * */
 
-    private ResponseData statusChange(int stateValue, WaitToken waitToken) {
+    private boolean statusChange(int stateValue, WaitToken waitToken) {
         int backStatus = 0;
         Date date = new Date();
         String redisKey = RedisKeys.waitOfTableType(waitToken.getShopId(), waitToken.getTableTypeId());
@@ -223,9 +228,9 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
             }
         }
         if (backStatus == 1) {
-            return new ResponseData(true);
+            return true;
         } else {
-            return ResponseData.errorData("fail");
+            return false;
         }
     }
 
@@ -333,17 +338,12 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
      * */
 
     @Override
-    public ResponseData cancel(WaitToken waitToken, String reason) {
-        return new ResponseData(true);
+    public boolean cancel(WaitToken waitToken, String reason) {
+        return true;
     }
 
     @Override
-    public ResponseData draw(DrawToken drawToken) {
-        return new ResponseData(true);
-    }
-
-    @Override
-    public ResponseData getWaitTokenInfo(Long tableTypeId) {
+    public Map<String,String> getWaitTokenInfo(Long tableTypeId) {
         return null;
     }
     /**
@@ -351,10 +351,10 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
      * @return
      */
 //    @Override
-    public ResponseData getResourceInfo(String jsonArgs) {
+    public String getResourceInfo(String jsonArgs) {
         System.out.println("jsonArgs: " + jsonArgs);
         System.out.println("DOWNLOAD_HOME: " + DOWNLOAD_HOME);
-        ResponseData result = null;
+        String result = null;
         try {
             JSONObject object = JSON.parseObject(jsonArgs);
             String name = object.getString("name");
@@ -371,8 +371,9 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
             logger.info("========File path :" + sb.toString());
             File file = new File(sb.toString());
             if (file.exists()) {
-                result = ResponseData.successData(readfile(file));
-            } else {
+                result = readfile(file);
+            }
+//			else {
 //                String filePath = sb.toString();
 //                String cloudFilePath = filePath.replace(orgId, "100");
 //                File cloudFile = new File(cloudFilePath);
@@ -380,12 +381,12 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
 //                    logger.info("========Cloud File path :"+cloudFilePath);
 //                    result = ResponseData.successData(readfile(cloudFile));
 //                }else{
-                result = ResponseData.errorData("resource not exist ");
-            }
+//                result = ResponseData.errorData("resource not exist ");
+//            }
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error Message: " + e.getMessage());
-            return ResponseData.errorData("find file error ");
+            return null;
         }
         return result;
     }
@@ -397,48 +398,44 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
      * @return
      */
     @Override
-    public ResponseData getShopInfo(String mainBoardCode) {
+    public Map<String,String> getShopInfo(String mainBoardCode) {
         DeviceUsed deviceUsed = deviceUsedService.getStoreInfoByMbCode(mainBoardCode);
         MerchantStore merchantStore = deviceUsed.getStore();
         List<TableType> tableTypeList = tableTypeService.listByStore(merchantStore.getId());
         for (TableType tableType : tableTypeList) {
             tableType.setStore(null);
         }
-        ResponseData result = null;
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, String> map = new HashMap<String, String>();
         if (merchantStore != null) {
-            map.put("shopInfo", merchantStore);
-            map.put("tableType", tableTypeList);
-            result = ResponseData.successData(JSON.toJSONString(map));
-        } else {
-            result = ResponseData.errorData("error");
+            map.put("shopInfo", JSON.toJSONString(merchantStore));
+            map.put("tableType", JSON.toJSONString(tableTypeList));
         }
-        return result;
+        return map;
     }
 
     @Override
-    public ResponseData sendResourceToCloud(Long orgId, UploadFileType resourceType, String filePath) {
-        return null;
+    public boolean sendResourceToCloud(Long orgId, UploadFileType resourceType, String filePath) {
+        return false;
     }
 
     @Override
-    public ResponseData uploadData(String type, String data) {
+    public boolean uploadData(String type, String data) {
         if (type != null && "selfCheckLog".equals(type)) {
             SelfCheckLogVO selfCheckLogVO = JSON.parseObject(data, SelfCheckLogVO.class);
             try {
                 SelfCheckLog scl = selfCheckLogService.update(new SelfCheckLog(selfCheckLogVO));
                 if (scl != null) {
-                    return ResponseData.success();
+                    return true;
                 }
             } catch (ServiceException e) {
                 System.out.println("error: " + e.toString());
             }
         }
-        return ResponseData.error();
+        return false;
     }
 
     @Override
-    public ResponseData getAgentVersionCode() {
+    public Integer getAgentVersionCode() {
         //TODO 云端不用实现
         return null;
     }

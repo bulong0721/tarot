@@ -151,8 +151,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
             OrchidService eptService = null;
             eptService = serverBootstrap.getClient(OrchidService.class, toClientUUID(shopId));
             Diner diner = new Diner();
-            ResponseData responseData = eptService.take(dinerCount, diner);
-            WaitToken waitToken = JSON.parseObject(responseData.getData().toString(), WaitToken.class);
+            WaitToken waitToken = eptService.take(dinerCount, diner);
             waitToken.setOpenId(openId);
             waitToken.setWaitStatus(WaitTokenState.WAITING.getValue());
             Date date = new Date();
