@@ -3,13 +3,14 @@ package com.myee.tarot.weixin.dao;
 import com.myee.tarot.core.dao.GenericEntityDao;
 import com.myee.tarot.weixin.domain.WxWaitToken;
 
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by Ray on 2016/7/4.
  */
 public interface WxWaitTokenDao extends GenericEntityDao<Long, WxWaitToken> {
-    public Integer updateState(Integer state, Long shopId, Long clientId, String token, Long timeTook, Long updateTime);
+    public Integer updateState(Integer state, Long shopId, Long clientId, String token, Date timeTook, Date updateTime);
 
     public Integer updateWaitTokenOpenId(String openId, String identityCode, Long date);
 

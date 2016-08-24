@@ -165,7 +165,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
             if (waitToken.getShopId().equals(sortedTokens.get(0).getShopId()) && waitToken.getToken().equals(sortedTokens.get(0).getToken())) {
                 hdelete(redisKey, waitToken.getToken());
                 //改状态2
-                backStatus = waitTokenDao.updateState(stateValue, waitToken.getClientId(), waitToken.getShopId(), waitToken.getToken(), sortedTokens.get(0).getTimeTook(), new Date().getTime() / 1000);
+                backStatus = waitTokenDao.updateState(stateValue, waitToken.getClientId(), waitToken.getShopId(), waitToken.getToken(), new Date(sortedTokens.get(0).getTimeTook()), new Date());
             }
         } else { //如果redis里没有数据，从MySql里同步
             List<WxWaitToken> tokenList = waitTokenDao.listByConditions(waitToken.getShopId(), waitToken.getTableTypeId(), WaitTokenState.WAITING.getValue());
@@ -184,7 +184,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
             }
             if (waitToken.getToken().equals(sortedTokensW.get(0).getToken()) && waitToken.getShopId().equals(sortedTokensW.get(0).getShopId())) {
                 //改状态2
-                backStatus = waitTokenDao.updateState(stateValue, waitToken.getClientId(), waitToken.getShopId(), waitToken.getToken(), sortedTokensW.get(0).getTimeTook(), new Date().getTime() / 1000);
+                backStatus = waitTokenDao.updateState(stateValue, waitToken.getClientId(), waitToken.getShopId(), waitToken.getToken(), new Date(sortedTokensW.get(0).getTimeTook()), new Date());
             }
         }
         //移除就餐桌号后的

@@ -23,16 +23,16 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
     public static Log log = LogFactory.getLog(WxWaitTokenDaoImpl.class);
 
     @Override
-    public Integer updateState(Integer state, Long orgId, Long clientId, String token, Long timeTook, Long updateTime) {
+    public Integer updateState(Integer state, Long orgId, Long clientId, String token, Date timeTook, Date updateTime) {
         WxWaitToken rWaitToken = new WxWaitToken();
         MerchantStore merchantStore = new MerchantStore();
         merchantStore.setId(orgId);
         rWaitToken.setStore(merchantStore);
         rWaitToken.setToken(token);
-        rWaitToken.setTimeTook(new Date(timeTook));
+        rWaitToken.setTimeTook(timeTook);
         rWaitToken = getWaitTokenByProp(rWaitToken);
         rWaitToken.setState(state);
-        rWaitToken.setUpdated(new Date(updateTime));
+        rWaitToken.setUpdated(updateTime);
         rWaitToken = this.update(rWaitToken);
         if(rWaitToken != null) {
             return 1;
