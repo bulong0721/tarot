@@ -91,7 +91,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
 	}
 
 	@Override
-    public String take(WaitToken waitToken) {
+    public ResponseData take(WaitToken waitToken) {
         //排号Key
         String redisKeyOfShopTb = RedisKeys.waitOfTableType(waitToken.getShopId(), waitToken.getTableTypeId());
         //唯一码-SeceneId对应Key
@@ -114,9 +114,9 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
             e.printStackTrace();
         }
         if (wxWaitToken != null && wxWaitToken.getId() != null) {
-            return myticket.getUrl(); //返回二维码图片的短连接
+            return ResponseData.successData(myticket.getUrl()); //返回二维码图片的短连接
         } else {
-            return "fail";
+            return ResponseData.errorData("fail");
         }
     }
 
