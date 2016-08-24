@@ -14,6 +14,9 @@ import java.util.Date;
  * Version: 1.0
  * History: <p>如果有修改过程，请记录</P>
  */
+@Entity
+//20160823 看代码暂时没用到，先不生成数据库
+//@javax.persistence.Table(name = "CA_ORDER")
 public class OrderInfo extends GenericEntity<Long, OrderInfo> {
 
     @Id
@@ -49,6 +52,10 @@ public class OrderInfo extends GenericEntity<Long, OrderInfo> {
     private Date updated;
     @Column(name = "STATUS",length = 2)
     private int status;//状态 0启用 1停用
+
+    //作为老接口的输入参数保留字段，不用持久化到数据库
+    @Transient
+    private long shopId;
 
     public long getMenuId() {
         return menuId;

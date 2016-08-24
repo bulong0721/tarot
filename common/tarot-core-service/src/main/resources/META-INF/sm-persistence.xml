@@ -68,5 +68,6 @@
         <class>com.myee.tarot.apiold.domain.MaterialFileKind</class>
         <class>com.myee.tarot.apiold.domain.MaterialPublish</class>
         <class>com.myee.tarot.apiold.domain.MenuInfo</class>
+        <class>com.myee.tarot.apiold.domain.UploadAccessLog</class>
     </persistence-unit>
 </persistence>

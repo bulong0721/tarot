@@ -49,6 +49,12 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
+        <!-- 暂时引用下excel包，给点点笔老的接口用，以后更新掉接口后可以删除，要关注是不是会内存泄漏-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.poi</groupId>-->
+            <!--<artifactId>poi</artifactId>-->
+            <!--<version>3.11</version>-->
+        <!--</dependency>-->
     </dependencies>
     <build>
         <finalName>tarot-home</finalName>

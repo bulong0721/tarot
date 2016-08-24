@@ -1,9 +1,13 @@
 package com.myee.tarot.campaign.service.impl.redis;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -18,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * History: <p>如果有修改过程，请记录</P>
  */
 public class DateTimeUtils {
+    private final static Logger logger = LoggerFactory.getLogger(DateTimeUtils.class);
 
     public static final String DEFAULT_DATE_FORMAT_PATTERN_SHORT = "yyyy-MM-dd";
 
@@ -33,10 +38,20 @@ public class DateTimeUtils {
 
     private static Map<String, DateTimeFormatter> dateFormatCache = new ConcurrentHashMap<String, DateTimeFormatter>();
 
+    /**	yyyyMM	*/
+    public final static String PATTERN_SHORTMONTH = "yyyyMM";
+    /**	yyyy-MM	*/
+    public final static String PATTERN_YEAR_MONTH = "yyyy-MM";
+    /**	yyyy-MM-dd	*/
+//    public final static String PATTERN_DATE = "yyyy-MM-dd";
+    /**	yyyyMMdd	*/
+    public final static String PATTERN_SHORTDATE = "yyyyMMdd";
+    /**	yyyy-MM-dd HH:mm:ss	*/
+//    public final static String PATTERN_DATETIME = "yyyy-MM-dd HH:mm:ss";
     /**	yyyy-MM-dd_HH-mm-ss	用于文件名的格式化*/
     public final static String PATTERN_NAME_DATETIME = "yyyy-MM-dd_HH-mm-ss";
     /**	yyyyMMddHHmmss	*/
-    public final static String PATTERN_SHORTDATETIME = "yyyyMMddHHmmss";
+//    public final static String PATTERN_SHORTDATETIME = "yyyyMMddHHmmss";
     /** yyyy-MM-dd'T'HH:mm:ssZ **/
     public final static String PATTREN_ES_SEARCH = "yyyy-MM-dd'T'HH:mm:ssZ";
 
@@ -287,7 +302,7 @@ public class DateTimeUtils {
         if(dateTime == null){
             return null;
         }
-        return DateFormatUtils.format(dateTime, PATTERN_SHORTDATETIME);
+        return DateFormatUtils.format(dateTime, DATE_FORMAT_PATTERN_FULL);
     }
 
     /**	返回yyyyMMddHHmmss格式的字符串	*/
@@ -312,7 +327,37 @@ public class DateTimeUtils {
         return toShortDateTimeL(new Date());
     }
 
+    /**	返回yyyyMMddHHmmss格式的字符串	*/
+    public static String getShortDateTime() {
+        return toShortDateTime(new Date());
+    }
 
+    /**	返回Date对象,yyyyMM格式,yyyyMMdd格式，yyyyMMddHHmmss格式，yyyy-MM格式，yyyy-MM-dd格式，yyyy-MM-dd HH:mm:ss格式*/
+    public static Date toDate(String dateTime) {
+        if(dateTime == null){
+            return null;
+        }
 
-
+        try {
+            Date d = null;
+            if(dateTime.length() == 6){
+                d = DateUtils.parseDate(dateTime, new String[]{PATTERN_SHORTMONTH});
+            }else if(dateTime.length() == 7){
+                d = DateUtils.parseDate(dateTime, new String[]{PATTERN_YEAR_MONTH});
+            }else if(dateTime.length() == 8){
+                d = DateUtils.parseDate(dateTime, new String[]{PATTERN_SHORTDATE});
+            }else if(dateTime.length() == 10){
+                d = DateUtils.parseDate(dateTime, new String[]{DEFAULT_DATE_FORMAT_PATTERN_SHORT});
+            }else if(dateTime.length() == 14){
+                d = DateUtils.parseDate(dateTime, new String[]{DATE_FORMAT_PATTERN_FULL});
+            }else if(dateTime.length() == 19){
+                d = DateUtils.parseDate(dateTime, new String[]{DEFAULT_DATE_FORMAT_PATTERN_FULL});
+            }
+            return d;
+        } catch (ParseException e) {
+            logger.error("toDate(String dateTime) error...");
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

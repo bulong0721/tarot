@@ -10,10 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Info: clever
@@ -25,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 //@Scope("prototype")
-@RequestMapping("/v10/order")
+@RequestMapping("/api/v10/order")
 public class OrderInfoController extends BaseController {
     private Logger logger = LoggerFactory.getLogger(OrderInfoController.class);
 
@@ -34,11 +31,11 @@ public class OrderInfoController extends BaseController {
 
 
     /**
-     * 订单申请
+     * 订单申请，看代码暂时没用到的接口
      * @return
      */
     @RequestMapping(value = "/create")
-    public ClientAjaxResult createOrder(@RequestParam(value="orderInfo", required=true) OrderInfo orderInfo){
+    public ClientAjaxResult createOrder(@ModelAttribute(value="orderInfo") OrderInfo orderInfo){
         logger.info("创建订单");
         try {
 
