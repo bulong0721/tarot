@@ -86,7 +86,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
 	}
 
 	@Override
-	public boolean isConnection() throws RemoteException {
+	public Boolean isConnection() throws RemoteException {
 		return  true;
 	}
 
@@ -126,7 +126,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
      * */
 
     @Override
-    public boolean skip(WaitToken waitToken) {
+    public Boolean skip(WaitToken waitToken) {
         return statusChange(WaitTokenState.SKIP.getValue(), waitToken);
     }
 
@@ -144,7 +144,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
      * @param tableId
       */
     @Override
-    public boolean repast(WaitToken waitToken, long tableId) {
+    public Boolean repast(WaitToken waitToken, long tableId) {
         return statusChange(WaitTokenState.REPASTING.getValue(), waitToken);
     }
 
@@ -338,7 +338,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
      * */
 
     @Override
-    public boolean cancel(WaitToken waitToken, String reason) {
+    public Boolean cancel(WaitToken waitToken, String reason) {
         return true;
     }
 
@@ -414,12 +414,12 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
     }
 
     @Override
-    public boolean sendResourceToCloud(Long orgId, UploadFileType resourceType, String filePath) {
+    public Boolean sendResourceToCloud(Long orgId, UploadFileType resourceType, String filePath) {
         return false;
     }
 
     @Override
-    public boolean uploadData(String type, String data) {
+    public Boolean uploadData(String type, String data) {
         if (type != null && "selfCheckLog".equals(type)) {
             SelfCheckLogVO selfCheckLogVO = JSON.parseObject(data, SelfCheckLogVO.class);
             try {

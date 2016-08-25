@@ -47,6 +47,11 @@
                 </bean>
             </list>
         </property>
+        <property name="communicationSpi">
+            <bean class="org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi">
+                <property name="slowClientQueueLimit" value="1000"/>
+            </bean>
+        </property>
     </bean>
 
 
