@@ -7,10 +7,10 @@ import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
-import me.chanjar.weixin.common.util.StringUtils;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
 import org.slf4j.Logger;
@@ -73,10 +73,10 @@ public class PriceInfoController {
             LOGGER.info("code为"+ code);
             AjaxResponse resp = new AjaxResponse();
             String openId = "";
-            if(StringUtils.isNotBlank(keyId)){
+            if(!StringUtil.isBlank(keyId)){
                 openId = keyId;
             }else{
-                if(StringUtils.isNotBlank(code)){
+                if(!StringUtil.isBlank(code)){
                     WxMpOAuth2AccessToken wxMpOAuth2AccessToken = wxMpService.oauth2getAccessToken(code);
                     openId = wxMpOAuth2AccessToken.getOpenId();
                 }else{

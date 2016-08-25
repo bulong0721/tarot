@@ -17,8 +17,7 @@ import com.myee.tarot.campaign.service.SaleCorpMerchantService;
 import com.myee.tarot.profile.domain.Address;
 import com.myee.tarot.profile.domain.GeoZone;
 import com.myee.tarot.profile.service.GeoZoneService;
-import com.myee.tarot.web.util.StringUtil;
-import me.chanjar.weixin.common.util.StringUtils;
+import com.myee.tarot.core.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,9 +53,9 @@ public class MerchantController {
         AjaxResponse resp = null;
         try {
             //验证name,CuisineType,BusinessType不能为空
-            if (StringUtil.isNullOrEmpty(merchant.getName())
-                    || StringUtil.isNullOrEmpty(merchant.getCuisineType())
-                    || StringUtil.isNullOrEmpty(merchant.getBusinessType())) {
+            if (StringUtil.isBlank(merchant.getName())
+                    || StringUtil.isBlank(merchant.getCuisineType())
+                    || StringUtil.isBlank(merchant.getBusinessType())) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("名称/菜系/商户类型不能为空");
                 return resp;
@@ -229,8 +228,8 @@ public class MerchantController {
         AjaxResponse resp = new AjaxResponse();
         try {
             //验证name,code，关联merchant_id不能为空
-            if (StringUtil.isNullOrEmpty(merchantStore.getName())
-                    || StringUtil.isNullOrEmpty(merchantStore.getCode())) {
+            if (StringUtil.isBlank(merchantStore.getName())
+                    || StringUtil.isBlank(merchantStore.getCode())) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("名称和门店码不能为空");
                 return resp;
@@ -329,7 +328,7 @@ public class MerchantController {
                 return resp;
             }
 
-            if (merchantStoreDelete.getId() == null || StringUtil.isNullOrEmpty(merchantStoreDelete.getId().toString())) {
+            if (merchantStoreDelete.getId() == null || StringUtil.isBlank(merchantStoreDelete.getId().toString())) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("参数错误");
                 return resp;
@@ -408,7 +407,7 @@ public class MerchantController {
             for (MerchantStore merchantStore : merchantStoreList) {
                 SaleCorpMerchant saleCorpMerchant = saleCorpMerchantService.findByMerchantId(merchantStore.getId());
                 List<MerchantStore> bindStores = Lists.newArrayList();
-                if(saleCorpMerchant!=null&& StringUtils.isNotBlank(saleCorpMerchant.getRelatedMerchants())){
+                if(saleCorpMerchant!=null&& !StringUtil.isBlank(saleCorpMerchant.getRelatedMerchants())){
                     List<Long> bindStore = JSON.parseArray(saleCorpMerchant.getRelatedMerchants(), Long.class);
                     for (Long storeId : bindStore) {
                         MerchantStore store = merchantStoreService.findById(storeId);

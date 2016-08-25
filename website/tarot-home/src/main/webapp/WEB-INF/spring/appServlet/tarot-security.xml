@@ -24,7 +24,7 @@
     </beans:bean>
 
     <beans:bean id="adminAccessDenied"
-                class="com.myee.tarot.core.web.AdminAccessDeniedHandler">
+                class="com.myee.tarot.core.security.AdminAccessDeniedHandler">
         <beans:property name="accessDeniedUrl" value="/admin/denied.html"/>
     </beans:bean>
 
@@ -44,7 +44,7 @@
     </beans:bean>
 
     <!-- updates last user logon timestamp -->
-    <beans:bean id="userAuthenticationSuccessHandler" class="com.myee.tarot.admin.web.handler.AdminAuthenticationSuccessHandler">
+    <beans:bean id="userAuthenticationSuccessHandler" class="com.myee.tarot.admin.web.handler.AuthenticationSuccessHandler">
     </beans:bean>
 
     <beans:bean id="customerAuthenticationSuccessHandler" class="com.myee.tarot.customer.web.handler.AuthenticationSuccessHandler">

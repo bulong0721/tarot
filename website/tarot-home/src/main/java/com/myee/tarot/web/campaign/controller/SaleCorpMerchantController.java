@@ -2,12 +2,12 @@ package com.myee.tarot.web.campaign.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
+import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.campaign.domain.SaleCorpMerchant;
 import com.myee.tarot.campaign.service.SaleCorpMerchantService;
-import me.chanjar.weixin.common.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +86,7 @@ public class SaleCorpMerchantController {
         try {
             AjaxResponse resp = new AjaxResponse();
             SaleCorpMerchant saleCorpMerchant = saleCorpMerchantService.findByMerchantId(shopId);
-            if(saleCorpMerchant!=null && StringUtils.isNotBlank(saleCorpMerchant.getRelatedMerchants())){
+            if(saleCorpMerchant!=null && !StringUtil.isBlank(saleCorpMerchant.getRelatedMerchants())){
                 List<Long> bindStoreIds = JSON.parseArray(saleCorpMerchant.getRelatedMerchants(), Long.class);
                 for (Long bindStoreId : bindStoreIds) {
                     MerchantStore store = merchantStoreService.findById(bindStoreId);

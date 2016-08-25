@@ -10,7 +10,7 @@
 			</div>
 			<p>
 				<span v-for="d in des" >{{$index+1}}.{{d.n}}</span>
-				<span>{{view.priceDescription | des_br 'true'}}.使用效期：{{view.priceStartDate}} ~ {{view.priceEndDate}}</span>
+				<span>{{view.priceDescription | des_br 'true'}}.使用有效期：{{view.priceStartDate}} ~ {{view.priceEndDate}}</span>
 			</p>
 		</div>
 	</div>

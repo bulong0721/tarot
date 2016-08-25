@@ -1,6 +1,6 @@
 package com.myee.tarot.web.apiold.controller.v10;
 
-import com.google.gson.Gson;
+import com.alibaba.fastjson.JSON;
 import com.myee.tarot.apiold.bean.DeadAuthInfo;
 import com.myee.tarot.apiold.domain.AkSk;
 import com.myee.tarot.apiold.service.AkSkService;
@@ -8,12 +8,12 @@ import com.myee.tarot.apiold.service.SendRecordService;
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.catering.service.TableService;
+import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.web.apiold.controller.BaseController;
 import com.myee.tarot.apiold.eum.TemplateSMSType;
 import com.myee.tarot.web.apiold.util.*;
 import com.myee.tarot.core.util.DateUtil;
 import com.myee.tarot.weixin.domain.ClientAjaxResult;
-import me.chanjar.weixin.common.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +72,7 @@ public class PartnerApiManageController extends BaseController {
             List<DeviceUsed> deviceUsedList = table.getDeviceUsed();
             if(deviceUsedList != null && deviceUsedList.size() > 0){
                 for(DeviceUsed deviceUsed : deviceUsedList){
-                    if(StringUtils.isBlank(deviceUsed.getPhone())){
+                    if(StringUtil.isBlank(deviceUsed.getPhone())){
                         mobiles += deviceUsed.getPhone();
                     }
                 }
@@ -161,7 +161,7 @@ public class PartnerApiManageController extends BaseController {
      * @return
      */
     private ClientAjaxResult checkArgs(String sendToken, String mobiles, int template, HttpServletRequest request){
-        if(StringUtils.isBlank(sendToken) || StringUtils.isBlank(mobiles) || template <= 0){
+        if(StringUtil.isBlank(sendToken) || StringUtil.isBlank(mobiles) || template <= 0){
             return ClientAjaxResult.failed("args is null", "999");
         }
         if(TemplateSMSType.PARTNERGAME.getIndex() != template){
@@ -171,7 +171,7 @@ public class PartnerApiManageController extends BaseController {
         if(token == null || (token != null && token.length < 3)){
             return ClientAjaxResult.failed("token is empty", "999");
         }
-        if(StringUtils.isBlank(token[0])){
+        if(StringUtil.isBlank(token[0])){
             return ClientAjaxResult.failed("key is empty", "999");
         }
         AkSk akSk = akSkManageService.getByToken(token[0]);
@@ -187,13 +187,13 @@ public class PartnerApiManageController extends BaseController {
         if(!IPUtils.getIpAddr(request).equals(akSk.getCompanyIp())){
             return ClientAjaxResult.failed("ip no bindings", "999");
         }
-        if(StringUtils.isBlank(token[2])){
+        if(StringUtil.isBlank(token[2])){
             return ClientAjaxResult.failed("token Not correct", "999");
         }
         String deadStr = new String(Base64.decode(token[2]));
         DeadAuthInfo deadAuthInfo = null;
         try {
-            deadAuthInfo = (new Gson()).fromJson(deadStr, DeadAuthInfo.class);
+            deadAuthInfo = JSON.parseObject(deadStr, DeadAuthInfo.class);
         }catch (Exception e){
         }
         if(deadAuthInfo == null){
@@ -204,7 +204,7 @@ public class PartnerApiManageController extends BaseController {
         }
         Auth auth = Auth.create(akSk.getAccessKey(), akSk.getSecretKey());
         String authToken = auth.sendTokenWithDeadline(deadAuthInfo.getDeadline());
-        if(!StringUtils.isBlank(authToken) && authToken.equals(sendToken)){
+        if(!StringUtil.isBlank(authToken) && authToken.equals(sendToken)){
             return ClientAjaxResult.success();
         }else{
             return ClientAjaxResult.failed("token exception", "999");
@@ -220,27 +220,27 @@ public class PartnerApiManageController extends BaseController {
      * @return
      */
     private ClientAjaxResult checkArgsMyee(String sendToken, String mobiles, int template, HttpServletRequest request){
-        if(StringUtils.isBlank(sendToken) || StringUtils.isBlank(mobiles) || template <= 0){
+        if(StringUtil.isBlank(sendToken) || StringUtil.isBlank(mobiles) || template <= 0){
             return ClientAjaxResult.failed("args is null", "999");
         }
         String[] token = sendToken.split(":");
         if(token == null || (token != null && token.length < 3)){
             return ClientAjaxResult.failed("token is empty", "999");
         }
-        if(StringUtils.isBlank(token[0])){
+        if(StringUtil.isBlank(token[0])){
             return ClientAjaxResult.failed("key is empty", "999");
         }
         AkSk akSk = akSkManageService.getByToken(token[0]);
         if(akSk == null){
             return ClientAjaxResult.failed("key Not exist", "999");
         }
-        if(StringUtils.isBlank(token[2])){
+        if(StringUtil.isBlank(token[2])){
             return ClientAjaxResult.failed("token Not correct", "999");
         }
         String deadStr = new String(Base64.decode(token[2]));
         DeadAuthInfo deadAuthInfo = null;
         try {
-            deadAuthInfo = (new Gson()).fromJson(deadStr, DeadAuthInfo.class);
+            deadAuthInfo = JSON.parseObject(deadStr, DeadAuthInfo.class);
         }catch (Exception e){
         }
         if(deadAuthInfo == null){
@@ -251,7 +251,7 @@ public class PartnerApiManageController extends BaseController {
         }
         Auth auth = Auth.create(akSk.getAccessKey(), akSk.getSecretKey());
         String authToken = auth.sendTokenWithDeadline(deadAuthInfo.getDeadline());
-        if(!StringUtils.isBlank(authToken) && authToken.equals(sendToken)){
+        if(!StringUtil.isBlank(authToken) && authToken.equals(sendToken)){
             return ClientAjaxResult.success();
         }else{
             return ClientAjaxResult.failed("token exception", "999");

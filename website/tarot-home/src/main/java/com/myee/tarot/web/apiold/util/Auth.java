@@ -1,7 +1,7 @@
 package com.myee.tarot.web.apiold.util;
 
-import com.google.gson.Gson;
-import me.chanjar.weixin.common.util.StringUtils;
+import com.alibaba.fastjson.JSON;
+import com.myee.tarot.core.util.StringUtil;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -20,7 +20,7 @@ public final class Auth {
 	    }
 
 	    public static Auth create(String accessKey, String secretKey) {
-	        if(!StringUtils.isBlank(accessKey) && !StringUtils.isBlank(secretKey)) {
+	        if(!StringUtil.isBlank(accessKey) && !StringUtil.isBlank(secretKey)) {
 	            byte[] sk = secretKey.getBytes(Charset.forName("UTF-8"));
 	            SecretKeySpec secretKeySpec = new SecretKeySpec(sk, "HmacSHA1");
 	            return new Auth(accessKey, secretKeySpec);
@@ -60,7 +60,7 @@ public final class Auth {
 	    public String sendTokenWithDeadline(long deadline) {
 	        Map<String, Object> x = new HashMap<String, Object>();
 	        x.put("deadline", Long.valueOf(deadline));
-	        String s = (new Gson()).toJson(x);
+	        String s = JSON.toJSONString(x);
 	        return this.signWithData(s.getBytes(Charset.forName("UTF-8")));
 	    }
 

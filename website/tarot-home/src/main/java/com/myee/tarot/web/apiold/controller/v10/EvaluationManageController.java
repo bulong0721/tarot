@@ -7,14 +7,13 @@ import com.myee.tarot.apiold.view.EvaluationView;
 import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
 import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.catering.service.TableService;
+import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.core.util.TypeConverter;
 import com.myee.tarot.web.apiold.controller.BaseController;
 import com.myee.tarot.weixin.domain.ClientAjaxResult;
-import me.chanjar.weixin.common.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +29,6 @@ import java.util.Date;
  * History: <p>如果有修改过程，请记录</P>
  */
 @RestController
-//@Scope("prototype")
 public class EvaluationManageController extends BaseController {
 
     private Logger logger = LoggerFactory.getLogger(EvaluationManageController.class);
@@ -58,7 +56,7 @@ public class EvaluationManageController extends BaseController {
                 return ClientAjaxResult.failed("餐桌不存在...");
             }
             Evaluation evaluation = evaluationManageService.getLatestByTableId(evaluationView.getTableId());
-            if(evaluation != null && StringUtils.isBlank(TypeConverter.toString(evaluation.getTimeSecond()))){
+            if(evaluation != null && StringUtil.isBlank(TypeConverter.toString(evaluation.getTimeSecond()))){
                 return ClientAjaxResult.failed("数据出问题了...");
             }
             if(evaluation == null || (evaluation != null && ((DateTimeUtils.getShortDateTimeL() - evaluation.getTimeSecond()) > 300))){
@@ -88,19 +86,19 @@ public class EvaluationManageController extends BaseController {
     //评论参数为必须至少有一个输入
     boolean conNotBlank(EvaluationView evaluationView){
         if(evaluationView == null || (evaluationView != null
-                && StringUtils.isBlank(TypeConverter.toString(evaluationView.getTableId())))){
+                && StringUtil.isBlank(TypeConverter.toString(evaluationView.getTableId())))){
             return false;
         }else if(evaluationView.getTimeSecond() == null){
             return false;
-        }else if(!StringUtils.isBlank(evaluationView.getDeviceRemark())
-                && !StringUtils.isBlank(evaluationView.getMealsRemark()) && (evaluationView.getDeviceRemark().length() > 200 || evaluationView.getMealsRemark().length() > 200)){
+        }else if(!StringUtil.isBlank(evaluationView.getDeviceRemark())
+                && !StringUtil.isBlank(evaluationView.getMealsRemark()) && (evaluationView.getDeviceRemark().length() > 200 || evaluationView.getMealsRemark().length() > 200)){
             return false;
-        }else if(!StringUtils.isBlank(EvaluationLevelType.getName(evaluationView.getFeelWhole()))
-                || !StringUtils.isBlank(EvaluationLevelType.getName(evaluationView.getFeelFlavor()))
-                || !StringUtils.isBlank(EvaluationLevelType.getName(evaluationView.getFeelService()))
-                || !StringUtils.isBlank(EvaluationLevelType.getName(evaluationView.getFeelEnvironment()))
-                || !StringUtils.isBlank(evaluationView.getDeviceRemark())
-                || !StringUtils.isBlank(evaluationView.getMealsRemark()) ){
+        }else if(!StringUtil.isBlank(EvaluationLevelType.getName(evaluationView.getFeelWhole()))
+                || !StringUtil.isBlank(EvaluationLevelType.getName(evaluationView.getFeelFlavor()))
+                || !StringUtil.isBlank(EvaluationLevelType.getName(evaluationView.getFeelService()))
+                || !StringUtil.isBlank(EvaluationLevelType.getName(evaluationView.getFeelEnvironment()))
+                || !StringUtil.isBlank(evaluationView.getDeviceRemark())
+                || !StringUtil.isBlank(evaluationView.getMealsRemark()) ){
             return true;
         }else{
             return false;
