@@ -336,7 +336,7 @@ public class WebMpController {
         WxMpQrCodeTicket ticket = null;
         try {
             Long startTime = System.currentTimeMillis();
-            ticket = wxMpService.qrCodeCreateTmpTicket(shopId.intValue(), 604800);
+            ticket = wxMpService.qrCodeCreateTmpTicket(shopId.intValue(), 2592000);
             Long endTime = System.currentTimeMillis();
             Long time = endTime - startTime;
             LOGGER.info("生成二维码接口时间消耗:" + time + "毫秒");
