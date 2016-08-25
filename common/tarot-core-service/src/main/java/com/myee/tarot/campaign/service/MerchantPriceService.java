@@ -11,4 +11,6 @@ import java.util.List;
 public interface MerchantPriceService extends GenericEntityService<Long , MerchantPrice>{
 
     List<MerchantPrice> findPriceByActivityId(Long activityId);
+
+    boolean isOnlyPriceName(String priceName, Long storeId);
 }

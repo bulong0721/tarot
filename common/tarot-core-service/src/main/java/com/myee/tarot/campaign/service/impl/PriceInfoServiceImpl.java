@@ -177,7 +177,7 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
             if (priceInt <= compare) {
                 MerchantPrice getPrice = activePrice;
                 basePriceInfo.setPriceName(getPrice.getName());
-                basePriceInfo.setPriceLogo(getPrice.getLogoUrl());
+                basePriceInfo.setPriceLogo(getPrice.getLogoUrl()== null ? "": getPrice.getLogoUrl());
                 basePriceInfo.setPriceDescription(getPrice.getDescription());
                 basePriceInfo.setPriceStartDate(getPrice.getStartDate());
                 basePriceInfo.setPriceEndDate(getPrice.getEndDate());

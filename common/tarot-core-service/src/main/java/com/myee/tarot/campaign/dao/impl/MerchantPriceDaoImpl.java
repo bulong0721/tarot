@@ -22,4 +22,12 @@ public class MerchantPriceDaoImpl extends GenericEntityDaoImpl<Long, MerchantPri
         List<MerchantPrice> result = query.from(qMerchantPrice).where(qMerchantPrice.activity.id.eq(activityId)).fetch();
         return result;
     }
+
+    @Override
+    public Long countSamePriceName(String priceName, Long storeId) {
+        QMerchantPrice qMerchantPrice = QMerchantPrice.merchantPrice;
+        JPQLQuery<MerchantPrice> query = new JPAQuery(getEntityManager());
+        Long count = query.from(qMerchantPrice).where(qMerchantPrice.storeId.eq(storeId).and(qMerchantPrice.name.eq(priceName))).fetchCount();
+        return count;
+    }
 }

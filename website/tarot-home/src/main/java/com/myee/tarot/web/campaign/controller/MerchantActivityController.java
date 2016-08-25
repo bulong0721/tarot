@@ -47,8 +47,6 @@ public class MerchantActivityController {
     private ModeSwitchService modeSwitchService;
     @Autowired
     private MerchantStoreService merchantStoreService;
-    @Autowired
-    private Ignite ignite;
 
     /**
      * 添加个新的奖券活动 传过来
@@ -83,6 +81,14 @@ public class MerchantActivityController {
                     resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
                     return resp;
                 }
+            }
+            //前台再次判断 奖券名字是否重复
+           String checkPriceName = checkPrice.getName();
+            boolean isOnlyPriceName = merchantPriceService.isOnlyPriceName(checkPriceName,merchantActivity.getStore().getId());
+            if(isOnlyPriceName ==  false){
+                resp.setErrorString("该奖券名称重复");
+                resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                return resp;
             }
             //多种情况的添加或修改逻辑
             boolean exist = false;
@@ -170,9 +176,7 @@ public class MerchantActivityController {
                 activity = merchantActivityService.update(merchantActivity);
             }
             //添加或更新的时候，修改redis对应的商户的活动List
-            CacheUtil.activityCache(ignite).put(storeId, activity);
-//            redisUtil.set(RedisKeyConstants.STORE_ACTIVITY + "_" + storeId, activity);
-            // redisUtil.set(RedisKeyConstants.STORE_ACTIVITY + "_" + storeId, activity);
+            //CacheUtil.activityCache(ignite).put(storeId, activity);
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
             resp.addEntry("result", activity);
             return resp;
@@ -217,12 +221,7 @@ public class MerchantActivityController {
     public AjaxResponse findStoreActivity(@RequestParam("storeId")Long storeId){
         try {
             AjaxResponse response = new AjaxResponse();
-            Cache<Long, MerchantActivity> activeCache = CacheUtil.activityCache(ignite);
-            MerchantActivity result = activeCache.get(storeId);
-            if(result == null){
-                result = merchantActivityService.findStoreActivity(storeId);
-                activeCache.put(storeId, result);
-            }
+            MerchantActivity result = merchantActivityService.findStoreActivity(storeId);
             response.addEntry("result", result);
             return response;
         } catch (Exception e) {
@@ -242,6 +241,18 @@ public class MerchantActivityController {
         try {
             AjaxResponse resp = new AjaxResponse();
             MerchantActivity activity = merchantActivityService.findStoreActivity(storeId);
+            //先对需要启动的奖券信息进行过期验证
+            for (Long priceId : priceIds) {
+                MerchantPrice openPrice = merchantPriceService.findById(priceId);
+                //添加时间判断
+                Date endDate = openPrice.getEndDate();
+                Date startToday = DateTimeUtils.startToday();
+                if (endDate.compareTo(startToday) < 0) {
+                    resp.setErrorString("启动的奖券有效期不能已过期");
+                    resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                    return resp;
+                }
+            }
             //先开放活动
             activity.setActivityStatus(Constants.ACITIVITY_START);
             List<MerchantPrice> activePrice = Lists.newArrayList();

@@ -29,4 +29,10 @@ public class MerchantPriceServiceImpl extends GenericEntityServiceImpl<Long , Me
         return merchantPriceDao.findPriceByActivityId(activityId);
     }
 
+    @Override
+    public boolean isOnlyPriceName(String priceName, Long storeId) {
+        Long num = merchantPriceDao.countSamePriceName(priceName, storeId);
+        return num == 0 ? true: false;
+    }
+
 }

@@ -156,9 +156,9 @@ public class PriceInfoController {
                 //判断状态
                 int status = priceInfo.getStatus();
                 if(status==Constants.PRICEINFO_EXPIRE){
-                    resp.setErrorString("该奖券已过期");
+                    resp.setErrorString("该优惠码已过期");
                 }else if(status==Constants.PRICEINFO_USED){
-                    resp.setErrorString("该奖券已被使用");
+                    resp.setErrorString("该优惠码已被使用");
                 }else{
                     //再次判断是否过期或是否未在使用期内
                     Date startDate = priceInfo.getPriceStartDate();
@@ -166,9 +166,9 @@ public class PriceInfoController {
                     Date nowDate = DateTimeUtils.startToday();
                     if(endDate.compareTo(nowDate) < 0){
                         priceInfo.setStatus(Constants.PRICEINFO_EXPIRE);
-                        resp.setErrorString("该奖券已过期");
+                        resp.setErrorString("该优惠码已过期");
                     }else if(startDate.compareTo(nowDate) > 0 ){
-                        resp.setErrorString("该奖券不在兑换时间内");
+                        resp.setErrorString("该优惠码不在兑换时间内");
                     }else {
                         //验证通过后
                         resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
@@ -180,7 +180,7 @@ public class PriceInfoController {
                 priceInfoService.update(priceInfo);
                 return resp;
             }else{
-                resp.setErrorString("此验证码该店无效");
+                resp.setErrorString("此优惠码该店无效");
                 return resp;
             }
         } catch (Exception e) {
