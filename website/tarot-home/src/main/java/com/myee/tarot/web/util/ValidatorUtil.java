@@ -1,7 +1,5 @@
 package com.myee.tarot.web.util;
 
-import me.chanjar.weixin.common.util.StringUtils;
-
 import java.util.EmptyStackException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -70,7 +68,7 @@ public class ValidatorUtil {
 
 	/**	是否纯中文	*/
 	public static boolean isChinese(String text) {
-		if (StringUtils.isBlank(text)){
+		if (StringUtil.isNullOrEmpty(text)){
 			return false;
 		}
 		for (int i = 0; i < text.length(); i++) {
@@ -125,7 +123,7 @@ public class ValidatorUtil {
 	 * @return
 	 */
 	public static boolean isTelePhone(String phone) {
-		if (StringUtils.isBlank(phone)){
+		if (StringUtil.isNullOrEmpty(phone)){
 			return false;
 		}
 

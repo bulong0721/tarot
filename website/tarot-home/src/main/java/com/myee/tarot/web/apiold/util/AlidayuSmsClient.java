@@ -1,16 +1,17 @@
 package com.myee.tarot.web.apiold.util;
 
+import com.google.common.base.Joiner;
 import com.myee.tarot.apiold.domain.SendRecord;
 import com.myee.tarot.apiold.service.SendRecordService;
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catering.domain.Table;
+import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.web.util.ValidatorUtil;
 import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
 import com.taobao.api.request.AlibabaAliqinFcSmsNumSendRequest;
 import com.taobao.api.response.AlibabaAliqinFcSmsNumSendResponse;
-import me.chanjar.weixin.common.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +62,7 @@ public class AlidayuSmsClient {
 					}
 					List list = new ArrayList();
 					for(DeviceUsed deviceUsed : deviceUsedList){
-						if(!StringUtils.isBlank(deviceUsed.getPhone()) && ValidatorUtil.isMobile(deviceUsed.getPhone())){//不为空且是手机号才添加
+						if(!StringUtil.isBlank(deviceUsed.getPhone()) && ValidatorUtil.isMobile(deviceUsed.getPhone())){//不为空且是手机号才添加
 							list.add(deviceUsed.getPhone());
 						}
 					}
@@ -82,7 +83,7 @@ public class AlidayuSmsClient {
 					record.setFlag(i);
 					record.setPartner(0);//设置为0，非第三方发送
 					record.setTemplateNum(templateNum);
-					record.setDescription(MyArrayUtils.merge(smsNum, ",") + ",ip=" + ipAddress + ",tableId=" + tb.getId() + ",templateID=" + templateNum + ",st=" + st + ",et=" + et);
+					record.setDescription(Joiner.on(',').join(smsNum) + ",ip=" + ipAddress + ",tableId=" + tb.getId() + ",templateID=" + templateNum + ",st=" + st + ",et=" + et);
 					record.setCreated(dt);
 					sendRecordManageService.update(record);
 				} catch (Exception e) {
@@ -124,7 +125,7 @@ public class AlidayuSmsClient {
 					record.setFlag(i);
 					record.setPartner(1);//设置为1，第三方发送
 					record.setTemplateNum(templateNum);
-					record.setDescription(MyArrayUtils.merge(smsNum, ",") + ",ip=" + ip + ",templateID=" + templateNum + ",st=" + st + ",et=" + et);
+					record.setDescription(Joiner.on(',').join(smsNum) + ",ip=" + ip + ",templateID=" + templateNum + ",st=" + st + ",et=" + et);
 					record.setCreated(dt);
 					sendRecordManageService.update(record);
 				} catch (Exception e) {
@@ -170,15 +171,15 @@ public class AlidayuSmsClient {
 		if (mobiles == null || templateNum == null){
 			return PARA_ERROR;
 		}
-		String mobileStr = MyArrayUtils.merge(mobiles, ",");
+		String mobileStr = Joiner.on(',').join(mobiles);
 		TaobaoClient client = new DefaultTaobaoClient(commConfig.getAlidayuHttpApiUrl(), commConfig.getAlidayuApiAppkey(), commConfig.getAlidayuApiSecret());
 		AlibabaAliqinFcSmsNumSendRequest req = new AlibabaAliqinFcSmsNumSendRequest();
 		req.setSmsType(commConfig.getAlidayuSmsType());
 		req.setSmsFreeSignName(commConfig.getAlidayuSignNameActionPen());
-		if(!StringUtils.isBlank(sign)){
+		if(!StringUtil.isBlank(sign)){
 			req.setSmsFreeSignName(sign);
 		}
-		if(!StringUtils.isBlank(argName)){
+		if(!StringUtil.isBlank(argName)){
 			req.setSmsParamString("{"+commConfig.getAlidayuSendParam()+":'"+argName+"'}");
 		}
 		req.setRecNum(mobileStr);

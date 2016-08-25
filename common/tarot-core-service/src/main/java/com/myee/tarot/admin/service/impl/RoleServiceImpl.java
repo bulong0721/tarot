@@ -26,10 +26,6 @@ public class RoleServiceImpl extends GenericEntityServiceImpl<Long, Role> implem
         this.roleDao = roleDao;
     }
 
-    @Caching(
-            cacheable = @Cacheable(value = "test1"),
-            put = @CachePut(value = "test1")
-    )
     @Override
     public List<Role> listAll() {
         return list();

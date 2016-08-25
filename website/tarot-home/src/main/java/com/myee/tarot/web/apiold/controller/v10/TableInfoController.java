@@ -6,10 +6,10 @@ import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.catering.service.TableService;
 import com.myee.tarot.catering.service.TableTypeService;
+import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.web.apiold.controller.BaseController;
 import com.myee.tarot.uitl.CacheUtil;
 import com.myee.tarot.weixin.domain.ClientAjaxResult;
-import me.chanjar.weixin.common.util.StringUtils;
 import org.apache.ignite.Ignite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +56,7 @@ public class TableInfoController extends BaseController {
         try {
 
             long id = 0l;
-            if (StringUtils.isNotEmpty(shopId)) {
+            if (!StringUtil.isBlank(shopId)) {
                 id = Long.parseLong(shopId);
             } else {
                 return ClientAjaxResult.failed("商户ID不能为空");
