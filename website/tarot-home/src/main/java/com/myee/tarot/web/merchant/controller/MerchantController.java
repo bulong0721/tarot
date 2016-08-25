@@ -14,6 +14,7 @@ import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.merchant.type.BusinessType;
 import com.myee.tarot.campaign.domain.SaleCorpMerchant;
 import com.myee.tarot.campaign.service.SaleCorpMerchantService;
+import com.myee.tarot.merchant.type.CuisineType;
 import com.myee.tarot.profile.domain.Address;
 import com.myee.tarot.profile.domain.GeoZone;
 import com.myee.tarot.profile.service.GeoZoneService;
@@ -204,6 +205,12 @@ public class MerchantController {
         return new BusinessType().getMerchantBusinessType4Select();
     }
 
+    @RequestMapping(value = "admin/merchant/cuisineList4Select", method = RequestMethod.GET)
+    @ResponseBody
+    public List getMerchantCuisine4Select() {
+        return new CuisineType().getMerchantCuisine4Select();
+    }
+
     //把类转换成entry返回给前端，解耦和
     private Map objectToEntry(Merchant merchant) {
         Map entry = new HashMap();
@@ -211,7 +218,7 @@ public class MerchantController {
         entry.put("name", merchant.getName());
         entry.put("businessType", merchant.getBusinessType());
         entry.put("businessTypeKey", new BusinessType().getBusinessTypeName(merchant.getBusinessType()));
-        entry.put("cuisineType", merchant.getCuisineType());
+        entry.put("cuisineType", new CuisineType().getCuisineTypeName(merchant.getCuisineType()));
         entry.put("logo", merchant.getLogo());
         entry.put("description", merchant.getDescription());
         return entry;

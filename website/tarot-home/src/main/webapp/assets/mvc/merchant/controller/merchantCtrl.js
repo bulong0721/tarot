@@ -25,20 +25,31 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
             },
             {
                 key: 'cuisineType',
-                type: 'c_input',
-                templateOptions: {type: 'text', label: '商户菜系', required: true, placeholder: '商户菜系'}
+                type: 'c_select',
+                className: 'c_select',
+                templateOptions: {
+                    label: '商户菜系',
+                    options: Constants.merchantCuisine
+                },
+                hideExpression: function ($viewValue, $modelValue, scope) {
+                    if (scope.model.businessType != 'FOOD') {
+                        return true;   //隐藏
+                    } else {
+                        return false;  //餐厅类型为餐饮时显示
+                    }
+                }
             },
             {
                 id: 'imgFile',
                 key: 'imgFile',
                 type: 'upload',
                 name: 'img',//这个name是用来判断上传文件的类型，不判断为空('') || null
-                templateOptions: {type: 'file', label: '商户图标', required: false,placeholder: '商户图标'}
+                templateOptions: {type: 'file', label: '商户图标', required: false, placeholder: '商户图标'}
             },
             {
                 key: 'images',
                 type: 'c_images',
-                templateOptions: {label: '商户图标预览',Multi:false}
+                templateOptions: {label: '商户图标预览', Multi: false}
             },
             {
                 key: 'description',
@@ -96,16 +107,16 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
             path: "logo",
             type: "file"
         }, arg).$promise.then(function (res) {
-            //console.log(res)
-            if (0 != res.status) {
-                $scope.toasterManage($scope.toastError,res);
-                return;
-            }
-            $scope.toasterManage($scope.toastUploadSucc);
-            $scope.formData.model.logo = res.dataMap.tree.downloadPath;
+                //console.log(res)
+                if (0 != res.status) {
+                    $scope.toasterManage($scope.toastError, res);
+                    return;
+                }
+                $scope.toasterManage($scope.toastUploadSucc);
+                $scope.formData.model.logo = res.dataMap.tree.downloadPath;
 
-            //console.log($scope.formData.model.images)
-            $scope.formData.model.images = res.dataMap.tree.downloadPath;
-        })
+                //console.log($scope.formData.model.images)
+                $scope.formData.model.images = res.dataMap.tree.downloadPath;
+            })
     });
 }

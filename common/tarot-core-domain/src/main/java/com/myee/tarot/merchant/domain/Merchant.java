@@ -32,7 +32,6 @@ public class Merchant extends GenericEntity<Long, Merchant> {
     @Column(name = "BUSINESS_TYPE", length = 10)
     private String businessType;
 
-    @NotEmpty
     @Column(name = "CUISINE_TYPE", length = 10)
     private String cuisineType;
 

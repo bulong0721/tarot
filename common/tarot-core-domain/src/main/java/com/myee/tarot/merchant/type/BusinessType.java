@@ -72,7 +72,7 @@ public class BusinessType implements GenericEnumType, Comparable<BusinessType>, 
         Set keySet = TYPES.keySet();
         for (Object keyName : keySet) {
             Map entry = new HashMap();
-            entry.put("name", ((BusinessType)TYPES.get(keyName)).getFriendlyType());
+            entry.put("name", (TYPES.get(keyName)).getFriendlyType());
             entry.put("value", keyName);
             resp.add(entry);
         }
@@ -81,7 +81,7 @@ public class BusinessType implements GenericEnumType, Comparable<BusinessType>, 
 
     public String getBusinessTypeName(String businessType) {
         try {
-            String key = String.valueOf(((BusinessType) TYPES.get(businessType)).getFriendlyType());
+            String key = String.valueOf((TYPES.get(businessType)).getFriendlyType());
             return key == null || key.equals("null") ? "" : key;
         } catch (Exception e) {
             e.printStackTrace();
