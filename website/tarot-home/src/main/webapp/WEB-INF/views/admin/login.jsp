@@ -12,7 +12,7 @@
 </head>
 <body class="gray-bg loginBg">
     <div class="middle-box text-center loginscreen animated fadeInDown">
-        <div>
+        <div class="loginMain">
             <h3>木爷终端管理系统</h3>
             <p class="client-status info"><i class="fa fa-coffee"></i>请输入您的登录信息.</p>
             <form class="m-t" role="form" method="post" action="../admin/j_spring_security_check">
