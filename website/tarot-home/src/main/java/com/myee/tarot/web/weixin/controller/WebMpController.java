@@ -65,6 +65,8 @@ public class WebMpController {
     @Value("${cleverm.push.dirs}")
     private String DOWNLOAD_HOME;
 
+    private static final int QRCODE_EXPIRE_SECONDS = 2592000; //微信公众号二维码有效时间，以秒为单位。 最大不超过2592000（即30天）
+
     @RequestMapping(value = "service")
     @ResponseBody
     public void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -87,10 +89,10 @@ public class WebMpController {
         try {
             if (!wxMpService.checkSignature(timestamp, nonce, signature)) {
                 out.print("非法请求");
-            } else if (!StringUtil.isBlank(echostr)) {
+            } else if (StringUtil.isNotBlankWeiXin(echostr)) {
                 out.write(echostr);
             }
-            String encryptType = !StringUtil.isBlank(req.getParameter("encrypt_type")) ? "raw" : req.getParameter("encrypt_type");
+            String encryptType = StringUtil.isBlankWeiXin(req.getParameter("encrypt_type")) ? "raw" : req.getParameter("encrypt_type");
             if ("raw".equals(encryptType)) {
                 WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(req.getInputStream());
                 LOGGER.info("inMessage:" + inMessage.toString());
@@ -336,7 +338,7 @@ public class WebMpController {
         WxMpQrCodeTicket ticket = null;
         try {
             Long startTime = System.currentTimeMillis();
-            ticket = wxMpService.qrCodeCreateTmpTicket(shopId.intValue(), 2592000);
+            ticket = wxMpService.qrCodeCreateTmpTicket(shopId.intValue(), QRCODE_EXPIRE_SECONDS);
             Long endTime = System.currentTimeMillis();
             Long time = endTime - startTime;
             LOGGER.info("生成二维码接口时间消耗:" + time + "毫秒");
