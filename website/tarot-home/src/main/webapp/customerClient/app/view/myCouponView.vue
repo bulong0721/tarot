@@ -21,10 +21,15 @@
 		route: {
 			data({to,next}){
 				resource.post(this,'api/info/getPrice',{id:to.params.id,keyId:to.params.keyId}).then((res) => {
-					let view = res.dataMap.result,_des = view.priceDescription.split('<br />'),tmp=[];
-					for(var key in _des){
-						tmp.push({n:_des[key]})
+					let view = res.dataMap.result,_des = null,tmp=[];
+					if(view.priceDescription != ""){
+						_des = view.priceDescription.split('<br />')
+						for(var key in _des){
+							tmp.push({n:_des[key]})
+						}
 					}
+
+					console.log(tmp)
 					next({
 						view: view,
 						des:tmp
