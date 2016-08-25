@@ -261,17 +261,17 @@ public class PushController {
         if (pushResourceDTO.getContent() == null || pushResourceDTO.getContent().size() <= 0) {
             return AjaxResponse.failed(-4, "推送内容为空或格式错误");
         }
-        Boolean rd = false;
+        Boolean isSuccess = null;
         PushResource pushResource = new PushResource();
         try {
             //入库
-            rd = eptService.pushResource(pushResourceDTO);
+            isSuccess = eptService.pushResource(pushResourceDTO);
             pushResource.setAppId(pushResourceDTO.getAppId());
             pushResource.setContent(JSONArray.toJSONString(pushResourceDTO.getContent()));
             pushResource.setStoragePath(pushResourceDTO.getStoragePath());
             pushResource.setTimeout(pushResourceDTO.getTimeout());
             pushResource.setUniqueNo(pushResourceDTO.getUniqueNo());
-            if (rd != null && rd) {
+            if (isSuccess != null && isSuccess) {
                 pushResource.setSuccess(true);
                 pushResourceService.update(pushResource);
                 return AjaxResponse.success("推送成功");
