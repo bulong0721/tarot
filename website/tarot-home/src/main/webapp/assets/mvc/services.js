@@ -320,8 +320,8 @@ function cfromlyService(formlyConfig, $window, toaster, $filter) {
             el.on("change", function (changeEvent) {
                 var file = changeEvent.target.files[0],
                     name = file.name.replace(/.+\./, "");
-                if(file.size > 100000000){
-                    toaster.error({body: "上传文件超过大小限制(100M)！"});
+                if(file.size <= 0 || file.size > 100000000){
+                    toaster.error({body: "不能上传空文件或文件大小限制(100M)！"});
                     if(angular.element('#file')[0]){
                         angular.element('#file')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
                     }
