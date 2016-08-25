@@ -69,5 +69,6 @@
         <class>com.myee.tarot.apiold.domain.MaterialPublish</class>
         <class>com.myee.tarot.apiold.domain.MenuInfo</class>
         <class>com.myee.tarot.apiold.domain.UploadAccessLog</class>
+        <class>com.myee.tarot.apiold.domain.UploadAccessAction</class>
     </persistence-unit>
 </persistence>
