@@ -15,9 +15,9 @@ import java.util.Date;
 /**
  * Created by Martin on 2016/4/18.
  */
-public class AdminAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AdminAuthenticationSuccessHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationSuccessHandler.class);
 
     @Autowired
     private AdminUserService userService;

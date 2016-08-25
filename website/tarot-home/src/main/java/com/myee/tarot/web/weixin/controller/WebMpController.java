@@ -6,6 +6,7 @@ import com.myee.tarot.campaign.domain.PriceInfo;
 import com.myee.tarot.campaign.service.PriceInfoService;
 import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
 import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantStoreService;
@@ -18,7 +19,6 @@ import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.WxJsapiSignature;
 import me.chanjar.weixin.common.bean.WxMenu;
 import me.chanjar.weixin.common.exception.WxErrorException;
-import me.chanjar.weixin.common.util.StringUtils;
 import me.chanjar.weixin.mp.api.WxMpConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -87,10 +87,10 @@ public class WebMpController {
         try {
             if (!wxMpService.checkSignature(timestamp, nonce, signature)) {
                 out.print("非法请求");
-            } else if (StringUtils.isNotBlank(echostr)) {
+            } else if (!StringUtil.isBlank(echostr)) {
                 out.write(echostr);
             }
-            String encryptType = StringUtils.isBlank(req.getParameter("encrypt_type")) ? "raw" : req.getParameter("encrypt_type");
+            String encryptType = !StringUtil.isBlank(req.getParameter("encrypt_type")) ? "raw" : req.getParameter("encrypt_type");
             if ("raw".equals(encryptType)) {
                 WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(req.getInputStream());
                 LOGGER.info("inMessage:" + inMessage.toString());

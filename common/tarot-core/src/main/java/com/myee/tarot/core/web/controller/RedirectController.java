@@ -12,6 +12,6 @@ public class RedirectController {
 
     public String redirect(HttpServletRequest request, HttpServletResponse response, Model model) {
         String path = request.getContextPath();
-        return "ajaxredirect:" + path;
+        return "redirect:" + path;
     }
 }
