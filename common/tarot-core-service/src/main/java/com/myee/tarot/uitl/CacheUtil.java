@@ -42,6 +42,11 @@ public final class CacheUtil {
         return getCache(ignite, CACHE_TABLE_INFO);
     }
 
+    public static final String CACHE_TABLE_TYPE_INFO = "shop.table.Type.info";
+    public static IgniteCache<String, BaseDataInfo> tableTypeInfoCache(Ignite ignite) {
+        return getCache(ignite, CACHE_TABLE_TYPE_INFO);
+    }
+
     public static IgniteCache<String, MenuDataInfo> menuInfoCache(Ignite ignite) {
         return getCache(ignite, CACHE_MENU_INFO);
     }
