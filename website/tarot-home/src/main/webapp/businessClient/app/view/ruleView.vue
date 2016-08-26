@@ -1,7 +1,7 @@
 <template>
 	<div id="ruleview" v-show="storeId">
 		<ul>
-			<li class="list"><div><label class="t"><em>*</em>奖品名称</label></div><div><input type="text" placeholder="请输入奖品名称" maxlength="30" v-model="v.name" /><div></li>
+			<li class="list"><div><label class="t"><em>*</em>奖品名称</label></div><div><input type="text" placeholder="请输入奖品名称" maxlength="20" v-model="v.name" /><div></li>
 			<li class="list"><div><label class="t"><em>*</em>奖品数量</label></div><div><input type="number" placeholder="请输入奖品数量" v-model="v.total" min="0"/><div></li>
 			<li class="list"><div><label><em>*</em>使用有效期</label></div><div class="date"><input type="date" v-model="v.startDate" placeholder="开始时间" min="{{today}}"> - <input type="date" v-model="v.endDate" placeholder="结束时间" min="{{today}}"><div></li>
 			<li class="list"><div><label>使用说明1</label></div><div><textarea v-model="v.des1" rows="3" cols="20" placeholder="请输入使用说明1" maxlength="30"></textarea><div></li>
