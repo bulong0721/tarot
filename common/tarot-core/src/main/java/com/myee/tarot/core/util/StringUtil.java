@@ -162,4 +162,33 @@ public class StringUtil {
             return new String(padding).concat(str);
         }
     }
+
+    /**
+     * 微信公众号使用，暂时不了解是否通用
+     * @param cs
+     * @return
+     */
+    public static boolean isBlankWeiXin(CharSequence cs) {
+        int strLen;
+        if(cs != null && (strLen = cs.length()) != 0) {
+            for(int i = 0; i < strLen; ++i) {
+                if(!Character.isWhitespace(cs.charAt(i))) {
+                    return false;
+                }
+            }
+
+            return true;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * 微信公众号使用，暂时不了解是否通用
+     * @param cs
+     * @return
+     */
+    public static boolean isNotBlankWeiXin(CharSequence cs) {
+        return !isBlankWeiXin(cs);
+    }
 }
