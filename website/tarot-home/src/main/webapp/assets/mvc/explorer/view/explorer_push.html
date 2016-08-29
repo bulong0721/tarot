@@ -6,9 +6,9 @@
             </uib-tab-heading>
             <div class="panel-body">
                 <form name="formData.form" novalidate>
-                    <formly-form model="formData.model" fields="formData.fields" form="formData.form" options="formData.options">
+                    <formly-form model="formDataPusher.model" fields="formDataPusher.fields" form="formDataPusher.form" options="formDataPusher.options">
                         <div class="text-center col-xs-8">
-                            <button class="btn btn-primary" ng-click="pushSubmit()" ng-disabled="formData.form.$invalid"><i class="fa fa-sm fa-check"></i>&nbsp;推送</button>
+                            <button class="btn btn-primary" ng-click="pushSubmit()" ng-disabled="formDataPusher.form.$invalid"><i class="fa fa-sm fa-check"></i>&nbsp;推送</button>
                             <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
                         </div>
                     </formly-form>
