@@ -10087,8 +10087,7 @@ th.center, td.center {
 .loginBg .info i {margin-right: 5px;}
 
 /*table tr[]*/
-table tr:hover {background-color: #eee;}
-
+table tr:hover,table>tbody>tr:nth-of-type(odd):hover {background-color: #f6fefc;}
 /*.wrapper-content {padding: 15px 0px 20px;}*/
 .navbar {
     position: inherit;
