@@ -10,44 +10,27 @@
     <link href="assets/plugins/animate.css" rel="stylesheet">
     <link href="assets/plugins/style.css" rel="stylesheet">
 </head>
-
-<body class="gray-bg">
-
-<div class="middle-box text-center loginscreen animated fadeInDown">
-    <div>
-        <div>
-            <h1 class="logo-name">IN+</h1>
-        </div>
-        <h3>Welcome to IN+</h3>
-        <p>Perfectly designed and precisely prepared admin theme with over 50 pages with extra new web app views.
-            <!--Continually expanded and constantly improved Inspinia Admin Them (IN+)-->
-        </p>
-        <p>Login in. To see it in action.</p>
-        <form class="m-t" role="form" method="post" action="../shop/j_spring_security_check">
-            <div class="form-group">
-                <input type="text" name="username" class="form-control" placeholder="Username" required="">
-            </div>
-            <div class="form-group">
-                <input type="password" name="password" class="form-control" placeholder="Password" required="">
-            </div>
-            <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
-            <a href="#">
-                <small>Forgot password?</small>
-            </a>
-            <p class="text-muted text-center">
-                <small>Do not have an account?</small>
+<body class="gray-bg loginBg">
+    <div class="middle-box text-center loginscreen animated fadeInDown">
+        <div class="loginMain">
+            <h3>木爷终端管理系统</h3>
+            <p class="client-status info"><i class="fa fa-coffee"></i>请输入您的登录信息.</p>
+            <form class="m-t" role="form" method="post" action="../shop/j_spring_security_check">
+                <div class="form-group">
+                    <input type="text" name="username" class="form-control" placeholder="用户名" required="">
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" class="form-control" placeholder="密码" required="">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">登录</button>
+            </form>
+            <p class="m-t">
+                <small>木爷机器人 &copy; 2016</small>
             </p>
-            <a class="btn btn-sm btn-white btn-block" href="register.html">Create an account</a>
-        </form>
-        <p class="m-t">
-            <small>Inspinia we app framework base on Bootstrap 3 &copy; 2014</small>
-        </p>
+        </div>
     </div>
-</div>
-<!-- Mainly scripts -->
-<script src="assets/plugins/jquery/jquery-2.1.1.min.js"></script>
-<script src="assets/plugins/bootstrap/bootstrap.min.js"></script>
-
+    <!-- Mainly scripts -->
+    <script src="assets/plugins/jquery/jquery-2.1.1.min.js"></script>
+    <script src="assets/plugins/bootstrap/bootstrap.min.js"></script>
 </body>
-
 </html>
