@@ -7,12 +7,14 @@
             <div class="col-xs-2">
             </div>
             <div class="col-xs-6">
-                <formly-form model="formData.model" fields="formData.fields" form="formData.form" options="formData.options">
-                    <div class="text-center col-xs-8">
-                        <button class="btn btn-primary" ng-click="processSubmit()"><i class="fa fa-sm fa-check"></i>&nbsp;提交</button>
-                        <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
-                    </div>
-                </formly-form>
+                <form name="formData.form" novalidate>
+                    <formly-form model="formData.model" fields="formData.fields" form="formData.form" options="formData.options">
+                        <div class="text-center col-xs-8">
+                            <button class="btn btn-primary" ng-click="processSubmit()"><i class="fa fa-sm fa-check"></i>&nbsp;提交</button>
+                            <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
+                        </div>
+                    </formly-form>
+                </form>
             </div>
         </div>
     </uib-tab>

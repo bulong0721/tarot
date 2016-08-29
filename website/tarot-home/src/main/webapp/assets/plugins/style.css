@@ -2835,6 +2835,7 @@ div.dt-button-info {
 }
 
 /* Validation */
+.validation {color: #ed5565}
 label.error {
     color: #cc5965;
     display: inline-block;
@@ -2857,6 +2858,7 @@ label.error {
     width: 500px;
     height: 300px;
 }
+
 
 .ngH {
     border-right: none;

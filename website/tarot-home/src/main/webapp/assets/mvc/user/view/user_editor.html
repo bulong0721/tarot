@@ -4,12 +4,14 @@
             <i class="fa fa-info"></i>基本
         </uib-tab-heading>
         <div class="panel-body">
-            <formly-form model="formData.model" fields="formData.fields" form="formData.form" options="formData.options">
-                <div class="text-center col-xs-8">
-                    <button class="btn btn-primary" ng-click="processSubmit()"><i class="fa fa-sm fa-check"></i>&nbsp;提交</button>
-                    <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
-                </div>
-            </formly-form>
+            <form name="formData.form" novalidate>
+                <formly-form model="formData.model" fields="formData.fields" form="formData.form" options="formData.options">
+                    <div class="text-center col-xs-8">
+                        <button class="btn btn-primary" ng-click="processSubmit()"><i class="fa fa-sm fa-check"></i>&nbsp;提交</button>
+                        <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
+                    </div>
+                </formly-form>
+            </form>
         </div>
     </uib-tab>
     <uib-tab>

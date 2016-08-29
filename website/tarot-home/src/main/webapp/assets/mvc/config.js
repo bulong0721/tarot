@@ -24,6 +24,10 @@ function ctrlManagerLoader(oclazyload, dir, ctrl) {
             files: ['assets/plugins/formly/angular-formly-templates-bootstrap.js']
         },
         {
+            name: 'ngMessages',
+            files: ['assets/plugins/angular/angular-messages.min.js']
+        },
+        {
             serie: true,
             name: 'ngTable',
             files: ['assets/plugins/ng-table/ng-table.js', 'assets/plugins/ng-table/ng-table.css']

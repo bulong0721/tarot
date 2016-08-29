@@ -240,7 +240,10 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster) {
 /*
  * cfromly
  * */
-function cfromlyService(formlyConfig, $window, toaster, $filter) {
+function cfromlyService(formlyConfig, $window, toaster, $filter,formlyValidationMessages) {
+    formlyConfig.extras.errorExistsAndShouldBeVisibleExpression = 'fc.$touched || form.$submitted';
+    formlyValidationMessages.addStringMessage('required', '此字段必填');
+
     //自定义formly Label&input一行显示
     formlyConfig.setWrapper({
         name: 'lineLabel',
@@ -249,8 +252,14 @@ function cfromlyService(formlyConfig, $window, toaster, $filter) {
             '{{to.label}} {{to.required ? "*" : ""}}',
             '</label>',
             '<div ng-hide="hide" class="col-sm-8">',
-            '<formly-transclude></formly-transclude>',
-            '</div>'
+            '<formly-transclude></formly-transclude> <div class="validation" ng-if="showError" ng-messages="fc.$error">',
+            '<div ng-message="required">此字段必填</div>',
+            '<div ng-message="email">无效的邮件地址</div>',
+            '<div ng-message="minlength">太短</div>',
+            '<div ng-message="maxlength">太长</div>',
+            '<div ng-message="{{::name}}" ng-repeat="(name, message) in ::options.validation.messages">',
+            '{{message(fc.$viewValue, fc.$modelValue, this)}}',
+            '</div></div></div>',
         ].join(' ')
     });
 
@@ -261,6 +270,7 @@ function cfromlyService(formlyConfig, $window, toaster, $filter) {
         name: 'c_input',
         extends: 'input',
         wrapper: ['lineLabel', 'bootstrapHasError'],
+        template: '<input type="{{options.templateOptions.type}}" class="form-control" id="{{id}}" formly-dynamic-name="id" formly-custom-validation="options.validators" placeholder="{{options.templateOptions.placeholder}}" aria-describedby="{{id}}_description" ng-required="options.templateOptions.required" ng-disabled="options.templateOptions.disabled" ng-model="model[options.key]">'
     });
 
     //select
