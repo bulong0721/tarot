@@ -70,5 +70,6 @@
         <class>com.myee.tarot.apiold.domain.MenuInfo</class>
         <class>com.myee.tarot.apiold.domain.UploadAccessLog</class>
         <class>com.myee.tarot.apiold.domain.UploadAccessAction</class>
+        <class>com.myee.tarot.apiold.domain.TasteInfo</class>
     </persistence-unit>
 </persistence>
