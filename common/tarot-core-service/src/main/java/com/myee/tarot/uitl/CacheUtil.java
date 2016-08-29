@@ -51,6 +51,11 @@ public final class CacheUtil {
         return getCache(ignite, CACHE_MENU_INFO);
     }
 
+    public static final String CACHE_TASTE_INFO = "shop.menu.taste.info";
+    public static IgniteCache<String, BaseDataInfo> tasteInfoCache(Ignite ignite) {
+        return getCache(ignite, CACHE_TASTE_INFO);
+    }
+
     public static final String CACHE_SHOP_OF_CLIENT = "shopOfClient_";
     public static IgniteCache<Long, ShopDetail> shopOfClient(Ignite ignite, Long clientId) {
         return getCache(ignite, CACHE_SHOP_OF_CLIENT + clientId);
