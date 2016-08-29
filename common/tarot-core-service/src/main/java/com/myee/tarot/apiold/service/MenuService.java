@@ -10,5 +10,5 @@ import java.util.List;
  * Created by Chay on 2016/8/10.
  */
 public interface MenuService extends GenericEntityService<Long, MenuInfo> {
-    List<MenuInfo> listByStore(long id);
+    List<MenuInfo> listByStoreId(long id);
 }

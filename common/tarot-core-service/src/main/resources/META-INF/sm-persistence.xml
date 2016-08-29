@@ -71,5 +71,6 @@
         <class>com.myee.tarot.apiold.domain.UploadAccessLog</class>
         <class>com.myee.tarot.apiold.domain.UploadAccessAction</class>
         <class>com.myee.tarot.apiold.domain.TasteInfo</class>
+        <class>com.myee.tarot.apiold.domain.VersionInfo</class>
     </persistence-unit>
 </persistence>

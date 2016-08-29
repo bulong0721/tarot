@@ -24,7 +24,7 @@ public class MenuServiceImpl extends GenericEntityServiceImpl<Long, MenuInfo> im
         this.menuDao = menuDao;
     }
 
-    public List<MenuInfo> listByStore(long id){
-        return menuDao.listByStore(id);
+    public List<MenuInfo> listByStoreId(long id){
+        return menuDao.listByStoreId(id);
     }
 }

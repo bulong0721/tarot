@@ -52,8 +52,8 @@ public class MenuInfo extends GenericEntity<Long, MenuInfo> {
     @Column(name = "UPDATED")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
-    @Column(name = "STATUS",length = 2)
-    private int status;
+    @Column(name = "ACTIVE",length = 2)
+    private int active;
     @Column(name = "PHOTO")
     private String photo;
 
@@ -128,12 +128,12 @@ public class MenuInfo extends GenericEntity<Long, MenuInfo> {
         this.scanCode = scanCode;
     }
 
-    public int getStatus() {
-        return status;
+    public int getActive() {
+        return active;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setActive(int active) {
+        this.active = active;
     }
 
     public String getPhoto() {

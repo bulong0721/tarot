@@ -69,7 +69,7 @@ public class MenuManageController extends BaseController {
             } else {
                 //如果为空，从数据库中查询数据
                 List<MenuInfoView> list = null;
-                List<MenuInfo> listMenuInfo = menuManageService.listByStore(id);
+                List<MenuInfo> listMenuInfo = menuManageService.listByStoreId(id);
                 if (listMenuInfo != null && listMenuInfo.size() > 0) {
                     list = new ArrayList<MenuInfoView>();
                     for (MenuInfo menuInfo : listMenuInfo) {

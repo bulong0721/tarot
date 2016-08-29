@@ -16,13 +16,13 @@ import java.util.List;
 @Repository
 public class MenuDaoImpl extends GenericEntityDaoImpl<Long, MenuInfo> implements MenuDao {
 
-    public List<MenuInfo> listByStore(long id){
+    public List<MenuInfo> listByStoreId(long id){
         QMenuInfo qMenuInfo = QMenuInfo.menuInfo;
 
         JPQLQuery<MenuInfo> query = new JPAQuery(getEntityManager());
 
         query.from(qMenuInfo);
-        query.where(qMenuInfo.status.eq(1));
+        query.where(qMenuInfo.active.eq(1));
         query.where(qMenuInfo.store.id.eq(id));
 
         return query.fetch();

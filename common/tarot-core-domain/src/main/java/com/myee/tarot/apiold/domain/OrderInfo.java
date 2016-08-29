@@ -16,7 +16,7 @@ import java.util.Date;
  */
 @Entity
 //20160823 看代码暂时没用到，先不生成数据库
-//@javax.persistence.Table(name = "CA_ORDER")
+@javax.persistence.Table(name = "CA_ORDER")
 public class OrderInfo extends GenericEntity<Long, OrderInfo> {
 
     @Id
@@ -50,8 +50,8 @@ public class OrderInfo extends GenericEntity<Long, OrderInfo> {
     @Column(name = "UPDATED")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
-    @Column(name = "STATUS",length = 2)
-    private int status;//状态 0启用 1停用
+    @Column(name = "ACTIVE",length = 2)
+    private int active;//状态 0启用 1停用
 
     //作为老接口的输入参数保留字段，不用持久化到数据库
     @Transient
@@ -155,12 +155,11 @@ public class OrderInfo extends GenericEntity<Long, OrderInfo> {
         this.updated = updated;
     }
 
-    public int getStatus() {
-        return status;
+    public int getActive() {
+        return active;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setActive(int active) {
+        this.active = active;
     }
-
 }
