@@ -75,9 +75,10 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
             '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-ban" title="文件夹不能下载"></i></a>',
             cellTemplateScope: {
                 add: function (data) {
-                    $scope.formDataEditor.options.resetModel();
+                    $scope.handleSelect(data);
+                    $scope.formData.options.resetModel();
                     $scope.activeTab = iEditor;
-                    $scope.formDataEditor.model ={
+                    $scope.formData.model ={
                         salt:data.salt,
                         path:data.path
                     }
@@ -88,7 +89,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 },
                 edit: function (data) {
                     $scope.activeTab = iEditor;
-                    $scope.formDataEditor.model = {
+                    $scope.formData.model = {
                         salt:data.salt,
                         name:data.name,
                         path:data.path,
@@ -135,8 +136,8 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
             return;
         }
         $scope.activeTab = iPush;
-        $scope.formData.model.store = {name: Constants.thisMerchantStore.name};
-        $scope.formData.model.content = arraySelected;
+        $scope.formDataPusher.model.store = {name: Constants.thisMerchantStore.name};
+        $scope.formDataPusher.model.content = arraySelected;
     };
 
     //递归出所有选中的文件
@@ -170,7 +171,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
         return $filter('json')(value, 2);
     }
 
-    var mgrData = {
+    var mgrDataPusher = {
         fields: [
             {
                 id: 'store.name',
@@ -221,7 +222,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
         }
     };
 
-    var mgrDataEditor = {
+    var mgrData = {
         fields: [
             {
                 key: 'salt',
@@ -332,21 +333,21 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
         }
     };
     //formly配置项push
+    $scope.formDataPusher = {
+        fields: mgrDataPusher.fields
+    };
+
+    //formly配置项editor
     $scope.formData = {
         fields: mgrData.fields
     };
 
-    //formly配置项editor
-    $scope.formDataEditor = {
-        fields: mgrDataEditor.fields
-    };
-
     //formly提交
     $scope.pushSubmit = function () {
-        var formly = $scope.formData;
+        var formly = $scope.formDataPusher;
         if (formly.form.$valid) {
             formly.options.updateInitialValue();
-            $resource(mgrData.api.push).save({}, formly.model).$promise.then(
+            $resource(mgrDataPusher.api.push).save({}, formly.model).$promise.then(
                 function success(resp) {
                     if(resp != null && resp.status == 0){
                         toaster.success({ body:resp.statusMessage});
@@ -364,7 +365,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
         var parentNode = $scope.treeControl.get_parent_branch(data);
         cAlerts.confirm('确定删除?',function(){
             //点击确定回调
-            $resource(mgrData.api.delete).save({salt: data.salt, path: data.path}, {}).$promise.then(function success(resp){
+            $resource(mgrDataPusher.api.delete).save({salt: data.salt, path: data.path}, {}).$promise.then(function success(resp){
                     if(resp != null && resp.status == 0){
                         $scope.deleteDom(parentNode.children,data.uid);
                         toaster.success({ body:"删除成功"});
@@ -390,20 +391,20 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
 
     //formly提交
     $scope.editorSubmit = function () {
-        var formly = $scope.formDataEditor;
+        var formly = $scope.formData;
         if (formly.form.$valid) {
             var  addFile = $scope.formData_addFile;
             if(!addFile){
                 addFile = new FormData();
             }
-            if($scope.formDataEditor.model.type ==0){
+            if($scope.formData.model.type ==0){
                 var parentPath = $scope.current.path == '/'?"":$scope.current.path;
                 $scope.current.children.push({
-                    name:$scope.formDataEditor.model.name,
-                    path:parentPath+"/"+$scope.formDataEditor.model.name,
+                    name:$scope.formData.model.name,
+                    path:parentPath+"/"+$scope.formData.model.name,
                     salt:$scope.current.salt,
                     storeId:$scope.current.storeId,
-                    url:$scope.current.url+"/"+$scope.formDataEditor.model.name,
+                    url:$scope.current.url+"/"+$scope.formData.model.name,
                     size:0,
                     modified:new Date(),
                     children:[],
@@ -411,12 +412,12 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 $scope.goDataTable();
             }else{
                 var addFile = $scope.formData_addFile || {};
-                $resource(mgrDataEditor.api.create).save({entityText:JSON.stringify($scope.formDataEditor.model)}, addFile).$promise.then(function(res) {
-                    if($scope.formDataEditor.model.editorModel==1?true:false){
-                        var fileNewName = $scope.formDataEditor.model.name;
+                $resource(mgrData.api.create).save({entityText:JSON.stringify($scope.formData.model)}, addFile).$promise.then(function(res) {
+                    if($scope.formData.model.editorModel==1?true:false){
+                        var fileNewName = $scope.formData.model.name;
                         $scope.current.name = fileNewName;
-                        var index = $scope.formDataEditor.model.path.lastIndexOf("/");
-                        var path = $scope.formDataEditor.model.path.substring(0,index);
+                        var index = $scope.formData.model.path.lastIndexOf("/");
+                        var path = $scope.formData.model.path.substring(0,index);
                         $scope.current.path = path+"/"+fileNewName;
                     }else{
                         angular.merge($scope.current.children, res.rows);
@@ -447,9 +448,9 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
     }
 
     $scope.showContent = function(data){
-        $resource(mgrDataEditor.api.getContent).get({data: data}, {}).$promise.then(function success(resp) {
+        $resource(mgrData.api.getContent).get({data: data}, {}).$promise.then(function success(resp) {
             if(resp != null && resp.status == 0){
-                $scope.formDataEditor.model.content=resp.rows[0].message;
+                $scope.formData.model.content=resp.rows[0].message;
             }else{
                 toaster.error({ body:resp.statusMessage});
             }
