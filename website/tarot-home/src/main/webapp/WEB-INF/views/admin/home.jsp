@@ -26,7 +26,7 @@
     <div id="wrapper">
         <div ng-include="'assets/mvc/desktop/view/navigation.html'"></div>
         <div id="page-wrapper" class="white-bg {{$state.current.name}}">
-            <toaster-container></toaster-container>
+            <toaster-container toaster-options="{'position-class': 'toast-bottom-right','limit':5}"></toaster-container>
             <div ng-include="'assets/mvc/desktop/view/topnavbar.html'"></div>
             <breadcrumb></breadcrumb>
             <div class="wrapper wrapper-content animated fadeIn"><div ui-view></div></div>

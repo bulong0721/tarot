@@ -240,7 +240,7 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster) {
 /*
  * cfromly
  * */
-function cfromlyService(formlyConfig, $window, toaster, $filter,formlyValidationMessages) {
+function cfromlyService(formlyConfig, $window, toaster, $filter,formlyValidationMessages,$timeout) {
     formlyConfig.extras.errorExistsAndShouldBeVisibleExpression = 'fc.$touched || form.$submitted';
     formlyValidationMessages.addStringMessage('required', '此字段必填');
 
@@ -331,12 +331,16 @@ function cfromlyService(formlyConfig, $window, toaster, $filter,formlyValidation
                 var file = changeEvent.target.files[0],
                     name = file.name.replace(/.+\./, "");
                 if(file.size <= 0 || file.size > 100000000){
-                    toaster.error({body: "不能上传空文件或文件大小限制(100M)！"});
+                    $timeout(function () {
+                        toaster.error({body: "不能上传空文件或文件大小限制(100M)！"});
+                    }, 0);
                     if(angular.element('#file')[0]){
                         angular.element('#file')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
                     }
                 }else if (scope.name && $filter('inputType')(name, scope.name) < 0) {
-                    toaster.error({body: "请上传png,jpg,gif,bmp图片格式！"});
+                    $timeout(function () {
+                        toaster.error({body: "请上传png,jpg,gif,bmp图片格式！"});
+                    }, 0);
                     if(angular.element('#file')[0]){
                         angular.element('#file')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
                     }
