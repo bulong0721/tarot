@@ -49,7 +49,7 @@ public class MaterialManageController extends BaseController {
         logger.info("查询点点笔素材列表,orgId:" + orgId);
         try {
             Date now = new Date();
-            //获取本店视频列表
+            //获取本店素材列表,每个店铺限定一个
             List<MaterialBusiness> listBusiness = materialBusinessManageService.listByStore(orgId,now);
             List<MaterialPublish> listPublish = null;
             //获取推送商业视频列表

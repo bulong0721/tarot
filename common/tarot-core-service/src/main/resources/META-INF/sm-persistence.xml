@@ -72,5 +72,8 @@
         <class>com.myee.tarot.apiold.domain.UploadAccessAction</class>
         <class>com.myee.tarot.apiold.domain.TasteInfo</class>
         <class>com.myee.tarot.apiold.domain.VersionInfo</class>
+        <class>com.myee.tarot.apiold.domain.Video</class>
+        <class>com.myee.tarot.apiold.domain.VideoBusiness</class>
+        <class>com.myee.tarot.apiold.domain.VideoPublish</class>
     </persistence-unit>
 </persistence>

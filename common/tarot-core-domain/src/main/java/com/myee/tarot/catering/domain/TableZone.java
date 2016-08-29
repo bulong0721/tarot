@@ -18,10 +18,10 @@ public class TableZone extends GenericEntity<Long, TableZone> {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     private Long id;
 
-    @Column(name = "NAME", nullable = false)
+    @Column(name = "NAME", nullable = false,length = 50)
     protected String name;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION",length = 255)
     protected String description;
 
     @ManyToOne(fetch = FetchType.LAZY)

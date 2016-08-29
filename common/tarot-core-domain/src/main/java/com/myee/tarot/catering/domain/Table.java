@@ -20,16 +20,16 @@ public class Table extends GenericEntity<Long, Table> {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     private Long id;
 
-    @Column(name = "NAME", nullable = false)
+    @Column(name = "NAME", nullable = false,length = 30)
     protected String name;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION",length = 255)
     protected String description;
 
-    @Column(name = "SCAN_CODE")
+    @Column(name = "SCAN_CODE",length = 10)
     protected String scanCode;//桌子码，无线点点笔使用
 
-    @Column(name = "TEXT_ID")
+    @Column(name = "TEXT_ID",length = 10)
     protected String textId;//小超人点菜使用
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = TableType.class)

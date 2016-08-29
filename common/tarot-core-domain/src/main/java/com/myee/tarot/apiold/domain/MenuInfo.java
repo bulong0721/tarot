@@ -30,21 +30,21 @@ public class MenuInfo extends GenericEntity<Long, MenuInfo> {
     @JoinColumn(name = "STORE_ID")
     private MerchantStore store;//商户编号
 
-    @Column(name = "MENU_ID")
+    @Column(name = "MENU_ID",length = 15)
     private String menuId;     //ERP编码
-    @Column(name = "SUB_MENU_ID")
+    @Column(name = "SUB_MENU_ID",length = 10)
     private String subMenuId;  //
-    @Column(name = "NAME")
+    @Column(name = "NAME",length = 60)
     private String name;       //名称
-    @Column(name = "PRICE")
+    @Column(name = "PRICE",length = 11)
     private String price;      //价格
     @Column(name = "AMOUNT")
     private int amount;        //价格(分)
-    @Column(name = "UNIT")
+    @Column(name = "UNIT",length = 6)
     private String unit;       //单位
-    @Column(name = "MENU_CODE")
+    @Column(name = "MENU_CODE",length = 60)
     private String menuCode;   //编码
-    @Column(name = "SCAN_CODE")
+    @Column(name = "SCAN_CODE",length = 10)
     private String scanCode;   //扫描码
     @Column(name = "CREATED")
     @Temporal(TemporalType.TIMESTAMP)
@@ -54,7 +54,7 @@ public class MenuInfo extends GenericEntity<Long, MenuInfo> {
     private Date updated;
     @Column(name = "ACTIVE",length = 2)
     private int active;
-    @Column(name = "PHOTO")
+    @Column(name = "PHOTO",length = 100)
     private String photo;
 
     public MenuInfo(){

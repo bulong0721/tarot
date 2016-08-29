@@ -24,7 +24,7 @@ public class TasteInfo extends GenericEntity<Long, MenuInfo> {
     @Column(name = "TASTE_ID",length = 15)
     private String tasteId;     //口味编码
 
-    @Column(name = "NAME")
+    @Column(name = "NAME",length = 200)
     private String name;       //名称
 
     public String getName() {

@@ -28,21 +28,21 @@ public class OrderInfo extends GenericEntity<Long, OrderInfo> {
     @JoinColumn(name = "STORE_ID")
     private MerchantStore store;//商户编号
 
-    @Column(name = "TEMPLATENUM")
+    @Column(name = "MENU_ID")
     private long menuId;//菜品编号
-    @Column(name = "TEMPLATENUM")
+    @Column(name = "ORDER_ID",length = 60)
     private String orderId;//订单编号
-    @Column(name = "TEMPLATENUM")
+    @Column(name = "PRICE",length = 11)
     private int price;//价格，单位元
-    @Column(name = "TEMPLATENUM")
+    @Column(name = "NUMBER",length = 11)
     private int number;//菜品个数
-    @Column(name = "TEMPLATENUM")
+    @Column(name = "AMOUNT",length = 50)
     private int amount;//总价
-    @Column(name = "TEMPLATENUM")
+    @Column(name = "OUT_ORDER_ID",length = 60)
     private String outOrderId;//微信支付宝订单号
-    @Column(name = "TEMPLATENUM")
+    @Column(name = "PAY_TYPE",length = 2)
     private int payType;//支付类型 1支付宝 2微信 3百度
-    @Column(name = "TEMPLATENUM")
+    @Column(name = "PAY_STATUS",length = 2)
     private int payStatus;//状态 0未支付 1已支付
     @Column(name = "CREATED")
     @Temporal(TemporalType.TIMESTAMP)

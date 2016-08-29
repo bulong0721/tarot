@@ -1,6 +1,5 @@
 package com.myee.tarot.apiold.domain;
 
-import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
 
@@ -8,18 +7,18 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@javax.persistence.Table(name = "CA_MATERIAL_PUBLISH")
-public class MaterialPublish extends GenericEntity<Long, MaterialPublish> {
+@javax.persistence.Table(name = "CA_VIDEO_PUBLISH")
+public class VideoPublish extends GenericEntity<Long, VideoPublish> {
 
 	@Id
-	@Column(name = "MATERIAL_PUBLISH_ID", unique = true, nullable = false)
-	@TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "MATERIAL_PUBLISH_SEQ_NEXT_VAL",allocationSize=1)
+	@Column(name = "VIDEO_PUBLISH_ID", unique = true, nullable = false)
+	@TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "VIDEO_PUBLISH_SEQ_NEXT_VAL",allocationSize=1)
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "MATERIAL_BUSINESS_ID")
-	private MaterialBusiness materialBusiness;
+	@JoinColumn(name = "VIDEO_BUSINESS_ID")
+	private VideoBusiness videoBusiness;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "STORE_ID")
@@ -44,7 +43,7 @@ public class MaterialPublish extends GenericEntity<Long, MaterialPublish> {
 	@Column(name = "CREATED")
 	private Date created;
 
-	public MaterialPublish(){
+	public VideoPublish(){
 
 	}
 
@@ -58,12 +57,12 @@ public class MaterialPublish extends GenericEntity<Long, MaterialPublish> {
 		this.id = id;
 	}
 
-	public MaterialBusiness getMaterialBusiness() {
-		return materialBusiness;
+	public VideoBusiness getVideoBusiness() {
+		return videoBusiness;
 	}
 
-	public void setMaterialBusiness(MaterialBusiness materialBusiness) {
-		this.materialBusiness = materialBusiness;
+	public void setVideoBusiness(VideoBusiness videoBusiness) {
+		this.videoBusiness = videoBusiness;
 	}
 
 	public Date getTimeStart() {

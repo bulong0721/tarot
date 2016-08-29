@@ -1,7 +1,5 @@
 package com.myee.tarot.apiold.domain;
 
-import com.myee.tarot.catering.domain.*;
-import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
 
@@ -9,60 +7,54 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@javax.persistence.Table(name = "CA_MATERIAL_BUSINESS")
-public class MaterialBusiness extends GenericEntity<Long, MaterialBusiness> {
+@javax.persistence.Table(name = "CA_VIDEO_BUSINESS")
+public class VideoBusiness extends GenericEntity<Long, VideoBusiness> {
 
 	@Id
-	@Column(name = "MATERIAL_BUSINESS_ID", unique = true, nullable = false)
-	@TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "MATERIAL_BUSINESS_SEQ_NEXT_VAL",allocationSize=1)
+	@Column(name = "VIDEO_BUSINESS_ID", unique = true, nullable = false)
+	@TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "VIDEO_BUSINESS_SEQ_NEXT_VAL",allocationSize=1)
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "MATERIAL_ID")
-	private Material material;
+	@JoinColumn(name = "VIDEO_ID")
+	private Video video;
 
-	@Column(name = "KIND", columnDefinition = "INT",length = 11)
-	private Integer kind;//素材种类,0:未定义;1:apk升级素材,100:升级固件
+	@Column(name = "KIND", columnDefinition = "INT",length = 2)
+	private Integer kind;//视频种类,1:待机广告视频
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "TIME_START")
-	private Date timeStart; //本店素材用
+	private Date timeStart; //本店视频用
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "TIME_END")
-	private Date timeEnd; //本店素材用
+	private Date timeEnd; //本店视频用
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "STORE_ID")
-	private MerchantStore store;//本店素材用
+	private MerchantStore store;//本店视频用
 
 	@Column(name = "TYPE",length = 2)
 	private Integer type;//0：商户，1：商业（默认0）
 
-	@Column(name = "DESCRIPTION",length = 200)
+	@Column(name = "DESCRIPTION",length = 255)
 	private String description;
-
-	@Column(name = "PACKAGE_NAME",length = 200)
-	private String packageName;//包名
-
-	@Column(name = "VERSION",length = 100)
-	private String version;//版本号
 
 	@Column(name = "ACTIVE", columnDefinition = "INT",length = 1)
 	private int active;
-	@Column(name = "CREATED_BY")
+	@Column(name = "CREATED_BY",length = 20)
 	private long createdBy;
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATED")
 	private Date created;
-	@Column(name = "UPDATED_BY")
+	@Column(name = "UPDATED_BY",length = 20)
 	private long updatedBy;
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "UPDATED")
 	private Date updated;
 
-	public MaterialBusiness(){
+	public VideoBusiness(){
 
 	}
 
@@ -110,12 +102,12 @@ public class MaterialBusiness extends GenericEntity<Long, MaterialBusiness> {
 		this.id = id;
 	}
 
-	public Material getMaterial() {
-		return material;
+	public Video getVideo() {
+		return video;
 	}
 
-	public void setMaterial(Material material) {
-		this.material = material;
+	public void setVideo(Video video) {
+		this.video = video;
 	}
 
 	public Integer getKind() {
@@ -156,22 +148,6 @@ public class MaterialBusiness extends GenericEntity<Long, MaterialBusiness> {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public String getPackageName() {
-		return packageName;
-	}
-
-	public void setPackageName(String packageName) {
-		this.packageName = packageName;
-	}
-
-	public String getVersion() {
-		return version;
-	}
-
-	public void setVersion(String version) {
-		this.version = version;
 	}
 
 	public int getActive() {

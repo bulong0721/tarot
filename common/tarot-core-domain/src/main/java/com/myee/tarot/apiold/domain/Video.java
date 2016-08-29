@@ -1,7 +1,6 @@
 package com.myee.tarot.apiold.domain;
 
 
-import com.myee.tarot.catering.domain.*;
 import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.core.GenericEntity;
 
@@ -9,24 +8,20 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@javax.persistence.Table(name = "CA_MATERIAL")
-public class Material extends GenericEntity<Long, Material> {
+@javax.persistence.Table(name = "CA_VIDEO")
+public class Video extends GenericEntity<Long, Video> {
 
 	@Id
-	@Column(name = "MATERIAL_ID", unique = true, nullable = false)
-	@TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "MATERIAL_SEQ_NEXT_VAL",allocationSize=1)
+	@Column(name = "VIDEO_ID", unique = true, nullable = false)
+	@TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "VIDEO_SEQ_NEXT_VAL",allocationSize=1)
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
 	private Long id;
-
-//	@ManyToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name = "TABLE_ID")
-//	private Table table;
 
 	@Column(name = "PREVIEW_PATH",length = 255)
 	private String previewPath;
 
-	@Column(name = "MATERIAL_PATH",length = 255)
-	private String materialPath;
+	@Column(name = "VIDEO_PATH",length = 255)
+	private String videoPath;
 
 	@Column(name = "QINIU_PATH",length = 255)
 	private String qiniuPath;
@@ -34,20 +29,16 @@ public class Material extends GenericEntity<Long, Material> {
 	@Column(name = "PLAY_SECOND", columnDefinition = "INT")
 	private Integer playSecond;
 
-	@Column(name = "MATERIAL_SIZE", columnDefinition = "Long")
-	private Long materialSize;
+	@Column(name = "VIDEO_SIZE", columnDefinition = "Long")
+	private Long videoSize;
 
 	@Column(name = "TYPE", columnDefinition = "INT")
 	private Integer type;//0：商户，1：商业（默认0）
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "MATERIAL_FILE_KIND_ID")
-	private MaterialFileKind materialFileKind; //文件类型,0:未定义;1:apk;2:txt/plaintext;3:audio;
-
-	@Column(name = "DESCRIPTION",length = 200)
+	@Column(name = "DESCRIPTION",length = 255)
 	private String description;
 
-	@Column(name = "ORIGINAL",length = 200)
+	@Column(name = "ORIGINAL",length = 255)
 	private String original;//原文件名
 
 	@Column(name = "ACTIVE", columnDefinition = "INT",length = 1)
@@ -58,7 +49,7 @@ public class Material extends GenericEntity<Long, Material> {
 	@Column(name = "CREATED")
 	private Date created;
 
-	public Material(){
+	public Video(){
 
 	}
 
@@ -100,13 +91,6 @@ public class Material extends GenericEntity<Long, Material> {
 		this.id = id;
 	}
 
-//	public Table getTable() {
-//		return table;
-//	}
-//
-//	public void setTable(Table table) {
-//		this.table = table;
-//	}
 
 	public String getPreviewPath() {
 		return previewPath;
@@ -114,14 +98,6 @@ public class Material extends GenericEntity<Long, Material> {
 
 	public void setPreviewPath(String previewPath) {
 		this.previewPath = previewPath;
-	}
-
-	public String getMaterialPath() {
-		return materialPath;
-	}
-
-	public void setMaterialPath(String materialPath) {
-		this.materialPath = materialPath;
 	}
 
 	public String getQiniuPath() {
@@ -140,28 +116,12 @@ public class Material extends GenericEntity<Long, Material> {
 		this.playSecond = playSecond;
 	}
 
-	public Long getMaterialSize() {
-		return materialSize;
-	}
-
-	public void setMaterialSize(Long materialSize) {
-		this.materialSize = materialSize;
-	}
-
 	public Integer getType() {
 		return type;
 	}
 
 	public void setType(Integer type) {
 		this.type = type;
-	}
-
-	public MaterialFileKind getMaterialFileKind() {
-		return materialFileKind;
-	}
-
-	public void setMaterialFileKind(MaterialFileKind materialFileKind) {
-		this.materialFileKind = materialFileKind;
 	}
 
 	public String getDescription() {
@@ -204,4 +164,19 @@ public class Material extends GenericEntity<Long, Material> {
 		this.created = created;
 	}
 
+	public String getVideoPath() {
+		return videoPath;
+	}
+
+	public void setVideoPath(String videoPath) {
+		this.videoPath = videoPath;
+	}
+
+	public Long getVideoSize() {
+		return videoSize;
+	}
+
+	public void setVideoSize(Long videoSize) {
+		this.videoSize = videoSize;
+	}
 }

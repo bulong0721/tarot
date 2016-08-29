@@ -31,7 +31,7 @@ public class MaterialBusinessDaoImpl extends GenericEntityDaoImpl<Long, Material
         }
         query.where((qMaterialBusiness.type.eq(0)).and(qMaterialBusiness.active.eq(1)))
             .orderBy(qMaterialBusiness.id.desc())
-            .offset(0).limit(1);
+            .offset(0).limit(1);//本地素材推送只能有一个
 
         return query.fetch();
     }

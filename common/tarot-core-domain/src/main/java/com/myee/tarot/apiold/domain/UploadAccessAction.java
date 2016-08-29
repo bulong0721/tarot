@@ -12,10 +12,10 @@ public class UploadAccessAction extends GenericEntity<Long, UploadAccessAction> 
 	private Long id;
 
 	@NotEmpty
-	@Column(name = "NAME")
+	@Column(name = "NAME",length = 200)
 	private String name;
 
-	@Column(name = "LEVEL")
+	@Column(name = "LEVEL",length = 10)
 	private Integer level;//点击行为级别，1级，2级等
 
 	@Column(name = "PARENT")

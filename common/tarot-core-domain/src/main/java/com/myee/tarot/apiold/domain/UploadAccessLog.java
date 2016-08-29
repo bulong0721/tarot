@@ -36,7 +36,7 @@ public class UploadAccessLog extends GenericEntity<Long, UploadAccessLog> {
 	@Column(name = "TIME_STAY")
 	private Long timeStay;//浏览停留时长，秒为单位
 
-	@Column(name = "DISCRIPTION")
+	@Column(name = "DISCRIPTION",length = 255)
 	private String discription;//描述
 
 	@Column(name = "LEVEL_SECOND_ID")

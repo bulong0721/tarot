@@ -14,10 +14,10 @@ public class MaterialFileKind extends GenericEntity<Long, MaterialFileKind> {
     @Column(name = "MATERIAL_FILE_KIND_ID", unique = true, nullable = false)
     private Long id;
 
-    @Column(name = "NAME")
+    @Column(name = "NAME",length = 100)
     private String name;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION",length = 200)
     private String description;
 
     @Column(name = "ACTIVE", columnDefinition = "INT",length = 1)

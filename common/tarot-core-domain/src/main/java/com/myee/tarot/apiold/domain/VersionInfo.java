@@ -32,11 +32,11 @@ public class VersionInfo extends GenericEntity<Long, VersionInfo> {
 
     @Column(name = "VERSION",length = 15)
     private String version;      //版本号
-    @Column(name = "INFO")
+    @Column(name = "INFO",length = 100)
     private String info;         //版本升级显示信息
-    @Column(name = "URL")
+    @Column(name = "URL",length = 255)
     private String url;          //版本升级url
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION",length = 255)
     private String description;  //版本升级备注
     @Column(name = "UPDATED")
     @Temporal(TemporalType.TIMESTAMP)

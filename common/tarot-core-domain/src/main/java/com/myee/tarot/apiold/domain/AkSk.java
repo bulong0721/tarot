@@ -15,16 +15,16 @@ public class AkSk extends GenericEntity<Long, AkSk> {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
 	private Long id;
 
-	@Column(name = "ACCESS_KEY")
+	@Column(name = "ACCESS_KEY",length = 50)
 	private String accessKey;
 
-	@Column(name = "SECRET_KEY")
+	@Column(name = "SECRET_KEY",length = 50)
 	private String secretKey;
 
-	@Column(name = "COMPANY_NAME")
+	@Column(name = "COMPANY_NAME",length = 200)
 	private String companyName;
 
-	@Column(name = "COMPANY_IP")
+	@Column(name = "COMPANY_IP",length = 100)
 	private String companyIp;
 
 	@Column(name = "ACTIVE", columnDefinition = "INT",length = 1)

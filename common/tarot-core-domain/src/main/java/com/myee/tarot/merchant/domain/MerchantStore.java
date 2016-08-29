@@ -50,7 +50,7 @@ public class MerchantStore extends GenericEntity<Long, MerchantStore> {
     @Column(name = "STORE_CPP")
     private Integer cpp;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION",length = 255)
     private String description;
 
     @Column(name = "EXPERIENCE")

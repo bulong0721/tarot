@@ -22,22 +22,22 @@ public class Evaluation extends GenericEntity<Long, Evaluation> {
 	@JoinColumn(name = "TABLE_ID")
 	private Table table;
 
-	@Column(name = "FEELWHOLE", columnDefinition = "INT")
+	@Column(name = "FEELWHOLE", columnDefinition = "INT",length = 5)
 	private int feelWhole;//整体评价星级，0,20,40,80,100，即0-5分扩大20倍
 
-	@Column(name = "FEELFLAVOR", columnDefinition = "INT")
+	@Column(name = "FEELFLAVOR", columnDefinition = "INT",length = 5)
 	private int feelFlavor;//口味星级
 
-	@Column(name = "FEELSERVICE", columnDefinition = "INT")
+	@Column(name = "FEELSERVICE", columnDefinition = "INT",length = 5)
 	private int feelService;//服务星级
 
-	@Column(name = "FEELENVIRONMENT", columnDefinition = "INT")
+	@Column(name = "FEELENVIRONMENT", columnDefinition = "INT",length = 5)
 	private int feelEnvironment;//环境星级
 
-	@Column(name = "MEALSREMARK")
+	@Column(name = "MEALSREMARK",length = 400)
 	private String mealsRemark;//用餐评价
 
-	@Column(name = "DEVICEREMARK")
+	@Column(name = "DEVICEREMARK",length = 400)
 	private String deviceRemark;//设备评价
 
 	@Column(name = "TIMESECOND")

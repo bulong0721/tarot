@@ -25,7 +25,7 @@ public class Merchant extends GenericEntity<Long, Merchant> {
     @Column(name = "NAME", length=60)
     private String name;
 
-    @Column(name = "LOGO_URL")
+    @Column(name = "LOGO_URL",length = 255)
     private String logo;
 
     @NotEmpty
@@ -35,7 +35,7 @@ public class Merchant extends GenericEntity<Long, Merchant> {
     @Column(name = "CUISINE_TYPE", length = 10)
     private String cuisineType;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION",length = 255)
     private String description;
 
 //    @OneToMany(mappedBy = "merchant", targetEntity = MerchantStore.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)

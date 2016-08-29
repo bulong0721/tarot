@@ -24,10 +24,10 @@ public class SendRecord extends GenericEntity<Long, SendRecord> {
 	@Column(name = "FLAG",length = 1)
 	private Integer flag;
 
-	@Column(name = "TEMPLATENUM")
+	@Column(name = "TEMPLATENUM",length = 20)
 	private String templateNum;
 
-	@Column(name = "DESCRIPTION")
+	@Column(name = "DESCRIPTION",length = 255)
 	private String description;
 
 	@Column(name = "PARTNER")
