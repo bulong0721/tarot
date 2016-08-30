@@ -28,7 +28,7 @@
     <context:component-scan base-package="com.myee.tarot.*.service.impl"/>
     <context:component-scan base-package="com.myee.tarot.*.dao.impl"/>
     <!-- datasource -->
-    <import resource="classpath:/spring/datasource-c3p0.xml"/>
+    <import resource="classpath:/spring/datasource-druid.xml"/>
 
     <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
         <property name="corePoolSize" value="5"/>
