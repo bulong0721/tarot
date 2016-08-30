@@ -106,7 +106,12 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     $scope.delete(data);
                 },
                 download: function (data) {
-                    window.location.href = data.url;
+                    $resource(mgrData.api.download).save({salt:data.salt,path: data.path}, {}).$promise.then(
+                        function success(resp) {
+                            console.log(resp.rows[0].url)
+                            window.location.href = resp.rows[0].url;
+                        }
+                    );
                 }
             }
         }
@@ -425,7 +430,6 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     $scope.goDataTable();
                 });
             }
-
         }
     };
 
@@ -435,6 +439,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
 
     //formly返回
     $scope.goDataTable = function () {
+        $scope.disableSubmit = false;
         $scope.activeTab = iDatatable;
     };
 
@@ -447,11 +452,14 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
     function saveFailed(response) {
     }
 
+    $scope.disableSubmit = false;
     $scope.showContent = function(data){
         $resource(mgrData.api.getContent).get({data: data}, {}).$promise.then(function success(resp) {
             if(resp != null && resp.status == 0){
                 $scope.formData.model.content=resp.rows[0].message;
+                $scope.disableSubmit = false;
             }else{
+                $scope.disableSubmit = true;
                 toaster.error({ body:resp.statusMessage});
             }
         });

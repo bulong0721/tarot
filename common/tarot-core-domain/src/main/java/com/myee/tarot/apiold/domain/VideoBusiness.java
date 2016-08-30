@@ -20,7 +20,7 @@ public class VideoBusiness extends GenericEntity<Long, VideoBusiness> {
 	@JoinColumn(name = "VIDEO_ID")
 	private Video video;
 
-	@Column(name = "KIND", columnDefinition = "INT",length = 2)
+	@Column(name = "KIND", columnDefinition = "TINYINT")
 	private Integer kind;//视频种类,1:待机广告视频
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -35,24 +35,24 @@ public class VideoBusiness extends GenericEntity<Long, VideoBusiness> {
 	@JoinColumn(name = "STORE_ID")
 	private MerchantStore store;//本店视频用
 
-	@Column(name = "TYPE",length = 2)
+	@Column(name = "TYPE",columnDefinition = "TINYINT")
 	private Integer type;//0：商户，1：商业（默认0）
 
 	@Column(name = "DESCRIPTION",length = 255)
 	private String description;
 
-	@Column(name = "ACTIVE", columnDefinition = "INT",length = 1)
+	@Column(name = "ACTIVE", columnDefinition = "BIT")
 	private int active;
-	@Column(name = "CREATED_BY",length = 20)
-	private long createdBy;
+	@Column(name = "VB_CREATED_BY",length = 20)
+	private long vBCreatedBy;
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATED")
-	private Date created;
-	@Column(name = "UPDATED_BY",length = 20)
-	private long updatedBy;
+	@Column(name = "VB_CREATED")
+	private Date vBCreated;
+	@Column(name = "VB_UPDATED_BY",length = 20)
+	private long vBUpdatedBy;
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "UPDATED")
-	private Date updated;
+	@Column(name = "VB_UPDATED")
+	private Date vBUpdated;
 
 	public VideoBusiness(){
 
@@ -158,36 +158,36 @@ public class VideoBusiness extends GenericEntity<Long, VideoBusiness> {
 		this.active = active;
 	}
 
-	public long getCreatedBy() {
-		return createdBy;
+	public long getvBCreatedBy() {
+		return vBCreatedBy;
 	}
 
-	public void setCreatedBy(long createdBy) {
-		this.createdBy = createdBy;
+	public void setvBCreatedBy(long vBCreatedBy) {
+		this.vBCreatedBy = vBCreatedBy;
 	}
 
-	public Date getCreated() {
-		return created;
+	public Date getvBCreated() {
+		return vBCreated;
 	}
 
-	public void setCreated(Date created) {
-		this.created = created;
+	public void setvBCreated(Date vBCreated) {
+		this.vBCreated = vBCreated;
 	}
 
-	public long getUpdatedBy() {
-		return updatedBy;
+	public long getvBUpdatedBy() {
+		return vBUpdatedBy;
 	}
 
-	public void setUpdatedBy(long updatedBy) {
-		this.updatedBy = updatedBy;
+	public void setvBUpdatedBy(long vBUpdatedBy) {
+		this.vBUpdatedBy = vBUpdatedBy;
 	}
 
-	public Date getUpdated() {
-		return updated;
+	public Date getvBUpdated() {
+		return vBUpdated;
 	}
 
-	public void setUpdated(Date updated) {
-		this.updated = updated;
+	public void setvBUpdated(Date vBUpdated) {
+		this.vBUpdated = vBUpdated;
 	}
 
 	public MerchantStore getStore() {

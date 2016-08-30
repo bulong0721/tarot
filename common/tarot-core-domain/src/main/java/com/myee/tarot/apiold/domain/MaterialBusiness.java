@@ -22,7 +22,7 @@ public class MaterialBusiness extends GenericEntity<Long, MaterialBusiness> {
 	@JoinColumn(name = "MATERIAL_ID")
 	private Material material;
 
-	@Column(name = "KIND", columnDefinition = "INT",length = 11)
+	@Column(name = "KIND", columnDefinition = "TINYINT")
 	private Integer kind;//素材种类,0:未定义;1:apk升级素材,100:升级固件
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -37,7 +37,7 @@ public class MaterialBusiness extends GenericEntity<Long, MaterialBusiness> {
 	@JoinColumn(name = "STORE_ID")
 	private MerchantStore store;//本店素材用
 
-	@Column(name = "TYPE",length = 2)
+	@Column(name = "TYPE",columnDefinition = "TINYINT")
 	private Integer type;//0：商户，1：商业（默认0）
 
 	@Column(name = "DESCRIPTION",length = 200)
@@ -49,18 +49,18 @@ public class MaterialBusiness extends GenericEntity<Long, MaterialBusiness> {
 	@Column(name = "VERSION",length = 100)
 	private String version;//版本号
 
-	@Column(name = "ACTIVE", columnDefinition = "INT",length = 1)
+	@Column(name = "ACTIVE", columnDefinition = "BIT")
 	private int active;
-	@Column(name = "CREATED_BY")
-	private long createdBy;
+	@Column(name = "MB_CREATED_BY")
+	private long mBCreatedBy;
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATED")
-	private Date created;
-	@Column(name = "UPDATED_BY")
-	private long updatedBy;
+	@Column(name = "MB_CREATED")
+	private Date mBCreated;
+	@Column(name = "MB_UPDATED_BY")
+	private long mBUpdatedBy;
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "UPDATED")
-	private Date updated;
+	@Column(name = "MB_UPDATED")
+	private Date mBUpdated;
 
 	public MaterialBusiness(){
 
@@ -182,36 +182,36 @@ public class MaterialBusiness extends GenericEntity<Long, MaterialBusiness> {
 		this.active = active;
 	}
 
-	public long getCreatedBy() {
-		return createdBy;
+	public long getmBCreatedBy() {
+		return mBCreatedBy;
 	}
 
-	public void setCreatedBy(long createdBy) {
-		this.createdBy = createdBy;
+	public void setmBCreatedBy(long mBCreatedBy) {
+		this.mBCreatedBy = mBCreatedBy;
 	}
 
-	public Date getCreated() {
-		return created;
+	public Date getmBCreated() {
+		return mBCreated;
 	}
 
-	public void setCreated(Date created) {
-		this.created = created;
+	public void setmBCreated(Date mBCreated) {
+		this.mBCreated = mBCreated;
 	}
 
-	public long getUpdatedBy() {
-		return updatedBy;
+	public long getmBUpdatedBy() {
+		return mBUpdatedBy;
 	}
 
-	public void setUpdatedBy(long updatedBy) {
-		this.updatedBy = updatedBy;
+	public void setmBUpdatedBy(long mBUpdatedBy) {
+		this.mBUpdatedBy = mBUpdatedBy;
 	}
 
-	public Date getUpdated() {
-		return updated;
+	public Date getmBUpdated() {
+		return mBUpdated;
 	}
 
-	public void setUpdated(Date updated) {
-		this.updated = updated;
+	public void setmBUpdated(Date mBUpdated) {
+		this.mBUpdated = mBUpdated;
 	}
 
 	public MerchantStore getStore() {

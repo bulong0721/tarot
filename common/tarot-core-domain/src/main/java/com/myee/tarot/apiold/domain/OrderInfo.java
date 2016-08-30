@@ -40,9 +40,9 @@ public class OrderInfo extends GenericEntity<Long, OrderInfo> {
     private int amount;//总价
     @Column(name = "OUT_ORDER_ID",length = 60)
     private String outOrderId;//微信支付宝订单号
-    @Column(name = "PAY_TYPE",length = 2)
+    @Column(name = "PAY_TYPE",columnDefinition = "TINYINT")
     private int payType;//支付类型 1支付宝 2微信 3百度
-    @Column(name = "PAY_STATUS",length = 2)
+    @Column(name = "PAY_STATUS",columnDefinition = "TINYINT")
     private int payStatus;//状态 0未支付 1已支付
     @Column(name = "CREATED")
     @Temporal(TemporalType.TIMESTAMP)
@@ -50,7 +50,7 @@ public class OrderInfo extends GenericEntity<Long, OrderInfo> {
     @Column(name = "UPDATED")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
-    @Column(name = "ACTIVE",length = 2)
+    @Column(name = "ACTIVE",columnDefinition = "BIT")
     private int active;//状态 0启用 1停用
 
     //作为老接口的输入参数保留字段，不用持久化到数据库

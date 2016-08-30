@@ -21,7 +21,7 @@ public class SendRecord extends GenericEntity<Long, SendRecord> {
 	@JoinColumn(name = "TABLE_ID")
 	private Table table;
 
-	@Column(name = "FLAG",length = 1)
+	@Column(name = "FLAG",columnDefinition = "TINYINT")
 	private Integer flag;
 
 	@Column(name = "TEMPLATENUM",length = 20)

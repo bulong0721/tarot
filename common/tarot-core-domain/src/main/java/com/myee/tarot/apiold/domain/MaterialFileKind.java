@@ -20,7 +20,7 @@ public class MaterialFileKind extends GenericEntity<Long, MaterialFileKind> {
     @Column(name = "DESCRIPTION",length = 200)
     private String description;
 
-    @Column(name = "ACTIVE", columnDefinition = "INT",length = 1)
+    @Column(name = "ACTIVE", columnDefinition = "BIT")
     private int active;
 
     @Override

@@ -21,7 +21,7 @@ public class UploadAccessAction extends GenericEntity<Long, UploadAccessAction> 
 	@Column(name = "PARENT")
 	private Long parent;//如果是2级以上点击行为，则应该有关联的父级行为ID
 
-	@Column(name = "ACTIVE", columnDefinition = "INT",length = 1)
+	@Column(name = "ACTIVE", columnDefinition = "BIT")
 	private int active;
 
 	public UploadAccessAction(){

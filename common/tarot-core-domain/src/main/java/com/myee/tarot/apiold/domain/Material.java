@@ -37,7 +37,7 @@ public class Material extends GenericEntity<Long, Material> {
 	@Column(name = "MATERIAL_SIZE", columnDefinition = "Long")
 	private Long materialSize;
 
-	@Column(name = "TYPE", columnDefinition = "INT")
+	@Column(name = "TYPE", columnDefinition = "TINYINT")
 	private Integer type;//0：商户，1：商业（默认0）
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -50,13 +50,13 @@ public class Material extends GenericEntity<Long, Material> {
 	@Column(name = "ORIGINAL",length = 200)
 	private String original;//原文件名
 
-	@Column(name = "ACTIVE", columnDefinition = "INT",length = 1)
+	@Column(name = "ACTIVE", columnDefinition = "BIT")
 	private int active;
-	@Column(name = "CREATED_BY")
-	private long createdBy;
+	@Column(name = "M_CREATED_BY")
+	private long mCreatedBy;
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATED")
-	private Date created;
+	@Column(name = "M_CREATED")
+	private Date mCreated;
 
 	public Material(){
 
@@ -188,20 +188,19 @@ public class Material extends GenericEntity<Long, Material> {
 		this.active = active;
 	}
 
-	public long getCreatedBy() {
-		return createdBy;
+	public long getmCreatedBy() {
+		return mCreatedBy;
 	}
 
-	public void setCreatedBy(long createdBy) {
-		this.createdBy = createdBy;
+	public void setmCreatedBy(long mCreatedBy) {
+		this.mCreatedBy = mCreatedBy;
 	}
 
-	public Date getCreated() {
-		return created;
+	public Date getmCreated() {
+		return mCreated;
 	}
 
-	public void setCreated(Date created) {
-		this.created = created;
+	public void setmCreated(Date mCreated) {
+		this.mCreated = mCreated;
 	}
-
 }
