@@ -258,6 +258,31 @@ function alerts(){
     }
 }
 
+/*cDatepicker*/
+function cDatepicker(){
+    return {
+        template:'<div class="input-group"><input uib-datepicker-popup placeholder="{{placeholder}}" type="text"  ng-model="model" class="form-control" ng-click="datepicker.open($event)" is-open="datepicker.opened" datepicker-options="datepicker.dateOptions" /> <span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datepicker.open($event)"><i class="fa fa-calendar"></i></button></span> </div>',
+        replace: true,
+        scope:{
+            placeholder:'@placeholder',
+            model:'='
+        },
+        link:function(scope,ele,attr){
+            //datepicker配置
+            scope.datepicker = {
+                opened:false,
+                open:function($event){
+                    scope.datepicker.opened = !scope.datepicker.opened;
+                },
+                dateOptions : {
+                    maxDate: new Date(2020, 5, 22),
+                    minDate: new Date()
+                }
+            };
+        }
+    }
+}
+
 /**
  *
  * Pass all functions into module
@@ -272,3 +297,4 @@ angular
     .directive("pager", pager)
     .directive("breadcrumb", breadcrumb)
     .directive("alerts", alerts)
+    .directive("cDatepicker", cDatepicker)
