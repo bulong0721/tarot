@@ -106,7 +106,12 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     $scope.delete(data);
                 },
                 download: function (data) {
-                    window.location.href = data.url;
+                    $resource(mgrData.api.download).save({salt:data.salt,path: data.path}, {}).$promise.then(
+                        function success(resp) {
+                            console.log(resp.rows[0].url)
+                            window.location.href = resp.rows[0].url;
+                        }
+                    );
                 }
             }
         }
@@ -425,7 +430,6 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                     $scope.goDataTable();
                 });
             }
-
         }
     };
 

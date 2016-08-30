@@ -43,6 +43,7 @@ public final class CacheUtil {
     }
 
     public static final String CACHE_TABLE_TYPE_INFO = "shop.table.Type.info";
+
     public static IgniteCache<String, BaseDataInfo> tableTypeInfoCache(Ignite ignite) {
         return getCache(ignite, CACHE_TABLE_TYPE_INFO);
     }
@@ -57,17 +58,31 @@ public final class CacheUtil {
     }
 
     public static final String CACHE_SHOP_OF_CLIENT = "shopOfClient_";
+
     public static IgniteCache<Long, ShopDetail> shopOfClient(Ignite ignite, Long clientId) {
         return getCache(ignite, CACHE_SHOP_OF_CLIENT + clientId);
     }
 
     public static final String CACHE_WAIT_OF_TYPE = "waitOfTableType_";
+
     public static IgniteCache<String, WaitToken> waitOfTableType(Ignite ignite, Long tableType) {
         return getCache(ignite, CACHE_WAIT_OF_TYPE + tableType);
     }
 
+    public static String getWaitOfTableType(Long merchantStoreId, Long sceneId) {
+        return CACHE_WAIT_OF_TYPE + merchantStoreId + "_" + sceneId;
+    }
+
+
     public static final String CACHE_DRAW_OF_STORE = "drawOfStore_";
+
     public static IgniteCache<String, DrawToken> drawOfStore(Ignite ignite, Long shopId) {
         return getCache(ignite, CACHE_DRAW_OF_STORE + shopId);
+    }
+
+    private static final String CACHE_SCENEID_IDENTITYCODE = "sceneIdToIdentityCode_";
+
+    public static String getIdentityCode(Long sceneId) {
+        return CACHE_SCENEID_IDENTITYCODE + sceneId;
     }
 }
