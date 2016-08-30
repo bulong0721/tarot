@@ -1,19 +1,9 @@
 <div class="alert alert-info">
     <div class="form-inline">
         <div class="form-group">
-            <p class="input-group">
-                <input placeholder="开始日期" type="text" class="form-control" style="width:200px;margin-top:10px;" uib-datepicker-popup ng-model="where.beginDate" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
-                <span class="input-group-btn">
-                <button type="button" class="btn btn-default" ng-click="open1()" style="margin-top:10px;"><i class="glyphicon glyphicon-calendar"></i></button>
-                </span>
-            </p>
-            &nbsp;-&nbsp;
-            <p class="input-group">
-                <input placeholder="结束日期" type="text" class="form-control" style="width:200px;margin-top:10px;" uib-datepicker-popup ng-model="where.endDate" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
-                <span class="input-group-btn">
-                <button type="button" class="btn btn-default" ng-click="open2()" style="margin-top:10px;"><i class="glyphicon glyphicon-calendar"></i></button>
-                </span>
-            </p>
+            <c-Datepicker placeholder="开始日期" model="where.beginDate" style="width:150px;"></c-Datepicker>
+            <i class="fa fa-exchange"></i>
+            <c-Datepicker placeholder="结束日期" model="where.endDate" style="width:150px;"></c-Datepicker>
         </div>
         <select class="form-control" style="width:100px;" ng-model="where.voiceLogType">
             <option value="">类型</option>

@@ -6,20 +6,19 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.myee.djinn.dto.PushResourceDTO;
-import com.myee.djinn.dto.ResponseData;
 import com.myee.djinn.endpoint.OrchidService;
 import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
+import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
-import com.myee.tarot.resource.domain.PushResource;
-import com.myee.tarot.resource.service.PushResourceService;
+import com.myee.tarot.resource.domain.Notification;
+import com.myee.tarot.resource.service.NotificationService;
 import com.myee.tarot.web.files.FileType;
 import com.myee.tarot.web.files.vo.FileItem;
 import com.myee.tarot.web.util.StringUtil;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -31,11 +30,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,7 +55,7 @@ public class PushController {
     private ServerBootstrap serverBootstrap;
 
     @Autowired
-    private PushResourceService pushResourceService;
+    private NotificationService notificationService;
 
     @RequestMapping(value = "admin/file/search", method = RequestMethod.POST)
     @ResponseBody
@@ -149,7 +148,7 @@ public class PushController {
                     return AjaxResponse.failed(-2, message);
                 }
             }
-            boolean isMove = moveToRecycle(resFile);//移动文件到回收站
+            boolean isMove = moveToRecycle(resFile);//移动文件或者文件夹到回收站
             if (isMove) { //移动成功后执行删除
                 if (resFile.exists()) {
                     resFile.delete();
@@ -242,7 +241,7 @@ public class PushController {
 
     @RequestMapping(value = "admin/file/push", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse pushResource(@Valid @RequestBody PushResourceDTO pushResourceDTO) {
+    public AjaxResponse pushResource(@Valid @RequestBody PushResourceDTO pushResourceDTO, HttpServletRequest request) {
         OrchidService eptService = null;
         if (pushResourceDTO == null
                 || StringUtil.isNullOrEmpty(pushResourceDTO.getUniqueNo())
@@ -262,22 +261,28 @@ public class PushController {
             return AjaxResponse.failed(-4, "推送内容为空或格式错误");
         }
         Boolean isSuccess = null;
-        PushResource pushResource = new PushResource();
+        Notification notification = new Notification();
         try {
+            MerchantStore merchantStore = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
             //入库
             isSuccess = eptService.pushResource(pushResourceDTO);
-            pushResource.setAppId(pushResourceDTO.getAppId());
-            pushResource.setContent(JSONArray.toJSONString(pushResourceDTO.getContent()));
-            pushResource.setStoragePath(pushResourceDTO.getStoragePath());
-            pushResource.setTimeout(pushResourceDTO.getTimeout());
-            pushResource.setUniqueNo(pushResourceDTO.getUniqueNo());
+            notification.setAppId(pushResourceDTO.getAppId());
+            notification.setContent(JSONArray.toJSONString(pushResourceDTO.getContent()));
+            notification.setStoragePath(pushResourceDTO.getStoragePath());
+            notification.setTimeout(pushResourceDTO.getTimeout());
+            notification.setUniqueNo(pushResourceDTO.getUniqueNo());
+            notification.setAdminUser((AdminUser) request.getSession().getAttribute(Constants.ADMIN_USER));
+            notification.setStore(merchantStore);
+            notification.setCreateTime(new Date());
             if (isSuccess != null && isSuccess) {
-                pushResource.setSuccess(true);
-                pushResourceService.update(pushResource);
+                notification.setSuccess(true);
+                notification.setComment("推送成功");
+                notificationService.update(notification);
                 return AjaxResponse.success("推送成功");
             } else {
-                pushResource.setSuccess(false);
-                pushResourceService.update(pushResource);
+                notification.setSuccess(false);
+                notification.setComment("发送失败，客户端出错");
+                notificationService.update(notification);
                 return AjaxResponse.failed(-6, "发送失败，客户端出错");
             }
         } catch (ServiceException e) {
@@ -299,11 +304,8 @@ public class PushController {
      */
     public boolean moveToRecycle(File file) {
         try {
-            if (file.exists()) {
-                String tempFilePath = file.getPath().replaceAll("\\\\", "/");//把路径中的反斜杠替换成斜杠
-                String tempDownloadPath = DOWNLOAD_HOME.replaceAll("\\\\", "/") + "/";//准备用于替换成url的下载文件夹路径
-                String tempTargetPath = (DOWNLOAD_HOME + File.separator + "deleted" + File.separator).replaceAll("\\\\", "/");
-                String targetPath = tempFilePath.replaceAll(tempDownloadPath, tempTargetPath);
+            if (file.isFile()) {
+                String targetPath = getDeletedPath(file);
                 // Destination directory
                 File dir = new File(targetPath);
                 File parentPath = new File(dir.getParent());
@@ -311,10 +313,25 @@ public class PushController {
                 // Move file to new directory
                 boolean success = file.renameTo(dir);
                 return true;
+            } else if (!file.exists()) {
+                return false;
             } else {
                 File files[] = file.listFiles();
-                for (int i = 0; i < files.length; i++) {
-                    moveToRecycle(files[i]);
+                if (files != null && files.length > 0) {
+                    for (int i = 0; i < files.length; i++) {
+                        moveToRecycle(files[i]);
+                    }
+                } else { //空目录
+                    String targetPath = getDeletedPath(file);
+                    // Destination directory
+                    File dir = new File(targetPath);
+                    if (dir.exists()) {
+                        file.delete();
+                        return true;
+                    } else {
+                        boolean success = file.renameTo(dir);
+                        return true;
+                    }
                 }
                 LOGGER.info("所删除的文件不存在！" + '\n');
                 return false;
@@ -324,6 +341,19 @@ public class PushController {
             LOGGER.info("unable to delete the folder!");
         }
         return false;
+    }
+
+    /**
+     * 获取移除文件到回收站的后的文件路径
+     * @param file
+     * @return
+     */
+    private String getDeletedPath(File file) {
+        String tempFilePath = file.getPath().replaceAll("\\\\", "/");//把路径中的反斜杠替换成斜杠
+        String tempDownloadPath = DOWNLOAD_HOME.replaceAll("\\\\", "/") + "/";//准备用于替换成url的下载文件夹路径
+        String tempTargetPath = (DOWNLOAD_HOME + File.separator + "deleted" + File.separator).replaceAll("\\\\", "/");
+        String targetPath = tempFilePath.replaceAll(tempDownloadPath, tempTargetPath);
+        return targetPath;
     }
 
     /*
