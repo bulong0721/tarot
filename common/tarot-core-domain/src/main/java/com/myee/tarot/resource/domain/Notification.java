@@ -1,10 +1,10 @@
 package com.myee.tarot.resource.domain;
 
-import com.myee.tarot.catalog.domain.DeviceUsed;
+import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
-
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "C_NOTIFICATION")
@@ -13,28 +13,38 @@ public class Notification extends GenericEntity<Long, Notification> {
     @Column(name = "NOTIFICATION_ID", unique = true, nullable = false)
     @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", pkColumnValue = "NOTIFICATION_SEQ_NEXT_VAL", valueColumnName = "SEQ_COUNT", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
-    private Long    id;
-    @Column(name = "NAME")
-    private String  name;
-    @Column(name = "TIME_EXPIRED")
-    private Long    timeExpired;
-    @Column(name = "NOTIFICATION_TYPE")
-    private String  notificationType;
-    @Column(name = "CONTENT")
-    @Lob
-    private String  content;
-    @ManyToOne(targetEntity = DeviceUsed.class, optional = false, cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-    @JoinColumn(name = "DEVICE_USED_ID")
-    protected DeviceUsed deviceUsed;
-    @Column(name="APP_ID")
+    private Long id;
+    @Column(name = "UNIQUE_NO")
+    private String uniqueNo;
+
+    @Column(name = "APP_ID")
     private Integer appId;
-    @ManyToOne(targetEntity = MerchantStore.class, optional = false, cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+
+    @Column(name = "TIME_OUT")
+    private Long timeout;
+
+    @Column(name = "STORAGE_PATH")
+    private String storagePath;
+
+    @Column(name="CONTENT", columnDefinition="TEXT", nullable=true)
+    private String content;
+
+    @Column(name = "SUCCESS")
+    private Boolean success;
+
+    @Column(name = "CREATE_TIME")
+    private Date createTime;
+
+    @ManyToOne(targetEntity = MerchantStore.class, optional = false)
     @JoinColumn(name = "STORE_ID")
-    protected MerchantStore merchantStore;
-    @Column(name="MESSAGE")
-    private String message;
-    @Column(name="STATUS")
-    private String status;
+    protected MerchantStore store;
+
+    @Column(name = "COMMENT")
+    private String comment;
+
+    @ManyToOne(targetEntity = AdminUser.class, optional = false)
+    @JoinColumn(name = "ADMIN_USER_ID")
+    private AdminUser adminUser;
 
     @Override
     public Long getId() {
@@ -46,44 +56,12 @@ public class Notification extends GenericEntity<Long, Notification> {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUniqueNo() {
+        return uniqueNo;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getTimeExpired() {
-        return timeExpired;
-    }
-
-    public void setTimeExpired(Long timeExpired) {
-        this.timeExpired = timeExpired;
-    }
-
-    public String getNotificationType() {
-        return notificationType;
-    }
-
-    public void setNotificationType(String notificationType) {
-        this.notificationType = notificationType;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public DeviceUsed getDeviceUsed() {
-        return deviceUsed;
-    }
-
-    public void setDeviceUsed(DeviceUsed deviceUsed) {
-        this.deviceUsed = deviceUsed;
+    public void setUniqueNo(String uniqueNo) {
+        this.uniqueNo = uniqueNo;
     }
 
     public Integer getAppId() {
@@ -94,27 +72,67 @@ public class Notification extends GenericEntity<Long, Notification> {
         this.appId = appId;
     }
 
-    public MerchantStore getMerchantStore() {
-        return merchantStore;
+    public Long getTimeout() {
+        return timeout;
     }
 
-    public void setMerchantStore(MerchantStore merchantStore) {
-        this.merchantStore = merchantStore;
+    public void setTimeout(Long timeout) {
+        this.timeout = timeout;
     }
 
-    public String getMessage() {
-        return message;
+    public String getStoragePath() {
+        return storagePath;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setStoragePath(String storagePath) {
+        this.storagePath = storagePath;
     }
 
-    public String getStatus() {
-        return status;
+    public String getContent() {
+        return content;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Boolean getSuccess() {
+        return success;
+    }
+
+    public void setSuccess(Boolean success) {
+        this.success = success;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public MerchantStore getStore() {
+        return store;
+    }
+
+    public void setStore(MerchantStore store) {
+        this.store = store;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public AdminUser getAdminUser() {
+        return adminUser;
+    }
+
+    public void setAdminUser(AdminUser adminUser) {
+        this.adminUser = adminUser;
     }
 }
