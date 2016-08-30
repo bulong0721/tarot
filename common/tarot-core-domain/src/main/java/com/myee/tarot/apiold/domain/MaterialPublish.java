@@ -37,7 +37,7 @@ public class MaterialPublish extends GenericEntity<Long, MaterialPublish> {
 	private String description;
 
 	@Column(name = "ACTIVE", columnDefinition = "BIT")
-	private int active;
+	private Boolean active = Boolean.TRUE;
 	@Column(name = "MP_CREATED_BY")
 	private long mPCreatedBy;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -82,15 +82,29 @@ public class MaterialPublish extends GenericEntity<Long, MaterialPublish> {
 		this.timeEnd = timeEnd;
 	}
 
-	public int getActive() {
+	public Boolean getActive() {
 		return active;
 	}
 
-	public void setActive(int active) {
+	public void setActive(Boolean active) {
 		this.active = active;
 	}
 
+	public long getmPCreatedBy() {
+		return mPCreatedBy;
+	}
 
+	public void setmPCreatedBy(long mPCreatedBy) {
+		this.mPCreatedBy = mPCreatedBy;
+	}
+
+	public Date getmPCreated() {
+		return mPCreated;
+	}
+
+	public void setmPCreated(Date mPCreated) {
+		this.mPCreated = mPCreated;
+	}
 
 	public String getDescription() {
 		return description;

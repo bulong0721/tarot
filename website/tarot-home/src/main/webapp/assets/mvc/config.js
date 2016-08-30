@@ -249,6 +249,20 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 }
             }
         })
+        .state('cater.superMenu', {
+            url: "/superMenu",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'superMenuMgrCtrl',
+            data: {
+                subTitle: '餐桌管理',
+                datatable: 'assets/mvc/cater/view/super_menu_datatable.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
+                }
+            }
+        })
         .state('dataCenter', {
             abstract: true,
             url: "/dataCenter",

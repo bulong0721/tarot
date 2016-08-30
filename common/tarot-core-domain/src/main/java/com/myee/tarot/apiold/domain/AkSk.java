@@ -28,7 +28,7 @@ public class AkSk extends GenericEntity<Long, AkSk> {
 	private String companyIp;
 
 	@Column(name = "ACTIVE", columnDefinition = "BIT")
-	private int active;
+	private Boolean active = Boolean.TRUE;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "STORE_ID")
@@ -88,5 +88,13 @@ public class AkSk extends GenericEntity<Long, AkSk> {
 
 	public void setStore(MerchantStore store) {
 		this.store = store;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 }

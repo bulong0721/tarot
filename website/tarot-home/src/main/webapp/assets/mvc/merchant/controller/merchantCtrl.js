@@ -61,10 +61,10 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
             }
         ],
         api: {
-            read: '../admin/merchant/paging',
-            update: '../admin/merchant/save',
-            delete: '../admin/merchant/delete',
-            upload: '../admin/files/create'
+            read: './merchant/paging',
+            update: './merchant/save',
+            delete: './merchant/delete',
+            upload: './files/create'
         }
     };
     cTables.initNgMgrCtrl(mgrData, $scope);

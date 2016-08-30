@@ -42,7 +42,7 @@ public class VideoBusiness extends GenericEntity<Long, VideoBusiness> {
 	private String description;
 
 	@Column(name = "ACTIVE", columnDefinition = "BIT")
-	private int active;
+	private Boolean active = Boolean.TRUE;
 	@Column(name = "VB_CREATED_BY",length = 20)
 	private long vBCreatedBy;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -150,11 +150,11 @@ public class VideoBusiness extends GenericEntity<Long, VideoBusiness> {
 		this.description = description;
 	}
 
-	public int getActive() {
+	public Boolean getActive() {
 		return active;
 	}
 
-	public void setActive(int active) {
+	public void setActive(Boolean active) {
 		this.active = active;
 	}
 

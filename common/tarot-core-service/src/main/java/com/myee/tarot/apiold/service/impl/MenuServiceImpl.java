@@ -5,6 +5,8 @@ import com.myee.tarot.apiold.domain.MenuInfo;
 import com.myee.tarot.apiold.service.MenuService;
 import com.myee.tarot.apiold.view.MenuInfoView;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +28,9 @@ public class MenuServiceImpl extends GenericEntityServiceImpl<Long, MenuInfo> im
 
     public List<MenuInfo> listByStoreId(long id){
         return menuDao.listByStoreId(id);
+    }
+
+    public PageResult<MenuInfo> pageByStore(Long id, PageRequest pageRequest){
+        return menuDao.pageByStore(id, pageRequest);
     }
 }

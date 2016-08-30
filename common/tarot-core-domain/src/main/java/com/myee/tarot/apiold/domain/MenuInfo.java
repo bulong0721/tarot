@@ -53,7 +53,7 @@ public class MenuInfo extends GenericEntity<Long, MenuInfo> {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
     @Column(name = "ACTIVE",columnDefinition = "BIT")
-    private int active;
+    private Boolean active = Boolean.TRUE;
     @Column(name = "PHOTO",length = 100)
     private String photo;
 
@@ -128,11 +128,11 @@ public class MenuInfo extends GenericEntity<Long, MenuInfo> {
         this.scanCode = scanCode;
     }
 
-    public int getActive() {
+    public Boolean getActive() {
         return active;
     }
 
-    public void setActive(int active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 

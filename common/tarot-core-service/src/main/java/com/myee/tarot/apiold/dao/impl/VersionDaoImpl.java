@@ -21,7 +21,7 @@ public class VersionDaoImpl extends GenericEntityDaoImpl<Long, VersionInfo> impl
         JPQLQuery<VersionInfo> query = new JPAQuery(getEntityManager());
 
         query.from(qVersionInfo);
-        query.where(qVersionInfo.active.eq(1));
+        query.where(qVersionInfo.active.eq(true));
         query.where(qVersionInfo.store.id.eq(shopId));
 
         return query.fetchOne();

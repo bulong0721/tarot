@@ -31,7 +31,7 @@ public class MaterialPublishDaoImpl extends GenericEntityDaoImpl<Long, MaterialP
             query.where((qMaterialPublish.timeStart.before(now))
                     .and(qMaterialPublish.timeEnd.after(now)));
         }
-        query.where((qMaterialPublish.materialBusiness.type.eq(1)).and(qMaterialPublish.active.eq(1)))
+        query.where((qMaterialPublish.materialBusiness.type.eq(1)).and(qMaterialPublish.active.eq(true)))
                 .orderBy(qMaterialPublish.id.desc())
                 .offset(0).limit(30);
 

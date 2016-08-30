@@ -21,7 +21,7 @@ public class MaterialFileKind extends GenericEntity<Long, MaterialFileKind> {
     private String description;
 
     @Column(name = "ACTIVE", columnDefinition = "BIT")
-    private int active;
+    private Boolean active = Boolean.TRUE;
 
     @Override
     public Long getId() {
@@ -49,11 +49,11 @@ public class MaterialFileKind extends GenericEntity<Long, MaterialFileKind> {
         this.description = description;
     }
 
-    public int getActive() {
+    public Boolean getActive() {
         return active;
     }
 
-    public void setActive(int active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 }

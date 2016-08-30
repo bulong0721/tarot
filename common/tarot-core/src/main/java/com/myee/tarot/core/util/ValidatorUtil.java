@@ -1,4 +1,4 @@
-package com.myee.tarot.web.util;
+package com.myee.tarot.core.util;
 
 import java.util.EmptyStackException;
 import java.util.regex.Matcher;

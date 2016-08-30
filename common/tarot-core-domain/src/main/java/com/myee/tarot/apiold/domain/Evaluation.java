@@ -51,7 +51,7 @@ public class Evaluation extends GenericEntity<Long, Evaluation> {
 	private Long evaluCreatedL;
 
 	@Column(name = "ACTIVE", columnDefinition = "BIT")
-	private int active;
+	private Boolean active = Boolean.TRUE;
 
 	public Evaluation(){
 
@@ -157,11 +157,11 @@ public class Evaluation extends GenericEntity<Long, Evaluation> {
 		this.evaluCreatedL = evaluCreatedL;
 	}
 
-	public int getActive() {
+	public Boolean getActive() {
 		return active;
 	}
 
-	public void setActive(int active) {
+	public void setActive(Boolean active) {
 		this.active = active;
 	}
 }

@@ -51,7 +51,7 @@ public class Material extends GenericEntity<Long, Material> {
 	private String original;//原文件名
 
 	@Column(name = "ACTIVE", columnDefinition = "BIT")
-	private int active;
+	private Boolean active = Boolean.TRUE;
 	@Column(name = "M_CREATED_BY")
 	private long mCreatedBy;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -180,11 +180,11 @@ public class Material extends GenericEntity<Long, Material> {
 		this.original = original;
 	}
 
-	public int getActive() {
+	public Boolean getActive() {
 		return active;
 	}
 
-	public void setActive(int active) {
+	public void setActive(Boolean active) {
 		this.active = active;
 	}
 

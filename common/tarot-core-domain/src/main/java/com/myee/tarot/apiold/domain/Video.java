@@ -42,7 +42,7 @@ public class Video extends GenericEntity<Long, Video> {
 	private String original;//原文件名
 
 	@Column(name = "ACTIVE", columnDefinition = "BIT")
-	private int active;
+	private Boolean active = Boolean.TRUE;
 	@Column(name = "V_CREATED_BY")
 	private long vCreatedBy;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -140,11 +140,11 @@ public class Video extends GenericEntity<Long, Video> {
 		this.original = original;
 	}
 
-	public int getActive() {
+	public Boolean getActive() {
 		return active;
 	}
 
-	public void setActive(int active) {
+	public void setActive(Boolean active) {
 		this.active = active;
 	}
 

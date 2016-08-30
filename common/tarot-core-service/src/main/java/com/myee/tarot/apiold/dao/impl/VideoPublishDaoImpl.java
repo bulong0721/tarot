@@ -31,7 +31,7 @@ public class VideoPublishDaoImpl extends GenericEntityDaoImpl<Long, VideoPublish
             query.where((qVideoPublish.timeStart.before(now))
                     .and(qVideoPublish.timeEnd.after(now)));
         }
-        query.where((qVideoPublish.videoBusiness.type.eq(1)).and(qVideoPublish.active.eq(1)))
+        query.where((qVideoPublish.videoBusiness.type.eq(1)).and(qVideoPublish.active.eq(true)))
                 .orderBy(qVideoPublish.id.desc())
                 .offset(0).limit(30);
 

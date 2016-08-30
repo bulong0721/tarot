@@ -50,7 +50,7 @@ public class MaterialBusiness extends GenericEntity<Long, MaterialBusiness> {
 	private String version;//版本号
 
 	@Column(name = "ACTIVE", columnDefinition = "BIT")
-	private int active;
+	private Boolean active = Boolean.TRUE;
 	@Column(name = "MB_CREATED_BY")
 	private long mBCreatedBy;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -174,11 +174,11 @@ public class MaterialBusiness extends GenericEntity<Long, MaterialBusiness> {
 		this.version = version;
 	}
 
-	public int getActive() {
+	public Boolean getActive() {
 		return active;
 	}
 
-	public void setActive(int active) {
+	public void setActive(Boolean active) {
 		this.active = active;
 	}
 

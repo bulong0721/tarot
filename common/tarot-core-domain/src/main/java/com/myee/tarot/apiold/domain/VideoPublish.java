@@ -36,7 +36,7 @@ public class VideoPublish extends GenericEntity<Long, VideoPublish> {
 	private String description;
 
 	@Column(name = "ACTIVE", columnDefinition = "BIT")
-	private int active;
+	private Boolean active = Boolean.TRUE;
 	@Column(name = "VP_CREATED_BY")
 	private long vPCreatedBy;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -81,11 +81,11 @@ public class VideoPublish extends GenericEntity<Long, VideoPublish> {
 		this.timeEnd = timeEnd;
 	}
 
-	public int getActive() {
+	public Boolean getActive() {
 		return active;
 	}
 
-	public void setActive(int active) {
+	public void setActive(Boolean active) {
 		this.active = active;
 	}
 

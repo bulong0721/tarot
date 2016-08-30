@@ -42,7 +42,7 @@ public class VersionInfo extends GenericEntity<Long, VersionInfo> {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
     @Column(name = "ACTIVE",columnDefinition = "BIT")
-    private int active;//状态1生效0不生效
+    private Boolean active = Boolean.TRUE;//状态1生效0不生效
 
     @Override
     public Long getId() {
@@ -110,11 +110,11 @@ public class VersionInfo extends GenericEntity<Long, VersionInfo> {
         this.updated = updated;
     }
 
-    public int getActive() {
+    public Boolean getActive() {
         return active;
     }
 
-    public void setActive(int active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 }

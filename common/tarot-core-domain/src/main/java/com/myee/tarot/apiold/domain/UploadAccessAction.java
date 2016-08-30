@@ -22,7 +22,7 @@ public class UploadAccessAction extends GenericEntity<Long, UploadAccessAction> 
 	private Long parent;//如果是2级以上点击行为，则应该有关联的父级行为ID
 
 	@Column(name = "ACTIVE", columnDefinition = "BIT")
-	private int active;
+	private Boolean active = Boolean.TRUE;
 
 	public UploadAccessAction(){
 
@@ -60,11 +60,11 @@ public class UploadAccessAction extends GenericEntity<Long, UploadAccessAction> 
 		this.parent = parent;
 	}
 
-	public int getActive() {
+	public Boolean getActive() {
 		return active;
 	}
 
-	public void setActive(int active) {
+	public void setActive(Boolean active) {
 		this.active = active;
 	}
 }

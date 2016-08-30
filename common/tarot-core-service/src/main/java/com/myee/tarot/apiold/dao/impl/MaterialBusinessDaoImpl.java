@@ -29,7 +29,7 @@ public class MaterialBusinessDaoImpl extends GenericEntityDaoImpl<Long, Material
             query.where((qMaterialBusiness.timeStart.before(now))
                     .and(qMaterialBusiness.timeEnd.after(now)));
         }
-        query.where((qMaterialBusiness.type.eq(0)).and(qMaterialBusiness.active.eq(1)))
+        query.where((qMaterialBusiness.type.eq(0)).and(qMaterialBusiness.active.eq(true)))
             .orderBy(qMaterialBusiness.id.desc())
             .offset(0).limit(1);//本地素材推送只能有一个
 
@@ -43,7 +43,7 @@ public class MaterialBusinessDaoImpl extends GenericEntityDaoImpl<Long, Material
 
         query.from(qMaterialBusiness)
                 .where(qMaterialBusiness.material.materialFileKind.name.eq(materialFileKind))
-                .where((qMaterialBusiness.type.eq(1)).and(qMaterialBusiness.active.eq(1)))
+                .where((qMaterialBusiness.type.eq(1)).and(qMaterialBusiness.active.eq(true)))
                 .orderBy(qMaterialBusiness.id.desc());
 
         return query.fetch();

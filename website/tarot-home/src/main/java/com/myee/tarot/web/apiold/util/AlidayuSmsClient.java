@@ -6,7 +6,7 @@ import com.myee.tarot.apiold.service.SendRecordService;
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.core.util.StringUtil;
-import com.myee.tarot.web.util.ValidatorUtil;
+import com.myee.tarot.core.util.ValidatorUtil;
 import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;

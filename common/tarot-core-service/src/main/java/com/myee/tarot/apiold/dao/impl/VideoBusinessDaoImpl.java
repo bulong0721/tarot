@@ -29,7 +29,7 @@ public class VideoBusinessDaoImpl extends GenericEntityDaoImpl<Long, VideoBusine
             query.where((qVideoBusiness.timeStart.before(now))
                     .and(qVideoBusiness.timeEnd.after(now)));
         }
-        query.where((qVideoBusiness.type.eq(0)).and(qVideoBusiness.active.eq(1)))
+        query.where((qVideoBusiness.type.eq(0)).and(qVideoBusiness.active.eq(true)))
                 .orderBy(qVideoBusiness.id.desc())
                 .offset(0).limit(2);//取两个视频，一个待机视频，一个点播视频
 

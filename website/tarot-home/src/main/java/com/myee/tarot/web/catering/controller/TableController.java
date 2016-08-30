@@ -3,6 +3,8 @@ package com.myee.tarot.web.catering.controller;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.myee.tarot.apiold.domain.MenuInfo;
+import com.myee.tarot.apiold.service.MenuService;
 import com.myee.tarot.catalog.domain.Device;
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catering.domain.Table;
@@ -14,14 +16,14 @@ import com.myee.tarot.catering.service.TableZoneService;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.device.service.DeviceService;
 import com.myee.tarot.device.service.DeviceUsedService;
 import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
-import com.myee.tarot.web.util.StringUtil;
-import com.myee.tarot.web.util.ValidatorUtil;
+import com.myee.tarot.core.util.ValidatorUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +62,9 @@ public class TableController {
     @Autowired
     private DeviceService deviceService;
 
+    @Autowired
+    private MenuService menuService;
+
     @RequestMapping(value = {"admin/catering/type/save", "shop/catering/type/save"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse addTableType(@RequestBody TableType type, HttpServletRequest request) throws Exception {
@@ -78,7 +83,7 @@ public class TableController {
             resp = AjaxResponse.success();
             resp.addEntry("updateResult", type);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
@@ -116,7 +121,7 @@ public class TableController {
             typeService.delete(tableType);
             return AjaxResponse.success();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
@@ -165,7 +170,7 @@ public class TableController {
             resp = AjaxResponse.success();
             resp.addEntry("updateResult", zone);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
@@ -194,7 +199,7 @@ public class TableController {
             zoneService.delete(tableZone);
             return AjaxResponse.success();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
@@ -227,7 +232,7 @@ public class TableController {
 
             return resp;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             return resp;
         }
     }
@@ -327,7 +332,7 @@ public class TableController {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
@@ -352,7 +357,7 @@ public class TableController {
                 return false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             return false;
         }
     }
@@ -371,7 +376,7 @@ public class TableController {
                 return "";
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             return "";
         }
     }
@@ -397,7 +402,7 @@ public class TableController {
             tableService.delete(table1);
             return AjaxResponse.success();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
@@ -424,7 +429,7 @@ public class TableController {
             resp.setRecordsTotal(pageList.getRecordsTotal());
             return resp;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             return resp;
         }
     }
@@ -448,7 +453,7 @@ public class TableController {
             resp.addEntry("updateResult", objectToEntry(table));
             return resp;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
         return AjaxResponse.failed(-1);
     }
@@ -474,6 +479,114 @@ public class TableController {
         return entry;
     }
 
+    //superMenu---------------------------------------------------
+    @RequestMapping(value = {"admin/catering/superMenu/save", "shop/catering/superMenu/save"}, method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse addSuperMenu(@RequestBody MenuInfo menuInfo, HttpServletRequest request) throws Exception {
+        AjaxResponse resp;
+        try {
+            Merchant merchant1 = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            //name字段长度限制判断
+            if(menuInfo.getName().length()>60){
+                return AjaxResponse.failed(-1,"商户菜品名称字数不得大于60");
+            }
+            //price字段只能为数字
+            if(!StringUtil.isNumeric(menuInfo.getPrice())){
+                return AjaxResponse.failed(-1,"商户菜品价格只能为整数");
+            }
+            //scanCode字段只能为数字
+            if(!StringUtil.isNumeric(menuInfo.getScanCode())){
+                return AjaxResponse.failed(-1,"商户菜品扫描码只能为整数");
+            }
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            menuInfo.setStore(merchantStore1);
+            menuInfo = menuService.update(menuInfo);
+
+            resp = AjaxResponse.success();
+            resp.addEntry("updateResult", menuInfo);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("出错");
+            return resp;
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = {"admin/catering/superMenu/delete", "shop/catering/superMenu/delete"}, method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse delSuperMenu(@RequestBody MenuInfo menuInfo, HttpServletRequest request) throws Exception {
+        AjaxResponse resp;
+        try {
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+
+            if (menuInfo.getId() == null || StringUtil.isNullOrEmpty(menuInfo.getId().toString())) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("参数错误");
+                return resp;
+            }
+            MenuInfo menuInfo1 = menuService.findById(menuInfo.getId());
+            if (menuInfo1 == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "菜品不存在");
+                return resp;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (merchantStore1.getId() != menuInfo1.getStore().getId()) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "要删除的菜品不属于与当前切换的门店");
+                return resp;
+            }
+
+            menuService.delete(menuInfo1);
+            return AjaxResponse.success();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("出错");
+            return resp;
+        }
+    }
+
+    @RequestMapping(value = {"admin/catering/superMenu/paging", "shop/catering/superMenu/paging"}, method = RequestMethod.GET)
+    public
+    @ResponseBody
+    AjaxPageableResponse pageSuperMenus(Model model, HttpServletRequest request, PageRequest pageRequest) {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
+        if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            resp.setErrorString("请先切换门店");
+            return resp;
+        }
+        MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        PageResult<MenuInfo> pageList = menuService.pageByStore(merchantStore1.getId(), pageRequest);
+        List<MenuInfo> menuList = pageList.getList();
+        for (MenuInfo menuInfo : menuList) {
+            resp.addDataEntry(objectToEntry(menuInfo));
+        }
+        resp.setRecordsTotal(pageList.getRecordsTotal());
+        return resp;
+    }
+
+    //把类转换成entry返回给前端，解耦和
+    private Map objectToEntry(MenuInfo menuInfo) {
+        Map entry = new HashMap();
+        entry.put("id", menuInfo.getId());
+        entry.put("name", menuInfo.getName());
+        entry.put("photo", menuInfo.getPhoto());
+        entry.put("price", menuInfo.getPrice());
+        entry.put("scanCode", menuInfo.getScanCode());
+        entry.put("active", menuInfo.getActive());
+        entry.put("menuId", menuInfo.getMenuId());
+        entry.put("subMenuId", menuInfo.getSubMenuId());
+        return entry;
+    }
     /**
      * options-------------------------------------------------------------------------------
      */

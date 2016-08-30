@@ -51,7 +51,7 @@ public class OrderInfo extends GenericEntity<Long, OrderInfo> {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
     @Column(name = "ACTIVE",columnDefinition = "BIT")
-    private int active;//状态 0启用 1停用
+    private Boolean active = Boolean.TRUE;//状态 0启用 1停用
 
     //作为老接口的输入参数保留字段，不用持久化到数据库
     @Transient
@@ -155,11 +155,19 @@ public class OrderInfo extends GenericEntity<Long, OrderInfo> {
         this.updated = updated;
     }
 
-    public int getActive() {
+    public Boolean getActive() {
         return active;
     }
 
-    public void setActive(int active) {
+    public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public long getShopId() {
+        return shopId;
+    }
+
+    public void setShopId(long shopId) {
+        this.shopId = shopId;
     }
 }

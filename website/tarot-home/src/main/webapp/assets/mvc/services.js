@@ -346,7 +346,9 @@ function cfromlyService(formlyConfig, $window, toaster, $filter,formlyValidation
                     }
                 } else {
                     if (file) {
-                        scope.model.name = file.name;
+                        if(scope.name != 'img'){//chay商户上传和菜品图片是不需要同步文件名到name字段的
+                            scope.model.name = file.name;
+                        }
                         var fd = new FormData();
                         fd.append('file', file);
                         scope.$emit('fileToUpload', fd);
