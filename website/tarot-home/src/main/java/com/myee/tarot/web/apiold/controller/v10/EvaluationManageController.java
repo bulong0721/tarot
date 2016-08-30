@@ -62,7 +62,7 @@ public class EvaluationManageController extends BaseController {
             if(evaluation == null || (evaluation != null && ((DateTimeUtils.getShortDateTimeL() - evaluation.getTimeSecond()) > 300))){
                 Evaluation evaluation1 = new Evaluation(evaluationView);
                 evaluation1.setTable(table);
-                evaluation1.setCreated(new Date());
+                evaluation1.setEvaluCreated(new Date());
                 evaluationManageService.update(evaluation1);
             }else if(evaluation != null){
                 evaluation.setDeviceRemark(evaluationView.getDeviceRemark());
@@ -72,7 +72,7 @@ public class EvaluationManageController extends BaseController {
                 evaluation.setFeelService(evaluationView.getFeelService() == null ? 0 : evaluationView.getFeelService());
                 evaluation.setFeelWhole(evaluationView.getFeelWhole() == null ? 0 : evaluationView.getFeelWhole());
                 evaluation.setTimeSecond(DateTimeUtils.getShortDateTimeL());
-                evaluation.setCreated(new Date());
+                evaluation.setEvaluCreated(new Date());
                 evaluationManageService.update(evaluation);
             }
             return ClientAjaxResult.success();

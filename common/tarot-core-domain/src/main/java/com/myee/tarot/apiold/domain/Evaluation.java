@@ -22,16 +22,16 @@ public class Evaluation extends GenericEntity<Long, Evaluation> {
 	@JoinColumn(name = "TABLE_ID")
 	private Table table;
 
-	@Column(name = "FEELWHOLE", columnDefinition = "INT",length = 5)
+	@Column(name = "FEELWHOLE", columnDefinition = "TINYINT")
 	private int feelWhole;//整体评价星级，0,20,40,80,100，即0-5分扩大20倍
 
-	@Column(name = "FEELFLAVOR", columnDefinition = "INT",length = 5)
+	@Column(name = "FEELFLAVOR", columnDefinition = "TINYINT")
 	private int feelFlavor;//口味星级
 
-	@Column(name = "FEELSERVICE", columnDefinition = "INT",length = 5)
+	@Column(name = "FEELSERVICE", columnDefinition = "TINYINT")
 	private int feelService;//服务星级
 
-	@Column(name = "FEELENVIRONMENT", columnDefinition = "INT",length = 5)
+	@Column(name = "FEELENVIRONMENT", columnDefinition = "TINYINT")
 	private int feelEnvironment;//环境星级
 
 	@Column(name = "MEALSREMARK",length = 400)
@@ -44,13 +44,13 @@ public class Evaluation extends GenericEntity<Long, Evaluation> {
 	private Long timeSecond;//提交时间，格式yyyyMMddHHmmss
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATED")
-	private Date created;
+	@Column(name = "EVALU_CREATED")
+	private Date evaluCreated;
 
 	@Transient //不持久化到数据库
-	private Long createdL;
+	private Long evaluCreatedL;
 
-	@Column(name = "ACTIVE", columnDefinition = "INT",length = 1)
+	@Column(name = "ACTIVE", columnDefinition = "BIT")
 	private int active;
 
 	public Evaluation(){
@@ -141,20 +141,20 @@ public class Evaluation extends GenericEntity<Long, Evaluation> {
 		this.timeSecond = timeSecond;
 	}
 
-	public Date getCreated() {
-		return created;
+	public Date getEvaluCreated() {
+		return evaluCreated;
 	}
 
-	public void setCreated(Date created) {
-		this.created = created;
+	public void setEvaluCreated(Date evaluCreated) {
+		this.evaluCreated = evaluCreated;
 	}
 
-	public Long getCreatedL() {
-		return createdL;
+	public Long getEvaluCreatedL() {
+		return evaluCreatedL;
 	}
 
-	public void setCreatedL(Long createdL) {
-		this.createdL = createdL;
+	public void setEvaluCreatedL(Long evaluCreatedL) {
+		this.evaluCreatedL = evaluCreatedL;
 	}
 
 	public int getActive() {

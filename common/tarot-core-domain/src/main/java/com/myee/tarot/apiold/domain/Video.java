@@ -32,7 +32,7 @@ public class Video extends GenericEntity<Long, Video> {
 	@Column(name = "VIDEO_SIZE", columnDefinition = "Long")
 	private Long videoSize;
 
-	@Column(name = "TYPE", columnDefinition = "INT")
+	@Column(name = "TYPE", columnDefinition = "TINYINT")
 	private Integer type;//0：商户，1：商业（默认0）
 
 	@Column(name = "DESCRIPTION",length = 255)
@@ -41,13 +41,13 @@ public class Video extends GenericEntity<Long, Video> {
 	@Column(name = "ORIGINAL",length = 255)
 	private String original;//原文件名
 
-	@Column(name = "ACTIVE", columnDefinition = "INT",length = 1)
+	@Column(name = "ACTIVE", columnDefinition = "BIT")
 	private int active;
-	@Column(name = "CREATED_BY")
-	private long createdBy;
+	@Column(name = "V_CREATED_BY")
+	private long vCreatedBy;
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATED")
-	private Date created;
+	@Column(name = "V_CREATED")
+	private Date vCreated;
 
 	public Video(){
 
@@ -148,20 +148,20 @@ public class Video extends GenericEntity<Long, Video> {
 		this.active = active;
 	}
 
-	public long getCreatedBy() {
-		return createdBy;
+	public long getvCreatedBy() {
+		return vCreatedBy;
 	}
 
-	public void setCreatedBy(long createdBy) {
-		this.createdBy = createdBy;
+	public void setvCreatedBy(long vCreatedBy) {
+		this.vCreatedBy = vCreatedBy;
 	}
 
-	public Date getCreated() {
-		return created;
+	public Date getvCreated() {
+		return vCreated;
 	}
 
-	public void setCreated(Date created) {
-		this.created = created;
+	public void setvCreated(Date vCreated) {
+		this.vCreated = vCreated;
 	}
 
 	public String getVideoPath() {

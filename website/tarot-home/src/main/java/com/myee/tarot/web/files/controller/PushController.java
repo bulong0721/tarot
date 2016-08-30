@@ -152,7 +152,7 @@ public class PushController {
             boolean isMove = moveToRecycle(resFile);//移动文件到回收站
             if (isMove) { //移动成功后执行删除
                 if (resFile.exists()) {
-                    FileUtils.deleteQuietly(resFile);
+                    resFile.delete();
                 }
                 if (path.lastIndexOf(File.separator) != -1) {
                     File parentPathFile = getResFile(orgID, path.substring(0, path.lastIndexOf(File.separator)));
@@ -299,7 +299,7 @@ public class PushController {
      */
     public boolean moveToRecycle(File file) {
         try {
-            if (file.exists() && file.isFile()) {
+            if (file.exists()) {
                 String tempFilePath = file.getPath().replaceAll("\\\\", "/");//把路径中的反斜杠替换成斜杠
                 String tempDownloadPath = DOWNLOAD_HOME.replaceAll("\\\\", "/") + "/";//准备用于替换成url的下载文件夹路径
                 String tempTargetPath = (DOWNLOAD_HOME + File.separator + "deleted" + File.separator).replaceAll("\\\\", "/");
