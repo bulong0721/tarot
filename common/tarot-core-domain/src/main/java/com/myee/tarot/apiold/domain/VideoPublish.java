@@ -37,11 +37,11 @@ public class VideoPublish extends GenericEntity<Long, VideoPublish> {
 
 	@Column(name = "ACTIVE", columnDefinition = "BIT")
 	private int active;
-	@Column(name = "CREATED_BY")
-	private long createdBy;
+	@Column(name = "VP_CREATED_BY")
+	private long vPCreatedBy;
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATED")
-	private Date created;
+	@Column(name = "VP_CREATED")
+	private Date vPCreated;
 
 	public VideoPublish(){
 
@@ -89,20 +89,20 @@ public class VideoPublish extends GenericEntity<Long, VideoPublish> {
 		this.active = active;
 	}
 
-	public long getCreatedBy() {
-		return createdBy;
+	public long getvPCreatedBy() {
+		return vPCreatedBy;
 	}
 
-	public void setCreatedBy(long createdBy) {
-		this.createdBy = createdBy;
+	public void setvPCreatedBy(long vPCreatedBy) {
+		this.vPCreatedBy = vPCreatedBy;
 	}
 
-	public Date getCreated() {
-		return created;
+	public Date getvPCreated() {
+		return vPCreated;
 	}
 
-	public void setCreated(Date created) {
-		this.created = created;
+	public void setvPCreated(Date vPCreated) {
+		this.vPCreated = vPCreated;
 	}
 
 	public String getDescription() {

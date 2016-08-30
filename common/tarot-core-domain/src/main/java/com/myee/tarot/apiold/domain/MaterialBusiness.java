@@ -51,16 +51,16 @@ public class MaterialBusiness extends GenericEntity<Long, MaterialBusiness> {
 
 	@Column(name = "ACTIVE", columnDefinition = "BIT")
 	private int active;
-	@Column(name = "CREATED_BY")
-	private long createdBy;
+	@Column(name = "MB_CREATED_BY")
+	private long mBCreatedBy;
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATED")
-	private Date created;
-	@Column(name = "UPDATED_BY")
-	private long updatedBy;
+	@Column(name = "MB_CREATED")
+	private Date mBCreated;
+	@Column(name = "MB_UPDATED_BY")
+	private long mBUpdatedBy;
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "UPDATED")
-	private Date updated;
+	@Column(name = "MB_UPDATED")
+	private Date mBUpdated;
 
 	public MaterialBusiness(){
 
@@ -182,36 +182,36 @@ public class MaterialBusiness extends GenericEntity<Long, MaterialBusiness> {
 		this.active = active;
 	}
 
-	public long getCreatedBy() {
-		return createdBy;
+	public long getmBCreatedBy() {
+		return mBCreatedBy;
 	}
 
-	public void setCreatedBy(long createdBy) {
-		this.createdBy = createdBy;
+	public void setmBCreatedBy(long mBCreatedBy) {
+		this.mBCreatedBy = mBCreatedBy;
 	}
 
-	public Date getCreated() {
-		return created;
+	public Date getmBCreated() {
+		return mBCreated;
 	}
 
-	public void setCreated(Date created) {
-		this.created = created;
+	public void setmBCreated(Date mBCreated) {
+		this.mBCreated = mBCreated;
 	}
 
-	public long getUpdatedBy() {
-		return updatedBy;
+	public long getmBUpdatedBy() {
+		return mBUpdatedBy;
 	}
 
-	public void setUpdatedBy(long updatedBy) {
-		this.updatedBy = updatedBy;
+	public void setmBUpdatedBy(long mBUpdatedBy) {
+		this.mBUpdatedBy = mBUpdatedBy;
 	}
 
-	public Date getUpdated() {
-		return updated;
+	public Date getmBUpdated() {
+		return mBUpdated;
 	}
 
-	public void setUpdated(Date updated) {
-		this.updated = updated;
+	public void setmBUpdated(Date mBUpdated) {
+		this.mBUpdated = mBUpdated;
 	}
 
 	public MerchantStore getStore() {

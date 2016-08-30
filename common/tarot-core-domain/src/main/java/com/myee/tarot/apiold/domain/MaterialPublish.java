@@ -38,11 +38,11 @@ public class MaterialPublish extends GenericEntity<Long, MaterialPublish> {
 
 	@Column(name = "ACTIVE", columnDefinition = "BIT")
 	private int active;
-	@Column(name = "CREATED_BY")
-	private long createdBy;
+	@Column(name = "MP_CREATED_BY")
+	private long mPCreatedBy;
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATED")
-	private Date created;
+	@Column(name = "MP_CREATED")
+	private Date mPCreated;
 
 	public MaterialPublish(){
 
@@ -90,21 +90,7 @@ public class MaterialPublish extends GenericEntity<Long, MaterialPublish> {
 		this.active = active;
 	}
 
-	public long getCreatedBy() {
-		return createdBy;
-	}
 
-	public void setCreatedBy(long createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public Date getCreated() {
-		return created;
-	}
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
 
 	public String getDescription() {
 		return description;
