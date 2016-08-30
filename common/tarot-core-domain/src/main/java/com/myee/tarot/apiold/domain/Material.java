@@ -37,7 +37,7 @@ public class Material extends GenericEntity<Long, Material> {
 	@Column(name = "MATERIAL_SIZE", columnDefinition = "Long")
 	private Long materialSize;
 
-	@Column(name = "TYPE", columnDefinition = "INT")
+	@Column(name = "TYPE", columnDefinition = "TINYINT")
 	private Integer type;//0：商户，1：商业（默认0）
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -50,7 +50,7 @@ public class Material extends GenericEntity<Long, Material> {
 	@Column(name = "ORIGINAL",length = 200)
 	private String original;//原文件名
 
-	@Column(name = "ACTIVE", columnDefinition = "INT",length = 1)
+	@Column(name = "ACTIVE", columnDefinition = "BIT")
 	private int active;
 	@Column(name = "CREATED_BY")
 	private long createdBy;

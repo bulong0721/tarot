@@ -27,7 +27,7 @@ public class UploadAccessLog extends GenericEntity<Long, UploadAccessLog> {
 	@Column(name = "ACTION_ID")
 	private Long actionId;//功能ID
 
-	@Column(name = "CLICK_NUM")
+	@Column(name = "CLICK_NUM",columnDefinition = "TINYINT")
 	private Integer clickNum;//点击次数
 
 	@Column(name = "TIME_POIT")

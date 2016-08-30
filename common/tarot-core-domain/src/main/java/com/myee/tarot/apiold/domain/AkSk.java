@@ -27,7 +27,7 @@ public class AkSk extends GenericEntity<Long, AkSk> {
 	@Column(name = "COMPANY_IP",length = 100)
 	private String companyIp;
 
-	@Column(name = "ACTIVE", columnDefinition = "INT",length = 1)
+	@Column(name = "ACTIVE", columnDefinition = "BIT")
 	private int active;
 
 	@ManyToOne(fetch = FetchType.LAZY)

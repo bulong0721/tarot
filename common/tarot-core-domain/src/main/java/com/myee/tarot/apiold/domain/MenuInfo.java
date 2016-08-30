@@ -52,7 +52,7 @@ public class MenuInfo extends GenericEntity<Long, MenuInfo> {
     @Column(name = "UPDATED")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
-    @Column(name = "ACTIVE",length = 2)
+    @Column(name = "ACTIVE",columnDefinition = "BIT")
     private int active;
     @Column(name = "PHOTO",length = 100)
     private String photo;

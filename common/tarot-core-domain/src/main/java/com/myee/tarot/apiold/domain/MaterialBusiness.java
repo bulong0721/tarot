@@ -22,7 +22,7 @@ public class MaterialBusiness extends GenericEntity<Long, MaterialBusiness> {
 	@JoinColumn(name = "MATERIAL_ID")
 	private Material material;
 
-	@Column(name = "KIND", columnDefinition = "INT",length = 11)
+	@Column(name = "KIND", columnDefinition = "TINYINT")
 	private Integer kind;//素材种类,0:未定义;1:apk升级素材,100:升级固件
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -37,7 +37,7 @@ public class MaterialBusiness extends GenericEntity<Long, MaterialBusiness> {
 	@JoinColumn(name = "STORE_ID")
 	private MerchantStore store;//本店素材用
 
-	@Column(name = "TYPE",length = 2)
+	@Column(name = "TYPE",columnDefinition = "TINYINT")
 	private Integer type;//0：商户，1：商业（默认0）
 
 	@Column(name = "DESCRIPTION",length = 200)
@@ -49,7 +49,7 @@ public class MaterialBusiness extends GenericEntity<Long, MaterialBusiness> {
 	@Column(name = "VERSION",length = 100)
 	private String version;//版本号
 
-	@Column(name = "ACTIVE", columnDefinition = "INT",length = 1)
+	@Column(name = "ACTIVE", columnDefinition = "BIT")
 	private int active;
 	@Column(name = "CREATED_BY")
 	private long createdBy;

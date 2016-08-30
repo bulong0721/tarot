@@ -41,7 +41,7 @@ public class VersionInfo extends GenericEntity<Long, VersionInfo> {
     @Column(name = "UPDATED")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
-    @Column(name = "ACTIVE",length = 2)
+    @Column(name = "ACTIVE",columnDefinition = "BIT")
     private int active;//状态1生效0不生效
 
     @Override
