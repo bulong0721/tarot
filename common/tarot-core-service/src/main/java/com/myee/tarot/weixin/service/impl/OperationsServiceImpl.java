@@ -435,7 +435,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
     }
 
     @Override
-    public Integer getAgentVersionCode() {
+    public ResponseData checkAgentUpdateInfo() {
         //TODO 云端不用实现
         return null;
     }
