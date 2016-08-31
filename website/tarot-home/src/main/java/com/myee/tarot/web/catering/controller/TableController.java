@@ -24,16 +24,21 @@ import com.myee.tarot.device.service.DeviceUsedService;
 import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.core.util.ValidatorUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -572,6 +577,103 @@ public class TableController {
         }
         resp.setRecordsTotal(pageList.getRecordsTotal());
         return resp;
+    }
+
+    @RequestMapping(value = {"admin/catering/superMenu/upload","shop/catering/superMenu/upload"} )
+    @ResponseBody
+    public AjaxResponse fileUpload(@RequestParam("file") CommonsMultipartFile[] files, HttpServletRequest request) {
+        AjaxResponse resp = new AjaxResponse();
+        if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            resp.setErrorString("请先切换门店");
+            return resp;
+        }
+        MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+
+        LOGGER.info("----商户菜品上传----,商户ID:"+merchantStore1.getId());
+
+        for (int i = 0; i < files.length; i++) {
+            LOGGER.info("fileName---------->" + files[i].getOriginalFilename());
+            if (!files[i].isEmpty()) {
+                String type = files[i].getContentType();
+                if(!type.equals("text/plain")){
+                    return AjaxResponse.failed(-1,"请上传txt文档，其他格式不支持");
+                }
+                int startTime = (int) System.currentTimeMillis();
+                try {
+                    BufferedReader d = new BufferedReader(new InputStreamReader(files[i].getInputStream(),"utf-8"));
+
+                    String valueString = null;
+                    int line = 0; //记录读取行数
+                    while ((valueString = d.readLine())!=null) {
+                        line++;
+                        char s = valueString.trim().charAt(0);
+                        //65279是空字符
+                        if (s == 65279) {
+                            if (valueString.length() > 1) {
+                                valueString = valueString.substring(1);
+                            }
+                        }
+                        String[] values = valueString.split("\\s+");
+                        if(values.length!= 5){
+                            if(line==1){  //第一行若格式错误，直接stop
+                                return AjaxResponse.failed(-1,"上传的文档格式存在错误，终止上传");
+                            }else{   //后续出现格式错误，结束本次循环继续
+                                continue;
+                            }
+                        }
+                        int m =0;
+                        MenuInfo menu = new MenuInfo();
+                        menu.setStore(merchantStore1);
+                        for (int j = 0; j < values.length; j++) {
+                            if(StringUtils.isNotEmpty(values[j])){
+                                String temp = values[j].trim();
+                                switch (m){
+                                    case 0:
+                                        String menuId = temp.substring(0, 5);
+                                        String subMenuId = temp.substring(5, 7);
+                                        String menuIds = temp.substring(7);
+                                        menu.setMenuId(menuId.trim());
+                                        menu.setSubMenuId(subMenuId.trim());
+                                        menu.setName(menuIds);
+                                        break;
+                                    case 1:
+                                        menu.setPrice((int)Double.parseDouble(temp.substring(0,temp.length()-2))+"");
+                                        LOGGER.info(1 + "---" + values[j].substring(0, values[j].length() - 1));
+                                        break;
+                                    case 2:
+                                        menu.setMenuCode(temp);
+                                        LOGGER.info(2 + "---" + values[j]);
+                                        break;
+                                    case 3:
+                                        break;
+                                    case 4:
+                                        menu.setScanCode(temp);
+                                        LOGGER.info(4 + "---" + values[j]);
+                                        break;
+                                }
+
+                                m++;
+                                if(m>4){
+                                    menu.setActive(true);
+                                    menuService.update(menu);
+                                    m=0;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    d.close();
+                    int finalTime = (int) System.currentTimeMillis();
+                    LOGGER.info( (finalTime - startTime) +"");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    LOGGER.error("上传出错:"+e.getMessage());
+                }
+            }
+        }
+
+        return AjaxResponse.success("上传成功");
     }
 
     //把类转换成entry返回给前端，解耦和

@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@javax.persistence.Table(name = "LOG_SMP_UPLOAD_ACCESS",indexes = @Index(name="TABLE_UPLOAD_ACCESS_ID",columnList = "TABLE_ID,UPLOAD_ACCESS_ID",unique = true))//log_smartPen_upload_access
+@javax.persistence.Table(name = "LOG_SMP_UPLOAD_ACCESS",indexes = @Index(name="TABLE_UPLOAD_ACCESS_ID",columnList = "TABLE_ID,UPLOAD_ACCESS_ID,TIME_POIT",unique = true))//log_smartPen_upload_access
 public class UploadAccessLog extends GenericEntity<Long, UploadAccessLog> {
 
 	@Id

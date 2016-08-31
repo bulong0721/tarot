@@ -97,7 +97,8 @@ function superMenuMgrCtrl($scope, cTables, cfromly,$resource) {
             read: './catering/superMenu/paging',
             update: './catering/superMenu/save',
             delete: './catering/superMenu/delete',
-            upload: './files/create'
+            upload: './files/create',
+            uploadMenu: './catering/superMenu/upload'
         }
     };
 
@@ -141,4 +142,20 @@ function superMenuMgrCtrl($scope, cTables, cfromly,$resource) {
                 $scope.formData.model.images = res.dataMap.tree.downloadPath;
             })
     });
+
+    //上传菜单
+    $scope.menuUP = function(file){
+        console.log(file)
+        var fd = new FormData();
+        fd.append('file', file.files[0]);
+        console.log(fd)
+        $resource(mgrData.api.uploadMenu).save({},fd).$promise.then(function(res){
+            if (0 != res.status) {
+                $scope.toasterManage($scope.toastError, res);
+                return;
+            }
+
+            $scope.search();
+        });
+    };
 }
