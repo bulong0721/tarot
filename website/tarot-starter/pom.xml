@@ -21,6 +21,10 @@
             <artifactId>spring-boot-starter</artifactId>
             <version>1.4.0.RELEASE</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.ignite</groupId>-->
+            <!--<artifactId>ignite-spring</artifactId>-->
+        <!--</dependency>-->
     </dependencies>
 
     <build>

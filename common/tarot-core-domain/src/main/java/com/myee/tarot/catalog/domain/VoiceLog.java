@@ -8,7 +8,6 @@ import java.util.Date;
 /**
  * Created by Ray.Fu on 2016/8/10.
  */
-@Entity
 public class VoiceLog {
 
     private String dateTimeStr;
