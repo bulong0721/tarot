@@ -185,7 +185,7 @@ public abstract class AbstractTarotProcessor extends AbstractProcessor {
             serializer.serialize(model, serializerConfig, new JavaWriter(writer));
         } catch (Exception e) {
             if (null != processingEnv.getMessager()) {
-                processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, e.getMessage());
+//                processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, e.getMessage());
             }
         } finally {
             if (writer != null) {
