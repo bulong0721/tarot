@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * merchantShopCtrl - controller
  */
-merchantShopCtrl.$inject = ['$scope',  'Constants','cTables','cfromly','$resource','NgTableParams', '$q'];
-function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTableParams, $q) {
+merchantShopCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', '$resource', 'NgTableParams', '$q'];
+function merchantShopCtrl($scope, Constants, cTables, cfromly, $resource, NgTableParams, $q) {
 
     var iDatatable = 0, iEditor = 1;
     var mgrData = {
@@ -24,7 +24,7 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
             {
                 key: 'address.province.id',
                 type: 'c_select',
-                className:'c_select',
+                className: 'c_select',
                 templateOptions: {
                     label: '省份',
                     options: Constants.provinces,
@@ -34,16 +34,16 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
             {
                 key: 'address.city.id',
                 type: 'c_select',
-                className:'c_select',
+                className: 'c_select',
                 templateOptions: {
                     label: '城市',
                     options: Constants.citys,
                 },
-                controller: function($scope, Constants) {
+                controller: function ($scope, Constants) {
                     $scope.$watch('model.address.province.id', function (newValue, oldValue, theScope) {
-                        if(newValue !== oldValue) {
+                        if (newValue !== oldValue) {
                             // logic to reload this select's options asynchronusly based on state's value (newValue)
-                            if($scope.model[$scope.options.key] && oldValue) {
+                            if ($scope.model[$scope.options.key] && oldValue) {
                                 // reset this select
                                 $scope.model[$scope.options.key] = '';
                             }
@@ -57,13 +57,13 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
             {
                 key: 'address.county.id',
                 type: 'c_select',
-                className:'c_select',
+                className: 'c_select',
                 templateOptions: {label: '区县', options: Constants.districts},
-                controller: function($scope, Constants) {
+                controller: function ($scope, Constants) {
                     $scope.$watch('model.address.city.id', function (newValue, oldValue, theScope) {
-                        if(newValue !== oldValue) {
+                        if (newValue !== oldValue) {
                             // logic to reload this select's options asynchronusly based on state's value (newValue)
-                            if($scope.model[$scope.options.key] && oldValue) {
+                            if ($scope.model[$scope.options.key] && oldValue) {
                                 // reset this select
                                 $scope.model[$scope.options.key] = '';
                             }
@@ -77,13 +77,13 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
             {
                 key: 'address.circle.id',
                 type: 'c_select',
-                className:'c_select',
+                className: 'c_select',
                 templateOptions: {label: '商圈', options: Constants.circles}
             },
             {
                 key: 'address.mall.id',
                 type: 'c_select',
-                className:'c_select',
+                className: 'c_select',
                 templateOptions: {label: '商场', options: Constants.malls}
             },
             {key: 'address.address', type: 'c_input', templateOptions: {label: '地址', placeholder: '地址'}},
@@ -145,7 +145,7 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
     function toggleOne(selectedItems) {
         for (var id in selectedItems) {
             if (selectedItems.hasOwnProperty(id)) {
-                if (!selectedItems[id]&& id!= $scope.currentId) {
+                if (!selectedItems[id] && id != $scope.currentId) {
                     vm.selectAll = false;
                     return;
                 }
@@ -179,7 +179,7 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
                     $scope.currentId = data.id;
                     //console.log(data)
                     //console.log(Constants.thisMerchantStore)
-                    $scope.formBindData.model.bindShowName = '门店名称:' + (data.name || "") + ' | 商户名称:' + (data.merchant.name || "") ;
+                    $scope.formBindData.model.bindShowName = '门店名称:' + (data.name || "") + ' | 商户名称:' + (data.merchant.name || "");
 
                     //根据已关联的产品去勾选对应的checkbox
                     $scope.showCase.selectAll = false;
@@ -210,7 +210,7 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
         angular.forEach($scope.showCase.selected, function (data, index, array) {
             //data等价于array[index]
             if (data == true) {
-                if(index != $scope.currentId){
+                if (index != $scope.currentId) {
                     result.push(index);
                 }
             }
@@ -221,7 +221,7 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
             'merchantId': $scope.formBindData.model.id
         }, {}, function (respSucc) {
             if (0 != respSucc.status) {
-                $scope.toasterManage($scope.toastError,respSucc);
+                $scope.toasterManage($scope.toastError, respSucc);
                 return;
             }
 
@@ -250,7 +250,7 @@ function merchantShopCtrl($scope,Constants,cTables,cfromly,$resource,NgTablePara
             $scope.goDataTable();
         }, function (respFail) {
             //console.log(respFail);
-            $scope.toasterManage($scope.toastError,respFail);
+            $scope.toasterManage($scope.toastError, respFail);
         });
     };
 

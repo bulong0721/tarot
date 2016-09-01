@@ -2,10 +2,10 @@ package com.myee.tarot.web.admin.controller;
 
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.admin.service.AdminUserService;
-import com.myee.tarot.admin.service.RoleService;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.profile.domain.Role;
+import com.myee.tarot.profile.service.RoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +82,7 @@ public class AdminUserController {
     @ResponseBody
     AjaxPageableResponse pageRoles(Model model, HttpServletRequest request) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
-        List<Role> roleList = roleService.listAll();
+        List<Role> roleList = roleService.list();
         for (Role role : roleList) {
             Map entry = new HashMap();
             entry.put("id", role.getId());

@@ -2,6 +2,7 @@ package com.myee.tarot.customer.domain;
 
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.core.audit.Auditable;
+import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.profile.domain.Locale;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
@@ -38,6 +39,10 @@ public class Customer extends GenericEntity<Long, Customer> {
 
     @Column(name = "LAST_NAME")
     protected String lastName;
+
+    @ManyToOne(fetch = FetchType.LAZY)//懒加载会使用户登录时得到的用户信息中不包含门店，就没办法设置session默认门店__需要调用其中的属性才会加载
+    @JoinColumn(name = "STORE_ID")
+    private MerchantStore merchantStore;
 
     @ManyToOne(targetEntity = ChallengeQuestion.class)
     @JoinColumn(name = "CHALLENGE_QUESTION_ID")
@@ -111,6 +116,14 @@ public class Customer extends GenericEntity<Long, Customer> {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public MerchantStore getMerchantStore() {
+        return merchantStore;
+    }
+
+    public void setMerchantStore(MerchantStore merchantStore) {
+        this.merchantStore = merchantStore;
     }
 
     public boolean isAnonymous() {

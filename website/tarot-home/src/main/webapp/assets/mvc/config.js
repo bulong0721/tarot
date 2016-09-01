@@ -111,6 +111,21 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 }
             }
         })
+        .state('campaign.clientPrize', {
+            url: "/clientPrize",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'clientPrizeCtrl',
+            data: {
+                pageTitle: '活动管理',
+                subTitle: '小超人抽奖',
+                datatable: 'assets/mvc/campaign/view/clientPrize_datatable.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'campaign', 'clientPrizeCtrl.js')
+                }
+            }
+        })
         .state('device', {
             abstract: true,
             url: "/device",

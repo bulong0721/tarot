@@ -13,4 +13,6 @@ public interface MerchantPriceDao extends GenericEntityDao<Long , MerchantPrice>
 
     Long countSamePriceName(String priceName, Long storeId);
 
+    Long countSamePriceName(Long id , String priceName, Long storeId);
+
 }

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
 
+import java.util.List;
+
 @Service
 public class RoleServiceImpl extends GenericEntityServiceImpl<java.lang.Long, Role> implements RoleService {
 
@@ -18,6 +20,7 @@ public class RoleServiceImpl extends GenericEntityServiceImpl<java.lang.Long, Ro
         super(dao);
         this.dao = dao;
     }
+
 
 }
 

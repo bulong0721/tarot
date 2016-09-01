@@ -115,16 +115,23 @@ public class PriceInfoController {
      * 获取本商户下已使用的奖券
      * @return
      */
-    @RequestMapping(value = "api/info/findHistoryInfoByStoreToday",method = RequestMethod.GET )
+    @RequestMapping(value = {"admin/api/info/findHistoryInfoByStoreToday","shop/api/info/findHistoryInfoByStoreToday"},method = RequestMethod.GET )
     @ResponseBody
     public AjaxPageableResponse getHistoryInfoByStoreToday(HttpServletRequest request, PageRequest pageRequest){
         try {
             AjaxPageableResponse resp = new AjaxPageableResponse();
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            String path = request.getServletPath();
+            String sessionName = null;
+            if(path.contains("/admin/")) {
+                sessionName = Constants.ADMIN_STORE;
+            }else if(path.contains("/shop/")){
+                sessionName = Constants.CUSTOMER_STORE;
+            }
+            if (request.getSession().getAttribute(sessionName) == null) {
                 resp.setErrorString("当前无门店");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(sessionName);
             PageResult<PriceInfo> pageList = priceInfoService.pageList(merchantStore1.getId(), pageRequest);
             for (PriceInfo priceInfo : pageList.getList()) {
                 resp.addDataEntry(objectToEntry(priceInfo));

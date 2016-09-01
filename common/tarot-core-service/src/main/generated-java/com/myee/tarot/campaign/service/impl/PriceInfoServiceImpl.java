@@ -132,20 +132,31 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
         for (MerchantActivity activeActivity : activeActivities) {
             List<MerchantPrice> activePrices = Lists.newArrayList();
             List<MerchantPrice> prices = activeActivity.getPrices();
+            boolean isOverdue = false;
             for (MerchantPrice price : prices) {
                 // 奖券过期判断
-                Date endDate = price.getEndDate();
-                Date startToday = DateTimeUtils.startToday();
-                if (endDate.compareTo(startToday) < 0) {
-                    price.setActiveStatus(Constants.PRICE_END);
-                }
                 if (price.getActiveStatus() == Constants.PRICE_START) {
                     activePrices.add(price);
+                    //激活的奖券判断是否过期
+                    Date endDate = price.getEndDate();
+                    Date startToday = DateTimeUtils.startToday();
+                    if (endDate.compareTo(startToday) < 0) {
+                        price.setActiveStatus(Constants.PRICE_END);
+                        isOverdue = true;
+                    }
                 }
             }
-            List<Integer> priceList = getPriceCountList(activePrices);
-            activeActivity.setActivityStatus(Constants.ACTIVITY_ACTIVE);
-            activeActivity.setPriceList(JSON.toJSONString(priceList));
+            if(isOverdue){
+                for (MerchantPrice activePrice : activePrices) {
+                    activePrice.setActiveStatus(Constants.PRICE_END);
+                }
+                activeActivity.setActivityStatus(Constants.ACITIVITY_START);
+                activeActivity.setPriceList(null);
+            }else{
+                List<Integer> priceList = getPriceCountList(activePrices);
+                activeActivity.setActivityStatus(Constants.ACTIVITY_ACTIVE);
+                activeActivity.setPriceList(JSON.toJSONString(priceList));
+            }
             merchantActivityService.update(activeActivity);
             //不再使用redis
             /*if(priceList.size()==0){

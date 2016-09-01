@@ -260,7 +260,7 @@ public class FilesController {
      * @throws IllegalStateException
      * @throws IOException
      */
-    @RequestMapping(value = {"services/public/files/upload","admin/files/create"})
+    @RequestMapping(value = {"services/public/files/upload","admin/files/create","shop/files/create"})
     @ResponseBody
     public AjaxResponse createResource(@RequestParam("file") CommonsMultipartFile file, String path, @RequestParam(value = "storeId",required = false)Long storeId,HttpServletRequest request) throws IllegalStateException, IOException {
         AjaxResponse resp = AjaxResponse.success();
@@ -273,7 +273,14 @@ public class FilesController {
             }
             String storeIdStr;
             if(storeId == null ) {
-                MerchantStore merchantStore  = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+                String requestPath = request.getServletPath();
+                String sessionName = null;
+                if (requestPath.contains("/admin/")) {
+                    sessionName = Constants.ADMIN_STORE;
+                } else if (path.contains("/shop/")) {
+                    sessionName = Constants.CUSTOMER_STORE;
+                }
+                MerchantStore merchantStore  = (MerchantStore) request.getSession().getAttribute(sessionName);
                 storeIdStr = String.valueOf(merchantStore.getId());
             }
             else {

@@ -71,6 +71,19 @@ public class Constants {
 	public final static int ES_QUERY_PATTERN_SHOULD = 0;
 	public final static int ES_QUERY_PATTERN_MUST = 1;
 
+	//小超人 抽奖券开启状态
+	public final static Boolean CLIENT_PRIZE_ACTIVE_YES = true;
+	public final static Boolean CLIENT_PRIZE_ACTIVE_NO = false;
+
+	public final static int CLIENT_PRIZE_TYPE_PHONE = 0;
+	public final static int CLIENT_PRIZE_TYPE_SCANCODE = 1;
+	public final static int CLIENT_PRIZE_TYPE_THANKYOU = 2;
+
+	public final static int CLIENT_PRIZEINFO_STATUS_UNGET = 0;
+	public final static int CLIENT_PRIZEINFO_STATUS_GET = 1;
+	public final static int CLIENT_PRIZEINFO_STATUS_USED = 2;
+	public final static int CLIENT_PRIZEINFO_STATUS_EXPIRED = 3;
+
 	public final static String PRICEDRAW = "PRICEDRAW";
 
 	public final static String VOICELOG_BAK = "voicelogbak"; //存放语音日志备份

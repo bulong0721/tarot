@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 @Controller
 public class MerchantActivityController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MerchantActivity.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MerchantActivityController.class);
 
     @Autowired
     private MerchantActivityService merchantActivityService;
@@ -83,8 +83,8 @@ public class MerchantActivityController {
                 }
             }
             //前台再次判断 奖券名字是否重复
-           String checkPriceName = checkPrice.getName();
-            boolean isOnlyPriceName = merchantPriceService.isOnlyPriceName(checkPriceName,merchantActivity.getStore().getId());
+            String checkPriceName = checkPrice.getName();
+            boolean isOnlyPriceName = merchantPriceService.isOnlyPriceName(checkPrice.getId(),checkPriceName,merchantActivity.getStore().getId());
             if(isOnlyPriceName ==  false){
                 resp.setErrorString("该奖券名称重复");
                 resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);

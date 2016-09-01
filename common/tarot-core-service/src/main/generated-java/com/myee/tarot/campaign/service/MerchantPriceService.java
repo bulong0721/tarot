@@ -12,5 +12,5 @@ public interface MerchantPriceService extends GenericEntityService<Long , Mercha
 
     List<MerchantPrice> findPriceByActivityId(Long activityId);
 
-    boolean isOnlyPriceName(String priceName, Long storeId);
+    boolean isOnlyPriceName(Long id, String priceName, Long storeId);
 }

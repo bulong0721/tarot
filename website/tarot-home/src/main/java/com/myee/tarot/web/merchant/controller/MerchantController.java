@@ -99,7 +99,7 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "admin/merchant/getSwitch", method = RequestMethod.GET)
+    @RequestMapping(value = {"admin/merchant/getSwitch","shop/merchant/getSwitch"}, method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse getSwitchMerchant(HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -199,13 +199,13 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "admin/merchant/typeList4Select", method = RequestMethod.GET)
+    @RequestMapping(value = {"admin/merchant/typeList4Select","shop/merchant/typeList4Select"}, method = RequestMethod.GET)
     @ResponseBody
     public List getMerchantType4Select() {
         return new BusinessType().getMerchantBusinessType4Select();
     }
 
-    @RequestMapping(value = "admin/merchant/cuisineList4Select", method = RequestMethod.GET)
+    @RequestMapping(value = {"admin/merchant/cuisineList4Select","shop/merchant/cuisineList4Select"}, method = RequestMethod.GET)
     @ResponseBody
     public List getMerchantCuisine4Select() {
         return new CuisineType().getMerchantCuisine4Select();
@@ -421,7 +421,7 @@ public class MerchantController {
                         bindStores.add(store);
                     }
                 }
-                resp.addDataEntry(objectToEntryAdd(merchantStore,bindStores));
+                resp.addDataEntry(objectToEntryAdd(merchantStore, bindStores));
             }
             resp.setRecordsTotal(pageList.getRecordsTotal());
         } catch (Exception e) {
@@ -494,18 +494,25 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "admin/merchantStore/getSwitch", method = RequestMethod.GET)
+    @RequestMapping(value = {"admin/merchantStore/getSwitch","shop/merchantStore/getSwitch"}, method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse getSwitchMerchantStore(HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
+            String path = request.getServletPath();
+            String sessionName = null;
+            if(path.contains("/admin/")) {
+                sessionName = Constants.ADMIN_STORE;
+            }else if(path.contains("/shop/")){
+                sessionName = Constants.CUSTOMER_STORE;
+            }
             //从session中读取merchantStore信息，如果为空，则提示用户先切换门店
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            if (request.getSession().getAttribute(sessionName) == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(sessionName);
             resp.addDataEntry(objectToEntry(merchantStore1));
         } catch (Exception e) {
             e.printStackTrace();

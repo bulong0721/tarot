@@ -13,6 +13,7 @@ function constServiceCtor($resource, $q) {
     //从后台拿商户菜系
     vm.merchantCuisine = $resource('./merchant/cuisineList4Select').query();
 
+
     //切换商户
     //vm.thisMerchant = {};
     //vm.getSwitchMerchant = function () {

@@ -3,6 +3,9 @@ package com.myee.tarot.web.filter;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.customer.domain.Customer;
 import com.myee.tarot.customer.service.CustomerService;
+import com.myee.tarot.merchant.domain.Merchant;
+import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.merchant.service.MerchantService;
 import com.myee.tarot.web.util.SessionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +24,15 @@ public class CustomerFilter extends HandlerInterceptorAdapter {
     @Autowired
     private CustomerService customerService;
 
+    @Autowired
+    private MerchantService merchantService;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Customer user = SessionUtil.getSessionAttribute(Constants.CUSTOMER_USER, request);
 
         String userName = request.getRemoteUser();
+        MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.CUSTOMER_STORE);
 
         if (userName == null) {
 
@@ -44,8 +51,17 @@ public class CustomerFilter extends HandlerInterceptorAdapter {
                 user = customerService.getByUsername(userName);
                 SessionUtil.setSessionAttribute(Constants.CUSTOMER_USER, user, request);
             }
-            response.setCharacterEncoding("UTF-8");
         }
+
+        if (store == null && user != null) {
+//            store = merchantStoreService.getByCode(storeCode);
+            store = user.getMerchantStore();
+            Merchant merchant = merchantService.findById(store.getMerchant().getId());
+            request.getSession().setAttribute(Constants.CUSTOMER_STORE, store);
+            request.getSession().setAttribute(Constants.CUSTOMER_MERCHANT , merchant);
+        }
+        request.setAttribute(Constants.CUSTOMER_STORE, store);
+        response.setCharacterEncoding("UTF-8");
         return true;
     }
 }

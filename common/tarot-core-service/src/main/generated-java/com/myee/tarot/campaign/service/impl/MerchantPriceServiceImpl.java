@@ -30,8 +30,15 @@ public class MerchantPriceServiceImpl extends GenericEntityServiceImpl<Long , Me
     }
 
     @Override
-    public boolean isOnlyPriceName(String priceName, Long storeId) {
-        Long num = merchantPriceDao.countSamePriceName(priceName, storeId);
+    public boolean isOnlyPriceName(Long id, String priceName, Long storeId) {
+        Long num = null;
+        if(id == null){
+            //新增
+            num = merchantPriceDao.countSamePriceName(priceName, storeId);
+        }else {
+            //修改
+            num = merchantPriceDao.countSamePriceName(id , priceName, storeId);
+        }
         return num == 0 ? true: false;
     }
 

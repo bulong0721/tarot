@@ -26,7 +26,13 @@ public class PriceInfoDaoImpl extends GenericEntityDaoImpl<Long, PriceInfo> impl
     public List<PriceInfo> findByStatusAndKeyId(String keyId, int status) {
         QPriceInfo qPriceInfo = QPriceInfo.priceInfo;
         JPQLQuery<PriceInfo> query = new JPAQuery(getEntityManager());
-        List<PriceInfo> result = query.from(qPriceInfo).where(qPriceInfo.status.eq(status).and(qPriceInfo.keyId.eq(keyId))).orderBy(qPriceInfo.getDate.desc()).fetch(); //按照获取时间倒序排序
+        query.from(qPriceInfo).where(qPriceInfo.status.eq(status).and(qPriceInfo.keyId.eq(keyId)));
+        if(status == Constants.PRICEINFO_USED){
+            query.orderBy(qPriceInfo.checkDate.desc());
+        }else {
+            query.orderBy(qPriceInfo.getDate.desc());
+        }
+        List<PriceInfo> result = query.fetch(); //按照获取时间倒序排序
         return result;
     }
 
