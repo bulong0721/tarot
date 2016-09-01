@@ -103,4 +103,20 @@ public class Constants {
 	public final static String MY_LOTTERY_DETAIL_URL = "http://www.myee7.com/tarot_test/customerClient/index.html#!/myCouponView/";
 
 	public static final String OFF_ALLOW_EXCEL = "((doc)|(wps)|(vsd)|(docx))";	//只允许符合此规则的excel（正则）
+
+	//本店活动
+	public final static int API_OLD_TYPE_SHOP = 0;
+	//木爷活动
+	public final static int API_OLD_TYPE_MUYE = 1;
+	//木爷活动最大发布数量
+	public final static int ROLL_MAIN_PUBLISH_MAX = 5;
+	//本店活动最大发布数量
+	public final static int ROLL_MAIN_SHOP_MAX = 10;
+	//木爷视频最大发布数量
+	public final static int VIDEO_PUBLISH_MAX = 30;
+	//木爷素材最大发布数量
+	public final static int MATERIAL_PUBLISH_MAX = 30;
+	//木爷广告最大发布数量
+	public final static int ADVERTISEMENT_PUBLISH_MAX = 5;
+
 }

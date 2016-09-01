@@ -5,12 +5,12 @@ import com.myee.tarot.apiold.domain.MaterialPublish;
 import com.myee.tarot.apiold.service.MaterialBusinessService;
 import com.myee.tarot.apiold.service.MaterialPublishService;
 import com.myee.tarot.apiold.view.MaterialBusinessDTView;
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.web.apiold.controller.BaseController;
 import com.myee.tarot.weixin.domain.ClientAjaxResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,11 +50,11 @@ public class MaterialManageController extends BaseController {
         try {
             Date now = new Date();
             //获取本店素材列表,每个店铺限定一个
-            List<MaterialBusiness> listBusiness = materialBusinessManageService.listByStore(orgId,now);
+            List<MaterialBusiness> listBusiness = materialBusinessManageService.listByTypeStoreTime(orgId, Constants.API_OLD_TYPE_SHOP, now);
             List<MaterialPublish> listPublish = null;
             //获取推送商业视频列表
-            if(type == 1){
-                listPublish = materialPublishManageService.listByStore(orgId,now);
+            if(type == Constants.API_OLD_TYPE_MUYE){
+                listPublish = materialPublishManageService.listByStoreTime(orgId, now);
             }
 
             if( listBusiness == null && listPublish == null ){

@@ -10,5 +10,5 @@ import java.util.List;
  * Created by Chay on 2016/8/10.
  */
 public interface VideoPublishDao extends GenericEntityDao<Long, VideoPublish> {
-    List<VideoPublish> listByStore(Long storeId, Date now);
+    List<VideoPublish> listByStoreTime(Long storeId, Date now);
 }

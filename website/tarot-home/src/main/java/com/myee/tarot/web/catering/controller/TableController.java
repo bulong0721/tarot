@@ -40,10 +40,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Martin on 2016/4/21.
@@ -624,6 +621,7 @@ public class TableController {
                         int m =0;
                         MenuInfo menu = new MenuInfo();
                         menu.setStore(merchantStore1);
+                        menu.setCreated(new Date());
                         for (int j = 0; j < values.length; j++) {
                             if(StringUtils.isNotEmpty(values[j])){
                                 String temp = values[j].trim();

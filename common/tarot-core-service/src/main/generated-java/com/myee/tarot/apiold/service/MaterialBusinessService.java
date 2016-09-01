@@ -10,7 +10,7 @@ import java.util.List;
  * Created by Chay on 2016/8/10.
  */
 public interface MaterialBusinessService extends GenericEntityService<Long, MaterialBusiness> {
-    List<MaterialBusiness> listByStore(Long storeId,Date now);
+    List<MaterialBusiness> listByTypeStoreTime(Long storeId,int type, Date now);
 
     List<MaterialBusiness> listByMaterialFileKind(String materialFileKind);
 }

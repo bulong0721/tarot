@@ -3,14 +3,14 @@
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
              version="2.0">
     <persistence-unit name="sm-unit">
-        <class>com.myee.tarot.admin.domain.AdminModule</class>
+        <!--<class>com.myee.tarot.admin.domain.AdminModule</class>-->
         <class>com.myee.tarot.admin.domain.AdminUser</class>
         <class>com.myee.tarot.admin.domain.AdminRole</class>
         <class>com.myee.tarot.admin.domain.AdminPermission</class>
         <class>com.myee.tarot.admin.domain.AdminPermissionQualifiedEntity</class>
         <class>com.myee.tarot.admin.domain.AdminUserAttribute</class>
         <class>com.myee.tarot.admin.domain.ForgotPasswordSecurityToken</class>
-        <class>com.myee.tarot.admin.domain.AdminSection</class>
+        <!--<class>com.myee.tarot.admin.domain.AdminSection</class>-->
 
         <class>com.myee.tarot.profile.domain.GeoZone</class>
         <class>com.myee.tarot.profile.domain.ISOCountry</class>
@@ -77,5 +77,11 @@
         <class>com.myee.tarot.apiold.domain.Video</class>
         <class>com.myee.tarot.apiold.domain.VideoBusiness</class>
         <class>com.myee.tarot.apiold.domain.VideoPublish</class>
+        <class>com.myee.tarot.apiold.domain.Advertisement</class>
+        <class>com.myee.tarot.apiold.domain.AdvertisementPublish</class>
+        <class>com.myee.tarot.apiold.domain.RollMain</class>
+        <class>com.myee.tarot.apiold.domain.RollMainPublish</class>
+        <class>com.myee.tarot.apiold.domain.RollDetail</class>
+        <class>com.myee.tarot.apiold.domain.Picture</class>
     </persistence-unit>
 </persistence>

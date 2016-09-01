@@ -10,5 +10,5 @@ import java.util.List;
  * Created by Chay on 2016/8/10.
  */
 public interface MaterialPublishService extends GenericEntityService<Long, MaterialPublish> {
-    List<MaterialPublish> listByStore(Long storeId,Date now);
+    List<MaterialPublish> listByStoreTime(Long storeId, Date now);
 }

@@ -20,6 +20,7 @@ public class VideoPublish extends GenericEntity<Long, VideoPublish> {
 	@JoinColumn(name = "VIDEO_BUSINESS_ID")
 	private VideoBusiness videoBusiness;
 
+	//推送该视频到哪个门店
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "STORE_ID")
 	private MerchantStore store;

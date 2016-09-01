@@ -24,8 +24,8 @@ public class VideoBusinessServiceImpl extends GenericEntityServiceImpl<Long, Vid
         this.videoBusinessDao = videoBusinessDao;
     }
 
-    public List<VideoBusiness> listByStore(Long storeId,Date now){
-        return videoBusinessDao.listByStore(storeId, now);
+    public List<VideoBusiness> listByTypeStoreTime(Long storeId,int type, Date now){
+        return videoBusinessDao.listByTypeStoreTime(storeId,type, now);
     }
 
     public VideoBusiness findByIdType(Long vBId, Integer type){

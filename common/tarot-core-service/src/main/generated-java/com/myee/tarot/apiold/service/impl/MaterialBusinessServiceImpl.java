@@ -1,11 +1,8 @@
 package com.myee.tarot.apiold.service.impl;
 
 import com.myee.tarot.apiold.dao.MaterialBusinessDao;
-import com.myee.tarot.apiold.dao.SendRecordDao;
 import com.myee.tarot.apiold.domain.MaterialBusiness;
-import com.myee.tarot.apiold.domain.SendRecord;
 import com.myee.tarot.apiold.service.MaterialBusinessService;
-import com.myee.tarot.apiold.service.SendRecordService;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,8 +24,8 @@ public class MaterialBusinessServiceImpl extends GenericEntityServiceImpl<Long, 
         this.materialBusinessDao = materialBusinessDao;
     }
 
-    public List<MaterialBusiness> listByStore(Long storeId,Date now){
-        return materialBusinessDao.listByStore(storeId, now);
+    public List<MaterialBusiness> listByTypeStoreTime(Long storeId,int type, Date now){
+        return materialBusinessDao.listByTypeStoreTime(storeId,type, now);
     }
 
     public List<MaterialBusiness> listByMaterialFileKind(String materialFileKind){
