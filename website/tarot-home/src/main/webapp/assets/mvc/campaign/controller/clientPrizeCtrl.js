@@ -71,7 +71,6 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource) {
 
             {
                 id: 'smallImage',
-                key: 'smallPic',
                 type: 'upload',
                 name: 'img',
                 templateOptions: {type: 'file', label: '奖券小图标', placeholder: '奖券小图标'}
@@ -79,11 +78,10 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource) {
             {
                 key: 'imagesSmall',
                 type: 'c_images',
-                templateOptions: {label: '奖券小图标预览', Multi: false}
+                templateOptions: {pic:'smallPic',label: '奖券小图标预览', Multi: false}
             },
             {
                 id: 'bigImage',
-                key: 'bigPic',
                 type: 'upload',
                 name: 'img',
                 templateOptions: {type: 'file', label: '奖券大图标', placeholder: '奖券大图标'}
@@ -91,7 +89,7 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource) {
             {
                 key: 'imagesBig',
                 type: 'c_images',
-                templateOptions: {label: '奖券大图标预览', Multi: false}
+                templateOptions: {pic:'bigPic',label: '奖券大图标预览', Multi: false}
             },
             {
                 key: 'description',
@@ -140,17 +138,12 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource) {
                     return;
                 }
                 $scope.toasterManage($scope.toastUploadSucc);
+                var pic = res.dataMap.tree.downloadPath;
                 if(uploadId == "smallImage"){
-                    $scope.formData.model.smallPic = res.dataMap.tree.downloadPath;
-                    //console.log($scope.formData.model.images)
-                    $scope.formData.model.imagesSmall = res.dataMap.tree.downloadPath;
+                    $scope.formData.model.imagesSmall = pic;
                 }else if(uploadId == "bigImage"){
-                    $scope.formData.model.bigPic = res.dataMap.tree.downloadPath;
-                    //console.log($scope.formData.model.images)
-                    $scope.formData.model.imagesBig = res.dataMap.tree.downloadPath;
+                    $scope.formData.model.imagesBig = pic;
                 }
             })
     });
-
-
 }
