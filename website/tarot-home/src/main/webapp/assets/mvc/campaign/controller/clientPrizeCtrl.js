@@ -78,7 +78,7 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource) {
             {
                 key: 'imagesSmall',
                 type: 'c_images',
-                templateOptions: {pic:'smallPic',label: '奖券小图标预览', Multi: false}
+                templateOptions: {label: '奖券小图标预览', Multi: false}
             },
             {
                 id: 'bigImage',
@@ -89,7 +89,7 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource) {
             {
                 key: 'imagesBig',
                 type: 'c_images',
-                templateOptions: {pic:'bigPic',label: '奖券大图标预览', Multi: false}
+                templateOptions: {label: '奖券大图标预览', Multi: false}
             },
             {
                 key: 'description',
