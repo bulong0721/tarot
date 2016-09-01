@@ -24,7 +24,7 @@ public class MaterialPublishServiceImpl extends GenericEntityServiceImpl<Long, M
         this.materialPublishDao = materialPublishDao;
     }
 
-    public List<MaterialPublish> listByStore(Long storeId,Date now){
-        return materialPublishDao.listByStore(storeId,now);
+    public List<MaterialPublish> listByStoreTime(Long storeId, Date now){
+        return materialPublishDao.listByStoreTime(storeId, now);
     }
 }

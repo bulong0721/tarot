@@ -5,6 +5,7 @@ import com.myee.tarot.apiold.domain.VideoPublish;
 import com.myee.tarot.apiold.service.VideoBusinessService;
 import com.myee.tarot.apiold.service.VideoPublishService;
 import com.myee.tarot.apiold.view.VideoBusinessView;
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.web.apiold.controller.BaseController;
 import com.myee.tarot.weixin.domain.ClientAjaxResult;
 import org.slf4j.Logger;
@@ -53,15 +54,14 @@ public class VideoManageController extends BaseController {
                                               @RequestParam(value = "type", required = false) Integer type) {
         logger.info("查询点点笔广告视频列表,orgId:" + orgId);
         try {
-//            List<VideoBusiness> list = videoBusinessManageService.getEntities(new VideoBusiness(null, orgId, type, Constants.VIDEO_ROLLMAIN));//取待机广告视频
             //取待机广告视频和点播视频，让pad每天开机的时候就开始下载点播视频，这样在点播的时候才会流畅
             Date now = new Date();
             //获取本店视频列表，每个店铺限定2个，一个待机视频，一个点播视频
-            List<VideoBusiness> listBusiness = videoBusinessManageService.listByStore(orgId,now);
+            List<VideoBusiness> listBusiness = videoBusinessManageService.listByTypeStoreTime(orgId, Constants.API_OLD_TYPE_SHOP, now);
             List<VideoPublish> listPublish = null;
             //获取推送商业视频列表
             if(type == 1){
-                listPublish = videoPublishManageService.listByStore(orgId,now);
+                listPublish = videoPublishManageService.listByStoreTime(orgId, now);
             }
 
             if( listBusiness == null && listPublish == null ){

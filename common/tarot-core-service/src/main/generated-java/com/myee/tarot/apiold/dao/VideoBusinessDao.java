@@ -10,7 +10,7 @@ import java.util.List;
  * Created by Chay on 2016/8/10.
  */
 public interface VideoBusinessDao extends GenericEntityDao<Long, VideoBusiness> {
-    List<VideoBusiness> listByStore(Long storeId, Date now);
+    List<VideoBusiness> listByTypeStoreTime(Long storeId,int type, Date now);
 
     VideoBusiness findByIdType(Long vBId, Integer type);
 }

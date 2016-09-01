@@ -3,6 +3,7 @@ package com.myee.tarot.apiold.dao.impl;
 import com.myee.tarot.apiold.dao.MaterialPublishDao;
 import com.myee.tarot.apiold.domain.MaterialPublish;
 import com.myee.tarot.apiold.domain.QMaterialPublish;
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -17,7 +18,7 @@ import java.util.List;
 @Repository
 public class MaterialPublishDaoImpl extends GenericEntityDaoImpl<Long, MaterialPublish> implements MaterialPublishDao {
 
-    public List<MaterialPublish> listByStore(Long storeId,Date now){
+    public List<MaterialPublish> listByStoreTime(Long storeId, Date now){
         QMaterialPublish qMaterialPublish = QMaterialPublish.materialPublish;
 
         JPQLQuery<MaterialPublish> query = new JPAQuery(getEntityManager());
@@ -31,9 +32,9 @@ public class MaterialPublishDaoImpl extends GenericEntityDaoImpl<Long, MaterialP
             query.where((qMaterialPublish.timeStart.before(now))
                     .and(qMaterialPublish.timeEnd.after(now)));
         }
-        query.where((qMaterialPublish.materialBusiness.type.eq(1)).and(qMaterialPublish.active.eq(true)))
+        query.where((qMaterialPublish.materialBusiness.type.eq(Constants.API_OLD_TYPE_MUYE)).and(qMaterialPublish.active.eq(true)))
                 .orderBy(qMaterialPublish.id.desc())
-                .offset(0).limit(30);
+                .offset(0).limit(Constants.MATERIAL_PUBLISH_MAX);
 
         return query.fetch();
     }

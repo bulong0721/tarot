@@ -3,6 +3,7 @@ package com.myee.tarot.apiold.dao.impl;
 import com.myee.tarot.apiold.dao.VideoBusinessDao;
 import com.myee.tarot.apiold.domain.QVideoBusiness;
 import com.myee.tarot.apiold.domain.VideoBusiness;
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 @Repository
 public class VideoBusinessDaoImpl extends GenericEntityDaoImpl<Long, VideoBusiness> implements VideoBusinessDao {
-    public List<VideoBusiness> listByStore(Long storeId,Date now){
+    public List<VideoBusiness> listByTypeStoreTime(Long storeId,int type, Date now){
         QVideoBusiness qVideoBusiness = QVideoBusiness.videoBusiness;
 
         JPQLQuery<VideoBusiness> query = new JPAQuery(getEntityManager());
@@ -29,10 +30,13 @@ public class VideoBusinessDaoImpl extends GenericEntityDaoImpl<Long, VideoBusine
             query.where((qVideoBusiness.timeStart.before(now))
                     .and(qVideoBusiness.timeEnd.after(now)));
         }
-        query.where((qVideoBusiness.type.eq(0)).and(qVideoBusiness.active.eq(true)))
-                .orderBy(qVideoBusiness.id.desc())
-                .offset(0).limit(2);//取两个视频，一个待机视频，一个点播视频
+        query.where((qVideoBusiness.type.eq(type)).and(qVideoBusiness.active.eq(true)))
+                .orderBy(qVideoBusiness.id.desc());
 
+        //本店取两个视频，一个待机视频，一个点播视频
+        if(type == Constants.API_OLD_TYPE_SHOP) {
+            query.offset(0).limit(2);
+        }
         return query.fetch();
     }
 
@@ -42,6 +46,9 @@ public class VideoBusinessDaoImpl extends GenericEntityDaoImpl<Long, VideoBusine
         JPQLQuery<VideoBusiness> query = new JPAQuery(getEntityManager());
 
         query.from(qVideoBusiness);
+        if(null == type){
+            type = 0;
+        }
         query.where((qVideoBusiness.type.eq(type)).and(qVideoBusiness.id.eq(vBId)));
 
         return query.fetchOne();

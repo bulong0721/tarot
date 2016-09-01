@@ -7,9 +7,9 @@ angular.module('myee', [])
 /**
  * 小超人菜品列表 - controller
  */
-superMenuMgrCtrl.$inject = ['$scope', 'cTables', 'cfromly','$resource'];
+superMenuMgrCtrl.$inject = ['$scope', 'cTables', 'cfromly','$resource','$filter'];
 
-function superMenuMgrCtrl($scope, cTables, cfromly,$resource) {
+function superMenuMgrCtrl($scope, cTables, cfromly,$resource,$filter) {
     var mgrData = {
         fields: [
             {
@@ -122,28 +122,29 @@ function superMenuMgrCtrl($scope, cTables, cfromly,$resource) {
         $scope.activeTab = iEditor;
     };
 
+    //console.log( $filter('date')(new Date().getTime(), "yyyyMMdd") );
     //上传控件监听器
     $scope.$on('fileToUpload', function (event, arg) {
         //console.log(arg)
         //上传文件到后台
         $resource(mgrData.api.upload).save({
-            path: "image/superMenu",
+            path: "image/superMenu/"+$filter('date')(new Date().getTime(), "yyyyMMdd"),//按日期分图片文件夹
             type: "file"
         }, arg).$promise.then(function (res) {
-                //console.log(res)
-                if (0 != res.status) {
-                    $scope.toasterManage($scope.toastError, res);
-                    return;
-                }
-                $scope.toasterManage($scope.toastUploadSucc);
-                $scope.formData.model.photo = res.dataMap.tree.downloadPath;
+            //console.log(res)
+            if (0 != res.status) {
+                $scope.toasterManage($scope.toastError, res);
+                return;
+            }
+            $scope.toasterManage($scope.toastUploadSucc);
+            $scope.formData.model.photo = res.dataMap.tree.downloadPath;
 
-                //console.log($scope.formData.model.images)
-                $scope.formData.model.images = res.dataMap.tree.downloadPath;
-            })
+            //console.log($scope.formData.model.images)
+            $scope.formData.model.images = res.dataMap.tree.downloadPath;
+        })
     });
 
-    //上传菜单
+    //批量上传菜单
     $scope.menuUP = function(file){
         console.log(file)
         var fd = new FormData();

@@ -24,7 +24,7 @@ public class VideoPublishServiceImpl extends GenericEntityServiceImpl<Long, Vide
         this.videoPublishDao = videoPublishDao;
     }
 
-    public List<VideoPublish> listByStore(Long storeId,Date now){
-        return videoPublishDao.listByStore(storeId,now);
+    public List<VideoPublish> listByStoreTime(Long storeId, Date now){
+        return videoPublishDao.listByStoreTime(storeId, now);
     }
 }
