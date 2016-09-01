@@ -81,8 +81,11 @@ public class PushController {
             jsonObject.remove("salt");
             jsonObject.put("salt", store.getId());
         }
+
         FileItem vo = JSON.parseObject(jsonObject.toJSONString(), FileItem.class);
         Long orgID = vo.getSalt();
+		String name = vo.getName();
+
         boolean editorModel = false;
         Map<String, FileItem> resMap = Maps.newLinkedHashMap();
         try {
@@ -91,7 +94,6 @@ public class PushController {
             if (dest.exists() && dest.isFile() && !StringUtil.isNullOrEmpty(vo.getContent(), true)) {  //如果文件已经存在，则为编辑模式,
                 editorModel = true;
                 //删除原文件，创建一个新的文件，将内容写入
-                String name = vo.getName();
                 String path = dest.getAbsolutePath().substring(0, dest.getAbsolutePath().lastIndexOf(File.separator));
                 dest.delete();
                 File desFile = new File(path + File.separator + name);
@@ -102,21 +104,18 @@ public class PushController {
             if (!editorModel && !dest.exists())   //新增文件夹和文件需要检测文件夹是否存在
                 dest.mkdirs();
             if (!editorModel && file != null && !file.isEmpty()) {  //文件上传
-                String fileName = file.getFileItem().getName();
-
+//                String fileName = file.getFileItem().getName();
                 File desDir = new File(dest + File.separator + currPath);
                 if (!desDir.exists())
                     desDir.mkdirs();
-                File desFile = new File(desDir + File.separator + fileName);
+                File desFile = new File(desDir + File.separator + name);
                 desFile.createNewFile();
                 file.transferTo(desFile);
             }
             if (!editorModel && !StringUtil.isNullOrEmpty(vo.getContent(), true)) { //界面输入文件内容
-                String name = vo.getName();
                 File desDir = new File(dest + File.separator + currPath);
                 if (!desDir.exists())
                     desDir.mkdirs();
-
                 File desFile = new File(desDir + File.separator + name);
                 desFile.createNewFile();
                 FileUtils.writeStringToFile(desFile, vo.getContent());
