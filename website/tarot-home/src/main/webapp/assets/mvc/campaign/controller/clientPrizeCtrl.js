@@ -68,6 +68,7 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource) {
                     }
                 }
             },
+
             {
                 id: 'smallImage',
                 key: 'smallPic',
