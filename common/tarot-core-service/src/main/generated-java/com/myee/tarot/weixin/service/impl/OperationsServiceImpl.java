@@ -287,17 +287,13 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
             List<WxWaitToken> rwList = waitTokenDao.listByConditions(waitToken.getShopId(), waitToken.getTableTypeId(), WaitTokenState.WAITING.getValue());
             for (WxWaitToken rw : rwList) {
                 if (rw.getOpenId() != null && rw.getOpenId().trim().length() > 0) {
-                    //比较token查询进展
+					//比较token查询进展
                     Map<String, Object> msgMap = listProgressByIdentityCode(rw.getIdentityCode());
                     sendImageArticleMsg(msgMap);
                 }
             }
         }
-        if (backStatus == 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return backStatus == 1;
     }
 
     /**
