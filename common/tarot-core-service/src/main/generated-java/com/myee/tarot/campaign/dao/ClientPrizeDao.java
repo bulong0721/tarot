@@ -15,4 +15,6 @@ public interface ClientPrizeDao extends GenericEntityDao<Long, ClientPrize> {
     PageResult<ClientPrize> pageList(PageRequest pageRequest, Long storeId);
 
     List<ClientPrize> listActive(Long storeId);
+
+    List<ClientPrize> listAllActive();
 }

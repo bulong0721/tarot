@@ -89,6 +89,7 @@ function constServiceCtor($resource, $q) {
 
 
     };
+    vm.downloadHome = "http://127.0.0.1/push/";
 
 }
 

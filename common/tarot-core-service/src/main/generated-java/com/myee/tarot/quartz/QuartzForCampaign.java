@@ -1,5 +1,7 @@
 package com.myee.tarot.quartz;
 
+import com.myee.tarot.campaign.service.ClientPrizeGetInfoService;
+import com.myee.tarot.campaign.service.ClientPrizeService;
 import com.myee.tarot.campaign.service.PriceInfoService;
 import com.myee.tarot.core.exception.ServiceException;
 import org.slf4j.Logger;
@@ -21,6 +23,10 @@ public class QuartzForCampaign {
 
     @Autowired
     private PriceInfoService priceInfoService;
+    @Autowired
+    private ClientPrizeGetInfoService clientPrizeGetInfoService;
+    @Autowired
+    private ClientPrizeService clientPrizeService;
 
     //@Scheduled(cron = "0/5 * *  * * ? ")//测试每隔1秒隔行一次
     public void run(){
@@ -28,6 +34,7 @@ public class QuartzForCampaign {
                 new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ").format(new Date()));
     }
 
+    //大学士抽奖定时器
     @Scheduled(cron = "0 1 0 * * ?")  //每天凌晨0点1分更新奖券
     //@Scheduled(cron = "0 */1 * * * ?")
     public void updateDrawRedisList(){
@@ -39,6 +46,34 @@ public class QuartzForCampaign {
             e.printStackTrace();
         }
         LOGGER.info("数据更新结束");
+    }
+
+    //小超人抽奖定时器
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    //每天凌晨扫描过期
+    public void scanClientPrizeOverDate() {
+        LOGGER.info("扫描过期开始");
+        try {
+            clientPrizeService.scanClientPrizeOverDate();
+        } catch (Exception e) {
+            LOGGER.error("扫描过期失败");
+            e.printStackTrace();
+        }
+        LOGGER.info("扫描过期结束");
+    }
+
+    @Scheduled(cron = "0 0/5 * * * ?") //每隔5分钟执行一次
+    //定时清理未领取的奖券
+    public void overFiveMinGetInfo() {
+        LOGGER.info("检测未领取奖券");
+        try {
+            clientPrizeGetInfoService.overFiveMinGetInfo();
+        } catch (Exception e) {
+            LOGGER.error("检测奖券出现错误");
+            e.printStackTrace();
+        }
+        LOGGER.info("检测结束");
     }
 
 }

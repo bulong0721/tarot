@@ -3,6 +3,7 @@ package com.myee.tarot.web.campaign.controller;
 import com.google.common.collect.Lists;
 import com.myee.tarot.campaign.service.ClientPrizeGetInfoService;
 import com.myee.tarot.campaign.service.ClientPrizeService;
+import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
 import com.myee.tarot.clientprize.domain.ClientPrize;
 import com.myee.tarot.clientprize.domain.ClientPrizeGetInfo;
 import com.myee.tarot.core.Constants;
@@ -58,6 +59,22 @@ public class ClientPrizeController {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
+            //在此判断 设置时间是否合理
+            Date startDate = clientPrize.getStartDate();
+            Date endDate = clientPrize.getEndDate();
+            Date startToday = DateTimeUtils.startToday();
+            if(startDate.compareTo(startToday) < 0){   //开始时间小于当天开始时间
+                resp.setErrorString("有效期开始日期不得小于当天日期");
+                resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                return resp;
+            }else {
+                if(endDate.compareTo(startDate) < 0){  //有效期结束时间不能小于开始时间
+                    resp.setErrorString("有效期结束时间不能小于开始时间");
+                    resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                    return resp;
+                }
+            }
+            //添加 修改
             MerchantStore merchantStore = (MerchantStore) request.getSession().getAttribute(sessionName);
             clientPrize.setLeftNum(clientPrize.getTotal());
             clientPrize.setStore(merchantStore);
@@ -153,6 +170,107 @@ public class ClientPrizeController {
         return resp;
     }
 
+    /**
+     * 获取小超人 兑奖页面的历史兑奖记录
+     *
+     * @param request
+     * @param pageRequest
+     * @return
+     */
+    @RequestMapping(value = {"admin/clientPrizeInfo/pagingListOfChecked", "shop/clientPrizeInfo/pagingListOfChecked"}, method = RequestMethod.GET)
+    public AjaxPageableResponse pageListOfPrizeInfoChecked(HttpServletRequest request, PageRequest pageRequest) {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
+        try {
+            String path = request.getServletPath();
+            String sessionName = null;
+            if (path.contains("/admin/")) {
+                sessionName = Constants.ADMIN_STORE;
+            } else if (path.contains("/shop/")) {
+                sessionName = Constants.CUSTOMER_STORE;
+            }
+            //从session中读取merchantStore信息，如果为空，则提示用户先切换门店
+            if (request.getSession().getAttribute(sessionName) == null) {
+                resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            MerchantStore store = (MerchantStore) request.getSession().getAttribute(sessionName);
+            PageResult<ClientPrizeGetInfo> pageClientGetPrizes = clientPrizeGetInfoService.pageListOfChecked(pageRequest, store.getId());
+            List<ClientPrizeGetInfo> clientPrizeGetList = pageClientGetPrizes.getList();
+            for (ClientPrizeGetInfo clientPrizeGetInfo : clientPrizeGetList) {
+                resp.addDataEntry(objectToEntryForInfo(clientPrizeGetInfo));
+            }
+            resp.setRecordsTotal(pageClientGetPrizes.getRecordsTotal());
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.setErrorString("出错");
+        }
+        return resp;
+    }
+
+    /**
+     * 检验验证码 兑奖
+     * @param checkCode
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = {"admin/clientPrizeInfo/checkClientPriceInfo", "shop/clientPrizeInfo/checkClientPriceInfo"},method = RequestMethod.POST)
+    public AjaxResponse checkClientPriceInfo(@RequestParam("checkCode")String checkCode,HttpServletRequest request){
+        AjaxResponse resp = new AjaxResponse();
+        try {
+            String path = request.getServletPath();
+            String sessionName = null;
+            if (path.contains("/admin/")) {
+                sessionName = Constants.ADMIN_STORE;
+            } else if (path.contains("/shop/")) {
+                sessionName = Constants.CUSTOMER_STORE;
+            }
+            //从session中读取merchantStore信息，如果为空，则提示用户先切换门店
+            if (request.getSession().getAttribute(sessionName) == null) {
+                resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            MerchantStore store = (MerchantStore) request.getSession().getAttribute(sessionName);
+            ClientPrizeGetInfo clientPrizeGetInfo = clientPrizeGetInfoService.checkClientPriceInfo(store.getId(), checkCode.toUpperCase());
+            resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            if(clientPrizeGetInfo!= null){
+                int status = clientPrizeGetInfo.getStatus();
+                if(status == Constants.CLIENT_PRIZEINFO_STATUS_EXPIRED){
+                    resp.setErrorString("该优惠券已过期");
+                }else if(status==Constants.CLIENT_PRIZEINFO_STATUS_USED){
+                    resp.setErrorString("该优惠码已被使用");
+                }else{
+                    //再次判断是否过期或是否未在使用期内
+                    Date startDate = clientPrizeGetInfo.getPrizeStartDate();
+                    Date endDate = clientPrizeGetInfo.getPrizeEndDate();
+                    Date nowDate = DateTimeUtils.startToday();
+                    if(endDate.compareTo(nowDate) < 0){
+                        clientPrizeGetInfo.setStatus(Constants.CLIENT_PRIZEINFO_STATUS_EXPIRED);
+                        resp.setErrorString("该优惠码已过期");
+                    }else if(startDate.compareTo(nowDate) > 0 ){
+                        resp.setErrorString("该优惠码不在兑换时间内");
+                    }else {
+                        //验证通过后
+                        resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
+                        resp.addDataEntry(objectToEntryForInfo(clientPrizeGetInfo));
+                        clientPrizeGetInfo.setStatus(Constants.CLIENT_PRIZEINFO_STATUS_USED);
+                        clientPrizeGetInfo.setCheckDate(new Date());
+                    }
+                }
+                clientPrizeGetInfoService.update(clientPrizeGetInfo);
+                return resp;
+            }else {
+                resp.setErrorString("此优惠码该店无效");
+                return resp;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResponse.failed(-1);
+
+    }
+
     private Map objectToEntry(ClientPrize clientPrize) {
         Map entry = new HashMap();
         entry.put("id", clientPrize.getId());
@@ -166,6 +284,18 @@ public class ClientPrizeController {
         entry.put("bigPic", clientPrize.getBigPic());
         entry.put("smallPic", clientPrize.getSmallPic());
         entry.put("activeStatus", clientPrize.getActiveStatus());
+        return entry;
+    }
+
+    private Map objectToEntryForInfo(ClientPrizeGetInfo clientPrizeGetInfo) {
+        Map entry = new HashMap();
+        entry.put("id", clientPrizeGetInfo.getId());
+        entry.put("phoneNum", clientPrizeGetInfo.getPhoneNum());
+        entry.put("deskId",clientPrizeGetInfo.getDeskId());
+        entry.put("checkCode",clientPrizeGetInfo.getCheckCode());
+        entry.put("checkDate",clientPrizeGetInfo.getCheckDate());
+        entry.put("prizeName",clientPrizeGetInfo.getPrizeName());
+        entry.put("prizeDescription",clientPrizeGetInfo.getPrizeDescription());
         return entry;
     }
 
@@ -259,6 +389,7 @@ public class ClientPrizeController {
                         ClientPrizeGetInfo getInfo = new ClientPrizeGetInfo();
                         getInfo.setDeskId(deskId);
                         getInfo.setPrice(clientPrize);
+                        getInfo.setGetDate(new Date());
                         getInfo.setStatus(Constants.CLIENT_PRIZEINFO_STATUS_UNGET);
                         ClientPrizeGetInfo clientPrizeGetInfo = clientPrizeGetInfoService.update(getInfo);
                         return ClientAjaxResult.success(clientPrizeGetInfo);

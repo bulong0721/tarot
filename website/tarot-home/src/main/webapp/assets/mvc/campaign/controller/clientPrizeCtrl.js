@@ -73,7 +73,7 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource) {
                 id: 'smallImage',
                 type: 'upload',
                 name: 'img',
-                templateOptions: {type: 'file', label: '奖券小图标', placeholder: '奖券小图标'}
+                templateOptions: {type: 'file', label: '奖券小图标', required: false, placeholder: '奖券小图标'}
             },
             {
                 key: 'imagesSmall',
@@ -84,7 +84,7 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource) {
                 id: 'bigImage',
                 type: 'upload',
                 name: 'img',
-                templateOptions: {type: 'file', label: '奖券大图标', placeholder: '奖券大图标'}
+                templateOptions: {type: 'file', label: '奖券大图标', required: false, placeholder: '奖券大图标'}
             },
             {
                 key: 'imagesBig',
@@ -123,6 +123,25 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource) {
         }
     };
 
+    var iEditor = 1;
+    //点击编辑
+    $scope.goEditor = function (rowIndex) {
+        angular.element('#smallImage')[0].value = '';
+        angular.element('#bigImage')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
+        if (rowIndex > -1) {
+            var data = $scope.tableOpts.data[rowIndex];
+            $scope.formData.model = angular.copy(data);
+            //console.log(data)
+            $scope.formData.model.imagesSmall =data.smallPic ? Constants.downloadHome + data.smallPic:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt?imageView2/1/w/150/h/95";
+            $scope.formData.model.imagesBig = data.bigPic ? Constants.downloadHome+ data.bigPic:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt?imageView2/1/w/150/h/95";
+            $scope.rowIndex = rowIndex;
+        } else {
+            $scope.formData.model = {};
+            $scope.rowIndex = -1;
+        }
+        $scope.activeTab = iEditor;
+    };
+
     //上传控件监听器
     $scope.$on('fileToUpload', function (event, arg) {
         //console.log(event)
@@ -140,9 +159,12 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource) {
                 $scope.toasterManage($scope.toastUploadSucc);
                 var pic = res.dataMap.tree.downloadPath;
                 if(uploadId == "smallImage"){
-                    $scope.formData.model.imagesSmall = pic;
+                    $scope.formData.model.smallPic = pic;
+                    console.log($scope.downloadHome + pic);
+                    $scope.formData.model.imagesSmall = Constants.downloadHome + pic;
                 }else if(uploadId == "bigImage"){
-                    $scope.formData.model.imagesBig = pic;
+                    $scope.formData.model.bigPic = pic;
+                    $scope.formData.model.imagesBig = Constants.downloadHome + pic;
                 }
             })
     });

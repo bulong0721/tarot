@@ -102,7 +102,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             controller: 'campaignCtrl',
             data: {
                 pageTitle: '活动管理',
-                subTitle: '抽奖管理',
+                subTitle: '大学士兑奖',
                 datatable: 'assets/mvc/campaign/view/priceCheck_datatable.html'
             },
             resolve: {
@@ -123,6 +123,21 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
                     return ctrlManagerLoader($ocLazyLoad, 'campaign', 'clientPrizeCtrl.js')
+                }
+            }
+        })
+        .state('campaign.clientPrizeCheck', {
+            url: "/clientPrizeCheck",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'clientPrizeCheckCtrl',
+            data: {
+                pageTitle: '活动管理',
+                subTitle: '小超人兑奖',
+                datatable: 'assets/mvc/campaign/view/clientPrizeCheck_datatable.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'campaign', 'clientPrizeCheckCtrl.js')
                 }
             }
         })
