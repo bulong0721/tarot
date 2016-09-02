@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -105,20 +104,15 @@ public class WebMpController {
                     String identityCode = manager.getIdentityCode(sceneIdToIdentityCode);
                     //将该二维码绑定扫码的微信OpenId
                     Map<String, Object> msgMap = Maps.newHashMap();
-                    System.out.println("代码走到这5");
                     if (wxService.bondQrCodeByScan(identityCode, inMessage.getFromUserName())) {
-                        System.out.println("代码走到这6");
                         msgMap = checkProgressByIdentityCode(identityCode);
-                        System.out.println("代码走到这7");
-                        int i = wxService.modifyWaitingInfo(Long.parseLong(msgMap.get("waitedTableCount").toString()), identityCode, Long.valueOf(msgMap.get("timeTook").toString()), Long.parseLong(msgMap.get("predictWaitingTime").toString()));
-                        System.out.println("代码走到这8");
+                        int i = wxService.modifyWaitingInfo(Long.parseLong(msgMap.get("waitedTableCount").toString()), identityCode, Long.valueOf(msgMap.get("timeTook").toString()), Long.parseLong(msgMap.get("predictWaitingTime").toString()), Long.parseLong(msgMap.get("tableTypeId").toString()));
                         if (i != 1) {
                             LOGGER.error("修改排号信息失败!");
                         }
                     } else {
                         msgMap.put("valid", "该唯一码已过期或无效，查询进度失败!");
                     }
-                    System.out.println("代码走到这9");
                     inMessage.setMap(msgMap);
                 }
                 //微信自带的扫二维码，已关注(获取绑定抽奖信息-代号2)
@@ -178,7 +172,7 @@ public class WebMpController {
                         //将该二维码绑定扫码的微信OpenId
                         if (wxService.bondQrCodeByScan(identityCode, inMessage.getFromUserName())) {
                             map = checkProgressByIdentityCode(identityCode);
-                            int i = wxService.modifyWaitingInfo(Long.parseLong(map.get("waitedTableCount").toString()), identityCode, Long.valueOf(map.get("timeTook").toString()), Long.parseLong(map.get("predictWaitingTime").toString()));
+                            int i = wxService.modifyWaitingInfo(Long.parseLong(map.get("waitedTableCount").toString()), identityCode, Long.valueOf(map.get("timeTook").toString()), Long.parseLong(map.get("predictWaitingTime").toString()), Long.parseLong(map.get("tableTypeId").toString()));
                             if (i != 1) {
                                 LOGGER.error("修改排号信息失败!");
                             }
@@ -240,8 +234,8 @@ public class WebMpController {
     }
 
     @RequestMapping(value = "myKey")
-    public void testRemoveCache(String cacheName, String key, @RequestParam("waitKey") String waitTokenKey) {
-        wxService.testRemoveCacheValue(cacheName, key, waitTokenKey);
+    public void testCacheGetAll() {
+        wxService.testCacheGetAll();
     }
 
     @RequestMapping(value = "oauth2buildAuthorizationUrl")
@@ -293,7 +287,7 @@ public class WebMpController {
         //按openId和状态去数据库里查找最新的扫码绑定排位号
         WxWaitToken myWt = wxService.getByOpenId(openId, state);
         //如果找到了，说明是可以通过点击按钮方式直接查询
-        Map<String, Object> msgMap = new HashMap<String, Object>();
+        Map<String, Object> msgMap = Maps.newHashMap();
         if (myWt != null) {
             msgMap = wxService.listProgressByOpenId(openId, myWt.getStore().getId(), myWt.getTableId());
         } else {

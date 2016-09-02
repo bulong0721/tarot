@@ -56,7 +56,7 @@ public interface WeixinService {
 
     List<WxWaitToken> listByOpenId(String openId, Date startDate, Date endDate);
 
-    int modifyWaitingInfo(Long waitedCount, String identityCode, Long date, Long predictWaitingTime);
+    int modifyWaitingInfo(Long waitedCount, String identityCode, Long date, Long predictWaitingTime, Long tableTypeId);
 
     /**
      * 获取排队Id对应的RedisKey
@@ -91,5 +91,5 @@ public interface WeixinService {
 
     void sendFeedback(String context, String openId);
 
-    void testRemoveCacheValue(String cacheName, String token, String waitTokenTypeKey);
+    void testCacheGetAll();
 }

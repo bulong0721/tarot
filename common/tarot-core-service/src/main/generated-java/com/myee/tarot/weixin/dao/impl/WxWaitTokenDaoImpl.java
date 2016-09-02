@@ -1,15 +1,12 @@
 package com.myee.tarot.weixin.dao.impl;
 
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
-import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.weixin.dao.WxWaitTokenDao;
 import com.myee.tarot.weixin.domain.QWxWaitToken;
 import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -61,11 +58,11 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
     }
 
     @Override
-    public Integer modifyWaitingInfo(Long waitedCount, String identityCode, Long date, Long predictWaitingTime) {
+    public Integer modifyWaitingInfo(long waitedCount, String identityCode, Long date, Long predictWaitingTime, Long tableTypeId) {
         WxWaitToken rWaitToken = new WxWaitToken();
         rWaitToken.setIdentityCode(identityCode);
         rWaitToken.setTimeTook(new Date(date));
-        rWaitToken.setTableTypeId(5L);
+        rWaitToken.setTableTypeId(tableTypeId);
         rWaitToken = getWaitTokenByProp(rWaitToken);
         rWaitToken.setWaitedCount(waitedCount);
         rWaitToken.setPredictWaitingTime(predictWaitingTime);
