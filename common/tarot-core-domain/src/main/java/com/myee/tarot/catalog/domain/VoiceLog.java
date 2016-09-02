@@ -9,7 +9,6 @@ import java.util.Date;
  * Created by Ray.Fu on 2016/8/10.
  */
 public class VoiceLog {
-
     private String dateTimeStr;
 
     private String cookieListen;

@@ -10,6 +10,7 @@ import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantStoreService;
+import com.myee.tarot.uitl.CacheUtil;
 import com.myee.tarot.weixin.domain.ClientAjaxResult;
 import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.myee.tarot.weixin.service.WeixinService;
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -98,20 +100,25 @@ public class WebMpController {
                 LOGGER.info("inMessage:" + inMessage.toString());
                 //微信自带的扫二维码，已关注(查询进展用-代号1)
                 if (inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent() != null && inMessage.getEvent().equals(WxConsts.EVT_SCAN) && inMessage.getEventKey().substring(0, 1).equals("1")) {
-                    String merchantStoreId = inMessage.getEventKey().substring(1, inMessage.getEventKey().length());
-                    String redisKeyOfUcdScId = RedisKeys.getIdentityCode(Long.valueOf(merchantStoreId));
-                    String identityCode = manager.getIdentityCode(redisKeyOfUcdScId);
+                    String sceneId = inMessage.getEventKey().substring(1, inMessage.getEventKey().length());
+                    String sceneIdToIdentityCode = CacheUtil.getIdentityCode(Long.valueOf(sceneId));
+                    String identityCode = manager.getIdentityCode(sceneIdToIdentityCode);
                     //将该二维码绑定扫码的微信OpenId
                     Map<String, Object> msgMap = Maps.newHashMap();
+                    System.out.println("代码走到这5");
                     if (wxService.bondQrCodeByScan(identityCode, inMessage.getFromUserName())) {
+                        System.out.println("代码走到这6");
                         msgMap = checkProgressByIdentityCode(identityCode);
+                        System.out.println("代码走到这7");
                         int i = wxService.modifyWaitingInfo(Long.parseLong(msgMap.get("waitedTableCount").toString()), identityCode, Long.valueOf(msgMap.get("timeTook").toString()), Long.parseLong(msgMap.get("predictWaitingTime").toString()));
+                        System.out.println("代码走到这8");
                         if (i != 1) {
                             LOGGER.error("修改排号信息失败!");
                         }
                     } else {
                         msgMap.put("valid", "该唯一码已过期或无效，查询进度失败!");
                     }
+                    System.out.println("代码走到这9");
                     inMessage.setMap(msgMap);
                 }
                 //微信自带的扫二维码，已关注(获取绑定抽奖信息-代号2)
@@ -165,9 +172,9 @@ public class WebMpController {
                 //微信自带的扫二维码，未关注
                 if (inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent() != null && inMessage.getEvent().equals(WxConsts.EVT_SUBSCRIBE) && inMessage.getTicket() != null) {
                     if (inMessage.getEventKey().substring(8, 9).equals("1")) {
-                        String merchantStoreId = inMessage.getEventKey().substring(9, inMessage.getEventKey().length());
-                        String redisKeyOfUcdScId = RedisKeys.getIdentityCode(Long.valueOf(merchantStoreId));
-                        String identityCode = manager.getIdentityCode(redisKeyOfUcdScId);
+                        String sceneId = inMessage.getEventKey().substring(1, inMessage.getEventKey().length());
+                        String sceneIdToIdentityCode = CacheUtil.getIdentityCode(Long.valueOf(sceneId));
+                        String identityCode = manager.getIdentityCode(sceneIdToIdentityCode);
                         //将该二维码绑定扫码的微信OpenId
                         if (wxService.bondQrCodeByScan(identityCode, inMessage.getFromUserName())) {
                             map = checkProgressByIdentityCode(identityCode);
@@ -201,8 +208,8 @@ public class WebMpController {
 
                 }
                 //正则表达式判断是否包含字母数字(6位)
-                String pattern = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6}$";
-//                String pattern = "[0-9A-Za-z]{4,6}$";//测试用
+//                String pattern = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6}$";
+                String pattern = "[0-9A-Za-z]{4,6}$";//测试用
 
                 //直接输唯一码
                 if (inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.CUSTOM_MSG_TEXT) && inMessage.getContent() != null && inMessage.getContent().matches(pattern)) {
@@ -230,6 +237,11 @@ public class WebMpController {
         } finally {
             out.close();
         }
+    }
+
+    @RequestMapping(value = "myKey")
+    public void testRemoveCache(String cacheName, String key, @RequestParam("waitKey") String waitTokenKey) {
+        wxService.testRemoveCacheValue(cacheName, key, waitTokenKey);
     }
 
     @RequestMapping(value = "oauth2buildAuthorizationUrl")
@@ -346,5 +358,8 @@ public class WebMpController {
             e.printStackTrace();
         }
         return ticket;
+    }
+
+    public void testIgniteValue(String key) {
     }
 }

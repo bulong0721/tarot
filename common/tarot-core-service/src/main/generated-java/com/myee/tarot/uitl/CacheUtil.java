@@ -9,6 +9,8 @@ import com.myee.tarot.campaign.domain.MerchantActivity;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 
+import java.util.Set;
+
 /**
  * Created by Martin on 2016/8/22.
  */
@@ -69,10 +71,9 @@ public final class CacheUtil {
         return getCache(ignite, CACHE_WAIT_OF_TYPE + tableType);
     }
 
-    public static String getWaitOfTableType(Long merchantStoreId, Long sceneId) {
-        return CACHE_WAIT_OF_TYPE + merchantStoreId + "_" + sceneId;
+    public static String getWaitOfTableType(Long sceneId) {
+        return CACHE_WAIT_OF_TYPE + sceneId;
     }
-
 
     public static final String CACHE_DRAW_OF_STORE = "drawOfStore_";
 
@@ -85,4 +86,16 @@ public final class CacheUtil {
     public static String getIdentityCode(Long sceneId) {
         return CACHE_SCENEID_IDENTITYCODE + sceneId;
     }
+
+    public static final String CACHE_WAIT_OF_TYPE_SET = "waitOfTypeKeySet_";
+
+    public static IgniteCache<String, Set> waitOfTableTypeSet(Ignite ignite, Long tableType) {
+        return getCache(ignite, CACHE_WAIT_OF_TYPE_SET + tableType);
+    }
+
+    private static final String CACHE_OPENID_TO_STORE      = "openIdToStore_";
+    public static IgniteCache<String, String> openidToStore(Ignite ignite, Long storeId) {
+        return getCache(ignite, CACHE_OPENID_TO_STORE + storeId);
+    }
+
 }

@@ -5,6 +5,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
+import com.google.common.collect.Sets;
 import com.myee.djinn.dto.*;
 import com.myee.djinn.endpoint.OrchidService;
 import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
@@ -14,21 +15,33 @@ import com.myee.tarot.core.util.DateUtil;
 import com.myee.tarot.merchant.dao.MerchantStoreDao;
 import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.uitl.CacheUtil;
 import com.myee.tarot.weixin.dao.WFeedBackDao;
 import com.myee.tarot.weixin.dao.WxWaitTokenDao;
 import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.myee.tarot.weixin.domain.WFeedBack;
 import com.myee.tarot.weixin.service.WeixinService;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.ignite.Ignite;
+import org.apache.ignite.IgniteCache;
+import org.apache.ignite.IgniteSet;
+import org.apache.ignite.cache.CacheEntry;
+import org.apache.ignite.cache.query.QueryCursor;
+import org.apache.ignite.cache.query.SqlFieldsQuery;
+import org.apache.ignite.configuration.CollectionConfiguration;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import javax.cache.Cache;
+import javax.cache.expiry.AccessedExpiryPolicy;
+import javax.cache.expiry.Duration;
 import java.nio.charset.Charset;
 import java.util.*;
-
+import static org.apache.ignite.cache.CacheAtomicityMode.TRANSACTIONAL;
+import static org.apache.ignite.cache.CacheMode.PARTITIONED;
 /**
  * Created by Martin on 2016/1/19.
  */
@@ -37,17 +50,18 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
     private static final Logger logger = LoggerFactory.getLogger(WeixinServiceImpl.class);
 
     @Autowired
-    private TableTypeDao     tableTypeDao;
+    private TableTypeDao tableTypeDao;
     @Autowired
     private MerchantStoreDao merchantStoreDao;
     @Autowired
-    private WxWaitTokenDao   waitTokenDao;
+    private WxWaitTokenDao waitTokenDao;
     @Autowired
-    private WFeedBackDao     wFeedBackDao;
+    private WFeedBackDao wFeedBackDao;
     @Autowired
-    private ServerBootstrap  serverBootstrap;
+    private ServerBootstrap serverBootstrap;
 
-    static Integer iCount = 0;
+    @Autowired
+    private Ignite ignite;
 
     @Autowired
     public WeixinServiceImpl(RedisTemplate redisTemplate) {
@@ -56,6 +70,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
 
     /**
      * 查看品牌下的店铺
+     *
      * @param merchantId
      * @return
      */
@@ -110,6 +125,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
 
     /**
      * 根据经纬度地理位置搜附近的餐厅
+     *
      * @return
      */
     public Collection<ShopDetail> allOrgByGeo(Map map) {
@@ -119,11 +135,12 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
 
     /**
      * 根据选择的地点搜餐厅
+     *
      * @param map
      * @return
      */
     public Collection<ShopDetail> allOrgByLocation(Map map) {
-        if(map.get("city") != null && map.get("district") != null) {
+        if (map.get("city") != null && map.get("district") != null) {
 
         } else {
             //让其选择具体的城市
@@ -133,7 +150,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
     }
 
     @Override
-    public WaitToken waitOfTableType(long tableTypeId, String token,Long shopId) {
+    public WaitToken waitOfTableType(long tableTypeId, String token, Long shopId) {
         String redisKey = RedisKeys.waitOfTableType(shopId, tableTypeId);
         return hget(redisKey, token, WaitToken.class);
     }
@@ -155,7 +172,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
             waitToken.setOpenId(openId);
             waitToken.setWaitStatus(WaitTokenState.WAITING.getValue());
             Date date = new Date();
-            waitToken.setTimeTook(date.getTime()/1000);
+            waitToken.setTimeTook(date.getTime() / 1000);
             //保存某品牌餐厅下某分店的对应餐桌类型ID的排号
             String redisKey = RedisKeys.waitOfTableType(shopId, waitToken.getTableTypeId());
             String redisKeyToOpenIdRef = RedisKeys.openIdToTableType(shopId, openId);
@@ -170,9 +187,9 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
             hsetSimple(rwToken.getId().toString(), redisKey, endDate);
             hset(redisKey.trim(), rwToken.getId().toString(), waitToken, endDate);
             //去查询进展
-            Map<String,Object> msgMap = listProgressByIdentityCode(waitToken.getIdentityCode());
+            Map<String, Object> msgMap = listProgressByIdentityCode(waitToken.getIdentityCode());
             int i = waitTokenDao.modifyWaitingInfo(Long.parseLong(msgMap.get("waitedTableCount").toString()), waitToken.getIdentityCode(), Long.valueOf(msgMap.get("timeTook").toString()), Long.parseLong(msgMap.get("predictWaitingTime").toString()));
-            if(i !=1) {
+            if (i != 1) {
                 logger.error("修改等位状态失败!");
             }
             return rwToken;
@@ -199,7 +216,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
         }
     });
 
-    static WxWaitToken convertTo(WaitToken waitToken, Long date) {
+    static WxWaitToken convertTo(WaitToken waitToken, Long dateTimeLong) {
         WxWaitToken entity = new WxWaitToken();
         MerchantStore merchantStore = new MerchantStore();
         merchantStore.setId(100L);
@@ -215,7 +232,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
 //        entity.setMerchantId(waitToken.getClientId());
 //        entity.setMerchantStoreId(waitToken.getShopId());
         entity.setDinnerCount(waitToken.getDinnerCount());
-        Date dt = new Date(date * 1000);
+        Date dt = new Date(dateTimeLong * 1000);
         entity.setTimeTook(dt);
         entity.setState(waitToken.getWaitStatus());
         return entity;
@@ -241,7 +258,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
      * @return
      */
     @Override
-    public Map<String,Object> listProgressByOpenId(String openId, Long orgID, Long tableTypeId) {
+    public Map<String, Object> listProgressByOpenId(String openId, Long orgID, Long tableTypeId) {
         String redisKeyOpenIdRef = RedisKeys.openIdToTableType(orgID, openId);
         String redisKey2Find = (String) getSimple(redisKeyOpenIdRef);
         Map<String, WaitToken> waitTokenMap = hgetall(redisKey2Find, WaitToken.class);
@@ -273,22 +290,23 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
         return latestDevInfo;
     }
 
-    private void codeBlock(Map<String, Object> latestDevInfo, String shopName, String tokenNum, int beforeCount, String queueStatus, Date date) {
+    private Map<String, Object> codeBlock(Map<String, Object> latestDevInfo, String shopName, String tokenNum, int beforeCount, String queueStatus, Date date) {
         latestDevInfo.put("shopName", shopName);
         latestDevInfo.put("tokenNum", tokenNum);
         latestDevInfo.put("waitedTable", beforeCount + "桌");
         latestDevInfo.put("predictTime", String.valueOf(beforeCount * 30) + "分钟");
         latestDevInfo.put("queueStatus", queueStatus);
         latestDevInfo.put("queryTime", DateUtil.formatDateTime(date));
+        return latestDevInfo;
     }
 
     private String assignVal(int status) {
         String queueStatus = "";
         if (status == 1) {
             queueStatus = "排队中";
-        } else if (status == 2){
+        } else if (status == 2) {
             queueStatus = "就餐中";
-        } else if(status == 3) {
+        } else if (status == 3) {
             queueStatus = "已过号";
         } else if (status == 4) {
             queueStatus = "已取消";
@@ -301,45 +319,60 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
 
     /**
      * 拿identityCode去数据库里查找
+     *
      * @param identityCode
      * @return
      */
     @Override
-    public Map<String,Object> listProgressByIdentityCode(String identityCode) {
+    public Map<String, Object> listProgressByIdentityCode(String identityCode) {
         //先到Redis里去找，通过identityCode获取当时保存token的redisKey
-        String redisKey = getSimple(identityCode).toString();
+        IgniteCache<String, String> identityCodeWaitTokenTypeKeyCache = CacheUtil.getCache(ignite, "identityCodeWaitTokenTypeKeyCache");
+        System.out.println("获取identityCode值->" + identityCode);
+        String waitTokenTypeKey = identityCodeWaitTokenTypeKeyCache.get(identityCode);
+        System.out.println("获取waitTokenTypeKey值->" + waitTokenTypeKey);
         Date date = new Date();
         //排号
         String tokenNum = null;
         //店铺名称
         String shopName = null;
-        Map<String,Object> infoStr = Maps.newHashMap();
+        Map<String, Object> infoStr = Maps.newHashMap();
         //前面还有多少桌
         int index = 0;
         String queueStatus = null;
         long timeTook = 0;
-        if (redisKey != null) {
-            Map<String, WaitToken> myMap = hgetall(redisKey,WaitToken.class);
-            if(myMap != null) {
-                List<WaitToken> sortedTokens = orderingByTook.sortedCopy(myMap.values());
-                for (WaitToken wt : sortedTokens) {
-                    if (!wt.getIdentityCode().equals(identityCode)) {
-                        index++;
-                    } else {
-                        //根据identityCode查询merchantStoreId
-                        Date startDate = DateUtil.getZeroClockOfDate(date);
-                        Date endDate = DateUtil.getNextDayOfDate(date, 2, 30, 0);
-                        Long bTimeLong = startDate.getTime();
-                        Long eTimeLong = endDate.getTime();
-                        WxWaitToken wxWaitToken = waitTokenDao.getByIdentityCode(identityCode, bTimeLong, eTimeLong);
-                        //根据merchanStoreId查询merchanStoreName
-                        MerchantStore merchantStore = merchantStoreDao.findById(wxWaitToken.getStore().getId());
-                        shopName = merchantStore.getName();
-                        tokenNum = wt.getToken();
-                        timeTook = wt.getTimeTook();
-                        queueStatus = assignVal(wt.getWaitStatus());
-                        break;
-                    }
+        Set<String> setWaitTokenKey = Sets.newHashSet();
+        if (waitTokenTypeKey != null) {
+            IgniteCache<String, WaitToken> waitTokenTypeIdCache = CacheUtil.getCache(ignite, waitTokenTypeKey);
+            System.out.println("waitTokenTypeIdCache的值->" + waitTokenTypeIdCache.toString());
+
+            CollectionConfiguration setCfg = new CollectionConfiguration();
+            setCfg.setAtomicityMode(TRANSACTIONAL);
+            setCfg.setCacheMode(PARTITIONED);
+            IgniteSet<String> setTokenCache = ignite.set("set"+waitTokenTypeKey, setCfg);
+            Iterator it = setTokenCache.iterator();
+            while (it.hasNext()) {
+                setWaitTokenKey.add(it.next().toString());
+            }
+            Map<String, WaitToken> waitTokenMap = waitTokenTypeIdCache.getAll(setWaitTokenKey);
+            for(WaitToken waitToken : waitTokenMap.values()) {
+                if (!waitToken.getIdentityCode().equals(identityCode)) {
+                    index++;
+                } else {
+                    //根据identityCode查询merchantStoreId
+                    Date startDate = DateUtil.getZeroClockOfDate(date);
+                    Date endDate = DateUtil.getNextDayOfDate(date, 2, 30, 0);
+                    Long bTimeLong = startDate.getTime();
+                    Long eTimeLong = endDate.getTime();
+                    WxWaitToken wxWaitToken = waitTokenDao.getByIdentityCode(identityCode, bTimeLong, eTimeLong);
+                    //根据merchanStoreId查询merchanStoreName
+                    MerchantStore merchantStore = merchantStoreDao.findById(wxWaitToken.getStore().getId());
+                    shopName = merchantStore.getName();
+                    tokenNum = waitToken.getToken();
+                    System.out.println("店铺名称->"+shopName);
+                    System.out.println("排号->" + tokenNum);
+                    timeTook = waitToken.getTimeTook();
+                    queueStatus = assignVal(waitToken.getWaitStatus());
+                    break;
                 }
             }
         } else {
@@ -366,17 +399,35 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
                     }
                 }
             } else {
-                codeBlock(infoStr, shopName, tokenNum, index, queueStatus, date);
-                infoStr.put("waitedTableCount",index);
-                infoStr.put("predictWaitingTime",Long.valueOf(index * 10));
-                infoStr.put("timeTook",timeTook);
+                infoStr = codeBlock(infoStr, shopName, tokenNum, index, queueStatus, date);
+                infoStr.put("waitedTableCount", index);
+                infoStr.put("predictWaitingTime", Long.valueOf(index * 10));
+                infoStr.put("timeTook", timeTook);
+                logger.info("测试_shopName->" + infoStr.get("shopName"));
+                logger.info("测试_tokenNum->" + infoStr.get("tokenNum"));
+                logger.info("测试_waitedTable->" + infoStr.get("waitedTable"));
+                logger.info("测试_predictTime->" + infoStr.get("predictTime"));
+                logger.info("测试_queueStatus->" + infoStr.get("queueStatus"));
+                logger.info("测试_queryTime->" + infoStr.get("queryTime"));
+                logger.info("测试_timeTook->" + infoStr.get("timeTook"));
+                logger.info("测试_waitedTableCount->" + infoStr.get("waitedTableCount"));
+                logger.info("测试_predictWaitingTime->" + infoStr.get("predictWaitingTime"));
                 return infoStr;
             }
         }
-        codeBlock(infoStr, shopName, tokenNum, index, queueStatus, date);
-        infoStr.put("waitedTableCount",index);
-        infoStr.put("predictWaitingTime",Long.valueOf(index * 10));
-        infoStr.put("timeTook",timeTook);
+        infoStr = codeBlock(infoStr, shopName, tokenNum, index, queueStatus, date);
+        infoStr.put("waitedTableCount", index);
+        infoStr.put("predictWaitingTime", Long.valueOf(index * 10));
+        infoStr.put("timeTook", timeTook);
+        logger.info("1测试_shopName->" + infoStr.get("shopName"));
+        logger.info("1测试_tokenNum->" + infoStr.get("tokenNum"));
+        logger.info("1测试_waitedTable->" + infoStr.get("waitedTable"));
+        logger.info("1测试_predictTime->" + infoStr.get("predictTime"));
+        logger.info("1测试_queueStatus->" + infoStr.get("queueStatus"));
+        logger.info("1测试_queryTime->" + infoStr.get("queryTime"));
+        logger.info("1测试_timeTook->" + infoStr.get("timeTook"));
+        logger.info("1测试_waitedTableCount->" + infoStr.get("waitedTableCount"));
+        logger.info("1测试_predictWaitingTime->" + infoStr.get("predictWaitingTime"));
         return infoStr;
     }
 
@@ -401,24 +452,38 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
     @Override
     public boolean bondQrCodeByScan(String identityCode, String openId) {
         //先到Redis里去找，通过identityCode获取当时保存token的redisKey
-        String redisKey = getSimple(identityCode).toString();
+        Cache<String, String> identityCodeWaitTokenTypeKeyCache = CacheUtil.getCache(ignite, "identityCodeWaitTokenTypeKeyCache");
+        System.out.println("获取identityCodeWaitTokenTypeKeyCache值->"+identityCodeWaitTokenTypeKeyCache);
+        String waitTokenTypeKey = identityCodeWaitTokenTypeKeyCache.get(identityCode);
         Date date = new Date();
-        if (redisKey != null) {
-            Map<String, WaitToken> myMap = hgetall(redisKey, WaitToken.class);
+        Set<String> setWaitTokenKey = Sets.newHashSet();
+        if (waitTokenTypeKey != null) {
+            IgniteCache<String, WaitToken> waitTokenTypeIdCache = CacheUtil.getCache(ignite, waitTokenTypeKey);
+            CollectionConfiguration setCfg = new CollectionConfiguration();
+            setCfg.setAtomicityMode(TRANSACTIONAL);
+            setCfg.setCacheMode(PARTITIONED);
+            IgniteSet<String> setTokenCache = ignite.set("set"+waitTokenTypeKey, setCfg);
+            Iterator it = setTokenCache.iterator();
+            while (it.hasNext()) {
+                setWaitTokenKey.add(it.next().toString());
+            }
+            System.out.println("SET的结果->" + setWaitTokenKey);
+            Map<String, WaitToken> waitTokenMap = waitTokenTypeIdCache.getAll(setWaitTokenKey);
             //按WaitToken来取
-            for (String key : myMap.keySet()) {
-                if (myMap.get(key).getIdentityCode().equals(identityCode)) {
-                    WaitToken newWt = myMap.get(key);
+            for (WaitToken waitToken : waitTokenMap.values()) {
+                if (waitToken.getIdentityCode().equals(identityCode)) {
                     //删掉原来Redis中对应的排号数据，为了修改将openid绑定进去
-                    hdelete(redisKey, myMap.get(key).getToken());
-                    newWt.setOpenId(openId);
+                    waitTokenTypeIdCache.remove(waitToken.getToken());
+                    waitToken.setOpenId(openId);
                     Date endDate = DateUtil.getNextDayOfDate(date, 2, 30, 0);
-                    hset(redisKey, newWt.getToken(), newWt, endDate);
-                    Long timeTookLong = myMap.get(key).getTimeTook();
-                    waitTokenDao.updateWaitTokenOpenId(openId, myMap.get(key).getIdentityCode(), timeTookLong);
+                    waitTokenTypeIdCache.put(waitToken.getToken(), waitToken);
+                    waitTokenTypeIdCache.withExpiryPolicy(new AccessedExpiryPolicy(new Duration(date.getTime() / 1000, endDate.getTime() / 1000)));
+                    Long timeTookLong = waitToken.getTimeTook();
+                    waitTokenDao.updateWaitTokenOpenId(openId, waitToken.getIdentityCode(), timeTookLong);
                     //将openId跟店铺id作为key，绑定到之前的排号list的key中
-                    String redisKeyOpenIdRef = RedisKeys.openIdToTableType(myMap.get(key).getShopId(), openId);
-                    hsetSimple(redisKeyOpenIdRef, redisKey, endDate);
+                    IgniteCache<String, String> openIdToStoreCache = CacheUtil.openidToStore(ignite, waitToken.getShopId());
+                    openIdToStoreCache.put(openId, waitTokenTypeKey);
+                    openIdToStoreCache.withExpiryPolicy(new AccessedExpiryPolicy(new Duration(date.getTime() / 1000, endDate.getTime() / 1000)));
                     break;
                 }
             }
@@ -426,10 +491,10 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
         } else { //如果Redis里找不到，就到MySql里通过当前时间的范围，按identityCode搜索
             Date startDate = DateUtil.getZeroClockOfDate(date);
             Date endDate = DateUtil.getNextDayOfDate(date, 2, 30, 0);
-            Long bTimeLong = startDate.getTime()/1000;
-            Long eTimeLong = endDate.getTime()/1000;
-            WxWaitToken rw  = waitTokenDao.getByIdentityCode(identityCode, bTimeLong, eTimeLong);
-            if(rw != null) {
+            Long bTimeLong = startDate.getTime() / 1000;
+            Long eTimeLong = endDate.getTime() / 1000;
+            WxWaitToken rw = waitTokenDao.getByIdentityCode(identityCode, bTimeLong, eTimeLong);
+            if (rw != null) {
                 rw.setOpenId(openId);
                 Long timeTookLong = rw.getTimeTook().getTime() / 1000;
                 waitTokenDao.updateWaitTokenOpenId(rw.getOpenId(), rw.getIdentityCode(), timeTookLong);
@@ -459,18 +524,19 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
     }
 
     @Override
-    public void hDelWaitTokenRedisRecord( Long waitTokenId) {
+    public void hDelWaitTokenRedisRecord(Long waitTokenId) {
         hdeleteSimple(waitTokenId.toString());
     }
 
     @Override
     public int modifyWaitingStatus(int statusValue, long waitQueueId) {
-        int i = waitTokenDao.modifyWaitingStatus(statusValue,waitQueueId);
+        int i = waitTokenDao.modifyWaitingStatus(statusValue, waitQueueId);
         return i;
     }
 
     /**
      * 根据商店的经纬
+     *
      * @param storeLongitude
      * @param storeLatitude
      * @param longitude
@@ -485,6 +551,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
 
     /**
      * 发送意见
+     *
      * @param context
      * @return
      */
@@ -496,25 +563,42 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
         wFeedBackDao.update(fb);
     }
 
-    private static final  double EARTH_RADIUS = 6378137;//赤道半径(单位m)
+    @Override
+    public void testRemoveCacheValue(String cacheName, String token, String waitTokenTypeKey) {
+        Set<String> setWaitTokenKey = Sets.newHashSet();
+        IgniteCache<String, WaitToken> waitTokenTypeIdCache = CacheUtil.getCache(ignite, cacheName);
+        CollectionConfiguration setCfg = new CollectionConfiguration();
+        setCfg.setAtomicityMode(TRANSACTIONAL);
+        setCfg.setCacheMode(PARTITIONED);
+        IgniteSet<String> setTokenCache = ignite.set("set"+waitTokenTypeKey, setCfg);
+        Iterator it = setTokenCache.iterator();
+        while (it.hasNext()) {
+            setWaitTokenKey.add(it.next().toString());
+        }
+        System.out.println("SET的结果->" + setWaitTokenKey);
+        Map<String, WaitToken> waitTokenMap = waitTokenTypeIdCache.getAll(setWaitTokenKey);
+        waitTokenTypeIdCache.remove(token);
+    }
+
+    private static final double EARTH_RADIUS = 6378137;//赤道半径(单位m)
 
     /**
      * 转化为弧度(rad)
-     * */
-    private static double rad(double d)
-    {
+     */
+    private static double rad(double d) {
         return d * Math.PI / 180.0;
     }
 
     /**
      * 基于余弦定理求两经纬度距离
+     *
      * @param lon1 第一点的精度
      * @param lat1 第一点的纬度
      * @param lon2 第二点的精度
      * @param lat2 第二点的纬度
      * @return 返回的距离，单位km
-     * */
-    public static double LantitudeLongitudeDist(double lon1, double lat1,double lon2, double lat2) {
+     */
+    public static double LantitudeLongitudeDist(double lon1, double lat1, double lon2, double lat2) {
         double radLat1 = rad(lat1);
         double radLat2 = rad(lat2);
 
@@ -541,7 +625,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
         double y2 = EARTH_RADIUS * Math.sin(radLon2) * Math.sin(radLat2);
         double z2 = EARTH_RADIUS * Math.cos(radLat2);
 
-        double d = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)+ (z1 - z2) * (z1 - z2));
+        double d = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2));
         //余弦定理求夹角
         double theta = Math.acos((EARTH_RADIUS * EARTH_RADIUS + EARTH_RADIUS * EARTH_RADIUS - d * d) / (2 * EARTH_RADIUS * EARTH_RADIUS));
         double dist = theta * EARTH_RADIUS;

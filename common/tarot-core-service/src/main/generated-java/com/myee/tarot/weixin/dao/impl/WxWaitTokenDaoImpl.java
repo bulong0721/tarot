@@ -10,7 +10,10 @@ import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +23,7 @@ import java.util.List;
 @Repository
 public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> implements WxWaitTokenDao {
 
-    public static Log log = LogFactory.getLog(WxWaitTokenDaoImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WxWaitTokenDaoImpl.class);
 
     @Override
     public Integer updateState(Integer state, Long orgId, Long clientId, String token, Date timeTook, Date updateTime) {
@@ -34,7 +37,7 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
         rWaitToken.setState(state);
         rWaitToken.setUpdated(updateTime);
         rWaitToken = this.update(rWaitToken);
-        if(rWaitToken != null) {
+        if (rWaitToken != null) {
             return 1;
         } else {
             return 0;
@@ -50,7 +53,7 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
         rWaitToken.setOpenId(openId);
         rWaitToken.setUpdated(new Date());
         rWaitToken = this.update(rWaitToken);
-        if(rWaitToken != null) {
+        if (rWaitToken != null) {
             return 1;
         } else {
             return 0;
@@ -62,11 +65,12 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
         WxWaitToken rWaitToken = new WxWaitToken();
         rWaitToken.setIdentityCode(identityCode);
         rWaitToken.setTimeTook(new Date(date));
+        rWaitToken.setTableTypeId(5L);
         rWaitToken = getWaitTokenByProp(rWaitToken);
         rWaitToken.setWaitedCount(waitedCount);
         rWaitToken.setPredictWaitingTime(predictWaitingTime);
         rWaitToken = this.update(rWaitToken);
-        if(rWaitToken != null) {
+        if (rWaitToken != null) {
             return 1;
         } else {
             return 0;
@@ -78,13 +82,13 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
         QWxWaitToken qrWaitToken = QWxWaitToken.wxWaitToken;
         JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
         query.from(qrWaitToken);
-        if(identityCode != null){
+        if (identityCode != null) {
             query.where(qrWaitToken.identityCode.eq(identityCode));
         }
-        if(beginTime != null && endTime != null){
+        if (beginTime != null && endTime != null) {
             query.where(qrWaitToken.timeTook.between(new Date(beginTime), new Date(endTime)));
         }
-        log.info("the result is: " + query.fetchFirst());
+        LOGGER.info("the result is: " + query.fetchFirst());
 
         return query.fetchFirst();
     }
@@ -97,14 +101,14 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
         if (orgId != null) {
             query.where(qrWaitToken.store.id.eq(orgId));
         }
-        if(tableTypeId != null) {
+        if (tableTypeId != null) {
             query.where(qrWaitToken.tableTypeId.eq(tableTypeId));
         }
-        if(state != null) {
+        if (state != null) {
             query.where(qrWaitToken.state.eq(state));
         }
         query.orderBy(qrWaitToken.timeTook.asc());
-        log.info("the result counts: " + query.fetchCount());
+        LOGGER.info("the result counts: " + query.fetchCount());
         return query.fetch();
     }
 
@@ -116,11 +120,11 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
         if (openId != null) {
             query.where(qrWaitToken.openId.eq(openId));
         }
-        if(state != null) {
+        if (state != null) {
             query.where(qrWaitToken.state.eq(state));
         }
         query.orderBy(qrWaitToken.updated.desc());
-        log.info("the result counts: " + query.fetchCount());
+        LOGGER.info("the result counts: " + query.fetchCount());
         return query.fetch().get(0);
     }
 
@@ -132,13 +136,13 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
         if (openId != null) {
             query.where(qrWaitToken.openId.eq(openId));
         }
-        if(bTime != null) {
+        if (bTime != null) {
             query.where(qrWaitToken.timeTook.after(new Date(bTime)));
         }
-        if(eTime != null) {
+        if (eTime != null) {
             query.where(qrWaitToken.timeTook.before(new Date(eTime)));
         }
-        log.info("the result counts: " + query.fetchCount());
+        LOGGER.info("the result counts: " + query.fetchCount());
         return query.fetch();
     }
 
@@ -148,7 +152,7 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
         rWaitToken.setId(waitQueueId);
         rWaitToken.setState(state);
         this.update(rWaitToken);
-        if(rWaitToken != null) {
+        if (rWaitToken != null) {
             return 1;
         } else {
             return 0;
@@ -159,16 +163,19 @@ public class WxWaitTokenDaoImpl extends GenericEntityDaoImpl<Long, WxWaitToken> 
         QWxWaitToken qrWaitToken = QWxWaitToken.wxWaitToken;
         JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
         query.from(qrWaitToken);
-        if(rWaitToken.getStore().getId() != null){
+        if (rWaitToken.getStore() != null && rWaitToken.getStore().getId() != null) {
             query.where(qrWaitToken.store.id.eq(rWaitToken.getStore().getId()));
-    }
-        if(rWaitToken.getToken() != null){
+        }
+        if (rWaitToken.getTableTypeId() != null) {
+            query.where(qrWaitToken.tableTypeId.eq(rWaitToken.getTableTypeId()));
+        }
+        if (rWaitToken.getToken() != null) {
             query.where(qrWaitToken.token.eq(rWaitToken.getToken()));
         }
-        if(rWaitToken.getIdentityCode() != null){
+        if (rWaitToken.getIdentityCode() != null) {
             query.where(qrWaitToken.identityCode.eq(rWaitToken.getIdentityCode()));
         }
-        log.info("the result is: " + query.fetchFirst());
+        LOGGER.info("the result is: " + query.fetchFirst());
 
         return query.fetchFirst();
     }
