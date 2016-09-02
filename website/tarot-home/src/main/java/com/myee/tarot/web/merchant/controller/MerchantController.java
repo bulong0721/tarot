@@ -55,10 +55,9 @@ public class MerchantController {
         try {
             //验证name,CuisineType,BusinessType不能为空
             if (StringUtil.isBlank(merchant.getName())
-                    || StringUtil.isBlank(merchant.getCuisineType())
                     || StringUtil.isBlank(merchant.getBusinessType())) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-                resp.setErrorString("名称/菜系/商户类型不能为空");
+                resp.setErrorString("名称/商户类型不能为空");
                 return resp;
             }
             Merchant merchant1 = merchantService.update(merchant);//新建或更新
@@ -218,7 +217,8 @@ public class MerchantController {
         entry.put("name", merchant.getName());
         entry.put("businessType", merchant.getBusinessType());
         entry.put("businessTypeKey", new BusinessType().getBusinessTypeName(merchant.getBusinessType()));
-        entry.put("cuisineType", new CuisineType().getCuisineTypeName(merchant.getCuisineType()));
+        String suisineType = merchant.getCuisineType();
+        entry.put("cuisineType",(suisineType == null || "".equals(suisineType))?"": new CuisineType().getCuisineTypeName(merchant.getCuisineType()));
         entry.put("logo", merchant.getLogo());
         entry.put("description", merchant.getDescription());
         return entry;

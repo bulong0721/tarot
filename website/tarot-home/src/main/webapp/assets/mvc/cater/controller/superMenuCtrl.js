@@ -113,7 +113,7 @@ function superMenuMgrCtrl($scope, cTables, cfromly,$resource,$filter) {
             var data = $scope.tableOpts.data[rowIndex];
             $scope.formData.model = angular.copy(data);
             //console.log(data)
-            $scope.formData.model.images = data.photo;
+            $scope.formData.model.images = $filter('myeeUrlImg')(data.photo);
             $scope.rowIndex = rowIndex;
         } else {
             $scope.formData.model = {};
@@ -136,11 +136,12 @@ function superMenuMgrCtrl($scope, cTables, cfromly,$resource,$filter) {
                 $scope.toasterManage($scope.toastError, res);
                 return;
             }
+            var pic = res.dataMap.tree.downloadPath;
             $scope.toasterManage($scope.toastUploadSucc);
-            $scope.formData.model.photo = res.dataMap.tree.downloadPath;
+            $scope.formData.model.photo = pic;
 
             //console.log($scope.formData.model.images)
-            $scope.formData.model.images = res.dataMap.tree.downloadPath;
+            $scope.formData.model.images = $filter('myeeUrlImg')( pic);
         })
     });
 

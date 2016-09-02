@@ -132,8 +132,8 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource) {
             var data = $scope.tableOpts.data[rowIndex];
             $scope.formData.model = angular.copy(data);
             //console.log(data)
-            $scope.formData.model.imagesSmall =data.smallPic ? Constants.downloadHome + data.smallPic:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt?imageView2/1/w/150/h/95";
-            $scope.formData.model.imagesBig = data.bigPic ? Constants.downloadHome+ data.bigPic:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt?imageView2/1/w/150/h/95";
+            $scope.formData.model.imagesSmall = $filter('myeeUrlImg')(data.smallPic);
+            $scope.formData.model.imagesBig =  $filter('myeeUrlImg')(data.bigPic);
             $scope.rowIndex = rowIndex;
         } else {
             $scope.formData.model = {};
@@ -161,10 +161,10 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource) {
                 if(uploadId == "smallImage"){
                     $scope.formData.model.smallPic = pic;
                     console.log($scope.downloadHome + pic);
-                    $scope.formData.model.imagesSmall = Constants.downloadHome + pic;
+                    $scope.formData.model.imagesSmall = $filter('myeeUrlImg')(pic);
                 }else if(uploadId == "bigImage"){
                     $scope.formData.model.bigPic = pic;
-                    $scope.formData.model.imagesBig = Constants.downloadHome + pic;
+                    $scope.formData.model.imagesBig = $filter('myeeUrlImg')(pic);
                 }
             })
     });

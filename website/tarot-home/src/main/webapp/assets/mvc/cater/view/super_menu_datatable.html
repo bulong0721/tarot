@@ -34,7 +34,7 @@
                 </tr>
                 <tr ng-repeat="row in $data" class="center">
                     <td style=" vertical-align:middle;" class="center">
-                        <img   height="50px" ng-src="{{::row.photo}}" src="http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt?imageView2/1/w/150/h/95"/>
+                        <img   height="50px" ng-src="{{::row.photo | myeeUrlImg}}"/>
                     </td>
                     <td style=" vertical-align:middle;">{{::row.name}}</td>
                     <td style=" vertical-align:middle;">{{::row.price}}</td>

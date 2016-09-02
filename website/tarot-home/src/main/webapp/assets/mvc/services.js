@@ -89,7 +89,8 @@ function constServiceCtor($resource, $q) {
 
 
     };
-    vm.downloadHome = "http://127.0.0.1/push/";
+    //vm.downloadHome = "http://127.0.0.1/push/";
+    //vm.defaultPic = "http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt?imageView2/1/w/150/h/95";
 
 }
 

@@ -3,6 +3,7 @@ angular
     .filter('sizeFormatter', sizeFormatter)
     .filter('dateFormatter', dateFormatter)
     .filter('inputType',inputType)
+    .filter('myeeUrlImg',myeeUrlImg)
 
 //计算文件大小的单位
 function sizeFormatter() {
@@ -57,5 +58,12 @@ function inputType(){
             default:
                 return false;
         }
+    }
+}
+
+//木爷图片链接
+function myeeUrlImg($rootScope){
+    return function (val){
+        return val?$rootScope.Constant.myeeUrlImg+val:$rootScope.Constant.myeeDefaultUrlImg;
     }
 }

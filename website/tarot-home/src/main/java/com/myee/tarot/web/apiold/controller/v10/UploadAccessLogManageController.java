@@ -65,9 +65,9 @@ public class UploadAccessLogManageController extends BaseController {
     private ThreadPoolTaskExecutor taskExecutor;
 
     //需要人为计算点击行为停留时间的action表，因为apk那边没办法监测这些行为
-    private final static int[] needCountAction = {6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 31};
+    private final static int[] needCountAction = {6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 31,32};
     //不需要人为计算点击行为停留时间的action表，因为是瞬发行为
-    private final static int[] avoidCountAction = {1, 2, 3, 4, 5, 28, 29, 30};
+    private final static int[] avoidCountAction = {1, 2, 3, 4, 5, 28, 29, 30,33,34,35};
 
 
     /**
@@ -283,6 +283,7 @@ public class UploadAccessLogManageController extends BaseController {
                 c = (c <= 0 || c>= 7776000) ? 0 : c; //为负数,或差了3个月的则置0，防止错误数据影响
                 return c;//ms数除以1000转换为s
             } else {
+                //excel上传的停留时间单位是秒
                 return excelData.getString("var3") == null ? 0L : TypeConverter.toLong(excelData.getString("var3"));
             }
         } catch (Exception e) {
@@ -329,6 +330,7 @@ public class UploadAccessLogManageController extends BaseController {
                 c = (c <= 0 || c>= 7776000) ? 0 : c; //为负数,或差了3个月的则置0，防止错误数据影响
                 return c;//ms数除以1000转换为s
             } else {
+                //csv上传的停留时间单位是毫秒
                 return csvData[3] == null ? 0L : TypeConverter.toLong(csvData[3]) / 1000;//新方式timestay可能会为0
             }
         } catch (Exception e) {
