@@ -90,7 +90,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
             var data = $scope.tableOpts.data[rowIndex];
             $scope.formData.model = angular.copy(data);
             //console.log(data)
-            $scope.formData.model.images = data.logo;
+            $scope.formData.model.images = data.logo?data.logo:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt?imageView2/1/w/150/h/95";
             $scope.rowIndex = rowIndex;
         } else {
             $scope.formData.model = {};
