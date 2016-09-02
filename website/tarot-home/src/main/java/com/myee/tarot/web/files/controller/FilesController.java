@@ -306,7 +306,7 @@ public class FilesController {
                 jt.setType("file");
                 jt.setLastModify(new Date(dest.lastModified()));
                 jt.setDetailType(FilenameUtils.getExtension(fileName));
-                jt.setDownloadPath(DOWNLOAD_HTTP + storeIdStr + "/" + path + "/" + file.getFileItem().getName());
+                jt.setDownloadPath( storeIdStr + "/" + path + "/" + file.getFileItem().getName());//返回相对路径
                 resp.addEntry("tree", jt);
             }
             //20160708文本编辑放到另一个接口，以后再做
