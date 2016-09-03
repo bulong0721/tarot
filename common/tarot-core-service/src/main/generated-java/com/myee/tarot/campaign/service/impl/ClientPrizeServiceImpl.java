@@ -1,7 +1,6 @@
 package com.myee.tarot.campaign.service.impl;
 
 import com.myee.tarot.campaign.dao.ClientPrizeDao;
-import com.myee.tarot.campaign.dao.MerchantActivityDao;
 import com.myee.tarot.campaign.service.ClientPrizeService;
 import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
 import com.myee.tarot.clientprize.domain.ClientPrize;
@@ -37,6 +36,11 @@ public class ClientPrizeServiceImpl extends GenericEntityServiceImpl<Long, Clien
     @Override
     public List<ClientPrize> listActive(Long storeId) {
         return clientPrizeDao.listActive(storeId);
+    }
+
+    @Override
+    public ClientPrize getThankYouPrize(Long storeId) {
+        return clientPrizeDao.getThankYouPrize(storeId);
     }
 
     // 每天凌晨检测已过期的奖券

@@ -132,11 +132,13 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource) {
             var data = $scope.tableOpts.data[rowIndex];
             $scope.formData.model = angular.copy(data);
             //console.log(data)
-            $scope.formData.model.imagesSmall =data.smallPic ? Constants.downloadHome + data.smallPic:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt?imageView2/1/w/150/h/95";
-            $scope.formData.model.imagesBig = data.bigPic ? Constants.downloadHome+ data.bigPic:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt?imageView2/1/w/150/h/95";
+            $scope.formData.model.imagesSmall =data.smallPic ? Constants.downloadHome + data.smallPic: Constants.blankPicUrl;
+            $scope.formData.model.imagesBig = data.bigPic ? Constants.downloadHome+ data.bigPic: Constants.blankPicUrl;
             $scope.rowIndex = rowIndex;
         } else {
             $scope.formData.model = {};
+            $scope.formData.model.imagesSmall = Constants.blankPicUrl
+            $scope.formData.model.imagesBig = Constants.blankPicUrl;
             $scope.rowIndex = -1;
         }
         $scope.activeTab = iEditor;

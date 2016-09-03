@@ -315,10 +315,16 @@ public class ClientPrizeController {
             List<ClientPrize> activeClientPrize = clientPrizeService.listActive(orgId);
             int size = activeClientPrize.size();
             //若没满8个，需用谢谢惠顾填满
+            ClientPrize thankYouPrize = clientPrizeService.getThankYouPrize(orgId);
             if (size <= 8) {
                 for (int i = 0; i < 8 - size; i++) {
                     ClientPrize addPrize = new ClientPrize();
-                    addPrize.setName("谢谢惠顾");
+                    addPrize.setId(-1L);
+                    addPrize.setType(thankYouPrize.getType());
+                    addPrize.setBigPic(thankYouPrize.getBigPic());
+                    addPrize.setSmallPic(thankYouPrize.getSmallPic());
+                    addPrize.setDescription(thankYouPrize.getDescription());
+                    addPrize.setName(thankYouPrize.getName());
                     activeClientPrize.add(addPrize);
                 }
             } else {
@@ -346,7 +352,7 @@ public class ClientPrizeController {
      * @return
      */
     @RequestMapping(value = "services/public/getRandomClientPrizeInfo", method = RequestMethod.POST)
-    public ClientAjaxResult getRandomClientPrizeInfo(@RequestParam("shopId") Long shopId,
+    public ClientAjaxResult getRandomClientPrizeInfo(@RequestParam("orgId") Long shopId,
                                                      @RequestParam("deskId") String deskId) {
         try {
             List<ClientPrize> activeClientPrize = clientPrizeService.listActive(shopId);
@@ -392,14 +398,16 @@ public class ClientPrizeController {
                         getInfo.setGetDate(new Date());
                         getInfo.setStatus(Constants.CLIENT_PRIZEINFO_STATUS_UNGET);
                         ClientPrizeGetInfo clientPrizeGetInfo = clientPrizeGetInfoService.update(getInfo);
-                        return ClientAjaxResult.success(clientPrizeGetInfo);
+                        clientPrize.setPriceGetId(clientPrizeGetInfo.getId());
                     } else if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_SCANCODE) {
                         //无需消奖
+                        clientPrize.setPriceGetId(-1L);
                     } else if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_THANKYOU) {
                         clientPrize.setLeftNum(clientPrize.getLeftNum() - 1);
                         clientPrizeService.update(clientPrize);
+                        clientPrize.setPriceGetId(-1L);
                     }
-                    return ClientAjaxResult.success(clientPrize);
+                    return ClientAjaxResult.success(objectToClientEntry(clientPrize));
                 }
             }
         } catch (Exception e) {
@@ -478,11 +486,12 @@ public class ClientPrizeController {
     private Map objectToClientEntry(ClientPrize clientPrize) {
         Map entry = new HashMap();
         entry.put("id", clientPrize.getId());
-        entry.put("name", clientPrize.getName());
+        entry.put("name", clientPrize.getName() == null ? "" : clientPrize.getName());
         entry.put("type", clientPrize.getType());
-        entry.put("description", clientPrize.getDescription());
-        entry.put("bigPic", clientPrize.getBigPic());
-        entry.put("smallPic", clientPrize.getSmallPic());
+        entry.put("description", clientPrize.getDescription() == null ? "" :clientPrize.getDescription());
+        entry.put("bigPic", clientPrize.getBigPic() == null ? "": clientPrize.getBigPic());
+        entry.put("smallPic", clientPrize.getSmallPic() == null ? "":clientPrize.getSmallPic());
+        entry.put("prizeGetId", clientPrize.getPriceGetId());
         return entry;
     }
 

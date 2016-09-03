@@ -48,6 +48,14 @@ public class ClientPrizeDaoImpl extends GenericEntityDaoImpl<Long, ClientPrize> 
     }
 
     @Override
+    public ClientPrize getThankYouPrize(Long storeId) {
+        QClientPrize qClientPrize = QClientPrize.clientPrize;
+        JPQLQuery<ClientPrize> query = new JPAQuery(getEntityManager());
+        query.from(qClientPrize).where(qClientPrize.store.id.eq(storeId).and(qClientPrize.activeStatus.eq(Constants.CLIENT_PRIZE_ACTIVE_YES).and(qClientPrize.type.eq(Constants.CLIENT_PRIZE_TYPE_THANKYOU))));
+        return query.fetchFirst();
+    }
+
+    @Override
     public List<ClientPrize> listAllActive() {
         QClientPrize qClientPrize = QClientPrize.clientPrize;
         JPQLQuery<ClientPrize> query = new JPAQuery(getEntityManager());
