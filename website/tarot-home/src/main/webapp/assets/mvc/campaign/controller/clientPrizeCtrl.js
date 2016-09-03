@@ -134,13 +134,11 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource) {
             //console.log(data)
             $scope.formData.model.imagesSmall = $filter('myeeUrlImg')(data.smallPic);
             $scope.formData.model.imagesBig =  $filter('myeeUrlImg')(data.bigPic);
-            $scope.formData.model.imagesSmall =data.smallPic ? Constants.downloadHome + data.smallPic: Constants.blankPicUrl;
-            $scope.formData.model.imagesBig = data.bigPic ? Constants.downloadHome+ data.bigPic: Constants.blankPicUrl;
             $scope.rowIndex = rowIndex;
         } else {
             $scope.formData.model = {};
-            $scope.formData.model.imagesSmall = Constants.blankPicUrl
-            $scope.formData.model.imagesBig = Constants.blankPicUrl;
+           // $scope.formData.model.imagesSmall = Constants.myeeDefaultUrlImg;
+           // $scope.formData.model.imagesBig = Constants.myeeDefaultUrlImg;
             $scope.rowIndex = -1;
         }
         $scope.activeTab = iEditor;
@@ -164,7 +162,6 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource) {
                 var pic = res.dataMap.tree.downloadPath;
                 if(uploadId == "smallImage"){
                     $scope.formData.model.smallPic = pic;
-                    console.log($scope.downloadHome + pic);
                     $scope.formData.model.imagesSmall = $filter('myeeUrlImg')(pic);
                 }else if(uploadId == "bigImage"){
                     $scope.formData.model.bigPic = pic;
