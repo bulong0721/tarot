@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * clientPrizeCtrl - controller
  */
-clientPrizeCtrl.$inject = ['$scope', 'Constants','cTables','cfromly','toaster','$resource'];
-function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource) {
+clientPrizeCtrl.$inject = ['$scope', 'Constants','cTables','cfromly','toaster','$resource','$filter'];
+function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$filter) {
     var mgrData = {
         fields: [
             {
@@ -137,8 +137,8 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource) {
             $scope.rowIndex = rowIndex;
         } else {
             $scope.formData.model = {};
-           // $scope.formData.model.imagesSmall = Constants.myeeDefaultUrlImg;
-           // $scope.formData.model.imagesBig = Constants.myeeDefaultUrlImg;
+            //$scope.formData.model.imagesSmall = Constants.myeeDefaultUrlImg;
+            //$scope.formData.model.imagesBig = Constants.myeeDefaultUrlImg;
             $scope.rowIndex = -1;
         }
         $scope.activeTab = iEditor;
