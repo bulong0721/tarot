@@ -14,7 +14,7 @@ public interface WxWaitTokenDao extends GenericEntityDao<Long, WxWaitToken> {
 
     public Integer updateWaitTokenOpenId(String openId, String identityCode, Long date);
 
-    public Integer modifyWaitingInfo(Long waitedCount, String identityCode, Long date, Long predictWaitingTime);
+    public Integer modifyWaitingInfo(long waitedCount, String identityCode, Long date, Long predictWaitingTime, Long tableTypeId);
 
     public WxWaitToken getByIdentityCode(String identityCode, Long beginTime, Long endTime);
 

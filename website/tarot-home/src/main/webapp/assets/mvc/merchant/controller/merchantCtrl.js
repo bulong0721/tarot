@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * merchantCtrl - controller
  */
-merchantCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', '$resource'];
-function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
+merchantCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', '$resource','$filter'];
+function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
     var mgrData = {
         fields: [
             {
@@ -28,6 +28,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
                 type: 'c_select',
                 className: 'c_select',
                 templateOptions: {
+                    required:false,
                     label: '商户菜系',
                     options: Constants.merchantCuisine
                 },
@@ -89,8 +90,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
         if (rowIndex > -1) {
             var data = $scope.tableOpts.data[rowIndex];
             $scope.formData.model = angular.copy(data);
-            //console.log(data)
-            $scope.formData.model.images = data.logo?data.logo:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt?imageView2/1/w/150/h/95";
+            $scope.formData.model.images = $filter('myeeUrlImg')(data.logo);
             $scope.rowIndex = rowIndex;
         } else {
             $scope.formData.model = {};
@@ -107,16 +107,17 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
             path: "logo",
             type: "file"
         }, arg).$promise.then(function (res) {
-                //console.log(res)
-                if (0 != res.status) {
-                    $scope.toasterManage($scope.toastError, res);
-                    return;
-                }
-                $scope.toasterManage($scope.toastUploadSucc);
-                $scope.formData.model.logo = res.dataMap.tree.downloadPath;
+            //console.log(res)
+            if (0 != res.status) {
+                $scope.toasterManage($scope.toastError, res);
+                return;
+            }
+            var pic = res.dataMap.tree.downloadPath;
+            $scope.toasterManage($scope.toastUploadSucc);
+            $scope.formData.model.logo = pic;
 
-                //console.log($scope.formData.model.images)
-                $scope.formData.model.images = res.dataMap.tree.downloadPath;
-            })
+            //console.log($scope.formData.model.images)
+            $scope.formData.model.images = $filter('myeeUrlImg')( pic);
+        })
     });
 }

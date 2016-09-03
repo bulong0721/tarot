@@ -387,4 +387,10 @@ angular
     .run(function ($rootScope, $state) {
         $rootScope.storeInfo = {};
         $rootScope.$state = $state;
+        $rootScope.Constant = {
+            myeeUrlImg:"http://127.0.0.1/push/",//本地测试
+            //myeeUrlImg:"http://myee7.com/push_test/",//线上测试服务器
+            //myeeUrlImg:"http://myee7.com/push/",//线上正式服务器
+            myeeDefaultUrlImg:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt?imageView2/1/w/150/h/95"
+        };
     });
