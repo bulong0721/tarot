@@ -107,7 +107,7 @@ public class OperationsServiceImpl implements OperationsService {
 
     private static final String SHOP_NAME = "keyword1";
 
-    private static final String QUEUE_NUMBER = "QUEUE_NUMBER";
+    private static final String QUEUE_NUMBER = "keyword2";
 
     private static final String WAITING_AHEAD_COUNT = "keyword3";
 
@@ -303,7 +303,7 @@ public class OperationsServiceImpl implements OperationsService {
         try {
             WxMpTemplateMessage templateMessage = new WxMpTemplateMessage();
             templateMessage.setToUser(m.get("openId").toString());
-            templateMessage.setTemplateId("p9ZGWqeFEYbLPkMKOdd5KUKc_QiqfXaJgu1ZNmezIUo");
+            templateMessage.setTemplateId(IMAGE_ARTICLE_MSG_TEMPLEID);
             templateMessage.getDatas().add(new WxMpTemplateData(SHOP_NAME, m.get("shopName") == null ? "" : m.get("shopName").toString(), "#c37160"));
             templateMessage.getDatas().add(new WxMpTemplateData(QUEUE_NUMBER, m.get("tokenNum").toString(), "#36b2cc"));
             templateMessage.getDatas().add(new WxMpTemplateData(WAITING_AHEAD_COUNT, m.get("waitedTable").toString(), "#ff9900"));
