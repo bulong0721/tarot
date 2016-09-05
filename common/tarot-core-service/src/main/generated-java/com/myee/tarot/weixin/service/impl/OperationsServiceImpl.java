@@ -55,7 +55,7 @@ import static org.apache.ignite.cache.CacheMode.PARTITIONED;
  * Created by Martin on 2016/1/27.
  */
 @Service
-public class OperationsServiceImpl extends RedisOperation implements OperationsService {
+public class OperationsServiceImpl implements OperationsService {
     private static Logger logger = LoggerFactory.getLogger(OperationsServiceImpl.class);
 
     @Value("${cleverm.push.dirs}")
@@ -67,11 +67,6 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
     @Autowired
     @Lazy
     private WxWaitTokenDao waitTokenDao;
-
-    @Autowired
-    public OperationsServiceImpl(RedisTemplate redisTemplate) {
-        super(redisTemplate);
-    }
 
     @Autowired
     private WxMpService wxMpService;
@@ -144,14 +139,14 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
         //排号Key，第一个参数是店铺id，第二个参数是餐桌类型ID，例如：waitOfTableType:100-103
         String sourceStr = CacheUtil.getIdentityCode(Long.valueOf(waitToken.getSceneId()));
         //sourceStr截取之前是sceneIdToIdentityCode:110510303，把1截掉，其中1是为了区分查询最新进展和扫码抽奖设置的标识位,10510303是传递的参数
-        String redisKeyOfUcdScId = sourceStr.substring(0, 22) + sourceStr.substring(23);
+        String keyQrCode = sourceStr.substring(0, 22) + sourceStr.substring(23);
         IgniteCache<String, WaitToken> waitTokenCache = CacheUtil.waitOfTableType(ignite, waitToken.getTableTypeId());
         String waitOfTableTypeKey = CacheUtil.getWaitOfTableType(waitToken.getTableTypeId());
 
         //然后二维码的数字码放Redis，跟identityCode唯一码绑定，第一个参数redisKeyOfUcdScId作为key，第二个参数waitToken.getIdentityCode()唯一码作为value，第三个参数null是失效时间
-        IgniteCache<String, String> scenIdIdentityCodeCache = CacheUtil.qrParametersIdentityCode(ignite);
-        scenIdIdentityCodeCache.put(redisKeyOfUcdScId, waitToken.getIdentityCode());
-        scenIdIdentityCodeCache.withExpiryPolicy(new AccessedExpiryPolicy(new Duration(createDate.getTime() / DIVIDE_MILLSECOND, endDate.getTime() / DIVIDE_MILLSECOND)));
+        IgniteCache<String, String> cacheQrCodeIdentityCode = CacheUtil.qrParametersIdentityCode(ignite);
+        cacheQrCodeIdentityCode.put(keyQrCode, waitToken.getIdentityCode());
+        cacheQrCodeIdentityCode.withExpiryPolicy(new AccessedExpiryPolicy(new Duration(createDate.getTime() / DIVIDE_MILLSECOND, endDate.getTime() / DIVIDE_MILLSECOND)));
 
         //然后identityCode唯一码放Redis，跟第二个参数排号key绑定，第一个参数是key,第二个参数是value，这里放排号key，第三个是失效时间
         IgniteCache<String, String> identityCodeWaitTokenTypeKeyCache = CacheUtil.identityCodeWaitTokenType(ignite);
@@ -162,7 +157,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
         CollectionConfiguration setCfg = new CollectionConfiguration();
         setCfg.setAtomicityMode(TRANSACTIONAL);
         setCfg.setCacheMode(PARTITIONED);
-        IgniteSet<String> setTokenCache = ignite.set("set"+waitOfTableTypeKey,setCfg);
+        IgniteSet<String> setTokenCache = CacheUtil.waitOfTableTypeSet(ignite, waitOfTableTypeKey, setCfg);
         setTokenCache.add(waitToken.getToken());
 
         //第一个参数是排号key，作为key，第二个参数是排号(如：A01，B02)，第三个失效时间
