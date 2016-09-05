@@ -8,6 +8,8 @@ import com.myee.tarot.apiold.view.MenuDataInfo;
 import com.myee.tarot.campaign.domain.MerchantActivity;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
+import org.apache.ignite.IgniteSet;
+import org.apache.ignite.configuration.CollectionConfiguration;
 
 import java.util.Set;
 
@@ -89,13 +91,24 @@ public final class CacheUtil {
 
     public static final String CACHE_WAIT_OF_TYPE_SET = "waitOfTypeKeySet_";
 
-    public static IgniteCache<String, Set> waitOfTableTypeSet(Ignite ignite, Long tableType) {
-        return getCache(ignite, CACHE_WAIT_OF_TYPE_SET + tableType);
+    public static IgniteSet<String> waitOfTableTypeSet(Ignite ignite, String tableType, CollectionConfiguration setCfg) {
+        return ignite.set(CACHE_WAIT_OF_TYPE_SET + tableType, setCfg);
     }
 
     private static final String CACHE_OPENID_TO_STORE      = "openIdToStore_";
     public static IgniteCache<String, String> openidToStore(Ignite ignite, Long storeId) {
         return getCache(ignite, CACHE_OPENID_TO_STORE + storeId);
     }
+
+    private static final String CACHE_IDENTITYCODE_WAITTOKENTYPE = "identityCodeWaitTokenTypeKeyCache";
+    public static final IgniteCache<String,String> identityCodeWaitTokenType(Ignite ignite) {
+        return getCache(ignite, CACHE_IDENTITYCODE_WAITTOKENTYPE);
+    }
+
+    private static final String CACHE_QRPARAMETERS_IDENTITYCODE = "sceneIdIdentityCode";
+    public static final IgniteCache<String, String> qrParametersIdentityCode(Ignite ignite) {
+        return getCache(ignite, CACHE_QRPARAMETERS_IDENTITYCODE);
+    }
+
 
 }

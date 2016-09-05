@@ -15,7 +15,6 @@ import com.myee.tarot.weixin.domain.ClientAjaxResult;
 import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.myee.tarot.weixin.service.WeixinService;
 import com.myee.tarot.weixin.service.impl.OperationsServiceImpl;
-import com.myee.tarot.weixin.service.impl.RedisKeys;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.WxJsapiSignature;
 import me.chanjar.weixin.common.bean.WxMenu;
@@ -166,7 +165,7 @@ public class WebMpController {
                 //微信自带的扫二维码，未关注
                 if (inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent() != null && inMessage.getEvent().equals(WxConsts.EVT_SUBSCRIBE) && inMessage.getTicket() != null) {
                     if (inMessage.getEventKey().substring(8, 9).equals("1")) {
-                        String sceneId = inMessage.getEventKey().substring(1, inMessage.getEventKey().length());
+                        String sceneId = inMessage.getEventKey().substring(9, inMessage.getEventKey().length());
                         String sceneIdToIdentityCode = CacheUtil.getIdentityCode(Long.valueOf(sceneId));
                         String identityCode = manager.getIdentityCode(sceneIdToIdentityCode);
                         //将该二维码绑定扫码的微信OpenId
@@ -231,11 +230,6 @@ public class WebMpController {
         } finally {
             out.close();
         }
-    }
-
-    @RequestMapping(value = "myKey")
-    public void testCacheGetAll() {
-        wxService.testCacheGetAll();
     }
 
     @RequestMapping(value = "oauth2buildAuthorizationUrl")
