@@ -353,7 +353,7 @@ public class OperationsServiceImpl implements OperationsService {
                     userNum = Integer.parseInt(wt.getToken().substring(1, 3));
                     waitToken = wt.getToken();
                     timeTook = wt.getTimeTook();
-                    shopName = wt.getClientName();
+                    shopName = merchantStoreService.findById(wt.getShopId()).getName();
                     queueStatus = assignVal(wt.getWaitStatus());
                     openId = wt.getOpenId();
                 }
