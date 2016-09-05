@@ -45,13 +45,36 @@
                     <li ui-sref-active="active"><a ui-sref="cater.type">餐桌类型</a></li>
                     <li ui-sref-active="active"><a ui-sref="cater.zone">餐桌区域</a></li>
                     <li ui-sref-active="active"><a ui-sref="cater.table">餐桌管理</a></li>
-                    <li ui-sref-active="active"><a ui-sref="cater.superMenu">菜品管理</a></li>
+                </ul>
+            </li>
+
+            <li ng-class="{active: $state.includes('superman')}">
+                <a href="device"><i class="fa fa-lg fa-laptop"></i> <span class="nav-label">小超人设置</span> <span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level" ng-class="{in: $state.includes('superman')}">
+                    <li ui-sref-active="active"><a ui-sref="superman.menu">菜品管理</a></li>
                     <li ui-sref-active="active">
-                        <a ui-sref="cater.superMenuResource">小超人资源<span class="fa fa arrow"></span></a>
+                        <a ui-sref="superman.storeResource">本店资源查看<span class="fa fa arrow"></span></a>
                         <ul class="nav child_menu">
-                            <li class="sub_menu"><a href="level2.html">Level Two</a></li>
-                            <li><a href="#level2_1">Level Two</a></li>
-                            <li><a href="#level2_2">Level Two</a></li>
+                            <li ui-sref-active="active"><a ui-sref="superman.storeResource.activity">本店活动</a></li>
+                            <li ui-sref-active="active"><a ui-sref="superman.storeResource.video">本店视频</a></li>
+                        </ul>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="superman.MYResource">木爷资源管理<span class="fa fa arrow"></span></a>
+                        <ul class="nav child_menu">
+                            <li ui-sref-active="active"><a ui-sref="superman.MYResource.activity">木爷活动资源</a></li>
+                            <li ui-sref-active="active"><a ui-sref="superman.MYResource.video">木爷视频资源</a></li>
+                            <li ui-sref-active="active"><a ui-sref="superman.MYResource.ad">内嵌广告资源</a></li>
+                            <li ui-sref-active="active"><a ui-sref="superman.MYResource.material">木爷素材资源</a></li>
+                        </ul>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="superman.push">木爷资源推送<span class="fa fa arrow"></span></a>
+                        <ul class="nav child_menu">
+                            <li ui-sref-active="active"><a ui-sref="superman.push.activity">木爷活动推送</a></li>
+                            <li ui-sref-active="active"><a ui-sref="superman.push.video">木爷视频推送</a></li>
+                            <li ui-sref-active="active"><a ui-sref="superman.push.ad">内嵌广告推送</a></li>
+                            <li ui-sref-active="active"><a ui-sref="superman.push.material">木爷素材推送</a></li>
                         </ul>
                     </li>
                 </ul>

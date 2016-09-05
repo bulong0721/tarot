@@ -279,12 +279,176 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 }
             }
         })
-        .state('cater.superMenu', {
-            url: "/superMenu",
+        .state('superman', {
+            abstract: true,
+            url: "/super",
+            template: "<div ui-view></div>",
+            data: {pageTitle: '小超人'}
+        })
+        .state('superman.menu', {
+            url: "/menu",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'superMenuMgrCtrl',
             data: {
-                subTitle: '餐桌管理',
+                subTitle: '菜品管理',
+                datatable: 'assets/mvc/cater/view/super_menu_datatable.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
+                }
+            }
+        })
+        .state('superman.storeResource', {
+            abstract: true,
+            url: "/storeResource",
+            template: "<div ui-view></div>",
+            data: {pageTitle: '本店资源查看'}
+        })
+        .state('superman.storeResource.activity', {
+            url: "/activity",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'superMenuMgrCtrl',
+            data: {
+                subTitle: '本店活动',
+                datatable: 'assets/mvc/cater/view/super_menu_datatable.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
+                }
+            }
+        })
+        .state('superman.storeResource.video', {
+            url: "/video",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'superMenuMgrCtrl',
+            data: {
+                subTitle: '本店视频',
+                datatable: 'assets/mvc/cater/view/super_menu_datatable.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
+                }
+            }
+        })
+        .state('superman.MYResource', {
+            abstract: true,
+            url: "/MYResource",
+            template: "<div ui-view></div>",
+            data: {pageTitle: '木爷资源管理'}
+        })
+        .state('superman.MYResource.activity', {
+            url: "/activity",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'superMenuMgrCtrl',
+            data: {
+                subTitle: '木爷活动资源',
+                datatable: 'assets/mvc/cater/view/super_menu_datatable.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
+                }
+            }
+        })
+        .state('superman.MYResource.video', {
+            url: "/video",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'superMenuMgrCtrl',
+            data: {
+                subTitle: '木爷视频资源',
+                datatable: 'assets/mvc/cater/view/super_menu_datatable.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
+                }
+            }
+        })
+        .state('superman.MYResource.ad', {
+            url: "/ad",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'superMenuMgrCtrl',
+            data: {
+                subTitle: '内嵌广告资源',
+                datatable: 'assets/mvc/cater/view/super_menu_datatable.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
+                }
+            }
+        })
+        .state('superman.MYResource.material', {
+            url: "/material",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'superMenuMgrCtrl',
+            data: {
+                subTitle: '木爷素材资源',
+                datatable: 'assets/mvc/cater/view/super_menu_datatable.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
+                }
+            }
+        })
+        .state('superman.push', {
+            abstract: true,
+            url: "/push",
+            template: "<div ui-view></div>",
+            data: {pageTitle: '木爷资源推送'}
+        })
+        .state('superman.push.activity', {
+            url: "/activity",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'superMenuMgrCtrl',
+            data: {
+                subTitle: '木爷活动推送',
+                datatable: 'assets/mvc/cater/view/super_menu_datatable.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
+                }
+            }
+        })
+        .state('superman.push.video', {
+            url: "/video",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'superMenuMgrCtrl',
+            data: {
+                subTitle: '木爷视频推送',
+                datatable: 'assets/mvc/cater/view/super_menu_datatable.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
+                }
+            }
+        })
+        .state('superman.push.ad', {
+            url: "/ad",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'superMenuMgrCtrl',
+            data: {
+                subTitle: '内嵌广告推送',
+                datatable: 'assets/mvc/cater/view/super_menu_datatable.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
+                }
+            }
+        })
+        .state('superman.push.material', {
+            url: "/material",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'superMenuMgrCtrl',
+            data: {
+                subTitle: '木爷素材推送',
                 datatable: 'assets/mvc/cater/view/super_menu_datatable.html'
             },
             resolve: {
