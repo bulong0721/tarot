@@ -1,9 +1,11 @@
 package com.myee.tarot.web.customer.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,9 +16,14 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class CustomerController {
 
+    @Value("${cleverm.push.http}")
+    private String downloadBase;
+
     @RequestMapping(value = {"shop/home.html", "shop/", "shop"}, method = RequestMethod.GET)
-    public String displayDashboard(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return "shop/home";
+    public ModelAndView displayDashboard(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ModelAndView mv = new ModelAndView("shop/home");
+        mv.addObject("downloadBase",downloadBase);
+        return mv;
     }
 
     @RequestMapping(value = {"shop/denied.html"}, method = RequestMethod.GET)

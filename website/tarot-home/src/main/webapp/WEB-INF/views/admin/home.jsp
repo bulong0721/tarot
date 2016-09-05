@@ -63,5 +63,8 @@
     <script src="assets/mvc/services.js"></script>
     <script src="assets/mvc/controllers.js"></script>
     <script src="assets/mvc/filters.js"></script>
+    <script>
+        var downloadBase= "${downloadBase}";
+    </script>
 </body>
 </html>
