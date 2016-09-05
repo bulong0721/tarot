@@ -1,6 +1,6 @@
 package com.myee.tarot.web.apiold.controller;
 
-import com.alibaba.fastjson.JSON;
+import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.web.apiold.util.QiniuStoreClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +19,10 @@ public class PictureManageController extends BaseController{
 
     @RequestMapping(value = "/tokenAndKey")
     @ResponseBody
-    public String qiniuTokenAndKey(){
-        return JSON.toJSONString(QiniuStoreClient.getUploadTokenAndKey(getCommConfig()));
+    public AjaxResponse qiniuTokenAndKey(){
+        AjaxResponse resp = AjaxResponse.success();
+        resp.addEntry("uptoken",QiniuStoreClient.getUploadTokenAndKey(getCommConfig()).getUptoken());
+        return resp;
 //        return AjaxResult.success(QiniuStoreClient.getUploadTokenAndKey(user.getClientId(), user.getOrgId(), user.getUserId(), fileType));
     }
 }
