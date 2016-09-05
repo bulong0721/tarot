@@ -159,7 +159,8 @@ public class ClientPrizeController {
             }
             ClientPrize existPrize = clientPrizeService.findById(clientPrize.getId());
             if (existPrize != null) {
-                clientPrizeService.delete(existPrize);
+                existPrize.setDeleteStatus(Constants.CLIENT_PRIZE_DELETE_NO);
+                clientPrizeService.update(existPrize);
                 resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
             }
         } catch (Exception e) {
@@ -313,29 +314,36 @@ public class ClientPrizeController {
         try {
             //获取激活的奖券
             List<ClientPrize> activeClientPrize = clientPrizeService.listActive(orgId);
-            int size = activeClientPrize.size();
-            //若没满8个，需用谢谢惠顾填满
-            ClientPrize thankYouPrize = clientPrizeService.getThankYouPrize(orgId);
-            if (size <= 8) {
-                for (int i = 0; i < 8 - size; i++) {
-                    ClientPrize addPrize = new ClientPrize();
-                    addPrize.setId(-1L);
-                    addPrize.setType(thankYouPrize.getType());
-                    addPrize.setBigPic(thankYouPrize.getBigPic());
-                    addPrize.setSmallPic(thankYouPrize.getSmallPic());
-                    addPrize.setDescription(thankYouPrize.getDescription());
-                    addPrize.setName(thankYouPrize.getName());
-                    activeClientPrize.add(addPrize);
+            if(activeClientPrize != null && activeClientPrize.size() != 0){
+                int size = activeClientPrize.size();
+                //若没满8个，需用谢谢惠顾填满
+                ClientPrize thankYouPrize = clientPrizeService.getThankYouPrize(orgId);
+                if(thankYouPrize == null){
+                    return ClientAjaxResult.failed("请至少设置一个谢谢惠顾类型的奖券");
                 }
+                if (size <= 8) {
+                    for (int i = 0; i < 8 - size; i++) {
+                        ClientPrize addPrize = new ClientPrize();
+                        addPrize.setId(-1L);
+                        addPrize.setType(thankYouPrize.getType());
+                        addPrize.setBigPic(thankYouPrize.getBigPic());
+                        addPrize.setSmallPic(thankYouPrize.getSmallPic());
+                        addPrize.setDescription(thankYouPrize.getDescription());
+                        addPrize.setName(thankYouPrize.getName());
+                        activeClientPrize.add(addPrize);
+                    }
+                } else {
+                    return ClientAjaxResult.failed("设置激活的奖券不能超过8个");
+                }
+                //去除简化字段
+                List<Object> resultObject = Lists.newArrayList();
+                for (ClientPrize clientPrize : activeClientPrize) {
+                    resultObject.add(objectToClientEntry(clientPrize));
+                }
+                return ClientAjaxResult.success(resultObject);
             } else {
-                return ClientAjaxResult.failed("设置的奖品列表超过8个");
+                return ClientAjaxResult.failed("该商户未设置有效奖券");
             }
-            //去除简化字段
-            List<Object> resultObject = Lists.newArrayList();
-            for (ClientPrize clientPrize : activeClientPrize) {
-                resultObject.add(objectToClientEntry(clientPrize));
-            }
-            return ClientAjaxResult.success(resultObject);
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error(e.getMessage(), e);
@@ -356,59 +364,63 @@ public class ClientPrizeController {
                                                      @RequestParam("deskId") String deskId) {
         try {
             List<ClientPrize> activeClientPrize = clientPrizeService.listActive(shopId);
-            int totalLeft = 0;
-            int leftPhoneTotal = 0;
-            //先获取剩余手机奖券的
-            for (ClientPrize clientPrize : activeClientPrize) {
-                if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_PHONE) {
-                    int leftNum = clientPrize.getLeftNum().intValue();
-                    leftPhoneTotal += leftNum;
-                    totalLeft += leftNum;
-                } else if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_THANKYOU) {
-                    int leftNum = clientPrize.getLeftNum().intValue();
-                    totalLeft += leftNum;
-                }
-            }
-            //随机生成二维码计算数量
-            Random random = new Random();
-            for (ClientPrize clientPrize : activeClientPrize) {
-                if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_SCANCODE) {
-                    int randomLeft = random.nextInt(leftPhoneTotal) + 1;
-                    clientPrize.setLeftNumCache(randomLeft);
-                    totalLeft += randomLeft;
-                }
-            }
-            //从总量随机抽取一个
-            int randomPrizeNum = random.nextInt(totalLeft) + 1;
-            int compareNum = 0;
-            for (ClientPrize clientPrize : activeClientPrize) {
-                if(clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_SCANCODE){
-                    compareNum += clientPrize.getLeftNumCache();
-                }else{
-                    compareNum += clientPrize.getLeftNum();
-                }
-                if (randomPrizeNum <= compareNum) {
-                    //获取到抽到的奖项
+            if(activeClientPrize != null && activeClientPrize.size() != 0 ){
+                int totalLeft = 0;
+                int leftPhoneTotal = 0;
+                //先获取剩余手机奖券的
+                for (ClientPrize clientPrize : activeClientPrize) {
                     if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_PHONE) {
-                        //添加中奖纪录 并去除一张奖券
-                        clientPrize.setLeftNum(clientPrize.getLeftNum() - 1);
-                        ClientPrizeGetInfo getInfo = new ClientPrizeGetInfo();
-                        getInfo.setDeskId(deskId);
-                        getInfo.setPrice(clientPrize);
-                        getInfo.setGetDate(new Date());
-                        getInfo.setStatus(Constants.CLIENT_PRIZEINFO_STATUS_UNGET);
-                        ClientPrizeGetInfo clientPrizeGetInfo = clientPrizeGetInfoService.update(getInfo);
-                        clientPrize.setPriceGetId(clientPrizeGetInfo.getId());
-                    } else if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_SCANCODE) {
-                        //无需消奖
-                        clientPrize.setPriceGetId(-1L);
+                        int leftNum = clientPrize.getLeftNum().intValue();
+                        leftPhoneTotal += leftNum;
+                        totalLeft += leftNum;
                     } else if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_THANKYOU) {
-                        clientPrize.setLeftNum(clientPrize.getLeftNum() - 1);
-                        clientPrizeService.update(clientPrize);
-                        clientPrize.setPriceGetId(-1L);
+                        int leftNum = clientPrize.getLeftNum().intValue();
+                        totalLeft += leftNum;
                     }
-                    return ClientAjaxResult.success(objectToClientEntry(clientPrize));
                 }
+                //随机生成二维码计算数量
+                Random random = new Random();
+                for (ClientPrize clientPrize : activeClientPrize) {
+                    if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_SCANCODE) {
+                        int randomLeft = random.nextInt(leftPhoneTotal) + 1;
+                        clientPrize.setLeftNumCache(randomLeft);
+                        totalLeft += randomLeft;
+                    }
+                }
+                //从总量随机抽取一个
+                int randomPrizeNum = random.nextInt(totalLeft) + 1;
+                int compareNum = 0;
+                for (ClientPrize clientPrize : activeClientPrize) {
+                    if(clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_SCANCODE){
+                        compareNum += clientPrize.getLeftNumCache();
+                    }else{
+                        compareNum += clientPrize.getLeftNum();
+                    }
+                    if (randomPrizeNum <= compareNum) {
+                        //获取到抽到的奖项
+                        if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_PHONE) {
+                            //添加中奖纪录 并去除一张奖券
+                            clientPrize.setLeftNum(clientPrize.getLeftNum() - 1);
+                            ClientPrizeGetInfo getInfo = new ClientPrizeGetInfo();
+                            getInfo.setDeskId(deskId);
+                            getInfo.setPrice(clientPrize);
+                            getInfo.setGetDate(new Date());
+                            getInfo.setStatus(Constants.CLIENT_PRIZEINFO_STATUS_UNGET);
+                            ClientPrizeGetInfo clientPrizeGetInfo = clientPrizeGetInfoService.update(getInfo);
+                            clientPrize.setPriceGetId(clientPrizeGetInfo.getId());
+                        } else if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_SCANCODE) {
+                            //无需消奖
+                            clientPrize.setPriceGetId(-1L);
+                        } else if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_THANKYOU) {
+                            clientPrize.setLeftNum(clientPrize.getLeftNum() - 1);
+                            clientPrizeService.update(clientPrize);
+                            clientPrize.setPriceGetId(-1L);
+                        }
+                        return ClientAjaxResult.success(objectToClientEntry(clientPrize));
+                    }
+                }
+            }else {
+                return ClientAjaxResult.failed("该店奖券已停止");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -449,6 +461,8 @@ public class ClientPrizeController {
                 //状态改为领取
                 priceGetInfo.setStatus(Constants.CLIENT_PRIZEINFO_STATUS_GET);
                 clientPrizeGetInfoService.update(priceGetInfo);
+                //领取后 发送短信至用户
+                //todo
                 return ClientAjaxResult.success("领奖成功");
             }
         } catch (Exception e) {

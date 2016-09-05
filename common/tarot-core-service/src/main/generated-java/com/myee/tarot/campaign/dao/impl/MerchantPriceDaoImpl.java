@@ -1,6 +1,7 @@
 package com.myee.tarot.campaign.dao.impl;
 
 import com.myee.tarot.campaign.dao.MerchantPriceDao;
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.campaign.domain.MerchantPrice;
 import com.myee.tarot.campaign.domain.QMerchantPrice;
@@ -27,7 +28,7 @@ public class MerchantPriceDaoImpl extends GenericEntityDaoImpl<Long, MerchantPri
     public Long countSamePriceName(String priceName, Long storeId) {
         QMerchantPrice qMerchantPrice = QMerchantPrice.merchantPrice;
         JPQLQuery<MerchantPrice> query = new JPAQuery(getEntityManager());
-        Long count = query.from(qMerchantPrice).where(qMerchantPrice.storeId.eq(storeId).and(qMerchantPrice.name.eq(priceName))).fetchCount();
+        Long count = query.from(qMerchantPrice).where(qMerchantPrice.storeId.eq(storeId).and(qMerchantPrice.name.eq(priceName)).and(qMerchantPrice.deleteStatus.eq(Constants.DELETE_NO))).fetchCount();
         return count;
     }
 
@@ -35,7 +36,7 @@ public class MerchantPriceDaoImpl extends GenericEntityDaoImpl<Long, MerchantPri
     public Long countSamePriceName(Long id, String priceName, Long storeId) {
         QMerchantPrice qMerchantPrice = QMerchantPrice.merchantPrice;
         JPQLQuery<MerchantPrice> query = new JPAQuery(getEntityManager());
-        Long count = query.from(qMerchantPrice).where(qMerchantPrice.storeId.eq(storeId).and(qMerchantPrice.name.eq(priceName)).and(qMerchantPrice.id.ne(id))).fetchCount();
+        Long count = query.from(qMerchantPrice).where(qMerchantPrice.storeId.eq(storeId).and(qMerchantPrice.name.eq(priceName)).and(qMerchantPrice.id.ne(id)).and(qMerchantPrice.deleteStatus.eq(Constants.DELETE_NO))).fetchCount();
         return count;
     }
 }

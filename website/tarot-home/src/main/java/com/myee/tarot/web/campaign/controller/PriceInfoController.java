@@ -227,7 +227,7 @@ public class PriceInfoController {
         entry.put("status", priceInfo.getStatus());
         entry.put("priceName", priceInfo.getPriceName());
         entry.put("priceLogo", priceInfo.getPriceLogo());
-        entry.put("priceDescription", priceInfo.getPriceDescription());
+        entry.put("priceDescription", StringUtil.isBlank(priceInfo.getPriceDescription())?"":priceInfo.getPriceDescription().replaceAll("<br />",","));
         entry.put("priceStartDate", priceInfo.getPriceStartDate());
         entry.put("priceEndDate", priceInfo.getPriceEndDate());
         return entry;

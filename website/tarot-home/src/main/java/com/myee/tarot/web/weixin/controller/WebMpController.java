@@ -67,6 +67,10 @@ public class WebMpController {
 
     private static final int QRCODE_EXPIRE_SECONDS = 2592000; //微信公众号二维码有效时间，以秒为单位。 最大不超过2592000（即30天）
 
+    private static final String QUERY_PROGRESS = "1";
+
+    private static final String DRAW_LOTTERY = "2";
+
     @RequestMapping(value = "service")
     @ResponseBody
     public void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -164,7 +168,7 @@ public class WebMpController {
 
                 //微信自带的扫二维码，未关注
                 if (inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent() != null && inMessage.getEvent().equals(WxConsts.EVT_SUBSCRIBE) && inMessage.getTicket() != null) {
-                    if (inMessage.getEventKey().substring(8, 9).equals("1")) {
+                    if (inMessage.getEventKey().substring(8, 9).equals(QUERY_PROGRESS)) {
                         String sceneId = inMessage.getEventKey().substring(9, inMessage.getEventKey().length());
                         String sceneIdToIdentityCode = CacheUtil.getIdentityCode(Long.valueOf(sceneId));
                         String identityCode = manager.getIdentityCode(sceneIdToIdentityCode);
@@ -258,13 +262,13 @@ public class WebMpController {
      * @param param2 openId
      * @return
      */
-    private String buildAuthorizationUrl(Integer type, String param1, String param2) {
+    private String buildAuthorizationUrl(int type, String param1, String param2) {
         String redirectURI = null;
-        if (type == 1) {
+        if (type == Integer.parseInt(QUERY_PROGRESS)) {
             //我的奖券
             redirectURI = Constants.MY_LOTTERY_LIST_URL;
         }
-        if (type == 2) {
+        if (type == Integer.parseInt(DRAW_LOTTERY)) {
             //图文消息点击打开
             redirectURI = Constants.MY_LOTTERY_DETAIL_URL + param1 + "/" + param2;
         }
@@ -346,8 +350,5 @@ public class WebMpController {
             e.printStackTrace();
         }
         return ticket;
-    }
-
-    public void testIgniteValue(String key) {
     }
 }
