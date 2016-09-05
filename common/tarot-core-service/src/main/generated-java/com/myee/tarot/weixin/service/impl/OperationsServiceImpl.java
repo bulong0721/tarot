@@ -61,8 +61,8 @@ public class OperationsServiceImpl implements OperationsService {
     @Value("${cleverm.push.dirs}")
     private String DOWNLOAD_HOME;
 
-//    @Value("${weixin.imageArticleMsg.templateId}")
-//    private String IMAGE_ARTICLE_MSG_TEMPLEID;
+    @Value("${weixin.imageArticleMsg.templateId}")
+    private String IMAGE_ARTICLE_MSG_TEMPLEID;
 
     @Autowired
     @Lazy
@@ -104,6 +104,18 @@ public class OperationsServiceImpl implements OperationsService {
     private static final String STATE_SENT = "已发送";
 
     private static final String STATE_NOT_SENT = "未发送";
+
+    private static final String SHOP_NAME = "keyword1";
+
+    private static final String QUEUE_NUMBER = "QUEUE_NUMBER";
+
+    private static final String WAITING_AHEAD_COUNT = "keyword3";
+
+    private static final String PREDICT_WAITING_TIME = "keyword4";
+
+    private static final String QUEUE_STATUS = "keyword5";
+
+    private static final String QUERY_TIME = "remark";
 
     @Autowired
     private Ignite ignite;
@@ -292,12 +304,12 @@ public class OperationsServiceImpl implements OperationsService {
             WxMpTemplateMessage templateMessage = new WxMpTemplateMessage();
             templateMessage.setToUser(m.get("openId").toString());
             templateMessage.setTemplateId("p9ZGWqeFEYbLPkMKOdd5KUKc_QiqfXaJgu1ZNmezIUo");
-            templateMessage.getDatas().add(new WxMpTemplateData("keyword1", m.get("shopName") == null ? "" : m.get("shopName").toString(), "#c37160"));
-            templateMessage.getDatas().add(new WxMpTemplateData("keyword2", m.get("tokenNum").toString(), "#36b2cc"));
-            templateMessage.getDatas().add(new WxMpTemplateData("keyword3", m.get("waitedTable").toString(), "#ff9900"));
-            templateMessage.getDatas().add(new WxMpTemplateData("keyword4", m.get("predictTime").toString(), "#053eea"));
-            templateMessage.getDatas().add(new WxMpTemplateData("keyword5", m.get("queueStatus") == null ? "" : m.get("queueStatus").toString(), "#ea05b1"));
-            templateMessage.getDatas().add(new WxMpTemplateData("remark", m.get("queryTime").toString(), "#4a5de8"));
+            templateMessage.getDatas().add(new WxMpTemplateData(SHOP_NAME, m.get("shopName") == null ? "" : m.get("shopName").toString(), "#c37160"));
+            templateMessage.getDatas().add(new WxMpTemplateData(QUEUE_NUMBER, m.get("tokenNum").toString(), "#36b2cc"));
+            templateMessage.getDatas().add(new WxMpTemplateData(WAITING_AHEAD_COUNT, m.get("waitedTable").toString(), "#ff9900"));
+            templateMessage.getDatas().add(new WxMpTemplateData(PREDICT_WAITING_TIME, m.get("predictTime").toString(), "#053eea"));
+            templateMessage.getDatas().add(new WxMpTemplateData(QUEUE_STATUS, m.get("queueStatus") == null ? "" : m.get("queueStatus").toString(), "#ea05b1"));
+            templateMessage.getDatas().add(new WxMpTemplateData(QUERY_TIME, m.get("queryTime").toString(), "#4a5de8"));
             wxMpService.templateSend(templateMessage);
         } catch (Exception e) {
             e.printStackTrace();

@@ -16,6 +16,7 @@
                 <value>classpath:email.properties</value>
                 <value>classpath:configs.properties</value>
                 <value>classpath:commApi.properties</value>
+                <value>classpath:weixin.properties</value>
             </list>
         </property>
     </bean>
