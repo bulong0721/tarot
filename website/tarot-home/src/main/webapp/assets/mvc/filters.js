@@ -62,8 +62,8 @@ function inputType(){
 }
 
 //木爷图片链接
-function myeeUrlImg($rootScope){
+function myeeUrlImg(baseConstant){
     return function (val){
-        return val?$rootScope.Constant.myeeUrlImg+val:$rootScope.Constant.myeeDefaultUrlImg;
+        return val?downloadBase+val:baseConstant.myeeDefaultUrlImg;
     }
 }
