@@ -24,7 +24,7 @@ public class ClientPrizeDaoImpl extends GenericEntityDaoImpl<Long, ClientPrize> 
         PageResult<ClientPrize> pageList = new PageResult();
         QClientPrize qClientPrize = QClientPrize.clientPrize;
         JPQLQuery<ClientPrize> query = new JPAQuery(getEntityManager());
-        query.from(qClientPrize);
+        query.from(qClientPrize).where(qClientPrize.deleteStatus.eq(Constants.CLIENT_PRIZE_DELETE_YES));
         if(!StringUtil.isBlank(pageRequest.getQueryName())){
             query.where(qClientPrize.name.like("%" + pageRequest.getQueryName() + "%"));
         }
@@ -43,7 +43,7 @@ public class ClientPrizeDaoImpl extends GenericEntityDaoImpl<Long, ClientPrize> 
     public List<ClientPrize> listActive(Long storeId) {
         QClientPrize qClientPrize = QClientPrize.clientPrize;
         JPQLQuery<ClientPrize> query = new JPAQuery(getEntityManager());
-        query.from(qClientPrize).where(qClientPrize.store.id.eq(storeId).and(qClientPrize.activeStatus.eq(Constants.CLIENT_PRIZE_ACTIVE_YES)));
+        query.from(qClientPrize).where(qClientPrize.store.id.eq(storeId).and(qClientPrize.activeStatus.eq(Constants.CLIENT_PRIZE_ACTIVE_YES).and(qClientPrize.deleteStatus.eq(Constants.CLIENT_PRIZE_DELETE_YES))));
         return query.fetch();
     }
 
@@ -51,7 +51,7 @@ public class ClientPrizeDaoImpl extends GenericEntityDaoImpl<Long, ClientPrize> 
     public ClientPrize getThankYouPrize(Long storeId) {
         QClientPrize qClientPrize = QClientPrize.clientPrize;
         JPQLQuery<ClientPrize> query = new JPAQuery(getEntityManager());
-        query.from(qClientPrize).where(qClientPrize.store.id.eq(storeId).and(qClientPrize.activeStatus.eq(Constants.CLIENT_PRIZE_ACTIVE_YES).and(qClientPrize.type.eq(Constants.CLIENT_PRIZE_TYPE_THANKYOU))));
+        query.from(qClientPrize).where(qClientPrize.store.id.eq(storeId).and(qClientPrize.activeStatus.eq(Constants.CLIENT_PRIZE_ACTIVE_YES).and(qClientPrize.type.eq(Constants.CLIENT_PRIZE_TYPE_THANKYOU).and(qClientPrize.deleteStatus.eq(Constants.CLIENT_PRIZE_DELETE_YES)))));
         return query.fetchFirst();
     }
 
@@ -59,7 +59,7 @@ public class ClientPrizeDaoImpl extends GenericEntityDaoImpl<Long, ClientPrize> 
     public List<ClientPrize> listAllActive() {
         QClientPrize qClientPrize = QClientPrize.clientPrize;
         JPQLQuery<ClientPrize> query = new JPAQuery(getEntityManager());
-        query.from(qClientPrize).where(qClientPrize.activeStatus.eq(Constants.CLIENT_PRIZE_ACTIVE_YES));
+        query.from(qClientPrize).where(qClientPrize.activeStatus.eq(Constants.CLIENT_PRIZE_ACTIVE_YES).and(qClientPrize.deleteStatus.eq(Constants.CLIENT_PRIZE_DELETE_YES)));
         return query.fetch();
     }
 }

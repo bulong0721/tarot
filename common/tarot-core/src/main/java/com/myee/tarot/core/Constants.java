@@ -75,6 +75,9 @@ public class Constants {
 	public final static Boolean CLIENT_PRIZE_ACTIVE_YES = true;
 	public final static Boolean CLIENT_PRIZE_ACTIVE_NO = false;
 
+	public final static Boolean CLIENT_PRIZE_DELETE_YES = true;
+	public final static Boolean CLIENT_PRIZE_DELETE_NO = false;
+
 	public final static int CLIENT_PRIZE_TYPE_PHONE = 0;
 	public final static int CLIENT_PRIZE_TYPE_SCANCODE = 1;
 	public final static int CLIENT_PRIZE_TYPE_THANKYOU = 2;

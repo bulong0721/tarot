@@ -60,8 +60,19 @@ public class ClientPrize extends GenericEntity<Long, ClientPrize>{
     @Column(name = "ACTIVE_STATUS")
     private Boolean activeStatus = Boolean.TRUE; //启用状态
 
+    @Column(name = "DELETE_STATUS")
+    private Boolean deleteStatus = Boolean.TRUE;// 逻辑删除
+
     @Transient
     private Long priceGetId;
+
+    public Boolean getDeleteStatus() {
+        return deleteStatus;
+    }
+
+    public void setDeleteStatus(Boolean deleteStatus) {
+        this.deleteStatus = deleteStatus;
+    }
 
     public Long getPriceGetId() {
         return priceGetId;

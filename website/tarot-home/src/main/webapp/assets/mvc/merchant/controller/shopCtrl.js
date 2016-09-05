@@ -91,9 +91,9 @@ function merchantShopCtrl($scope, Constants, cTables, cfromly, $resource, NgTabl
             {key: 'code', type: 'c_input', templateOptions: {label: '门店码', required: true, placeholder: '门店码'}},
         ],
         api: {
-            read: '../admin/merchantStore/pagingByMerchant',
-            update: '../admin/merchantStore/save',
-            delete: '../admin/merchantStore/delete'
+            read: './merchantStore/pagingByMerchant',
+            update: './merchantStore/save',
+            delete: './merchantStore/delete'
         }
     };
     cTables.initNgMgrCtrl(mgrData, $scope);
