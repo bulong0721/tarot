@@ -90,6 +90,4 @@ public interface WeixinService {
     Double calcDistance(Double storeLongitude, Double storeLatitude, Double longitude, Double latitude);
 
     void sendFeedback(String context, String openId);
-
-    void testCacheGetAll();
 }

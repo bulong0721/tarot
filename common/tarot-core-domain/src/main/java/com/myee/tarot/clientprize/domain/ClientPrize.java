@@ -60,6 +60,17 @@ public class ClientPrize extends GenericEntity<Long, ClientPrize>{
     @Column(name = "ACTIVE_STATUS")
     private Boolean activeStatus = Boolean.TRUE; //启用状态
 
+    @Transient
+    private Long priceGetId;
+
+    public Long getPriceGetId() {
+        return priceGetId;
+    }
+
+    public void setPriceGetId(Long priceGetId) {
+        this.priceGetId = priceGetId;
+    }
+
     public Integer getLeftNumCache() {
         return leftNumCache;
     }

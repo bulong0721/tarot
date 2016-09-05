@@ -16,5 +16,7 @@ public interface ClientPrizeDao extends GenericEntityDao<Long, ClientPrize> {
 
     List<ClientPrize> listActive(Long storeId);
 
+    ClientPrize getThankYouPrize(Long storeId);
+
     List<ClientPrize> listAllActive();
 }

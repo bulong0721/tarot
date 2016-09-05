@@ -337,7 +337,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
     @Override
     public Map<String, Object> listProgressByIdentityCode(String identityCode) {
         //先到Redis里去找，通过identityCode获取当时保存token的redisKey
-        IgniteCache<String, String> identityCodeWaitTokenTypeKeyCache = CacheUtil.getCache(ignite, "identityCodeWaitTokenTypeKeyCache");
+        IgniteCache<String, String> identityCodeWaitTokenTypeKeyCache = CacheUtil.identityCodeWaitTokenType(ignite);
         String waitTokenTypeKey = identityCodeWaitTokenTypeKeyCache.get(identityCode);
         Date date = new Date();
         //排号
@@ -349,23 +349,14 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
         int index = 0;
         String queueStatus = null;
         long timeTook = 0;
-        Set<String> setWaitTokenKey = Sets.newHashSet();
         if (waitTokenTypeKey != null) {
             IgniteCache<String, WaitToken> waitTokenTypeIdCache = CacheUtil.getCache(ignite, waitTokenTypeKey);
             CollectionConfiguration setCfg = new CollectionConfiguration();
             setCfg.setAtomicityMode(TRANSACTIONAL);
             setCfg.setCacheMode(PARTITIONED);
-            IgniteSet<String> setTokenCache = ignite.set("set"+waitTokenTypeKey, setCfg);
-            Iterator it = setTokenCache.iterator();
-            while (it.hasNext()) {
-                setWaitTokenKey.add(it.next().toString());
-            }
-            Map<String, WaitToken> waitTokenMap = waitTokenTypeIdCache.getAll(setWaitTokenKey);
-            List<WaitToken> waitTokenList = Lists.newArrayList();
-            for (WaitToken wt : waitTokenMap.values()) {
-                waitTokenList.add(wt);
-            }
-            waitTokenList = orderingByTook.sortedCopy(waitTokenList);
+            IgniteSet<String> setTokenCache = CacheUtil.waitOfTableTypeSet(ignite, waitTokenTypeKey, setCfg);
+            Map<String, WaitToken> waitTokenMap = waitTokenTypeIdCache.getAll(setTokenCache);
+            List<WaitToken> waitTokenList = orderingByTook.sortedCopy(waitTokenMap.values());
 
             //排序waiTokenMap
             for(WaitToken waitToken : waitTokenList) {
@@ -448,7 +439,7 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
     @Override
     public boolean bondQrCodeByScan(String identityCode, String openId) {
         //先到Redis里去找，通过identityCode获取当时保存token的redisKey
-        Cache<String, String> identityCodeWaitTokenTypeKeyCache = CacheUtil.getCache(ignite, "identityCodeWaitTokenTypeKeyCache");
+        Cache<String, String> identityCodeWaitTokenTypeKeyCache = CacheUtil.identityCodeWaitTokenType(ignite);
         String waitTokenTypeKey = identityCodeWaitTokenTypeKeyCache.get(identityCode);
         Date date = new Date();
         Set<String> setWaitTokenKey = Sets.newHashSet();
@@ -457,17 +448,9 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
             CollectionConfiguration setCfg = new CollectionConfiguration();
             setCfg.setAtomicityMode(TRANSACTIONAL);
             setCfg.setCacheMode(PARTITIONED);
-            IgniteSet<String> setTokenCache = ignite.set("set"+waitTokenTypeKey, setCfg);
-            Iterator it = setTokenCache.iterator();
-            while (it.hasNext()) {
-                setWaitTokenKey.add(it.next().toString());
-            }
-            Map<String, WaitToken> waitTokenMap = waitTokenTypeIdCache.getAll(setWaitTokenKey);
-            List<WaitToken> waitTokenList = Lists.newArrayList();
-            for (WaitToken wt : waitTokenMap.values()) {
-                waitTokenList.add(wt);
-            }
-            waitTokenList = orderingByTook.sortedCopy(waitTokenList);
+            IgniteSet<String> setTokenCache = CacheUtil.waitOfTableTypeSet(ignite, waitTokenTypeKey, setCfg);
+            Map<String, WaitToken> waitTokenMap = waitTokenTypeIdCache.getAll(setTokenCache);
+            List<WaitToken> waitTokenList = orderingByTook.sortedCopy(waitTokenMap.values());
             //按WaitToken来取
             for (WaitToken waitToken : waitTokenList) {
                 if (waitToken.getIdentityCode().equals(identityCode)) {
@@ -560,24 +543,6 @@ public class WeixinServiceImpl extends RedisOperation implements WeixinService {
         fb.setFeedBackOpenId(openId);
         fb.setFeedBackContext(context);
         wFeedBackDao.update(fb);
-    }
-
-    @Override
-    public void testCacheGetAll() {
-        IgniteCache<String, WaitToken> waitTokenTypeIdCache = CacheUtil.getCache(ignite, "waitOfTableType_3");
-        Set<String> setWaitTokenKey = Sets.newHashSet();
-        CollectionConfiguration setCfg = new CollectionConfiguration();
-        setCfg.setAtomicityMode(TRANSACTIONAL);
-        setCfg.setCacheMode(PARTITIONED);
-        IgniteSet<String> setTokenCache = ignite.set("set" + "waitOfTableType_3", setCfg);
-        Iterator it = setTokenCache.iterator();
-        while (it.hasNext()) {
-            setWaitTokenKey.add(it.next().toString());
-        }
-        Map<String, WaitToken> waitTokenMap = waitTokenTypeIdCache.getAllOutTx(setWaitTokenKey);
-        for (WaitToken wt : waitTokenMap.values()) {
-            logger.info("排号{}" , wt.getToken());
-        }
     }
 
     private static final double EARTH_RADIUS = 6378137;//赤道半径(单位m)

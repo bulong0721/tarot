@@ -1,7 +1,6 @@
 package com.myee.tarot.clientprize.domain;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.myee.tarot.campaign.domain.MerchantPrice;
 import com.myee.tarot.core.GenericEntity;
 
 import javax.persistence.*;
