@@ -31,13 +31,7 @@ import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteSet;
-import org.apache.ignite.Ignition;
-import org.apache.ignite.cache.eviction.sorted.SortedEvictionPolicy;
-import org.apache.ignite.cache.query.SqlFieldsQuery;
-import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.CollectionConfiguration;
-import org.apache.ignite.configuration.IgniteConfiguration;
-import org.apache.ignite.lang.IgniteCallable;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -49,11 +43,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import javax.cache.Cache;
 import javax.cache.expiry.AccessedExpiryPolicy;
 import javax.cache.expiry.Duration;
 import java.io.File;
 import java.util.*;
-
 import static org.apache.ignite.cache.CacheAtomicityMode.TRANSACTIONAL;
 import static org.apache.ignite.cache.CacheMode.PARTITIONED;
 
@@ -61,7 +55,7 @@ import static org.apache.ignite.cache.CacheMode.PARTITIONED;
  * Created by Martin on 2016/1/27.
  */
 @Service
-public class OperationsServiceImpl extends RedisOperation implements OperationsService {
+public class OperationsServiceImpl implements OperationsService {
     private static Logger logger = LoggerFactory.getLogger(OperationsServiceImpl.class);
 
     @Value("${cleverm.push.dirs}")
@@ -73,11 +67,6 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
     @Autowired
     @Lazy
     private WxWaitTokenDao waitTokenDao;
-
-    @Autowired
-    public OperationsServiceImpl(RedisTemplate redisTemplate) {
-        super(redisTemplate);
-    }
 
     @Autowired
     private WxMpService wxMpService;
@@ -143,43 +132,37 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
      */
     @Override
     public ResponseData take(WaitToken waitToken) {
-        Date date = new Date();
-        waitToken.setTimeTook(date.getTime() / 1000);
+        Date createDate = waitToken.getCreateDate();
+        waitToken.setTimeTook(createDate.getTime() / DIVIDE_MILLSECOND);
         //获取第二天凌晨2点30分作为结束时间
-        Date endDate = DateUtil.getNextDayOfDate(date, HOUR, MINUTE, SECOND);
+        Date endDate = DateUtil.getNextDayOfDate(createDate, HOUR, MINUTE, SECOND);
         //排号Key，第一个参数是店铺id，第二个参数是餐桌类型ID，例如：waitOfTableType:100-103
         String sourceStr = CacheUtil.getIdentityCode(Long.valueOf(waitToken.getSceneId()));
         //sourceStr截取之前是sceneIdToIdentityCode:110510303，把1截掉，其中1是为了区分查询最新进展和扫码抽奖设置的标识位,10510303是传递的参数
-        String redisKeyOfUcdScId = sourceStr.substring(0, 22) + sourceStr.substring(23);
+        String keyQrCode = sourceStr.substring(0, 22) + sourceStr.substring(23);
         IgniteCache<String, WaitToken> waitTokenCache = CacheUtil.waitOfTableType(ignite, waitToken.getTableTypeId());
         String waitOfTableTypeKey = CacheUtil.getWaitOfTableType(waitToken.getTableTypeId());
 
         //然后二维码的数字码放Redis，跟identityCode唯一码绑定，第一个参数redisKeyOfUcdScId作为key，第二个参数waitToken.getIdentityCode()唯一码作为value，第三个参数null是失效时间
-        IgniteCache<String, String> scenIdIdentityCodeCache = CacheUtil.getCache(ignite, "sceneIdIdentityCode");
-        scenIdIdentityCodeCache.put(redisKeyOfUcdScId, waitToken.getIdentityCode());
-
-//        System.out.println("获取scenIdIdentityCodeCache值->" + scenIdIdentityCodeCache.get(redisKeyOfUcdScId));
-        logger.info("获取scenIdIdentityCodeCache值->", scenIdIdentityCodeCache.get(redisKeyOfUcdScId) == null);
-        scenIdIdentityCodeCache.withExpiryPolicy(new AccessedExpiryPolicy(new Duration(date.getTime() / DIVIDE_MILLSECOND, endDate.getTime() / DIVIDE_MILLSECOND)));
+        IgniteCache<String, String> cacheQrCodeIdentityCode = CacheUtil.qrParametersIdentityCode(ignite);
+        cacheQrCodeIdentityCode.put(keyQrCode, waitToken.getIdentityCode());
+        cacheQrCodeIdentityCode.withExpiryPolicy(new AccessedExpiryPolicy(new Duration(createDate.getTime() / DIVIDE_MILLSECOND, endDate.getTime() / DIVIDE_MILLSECOND)));
 
         //然后identityCode唯一码放Redis，跟第二个参数排号key绑定，第一个参数是key,第二个参数是value，这里放排号key，第三个是失效时间
-
-        IgniteCache<String, String> identityCodeWaitTokenTypeKeyCache = CacheUtil.getCache(ignite, "identityCodeWaitTokenTypeKeyCache");
+        IgniteCache<String, String> identityCodeWaitTokenTypeKeyCache = CacheUtil.identityCodeWaitTokenType(ignite);
         identityCodeWaitTokenTypeKeyCache.put(waitToken.getIdentityCode(), waitOfTableTypeKey);
 
-        logger.info("获取identityCodeWaitTokenTypeKeyCache值->", identityCodeWaitTokenTypeKeyCache.get(waitToken.getIdentityCode()) == null);
-        identityCodeWaitTokenTypeKeyCache.withExpiryPolicy(new AccessedExpiryPolicy(new Duration(date.getTime() / DIVIDE_MILLSECOND, endDate.getTime() / DIVIDE_MILLSECOND)));
+        identityCodeWaitTokenTypeKeyCache.withExpiryPolicy(new AccessedExpiryPolicy(new Duration(createDate.getTime() / DIVIDE_MILLSECOND, endDate.getTime() / DIVIDE_MILLSECOND)));
 
         CollectionConfiguration setCfg = new CollectionConfiguration();
         setCfg.setAtomicityMode(TRANSACTIONAL);
         setCfg.setCacheMode(PARTITIONED);
-        IgniteSet<String> setTokenCache = ignite.set("set"+waitOfTableTypeKey,setCfg);
+        IgniteSet<String> setTokenCache = CacheUtil.waitOfTableTypeSet(ignite, waitOfTableTypeKey, setCfg);
         setTokenCache.add(waitToken.getToken());
 
         //第一个参数是排号key，作为key，第二个参数是排号(如：A01，B02)，第三个失效时间
         waitTokenCache.put(waitToken.getToken(), waitToken);
-        waitTokenCache.withExpiryPolicy(new AccessedExpiryPolicy(new Duration(date.getTime() / DIVIDE_MILLSECOND, endDate.getTime() / DIVIDE_MILLSECOND)));
-        logger.info("获取waitTokenCache值->", waitTokenCache.get(waitToken.getToken()) == null);
+        waitTokenCache.withExpiryPolicy(new AccessedExpiryPolicy(new Duration(createDate.getTime() / DIVIDE_MILLSECOND, endDate.getTime() / DIVIDE_MILLSECOND)));
         //微信第三方封装的二维码ticket实体
         WxMpQrCodeTicket myticket = null;
         //微信排号实体
@@ -188,7 +171,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
             //创建临时二维码，第一个参数是二维码封装的参数如：110510303，第二个参数有效时间，这里设置1个月
             myticket = wxMpService.qrCodeCreateTmpTicket(Integer.parseInt(waitToken.getSceneId()), WEIXIN_EXPIRE_TIME);
             //入库
-            wxWaitToken = waitTokenDao.update(WeixinServiceImpl.convertTo(waitToken, date.getTime() / 1000));
+            wxWaitToken = waitTokenDao.update(WeixinServiceImpl.convertTo(waitToken, createDate.getTime() / DIVIDE_MILLSECOND));
         } catch (WxErrorException e) {
             e.printStackTrace();
         }
@@ -237,15 +220,20 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
     private boolean statusChange(int stateValue, WaitToken waitToken) {
         int backStatus = 0;
         Date date = new Date();
-        //排号Key，第一个参数是店铺id，第二个参数是餐桌类型ID，例如：waitOfTableType:100-103
-        String waitOfTableTypeKey = RedisKeys.waitOfTableType(waitToken.getShopId(), waitToken.getTableTypeId());
-        //第一个参数是key，第二个是map实际存放的类型，即是获取waitOfTableTypeKey下所有WaitToken类型的WaitToken实例，value是map
-        Map<String, WaitToken> map = hgetall(waitOfTableTypeKey, WaitToken.class);
-        if (map != null) { //如果redis里有数据，直接从Redis里拿
+        String waitOfTableTypeKey = CacheUtil.getWaitOfTableType(waitToken.getTableTypeId());
+        IgniteCache<String, WaitToken> waitTokenCache = CacheUtil.waitOfTableType(ignite, waitToken.getTableTypeId());
+
+        CollectionConfiguration setCfg = new CollectionConfiguration();
+        setCfg.setAtomicityMode(TRANSACTIONAL);
+        setCfg.setCacheMode(PARTITIONED);
+        IgniteSet<String> setTokenCache = CacheUtil.waitOfTableTypeSet(ignite,waitOfTableTypeKey, setCfg);
+
+        Map<String, WaitToken> waitTokenMap = waitTokenCache.getAll(setTokenCache);
+        if (waitTokenMap != null) { //如果redis里有数据，直接从Redis里拿
             //按照取号的先后顺序排序
-            List<WaitToken> sortedTokens = orderingByTook.sortedCopy(map.values());
+            List<WaitToken> sortedTokens = orderingByTook.sortedCopy(waitTokenMap.values());
             if (waitToken.getShopId().equals(sortedTokens.get(0).getShopId()) && waitToken.getToken().equals(sortedTokens.get(0).getToken())) { //判断如果当前修改的waitToken是第一个结果的shopId，排号也相同
-                hdelete(waitOfTableTypeKey, waitToken.getToken()); //在排号Key的value里删除该排号
+                waitTokenCache.remove(waitToken.getToken());
                 Date timeTook = new Date(sortedTokens.get(0).getTimeTook()); //获取取号时间
                 backStatus = waitTokenDao.updateState(stateValue, waitToken.getClientId(), waitToken.getShopId(), waitToken.getToken(), timeTook, date); //改状态值,如果成功则返回1
             }
@@ -263,8 +251,8 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
                 w.setShopId(wxToken.getStore().getId());
                 w.setIdentityCode(wxToken.getIdentityCode());
                 sortedTokensW.add(w);
-                //将数据库里的记录放入redis，并设置失效时间
-                hset(waitOfTableTypeKey, w.getToken(), w, DateUtil.getNextDayOfDate(date, HOUR, MINUTE, SECOND));
+                //将数据库里的记录放入ignite，并设置失效时间
+                waitTokenCache.put(waitToken.getToken(),waitToken);
             }
             //判断是否跟最近的排号匹配
             if (waitToken.getToken().equals(sortedTokensW.get(0).getToken()) && waitToken.getShopId().equals(sortedTokensW.get(0).getShopId())) {
@@ -272,13 +260,11 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
                 backStatus = waitTokenDao.updateState(stateValue, waitToken.getClientId(), waitToken.getShopId(), waitToken.getToken(), new Date(sortedTokensW.get(0).getTimeTook()), new Date());
             }
         }
-        //移除redis的当前就餐排号后，获取所有的排号的资源
-        Map<String, WaitToken> afterMap = hgetall(waitOfTableTypeKey, WaitToken.class);
-        if (afterMap != null) {
-            for (WaitToken w : afterMap.values()) {
+        if (waitTokenMap != null) {
+            for (WaitToken w : waitTokenMap.values()) {
                 if (w.getOpenId() != null && w.getOpenId().trim().length() > 0) {
                     //获取每个排号的唯一码，并返回它们的进展信息
-                    Map<String, Object> msgMap = listProgressByIdentityCode(w.getIdentityCode());
+                    Map<String, Object> msgMap = listProgressByIdentityCode(w.getIdentityCode(), w.getTableTypeId());
                     sendImageArticleMsg(msgMap);
                 }
             }
@@ -288,7 +274,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
             for (WxWaitToken rw : rwList) {
                 if (rw.getOpenId() != null && rw.getOpenId().trim().length() > 0) {
 					//比较token查询进展
-                    Map<String, Object> msgMap = listProgressByIdentityCode(rw.getIdentityCode());
+                    Map<String, Object> msgMap = listProgressByIdentityCode(rw.getIdentityCode(), rw.getTableTypeId());
                     sendImageArticleMsg(msgMap);
                 }
             }
@@ -324,10 +310,18 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
      * @param identityCode
      * @return
      */
-    public Map<String, Object> listProgressByIdentityCode(String identityCode) {
-        //先到Redis里去找，通过identityCode获取当时保存token的redisKey
-        String redisKey2Find = getSimple(identityCode).toString();
-        Map<String, WaitToken> waitTokenMap = hgetall(redisKey2Find, WaitToken.class);
+    public Map<String, Object> listProgressByIdentityCode(String identityCode, long tableTypeId) {
+        //先到Ignite里去找，通过identityCode获取当时保存token的redisKey
+        Cache<String, String> identityCodeWaitTokenTypeKeyCache = CacheUtil.identityCodeWaitTokenType(ignite);
+        String waitTokenTypeKey = identityCodeWaitTokenTypeKeyCache.get(identityCode);
+
+        CollectionConfiguration setCfg = new CollectionConfiguration();
+        setCfg.setAtomicityMode(TRANSACTIONAL);
+        setCfg.setCacheMode(PARTITIONED);
+        IgniteSet<String> setTokenCache = CacheUtil.waitOfTableTypeSet(ignite, waitTokenTypeKey, setCfg);
+
+        IgniteCache<String, WaitToken> waitTokenCache = CacheUtil.waitOfTableType(ignite, tableTypeId);
+        Map<String, WaitToken> waitTokenMap = waitTokenCache.getAll(setTokenCache);
         Set<Integer> waitNumSet = Sets.newHashSet();
         Map<String, Object> latestProgressInfo = Maps.newHashMap();
         String shopName = null;
@@ -338,6 +332,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
         String waitToken = "";
         String queueStatus = null;
         long timeTook = 0;
+        String openId = "";
         Date date = new Date();
         if (waitTokenMap != null && !waitTokenMap.isEmpty()) {
             for (WaitToken wt : waitTokenMap.values()) {
@@ -348,6 +343,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
                     timeTook = wt.getTimeTook();
                     shopName = wt.getClientName();
                     queueStatus = assignVal(wt.getWaitStatus());
+                    openId = wt.getOpenId();
                 }
             }
             for (int i : waitNumSet) {
@@ -355,7 +351,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
                     beforeCount++;
                 }
             }
-            codeBlock(latestProgressInfo, shopName, waitToken, beforeCount, queueStatus, timeTook, date);
+            codeBlock(latestProgressInfo, shopName, waitToken, beforeCount, queueStatus, timeTook, date, openId);
             latestProgressInfo.put("waitedTableCount", beforeCount);
             latestProgressInfo.put("predictWaitingTime", Long.valueOf(beforeCount * 10));
         } else {
@@ -363,8 +359,8 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
             Date startDate = DateUtil.getZeroClockOfDate(date);
             //获取第二天的2点30分的时间
             Date endDate = DateUtil.getNextDayOfDate(date, HOUR, MINUTE, SECOND);
-            Long bTimeLong = startDate.getTime() / DIVIDE_MILLSECOND;
-            Long eTimeLong = endDate.getTime() / DIVIDE_MILLSECOND;
+            Long bTimeLong = startDate.getTime();
+            Long eTimeLong = endDate.getTime();
             //再到MYSQL去找,用identityCode找到对应的clientId,orgId,和token，
             WxWaitToken wtoken = waitTokenDao.getByIdentityCode(identityCode, bTimeLong, eTimeLong);
             if (wtoken != null) {
@@ -377,6 +373,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
                         timeTook = wt.getTimeTook().getTime();
                         shopName = merchantStoreService.findById(wt.getStore().getId()).getName();
                         queueStatus = assignVal(wt.getState());
+                        openId = wt.getOpenId();
                     }
                 }
                 for (int i : waitNumSet) {
@@ -384,7 +381,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
                         beforeCount++;
                     }
                 }
-                codeBlock(latestProgressInfo, shopName, waitToken, beforeCount, queueStatus, timeTook, date);
+                codeBlock(latestProgressInfo, shopName, waitToken, beforeCount, queueStatus, timeTook, date, openId);
             } else {
                 latestProgressInfo.put("vaild", "您查询的编号不存在");
             }
@@ -403,7 +400,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
      * @param timeTook
      * @param date
      */
-    private void codeBlock(Map<String, Object> latestProgressInfo, String shopName, String waitToken, int beforeCount, String queueStatus, long timeTook, Date date) {
+    private void codeBlock(Map<String, Object> latestProgressInfo, String shopName, String waitToken, int beforeCount, String queueStatus, long timeTook, Date date, String openId) {
         latestProgressInfo.put("shopName", shopName);
         latestProgressInfo.put("tokenNum", waitToken);
         latestProgressInfo.put("waitedTable", String.valueOf(beforeCount) + "桌");
@@ -411,6 +408,7 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
         latestProgressInfo.put("queueStatus", queueStatus);
         latestProgressInfo.put("timeTook", timeTook);
         latestProgressInfo.put("queryTime", DateUtil.formatDateTime(date));
+        latestProgressInfo.put("openId", openId);
     }
 
     /**
@@ -565,11 +563,9 @@ public class OperationsServiceImpl extends RedisOperation implements OperationsS
         return object.toJSONString();
     }
 
-    public String getIdentityCode(String redisKeyOfUcdScId) {
-        IgniteCache<String, String> scenIdIdentityCodeCache = CacheUtil.getCache(ignite, "sceneIdIdentityCode");
-        logger.info("获取redisKeyOfUcdScId值->" + redisKeyOfUcdScId);
-        String identityCode = scenIdIdentityCodeCache.get(redisKeyOfUcdScId);
-        logger.info("Operation唯一码->" + identityCode);
+    public String getIdentityCode(String sceneIdToIdentityCode) {
+        IgniteCache<String, String> scenIdIdentityCodeCache = CacheUtil.qrParametersIdentityCode(ignite);
+        String identityCode = scenIdIdentityCodeCache.get(sceneIdToIdentityCode);
         return identityCode;
     }
 
