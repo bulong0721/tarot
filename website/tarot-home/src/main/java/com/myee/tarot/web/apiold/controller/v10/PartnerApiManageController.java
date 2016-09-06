@@ -86,6 +86,7 @@ public class PartnerApiManageController extends BaseController {
                     IPUtils.getIpAddr(getRequest()),
                     table,
                     sendRecordManageService,
+                    table.getName(),//短信内容
                     templateNum,
                     null,//签名,为null默认是美味点点笔
                     getCommConfig(),//从commonApi.properties获取默认配置

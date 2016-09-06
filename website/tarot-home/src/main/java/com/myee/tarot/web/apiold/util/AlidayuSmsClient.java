@@ -48,6 +48,7 @@ public class AlidayuSmsClient {
 	public static Runnable sendSMS(final String ipAddress,
 							  final Table tb,
 							  final SendRecordService sendRecordManageService,
+							  final String argName,
 							  final String templateNum,
 							  final String sign,
 							  final CommConfig commConfig,
@@ -75,7 +76,7 @@ public class AlidayuSmsClient {
 					final Date dt = new Date();
 
 //					int i=0;//测试用
-					int i = send(smsNum, tb.getName(), templateNum,sign,commConfig);
+					int i = send(smsNum, argName, templateNum,sign,commConfig);
 					//往数据库记录发送结果
 					SendRecord record = new SendRecord();
 					record.setStore(tb.getStore());
