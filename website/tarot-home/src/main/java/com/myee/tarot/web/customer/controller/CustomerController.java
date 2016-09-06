@@ -1,5 +1,6 @@
 package com.myee.tarot.web.customer.controller;
 
+import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,6 +10,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Martin on 2016/4/21.
@@ -17,12 +20,17 @@ import javax.servlet.http.HttpServletResponse;
 public class CustomerController {
 
     @Value("${cleverm.push.http}")
-    private String downloadBase;
+    private String pushUrl;
+    @Value("${qiniu_cdn}")
+    private String qiniuCdn;
 
     @RequestMapping(value = {"shop/home.html", "shop/", "shop"}, method = RequestMethod.GET)
     public ModelAndView displayDashboard(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         ModelAndView mv = new ModelAndView("shop/home");
-        mv.addObject("downloadBase",downloadBase);
+        Map<String,Object> entry = new HashMap<String ,Object>();
+        entry.put("pushUrl",pushUrl);
+        entry.put("qiniuCdn",qiniuCdn);
+        mv.addObject("downloadBase", JSON.toJSON(entry));
         return mv;
     }
 

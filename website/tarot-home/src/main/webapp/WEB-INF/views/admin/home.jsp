@@ -64,7 +64,7 @@
     <script src="assets/mvc/controllers.js"></script>
     <script src="assets/mvc/filters.js"></script>
     <script>
-        var downloadBase= "${downloadBase}";
+        var baseUrl= ${downloadBase};
     </script>
 </body>
 </html>

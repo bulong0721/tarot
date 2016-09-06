@@ -1,5 +1,6 @@
 package com.myee.tarot.web.admin.controller;
 
+import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,6 +9,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Martin on 2016/4/21.
@@ -16,12 +19,17 @@ import javax.servlet.http.HttpServletResponse;
 public class AdminController {
 
     @Value("${cleverm.push.http}")
-    private String downloadBase;
+    private String pushUrl;
+    @Value("${qiniu_cdn}")
+    private String qiniuCdn;
 
     @RequestMapping(value = {"admin/home.html", "admin/", "admin"}, method = RequestMethod.GET)
     public ModelAndView displayDashboard(HttpServletRequest request, HttpServletResponse response) throws Exception {
         ModelAndView mv = new ModelAndView("admin/home");
-        mv.addObject("downloadBase",downloadBase);
+        Map<String,Object> entry = new HashMap<String ,Object>();
+        entry.put("pushUrl",pushUrl);
+        entry.put("qiniuCdn",qiniuCdn);
+        mv.addObject("downloadBase", JSON.toJSON(entry));
         return mv;
     }
 
