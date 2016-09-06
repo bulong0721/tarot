@@ -6,7 +6,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.myee.djinn.dto.*;
-import com.myee.djinn.endpoint.OrchidService;
 import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
 import com.myee.tarot.catering.dao.TableTypeDao;
 import com.myee.tarot.catering.domain.TableType;
@@ -28,11 +27,8 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import javax.cache.Cache;
-import javax.cache.expiry.AccessedExpiryPolicy;
-import javax.cache.expiry.Duration;
+import javax.cache.expiry.*;
 import java.nio.charset.Charset;
 import java.util.*;
 import static org.apache.ignite.cache.CacheAtomicityMode.TRANSACTIONAL;
@@ -281,9 +277,8 @@ public class WeixinServiceImpl implements WeixinService {
      */
     @Override
     public Map<String, Object> listProgressByOpenId(String openId, Long orgID, Long tableTypeId) {
-        IgniteCache<String, String> openIdToStoreCache = CacheUtil.openidToStore(ignite, orgID);
-        String waitOfTableTypeKey = openIdToStoreCache.get(openId);
-        Set<String> setWaitTokenKey = Sets.newHashSet();
+        IgniteCache<String, String> cacheCustomerToken = CacheUtil.customerTokenCache(ignite);
+        String waitOfTableTypeKey = cacheCustomerToken.get(openId);
         IgniteCache<String, WaitToken> waitTokenTypeIdCache = CacheUtil.getCache(ignite, waitOfTableTypeKey);
         CollectionConfiguration setCfg = new CollectionConfiguration();
         setCfg.setAtomicityMode(TRANSACTIONAL);
@@ -354,8 +349,8 @@ public class WeixinServiceImpl implements WeixinService {
     @Override
     public Map<String, Object> listProgressByIdentityCode(String identityCode) {
         //先到Redis里去找，通过identityCode获取当时保存token的redisKey
-        IgniteCache<String, String> identityCodeWaitTokenTypeKeyCache = CacheUtil.identityCodeWaitTokenType(ignite);
-        String waitTokenTypeKey = identityCodeWaitTokenTypeKeyCache.get(identityCode);
+        IgniteCache<String, String> customerTokenCache = CacheUtil.customerTokenCache(ignite);
+        String waitTokenTypeKey = customerTokenCache.get(identityCode);
         Date date = new Date();
         //排号
         String tokenNum = null;
@@ -455,11 +450,9 @@ public class WeixinServiceImpl implements WeixinService {
      */
     @Override
     public boolean bondQrCodeByScan(String identityCode, String openId) {
-        //先到Redis里去找，通过identityCode获取当时保存token的redisKey
-        Cache<String, String> identityCodeWaitTokenTypeKeyCache = CacheUtil.identityCodeWaitTokenType(ignite);
-        String waitTokenTypeKey = identityCodeWaitTokenTypeKeyCache.get(identityCode);
+        IgniteCache<String, String> customerTokenCache = CacheUtil.customerTokenCache(ignite);
+        String waitTokenTypeKey = customerTokenCache.get(identityCode);
         Date date = new Date();
-        Set<String> setWaitTokenKey = Sets.newHashSet();
         if (waitTokenTypeKey != null) {
             IgniteCache<String, WaitToken> waitTokenTypeIdCache = CacheUtil.getCache(ignite, waitTokenTypeKey);
             CollectionConfiguration setCfg = new CollectionConfiguration();
@@ -475,14 +468,13 @@ public class WeixinServiceImpl implements WeixinService {
                     waitTokenTypeIdCache.remove(waitToken.getToken());
                     waitToken.setOpenId(openId);
                     Date endDate = DateUtil.getNextDayOfDate(date, HOUR, MINUTE, HOUR);
+                    waitTokenTypeIdCache.withExpiryPolicy(new CreatedExpiryPolicy(new Duration(date.getTime(), endDate.getTime())));
                     waitTokenTypeIdCache.put(waitToken.getToken(), waitToken);
-                    waitTokenTypeIdCache.withExpiryPolicy(new AccessedExpiryPolicy(new Duration(date.getTime() / DIVIDE_MILLSECOND, endDate.getTime() / DIVIDE_MILLSECOND)));
                     Long timeTookLong = waitToken.getTimeTook();
                     waitTokenDao.updateWaitTokenOpenId(openId, waitToken.getIdentityCode(), timeTookLong);
                     //将openId跟店铺id作为key，绑定到之前的排号list的key中
-                    IgniteCache<String, String> openIdToStoreCache = CacheUtil.openidToStore(ignite, waitToken.getShopId());
-                    openIdToStoreCache.put(openId, waitTokenTypeKey);
-                    openIdToStoreCache.withExpiryPolicy(new AccessedExpiryPolicy(new Duration(date.getTime() / DIVIDE_MILLSECOND, endDate.getTime() / DIVIDE_MILLSECOND)));
+                    customerTokenCache = customerTokenCache.withExpiryPolicy(new CreatedExpiryPolicy(new Duration(date.getTime(), endDate.getTime())));
+                    customerTokenCache.put(openId, waitTokenTypeKey);
                     break;
                 }
             }

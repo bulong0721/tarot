@@ -11,8 +11,6 @@ import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteSet;
 import org.apache.ignite.configuration.CollectionConfiguration;
 
-import java.util.Set;
-
 /**
  * Created by Martin on 2016/8/22.
  */
@@ -67,6 +65,12 @@ public final class CacheUtil {
         return getCache(ignite, CACHE_SHOP_OF_CLIENT + clientId);
     }
 
+    //存放所有取号查进展需要用的缓存
+    public static final String CACHE_CUSTOMER_TOKEN = "weixin.customerToken";
+    public static IgniteCache<String, String> customerTokenCache(Ignite ignite) {
+        return getCache(ignite, CACHE_CUSTOMER_TOKEN);
+    }
+
     public static final String CACHE_WAIT_OF_TYPE = "waitOfTableType_";
 
     public static IgniteCache<String, WaitToken> waitOfTableType(Ignite ignite, Long tableType) {
@@ -83,32 +87,15 @@ public final class CacheUtil {
         return getCache(ignite, CACHE_DRAW_OF_STORE + shopId);
     }
 
-    private static final String CACHE_SCENEID_IDENTITYCODE = "sceneIdToIdentityCode_";
-
-    public static String getIdentityCode(Long sceneId) {
-        return CACHE_SCENEID_IDENTITYCODE + sceneId;
+    //二维码参数和唯一码的缓存key
+    public static final String KEY_QRCODE_PARAM_IDENTITYCODE = "qrCodeParameterToIdentityCode_";
+    public static String getIdentityCode(Long qrCodeParameter) {
+        return KEY_QRCODE_PARAM_IDENTITYCODE + qrCodeParameter;
     }
 
-    public static final String CACHE_WAIT_OF_TYPE_SET = "waitOfTypeKeySet_";
-
+    //将排号的key放入Set中，如A01，A02，getAll取出所有某缓存的值的时候需要用到
+    public static final String CACHE_WAIT_OF_TYPE_SET = "waitTokenTypeKeySet_";
     public static IgniteSet<String> waitOfTableTypeSet(Ignite ignite, String tableType, CollectionConfiguration setCfg) {
         return ignite.set(CACHE_WAIT_OF_TYPE_SET + tableType, setCfg);
     }
-
-    private static final String CACHE_OPENID_TO_STORE      = "openIdToStore_";
-    public static IgniteCache<String, String> openidToStore(Ignite ignite, Long storeId) {
-        return getCache(ignite, CACHE_OPENID_TO_STORE + storeId);
-    }
-
-    private static final String CACHE_IDENTITYCODE_WAITTOKENTYPE = "identityCodeWaitTokenTypeKeyCache";
-    public static final IgniteCache<String,String> identityCodeWaitTokenType(Ignite ignite) {
-        return getCache(ignite, CACHE_IDENTITYCODE_WAITTOKENTYPE);
-    }
-
-    private static final String CACHE_QRPARAMETERS_IDENTITYCODE = "sceneIdIdentityCode";
-    public static final IgniteCache<String, String> qrParametersIdentityCode(Ignite ignite) {
-        return getCache(ignite, CACHE_QRPARAMETERS_IDENTITYCODE);
-    }
-
-
 }
