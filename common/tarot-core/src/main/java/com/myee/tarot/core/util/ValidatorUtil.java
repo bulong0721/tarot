@@ -1,6 +1,10 @@
 package com.myee.tarot.core.util;
 
+import com.myee.tarot.core.Constants;
+
 import java.util.EmptyStackException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -356,6 +360,21 @@ public class ValidatorUtil {
 			return eighteencardid;
 		}
 
+	}
+
+	/**
+	 * 根据路径获取sessionName
+	 * @param path
+	 * @return
+	 */
+	public static Map<String,Object> getSessionName(String path){
+		Map<String,Object> map = new HashMap<String, Object>();
+		if (path.contains("/admin/")) {
+			map.put("sessionName",Constants.ADMIN_STORE);
+		} else if (path.contains("/shop/")) {
+			map.put("sessionName",Constants.CUSTOMER_STORE);
+		}
+		return map;
 	}
 
 }
