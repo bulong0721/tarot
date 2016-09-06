@@ -41,10 +41,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import javax.cache.Cache;
-import javax.cache.expiry.AccessedExpiryPolicy;
+import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
 import java.io.File;
 import java.util.*;
@@ -148,33 +146,30 @@ public class OperationsServiceImpl implements OperationsService {
         waitToken.setTimeTook(createDate.getTime() / DIVIDE_MILLSECOND);
         //获取第二天凌晨2点30分作为结束时间
         Date endDate = DateUtil.getNextDayOfDate(createDate, HOUR, MINUTE, SECOND);
-        //排号Key，第一个参数是店铺id，第二个参数是餐桌类型ID，例如：waitOfTableType:100-103
+        //定义二维码参数和唯一码的字符串
         String sourceStr = CacheUtil.getIdentityCode(Long.valueOf(waitToken.getSceneId()));
-        //sourceStr截取之前是sceneIdToIdentityCode:110510303，把1截掉，其中1是为了区分查询最新进展和扫码抽奖设置的标识位,10510303是传递的参数
+        //去掉区分查询进展和扫码抽奖的标识位，将这个作为二维码的Key，用于绑定唯一码
         String keyQrCode = sourceStr.substring(0, 22) + sourceStr.substring(23);
-        IgniteCache<String, WaitToken> waitTokenCache = CacheUtil.waitOfTableType(ignite, waitToken.getTableTypeId());
+        //定义取号查询进展的总缓存
+        IgniteCache<String, String> customerTokenCache = CacheUtil.customerTokenCache(ignite);
+        //设置缓存有效期时间为取号开始到第二天2：30
+        customerTokenCache = customerTokenCache.withExpiryPolicy(new CreatedExpiryPolicy(new Duration(createDate.getTime(), endDate.getTime())));
+        //定义排号桌类型Key
         String waitOfTableTypeKey = CacheUtil.getWaitOfTableType(waitToken.getTableTypeId());
-
-        //然后二维码的数字码放Redis，跟identityCode唯一码绑定，第一个参数redisKeyOfUcdScId作为key，第二个参数waitToken.getIdentityCode()唯一码作为value，第三个参数null是失效时间
-        IgniteCache<String, String> cacheQrCodeIdentityCode = CacheUtil.qrParametersIdentityCode(ignite);
-        cacheQrCodeIdentityCode.put(keyQrCode, waitToken.getIdentityCode());
-        cacheQrCodeIdentityCode.withExpiryPolicy(new AccessedExpiryPolicy(new Duration(createDate.getTime() / DIVIDE_MILLSECOND, endDate.getTime() / DIVIDE_MILLSECOND)));
-
-        //然后identityCode唯一码放Redis，跟第二个参数排号key绑定，第一个参数是key,第二个参数是value，这里放排号key，第三个是失效时间
-        IgniteCache<String, String> identityCodeWaitTokenTypeKeyCache = CacheUtil.identityCodeWaitTokenType(ignite);
-        identityCodeWaitTokenTypeKeyCache.put(waitToken.getIdentityCode(), waitOfTableTypeKey);
-
-        identityCodeWaitTokenTypeKeyCache.withExpiryPolicy(new AccessedExpiryPolicy(new Duration(createDate.getTime() / DIVIDE_MILLSECOND, endDate.getTime() / DIVIDE_MILLSECOND)));
-
+        customerTokenCache.put(keyQrCode, waitToken.getIdentityCode());
+        customerTokenCache.put(waitToken.getIdentityCode(), waitOfTableTypeKey);
+        //设置排号号码放入Set，便于之后查询排号缓存下所有的排号实体值
         CollectionConfiguration setCfg = new CollectionConfiguration();
         setCfg.setAtomicityMode(TRANSACTIONAL);
         setCfg.setCacheMode(PARTITIONED);
         IgniteSet<String> setTokenCache = CacheUtil.waitOfTableTypeSet(ignite, waitOfTableTypeKey, setCfg);
         setTokenCache.add(waitToken.getToken());
-
-        //第一个参数是排号key，作为key，第二个参数是排号(如：A01，B02)，第三个失效时间
+        //排号缓存获取
+        IgniteCache<String, WaitToken> waitTokenCache = CacheUtil.waitOfTableType(ignite, waitToken.getTableTypeId());
+        //设置排号缓存的过期时间（从取号开始到第二天的凌晨2：30）
+        waitTokenCache = waitTokenCache.withExpiryPolicy(new CreatedExpiryPolicy(new Duration(createDate.getTime(), endDate.getTime())));
+        //第一个参数是排号(如：A01，B02)，第二个具体的排号实体
         waitTokenCache.put(waitToken.getToken(), waitToken);
-        waitTokenCache.withExpiryPolicy(new AccessedExpiryPolicy(new Duration(createDate.getTime() / DIVIDE_MILLSECOND, endDate.getTime() / DIVIDE_MILLSECOND)));
         //微信第三方封装的二维码ticket实体
         WxMpQrCodeTicket myticket = null;
         //微信排号实体
@@ -238,14 +233,17 @@ public class OperationsServiceImpl implements OperationsService {
         CollectionConfiguration setCfg = new CollectionConfiguration();
         setCfg.setAtomicityMode(TRANSACTIONAL);
         setCfg.setCacheMode(PARTITIONED);
+        //获取该排号号码的Set集合
         IgniteSet<String> setTokenCache = CacheUtil.waitOfTableTypeSet(ignite,waitOfTableTypeKey, setCfg);
-
+        //获取所有排号实例
         Map<String, WaitToken> waitTokenMap = waitTokenCache.getAll(setTokenCache);
-        if (waitTokenMap != null) { //如果redis里有数据，直接从Redis里拿
+        if (waitTokenMap != null) { //如果ignite里有数据，直接从Ignite里拿
             //按照取号的先后顺序排序
             List<WaitToken> sortedTokens = orderingByTook.sortedCopy(waitTokenMap.values());
             if (waitToken.getShopId().equals(sortedTokens.get(0).getShopId()) && waitToken.getToken().equals(sortedTokens.get(0).getToken())) { //判断如果当前修改的waitToken是第一个结果的shopId，排号也相同
                 waitTokenCache.remove(waitToken.getToken());
+                //移除Set中的排号码
+                setTokenCache.remove(waitToken.getToken());
                 Date timeTook = new Date(sortedTokens.get(0).getTimeTook()); //获取取号时间
                 backStatus = waitTokenDao.updateState(stateValue, waitToken.getClientId(), waitToken.getShopId(), waitToken.getToken(), timeTook, date); //改状态值,如果成功则返回1
             }
@@ -323,10 +321,9 @@ public class OperationsServiceImpl implements OperationsService {
      * @return
      */
     public Map<String, Object> listProgressByIdentityCode(String identityCode, long tableTypeId) {
-        //先到Ignite里去找，通过identityCode获取当时保存token的redisKey
-        Cache<String, String> identityCodeWaitTokenTypeKeyCache = CacheUtil.identityCodeWaitTokenType(ignite);
-        String waitTokenTypeKey = identityCodeWaitTokenTypeKeyCache.get(identityCode);
-
+        //先到Ignite里去找，通过用户取号的总缓存
+        IgniteCache<String, String> customerTokenCache = CacheUtil.customerTokenCache(ignite);
+        String waitTokenTypeKey = customerTokenCache.get(identityCode);
         CollectionConfiguration setCfg = new CollectionConfiguration();
         setCfg.setAtomicityMode(TRANSACTIONAL);
         setCfg.setCacheMode(PARTITIONED);
@@ -575,9 +572,9 @@ public class OperationsServiceImpl implements OperationsService {
         return object.toJSONString();
     }
 
-    public String getIdentityCode(String sceneIdToIdentityCode) {
-        IgniteCache<String, String> scenIdIdentityCodeCache = CacheUtil.qrParametersIdentityCode(ignite);
-        String identityCode = scenIdIdentityCodeCache.get(sceneIdToIdentityCode);
+    public String getIdentityCode(String qrCodeParameterToIdentityCodeKey) {
+        IgniteCache<String, String> customerTokenCache = CacheUtil.customerTokenCache(ignite);
+        String identityCode = customerTokenCache.get(qrCodeParameterToIdentityCodeKey);
         return identityCode;
     }
 
