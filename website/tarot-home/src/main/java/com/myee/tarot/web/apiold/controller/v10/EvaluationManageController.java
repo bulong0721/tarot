@@ -4,7 +4,7 @@ import com.myee.tarot.apiold.domain.Evaluation;
 import com.myee.tarot.apiold.eum.EvaluationLevelType;
 import com.myee.tarot.apiold.service.EvaluationService;
 import com.myee.tarot.apiold.view.EvaluationView;
-import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
+import com.myee.tarot.core.util.DateTimeUtils;
 import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.catering.service.TableService;
 import com.myee.tarot.core.util.StringUtil;

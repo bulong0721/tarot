@@ -3,7 +3,7 @@ package com.myee.tarot.web.campaign.controller;
 import com.google.common.collect.Lists;
 import com.myee.tarot.campaign.service.ClientPrizeGetInfoService;
 import com.myee.tarot.campaign.service.ClientPrizeService;
-import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
+import com.myee.tarot.core.util.DateTimeUtils;
 import com.myee.tarot.clientprize.domain.ClientPrize;
 import com.myee.tarot.clientprize.domain.ClientPrizeGetInfo;
 import com.myee.tarot.core.Constants;

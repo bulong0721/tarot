@@ -36,6 +36,10 @@ public class VideoPublish extends GenericEntity<Long, VideoPublish> {
 	@Column(name = "DESCRIPTION",length = 255)
 	private String description;
 
+	//播放日频次:1:120次，2:240次,100:全天
+	@Column(name = "PLAY_FREQ", columnDefinition = "TINYINT")
+	private Integer playFreq;
+
 	@Column(name = "ACTIVE", columnDefinition = "BIT")
 	private Boolean active = Boolean.TRUE;
 	@Column(name = "VP_CREATED_BY")
@@ -120,5 +124,13 @@ public class VideoPublish extends GenericEntity<Long, VideoPublish> {
 
 	public void setStore(MerchantStore store) {
 		this.store = store;
+	}
+
+	public Integer getPlayFreq() {
+		return playFreq;
+	}
+
+	public void setPlayFreq(Integer playFreq) {
+		this.playFreq = playFreq;
 	}
 }

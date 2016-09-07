@@ -1,8 +1,9 @@
-package com.myee.tarot.device.service.impl.elasticSearch;
+package com.myee.tarot.catalog.service.impl.elasticSearch;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.core.web.EntityQueryDto;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestClientFactory;
@@ -10,7 +11,7 @@ import io.searchbox.client.JestResult;
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.core.*;
 import io.searchbox.params.Parameters;
-import org.apache.commons.lang3.StringUtils;
+//import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,7 +129,7 @@ public class ESUtils {
             long start = System.currentTimeMillis();
             //采用自行拼接json
             String query = "";
-            if (StringUtils.isNotBlank(queryTitle)) {
+            if (!StringUtil.isBlank(queryTitle)) {
                 query = "{\n" +
                         "    \"query\": {\n" +
                         "    \"filtered\": {\n" +
@@ -265,7 +266,7 @@ public class ESUtils {
             long start = System.currentTimeMillis();
             Map<String, Object> result = Maps.newHashMap();
             JestResult jestResult = null;
-            if (StringUtils.isNotBlank(scrollId)) {
+            if (!StringUtil.isBlank(scrollId)) {
                 jestResult = readMoreScroll(scrollId, pageSize);
                 result.put("scrollId", scrollId);
             } else {

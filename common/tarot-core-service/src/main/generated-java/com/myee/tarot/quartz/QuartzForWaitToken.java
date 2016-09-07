@@ -1,11 +1,9 @@
 package com.myee.tarot.quartz;
 
 import com.google.common.collect.Lists;
-import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
 import com.myee.tarot.catalog.domain.VoiceLog;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.DateUtil;
-import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.datacenter.service.WaitTokenService;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.weixin.domain.WxWaitToken;
@@ -14,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.*;

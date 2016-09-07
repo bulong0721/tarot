@@ -1,6 +1,6 @@
 package com.myee.tarot.datacenter.dao.impl;
 
-import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
+import com.myee.tarot.core.util.DateTimeUtils;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.StringUtil;
@@ -10,8 +10,6 @@ import com.myee.tarot.weixin.domain.QWxWaitToken;
 import com.myee.tarot.weixin.domain.WxWaitToken;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
