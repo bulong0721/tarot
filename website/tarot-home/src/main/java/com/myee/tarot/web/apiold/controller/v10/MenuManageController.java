@@ -4,23 +4,22 @@ import com.myee.tarot.apiold.domain.MenuInfo;
 import com.myee.tarot.apiold.service.MenuService;
 import com.myee.tarot.apiold.view.MenuDataInfo;
 import com.myee.tarot.apiold.view.MenuInfoView;
+import com.myee.tarot.cache.uitl.RedissonUtil;
 import com.myee.tarot.web.apiold.controller.BaseController;
-import com.myee.tarot.uitl.CacheUtil;
-import com.myee.tarot.weixin.domain.ClientAjaxResult;
+import com.myee.tarot.web.ClientAjaxResult;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ignite.Ignite;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.cache.Cache;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Info: 商户菜品管理接口
@@ -38,9 +37,9 @@ public class MenuManageController extends BaseController {
     private Logger logger = LoggerFactory.getLogger(MenuManageController.class);
 
     @Autowired
-    private MenuService menuManageService;
+    private MenuService    menuManageService;
     @Autowired
-    private Ignite ignite;
+    private RedissonClient redisson;
 
 
     /**
@@ -59,7 +58,7 @@ public class MenuManageController extends BaseController {
             if (StringUtils.isNotEmpty(shopId)) {
                 id = Long.parseLong(shopId);
             }
-            Cache<String, MenuDataInfo> menuInfoCache = CacheUtil.menuInfoCache(ignite);
+            Map<String, MenuDataInfo> menuInfoCache = RedissonUtil.commonCache(redisson).getMenuCache();
             MenuDataInfo shopMenu = menuInfoCache.get(shopId);
             if (shopMenu != null) {
                 if (timestamp == shopMenu.getTimestamp()) {

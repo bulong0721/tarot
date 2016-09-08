@@ -11,7 +11,7 @@ import com.myee.tarot.core.util.TypeConverter;
 import com.myee.tarot.web.apiold.controller.BaseController;
 import com.myee.tarot.web.apiold.util.ExcelData;
 import com.myee.tarot.web.files.FileType;
-import com.myee.tarot.weixin.domain.ClientAjaxResult;
+import com.myee.tarot.web.ClientAjaxResult;
 import com.opencsv.CSVReader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;

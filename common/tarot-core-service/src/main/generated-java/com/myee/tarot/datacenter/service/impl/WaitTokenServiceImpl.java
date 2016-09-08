@@ -5,7 +5,7 @@ import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.datacenter.dao.WaitTokenDao;
 import com.myee.tarot.datacenter.service.WaitTokenService;
-import com.myee.tarot.weixin.domain.WxWaitToken;
+import com.myee.tarot.wechat.domain.WxWaitToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

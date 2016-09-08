@@ -13,7 +13,7 @@ import com.myee.tarot.web.apiold.controller.BaseController;
 import com.myee.tarot.apiold.eum.TemplateSMSType;
 import com.myee.tarot.web.apiold.util.*;
 import com.myee.tarot.core.util.DateUtil;
-import com.myee.tarot.weixin.domain.ClientAjaxResult;
+import com.myee.tarot.web.ClientAjaxResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
