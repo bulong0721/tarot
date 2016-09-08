@@ -242,7 +242,7 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster) {
 /*
  * cfromly
  * */
-function cfromlyService(formlyConfig, $window, toaster, $filter,formlyValidationMessages,$timeout) {
+function cfromlyService(formlyConfig, $window,$q, toaster, $filter,$timeout,formlyValidationMessages,uploads) {
     formlyConfig.extras.errorExistsAndShouldBeVisibleExpression = 'fc.$touched || form.$submitted';
     formlyValidationMessages.addStringMessage('required', '此字段必填');
 
@@ -321,38 +321,103 @@ function cfromlyService(formlyConfig, $window, toaster, $filter,formlyValidation
         name: 'upload',
         extends: 'input',
         wrapper: ['bootstrapLabel', 'bootstrapHasError'],
+        template: [
+            '<div ng-class="{true: \'uploadFileT\',false: \'uploadFileF\'}[upClass]" ><ul>',
+            '<li ng-if="thumbnail && upClass && upType ==\'video\'" ng-repeat="t in thumbnail"><c-video ng-show="t.url"></c-video><i class="btn-icon fa fa-trash-o" ng-click="remove($index)"></i></li>',
+            '<li ng-if="thumbnail && upClass && upType ==\'img\'"" ng-repeat="t in thumbnail"><img ng-src="{{t.url}}?imageView2/1/w/200/h/126" /><i class="btn-icon fa fa-trash-o" ng-click="remove($index)"></i></li>',
+            '<li ng-if="len"><input ng-model="model[options.key]" />',
+            '<img ng-if="upClass" src="http://7xl2nm.com2.z0.glb.qiniucdn.com/FoDIQTAe1QiceIgWPgngRvJaGkeq?imageView2/1/w/200/h/126" />',
+            '<span ng-if="progress">{{progress}}%</span></li>',
+            '</ul></div>',
+        ].join(' '),
         defaultOptions: {
             templateOptions: {
                 type: 'file',
                 required: true
             }
         },
-
         link: function (scope, el, attrs) {
+            //初始化 [缩略图|多图长度|样式]
+            scope.thumbnail = [];
+            scope.len = true;
+            scope.upClass = false;
+            //判断是否upAttr
+            if(scope.to.upAttr){
+                var t = scope.to.upAttr;
+                //判断属性是否完整
+                if(!t.param && !t.upType && !t.url){
+                    console.error('请完整设置upType[number] url[str] param[obj]');
+                    return false;
+                }
+                scope.upType = t.name;
+                scope.upClass = true;
+            }
+            //上传事件及回调
             el.on("change", function (changeEvent) {
-                var file = changeEvent.target.files[0],
-                    name = file.name.replace(/.+\./, "");
-                if(file.size <= 0 || file.size > 100000000){
-                    $timeout(function () {
-                        toaster.error({body: "不能上传空文件或文件大小限制(100M)！"});
-                    }, 0);
-                    if(angular.element('#file')[0]){
-                        angular.element('#file')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
-                    }
-                }else if (scope.name && $filter('inputType')(name, scope.name) < 0) {
-                    $timeout(function () {
-                        toaster.error({body: "请上传png,jpg,gif,bmp图片格式！"});
-                    }, 0);
-                    if(angular.element('#file')[0]){
-                        angular.element('#file')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
-                    }
-                } else {
-                    if (file) {
-                        if(scope.name != 'img'){//chay商户上传和菜品图片是不需要同步文件名到name字段的
-                            scope.model.name = file.name;
+                var file = changeEvent.target.files[0], name = file.name.replace(/.+\./, ""),to = scope.to,ajaxAll = [];
+                if(file && file.size > 0 || file.size <= 100000000){
+                    //初始化需要上传的资源
+                    var fd = new FormData();
+                    fd.append('file', file);
+
+                    //判断上传到哪里
+                    if(t){
+                        //判断类型是否合法
+                        var types = $filter('inputType')(name, t.name);
+                        if(types.state < 0){
+                            $timeout(function () {toaster.error({body: types.error})}, 0);
+                            return;
                         }
-                        var fd = new FormData();
-                        fd.append('file', file);
+
+                        //type{2:线上3:七牛4:(2+3)}
+                        switch(t.upType) {
+                            case 2:
+                                ajaxAll = [uploads.myeeUpload(fd,t,progress)];
+                                break;
+                            case 3:
+                                ajaxAll = [uploads.qnUpload(file,progress)];
+                                break;
+                            case 4:
+                                ajaxAll = [uploads.qnUpload(file,progress),uploads.myeeUpload(fd,t,progress)];
+                                break;
+                            default:
+                                ajaxAll = null;
+                        }
+                        //上传
+                        if(ajaxAll){
+                            $q.all(ajaxAll).then(function(res){
+                                scope.progress = null;
+                                if(t.upMore && t.upMore>1){
+                                    switch(t.upType) {
+                                        case 2:
+                                            scope.thumbnail.push({url:baseUrl.pushUrl+res[0].dataMap.tree.downloadPath})
+                                            break;
+                                        case 3:
+                                            scope.thumbnail.push({url:baseUrl.qiniuCdn+res[0].key})
+                                            break;
+                                        case 4:
+                                            scope.thumbnail.push({url:baseUrl.qiniuCdn+res[0].key})
+                                            break;
+                                        default:
+                                    }
+                                }
+                                //判断thumbnail长度显示隐藏上传按钮
+                                if(scope.thumbnail.length>=t.upMore){
+                                    scope.len = false;
+                                }
+                                angular.element('#imgFile')[0].value = '';//初始input value
+                                scope.$emit('fileToUpload', res);
+                            })
+                        }else{
+                            console.error('不能上传非法服务器！');
+                        }
+                        //进度回调
+                        function progress(p){
+                            scope.progress = parseInt(t.upType == 3?p:(p+50)/2);
+                        }
+                    }else{
+                        scope.model.name = file.name;//资源管理需要同步文件名到name字段的
+                        //广播fd开始
                         scope.$emit('fileToUpload', fd);
                         var fileProp = {};
                         for (var properties in file) {
@@ -361,11 +426,15 @@ function cfromlyService(formlyConfig, $window, toaster, $filter,formlyValidation
                             }
                         }
                         scope.fc.$setViewValue(fileProp);
-                    } else {
-                        scope.fc.$setViewValue(undefined);
+                        //广播fd结束
                     }
+                }else{
+                    scope.fc.$setViewValue(undefined);
+                    $timeout(function () {toaster.error({body: "不能上传空文件或文件大小限制(100M)！"})}, 0);
                 }
+
             });
+            //
             el.on("focusout", function (focusoutEvent) {
                 if ($window.document.activeElement.id === scope.id) {
                     scope.$apply(function (scope) {
@@ -375,6 +444,13 @@ function cfromlyService(formlyConfig, $window, toaster, $filter,formlyValidation
                     scope.fc.$validate();
                 }
             });
+
+            //删除素材
+            scope.remove = function(index){
+                scope.thumbnail.splice(index,1);
+                scope.len = true;
+                scope.upRemove(index)
+            }
         }
     });
 
@@ -436,10 +512,46 @@ function cAlerts($uibModal) {
         }
     }
 }
+/*
+ * uploads
+ * */
+function uploads($qupload,$resource) {
+    var token = $resource('./superman/picture/tokenAndKey').get();
+    return {
+        qnUpload: function (file,progress) {
+            //七牛上传
+            var files = $qupload.upload({file: file, token: token.dataMap.uptoken})
+            files.then(function (res) {
 
+            }, function (res) {
+
+            }, function (evt) {
+                progress(Math.floor(100 * evt.loaded / evt.totalSize))
+            });
+            return files
+        },
+        myeeUpload: function (file,attr,progress) {
+            //木爷服务器上传
+            //,qiniuPath:qn?qn:
+            //attr.param.qiniuPath = 'key'
+            var files = $resource(attr.url).save(attr.param, file).$promise;
+            files.then(function (res) {
+                if (0 != res.status) {
+                    $scope.toasterManage($scope.toastError, res);
+                    return false;
+                }else{
+                    return res;
+                }
+            });
+            progress(0)
+            return files;
+        }
+    }
+}
 angular
     .module('myee')
     .service('Constants', constServiceCtor)
     .service('cTables', cTablesService)
     .service('cfromly', cfromlyService)
+    .factory('uploads', uploads)
     .factory('cAlerts', cAlerts)

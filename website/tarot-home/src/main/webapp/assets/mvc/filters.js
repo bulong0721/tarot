@@ -44,16 +44,16 @@ function inputType(){
         switch(type)
         {
             case 'img':
-                return img.indexOf(val);
+                return {state:img.indexOf(val),error:'请上传png,jpg,gif,bmp图片格式！'};
                 break;
             case 'video':
-                return video.indexOf(val);
+                return {state:video.indexOf(val),error:'请上传avi,mp4,mkv视频格式！'};
                 break;
             case 'txt':
-                return txt.indexOf(val);
+                return {state:txt.indexOf(val),error:'请上传txt,pdf文件格式！'};
                 break;
             case 'material':
-                return material.indexOf(val);
+                return {state:material.indexOf(val),error:'请上传wav,apk,txt,bin,img文件格式！'};
                 break;
             default:
                 return false;

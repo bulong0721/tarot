@@ -283,6 +283,21 @@ function cDatepicker(){
     }
 }
 
+/*
+* 视频播放
+* */
+function cVideo(){
+    return {
+        link: function (scope, ele,attr) {
+            scope.$watch(attr.ngShow, function(val) {
+                if(val){
+                    ele.html('<video src="'+val+'" controls></video>');
+                }
+            });
+        }
+    }
+}
+
 /**
  *
  * Pass all functions into module
@@ -298,3 +313,4 @@ angular
     .directive("breadcrumb", breadcrumb)
     .directive("alerts", alerts)
     .directive("cDatepicker", cDatepicker)
+    .directive("cVideo", cVideo)

@@ -38,6 +38,11 @@ function ctrlManagerLoader(oclazyload, dir, ctrl) {
             files: ['assets/plugins/ui-tree/angular-tree-grid.css', 'assets/plugins/ui-tree/angular-tree-grid.js']
         },
         {
+            serie: true,
+            name: 'ngQiniu',
+            files: ['assets/plugins/qiniu/ngQiniu.js']
+        },
+        {
             name: 'myee',//属于哪个模块
             files: ['assets/mvc/' + dir + '/controller/' + ctrl]
         }
@@ -88,7 +93,16 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
                     return ctrlManagerLoader($ocLazyLoad, 'merchant', 'merchantCtrl.js')
-                }
+                },
+                /*qiniu:function($ocLazyLoad){
+                    return $ocLazyLoad.load([
+                        {
+                            serie: true,
+                            name:'ngQiniu',
+                            files: ['assets/plugins/qiniu/ngQiniu.js']
+                        }
+                    ])
+                }*/
             }
         })
         .state('campaign', {
