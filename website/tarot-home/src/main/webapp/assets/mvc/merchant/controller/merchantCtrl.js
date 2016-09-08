@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * merchantCtrl - controller
  */
-merchantCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', '$resource','$http'];
-function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$http) {
+merchantCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', '$resource'];
+function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
     var mgrData = {
         fields: [
             {
@@ -114,11 +114,6 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$http) {
     //上传控件监听器
     $scope.$on('fileToUpload', function (event, arg) {
         console.log(arg)
-/*        $http.post('http://127.0.0.1/ceshi/qiniu/examples/',{},{
-            'Content-Type':'application/x-www-form-urlencoded'
-        }).success(function(res){
-            console.log(res)
-        });*/
         //上传文件到后台
 
         /*$resource(mgrData.api.upload).save({path: "logo", type: "file"}, arg).$promise.then(function (res) {
