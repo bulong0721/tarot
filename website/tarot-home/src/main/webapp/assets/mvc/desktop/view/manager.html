@@ -3,7 +3,7 @@
         <div ng-include="$state.current.data.datatable"/>
     </uib-tab>
     <uib-tab heading="editor" index="1">
-        <div ng-include="$state.current.data.editor || 'assets/mvc/desktop/view/basic_editor.html'"/>
+        <div ng-if="activeTab == '1'" ng-include="$state.current.data.editor || 'assets/mvc/desktop/view/basic_editor.html'"/>
     </uib-tab>
     <uib-tab heading="table" index="2">
         <div ng-include="$state.current.data.other1"/>

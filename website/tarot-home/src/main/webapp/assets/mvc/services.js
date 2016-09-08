@@ -338,8 +338,6 @@ function cfromlyService(formlyConfig, $window,$q, toaster, $filter,$timeout,form
         },
         link: function (scope, el, attrs) {
             //初始化 [缩略图|多图长度|样式]
-            scope.thumbnail = [];
-            scope.len = true;
             scope.upClass = false;
             //判断是否upAttr
             if(scope.to.upAttr){

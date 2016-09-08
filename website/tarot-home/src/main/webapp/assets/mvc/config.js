@@ -567,5 +567,5 @@ angular
         $rootScope.$state = $state;
     })
     .constant('baseConstant',{
-        myeeDefaultUrlImg:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt?imageView2/1/w/150/h/95"
+        myeeDefaultUrlImg:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt"
     });
