@@ -1,22 +1,30 @@
 package com.myee.tarot.web.campaign.controller;
 
 import com.google.common.collect.Lists;
+import com.myee.tarot.apiold.eum.TemplateSMSType;
+import com.myee.tarot.apiold.service.SendRecordService;
 import com.myee.tarot.campaign.service.ClientPrizeGetInfoService;
 import com.myee.tarot.campaign.service.ClientPrizeService;
 import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
+import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.clientprize.domain.ClientPrize;
 import com.myee.tarot.clientprize.domain.ClientPrizeGetInfo;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.AutoNumUtil;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.ValidatorUtil;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.web.apiold.controller.BaseController;
+import com.myee.tarot.web.apiold.util.AlidayuSmsClient;
+import com.myee.tarot.web.apiold.util.IPUtils;
 import com.myee.tarot.weixin.domain.ClientAjaxResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,12 +34,16 @@ import java.util.*;
  * Created by Administrator on 2016/8/29.
  */
 @RestController
-public class ClientPrizeController {
+public class ClientPrizeController extends BaseController{
 
     @Autowired
     private ClientPrizeService clientPrizeService;
     @Autowired
     private ClientPrizeGetInfoService clientPrizeGetInfoService;
+    @Autowired
+    private ThreadPoolTaskExecutor taskExecutor;
+    @Autowired
+    private SendRecordService sendRecordManageService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientPrizeController.class);
 
@@ -46,13 +58,7 @@ public class ClientPrizeController {
     public AjaxResponse saveClientPrize(@RequestBody ClientPrize clientPrize, HttpServletRequest request) {
         AjaxResponse resp = new AjaxResponse();
         try {
-            String path = request.getServletPath();
-            String sessionName = null;
-            if (path.contains("/admin/")) {
-                sessionName = Constants.ADMIN_STORE;
-            } else if (path.contains("/shop/")) {
-                sessionName = Constants.CUSTOMER_STORE;
-            }
+            String sessionName = ValidatorUtil.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
             //从session中读取merchantStore信息，如果为空，则提示用户先切换门店
             if (request.getSession().getAttribute(sessionName) == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -76,12 +82,20 @@ public class ClientPrizeController {
             }
             //添加 修改
             MerchantStore merchantStore = (MerchantStore) request.getSession().getAttribute(sessionName);
-            clientPrize.setLeftNum(clientPrize.getTotal());
+            int total = clientPrize.getTotal();
+            //设置剩余数量  防止重置超奖池
+            if(clientPrize.getId()!= null){
+                int remainInPool = clientPrizeGetInfoService.countUnGetByPrizeId(clientPrize.getId());
+                total = total - remainInPool;
+            }
+            clientPrize.setLeftNum(total);
             clientPrize.setStore(merchantStore);
             if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_SCANCODE) {
                 clientPrize.setLeftNum(null);
                 clientPrize.setTotal(null);
+                clientPrize.setPhonePrizeType(null);
             } else if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_THANKYOU) {
+                clientPrize.setPhonePrizeType(null);
                 clientPrize.setName("谢谢惠顾");
             }
             ClientPrize updatePrize = clientPrizeService.update(clientPrize);
@@ -106,13 +120,7 @@ public class ClientPrizeController {
     public AjaxPageableResponse pageListOfPrize(HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
-            String path = request.getServletPath();
-            String sessionName = null;
-            if (path.contains("/admin/")) {
-                sessionName = Constants.ADMIN_STORE;
-            } else if (path.contains("/shop/")) {
-                sessionName = Constants.CUSTOMER_STORE;
-            }
+            String sessionName = ValidatorUtil.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
             //从session中读取merchantStore信息，如果为空，则提示用户先切换门店
             if (request.getSession().getAttribute(sessionName) == null) {
                 resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -144,13 +152,7 @@ public class ClientPrizeController {
     public AjaxResponse deleteClientPrize(@RequestBody ClientPrize clientPrize, HttpServletRequest request) {
         AjaxResponse resp = new AjaxResponse();
         try {
-            String path = request.getServletPath();
-            String sessionName = null;
-            if (path.contains("/admin/")) {
-                sessionName = Constants.ADMIN_STORE;
-            } else if (path.contains("/shop/")) {
-                sessionName = Constants.CUSTOMER_STORE;
-            }
+            String sessionName = ValidatorUtil.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
             //从session中读取merchantStore信息，如果为空，则提示用户先切换门店
             if (request.getSession().getAttribute(sessionName) == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -182,13 +184,7 @@ public class ClientPrizeController {
     public AjaxPageableResponse pageListOfPrizeInfoChecked(HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
-            String path = request.getServletPath();
-            String sessionName = null;
-            if (path.contains("/admin/")) {
-                sessionName = Constants.ADMIN_STORE;
-            } else if (path.contains("/shop/")) {
-                sessionName = Constants.CUSTOMER_STORE;
-            }
+            String sessionName = ValidatorUtil.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
             //从session中读取merchantStore信息，如果为空，则提示用户先切换门店
             if (request.getSession().getAttribute(sessionName) == null) {
                 resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -219,13 +215,7 @@ public class ClientPrizeController {
     public AjaxResponse checkClientPriceInfo(@RequestParam("checkCode")String checkCode,HttpServletRequest request){
         AjaxResponse resp = new AjaxResponse();
         try {
-            String path = request.getServletPath();
-            String sessionName = null;
-            if (path.contains("/admin/")) {
-                sessionName = Constants.ADMIN_STORE;
-            } else if (path.contains("/shop/")) {
-                sessionName = Constants.CUSTOMER_STORE;
-            }
+            String sessionName = ValidatorUtil.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
             //从session中读取merchantStore信息，如果为空，则提示用户先切换门店
             if (request.getSession().getAttribute(sessionName) == null) {
                 resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -285,6 +275,7 @@ public class ClientPrizeController {
         entry.put("bigPic", clientPrize.getBigPic());
         entry.put("smallPic", clientPrize.getSmallPic());
         entry.put("activeStatus", clientPrize.getActiveStatus());
+        entry.put("phonePrizeType", clientPrize.getPhonePrizeType());
         return entry;
     }
 
@@ -462,7 +453,21 @@ public class ClientPrizeController {
                 priceGetInfo.setStatus(Constants.CLIENT_PRIZEINFO_STATUS_GET);
                 clientPrizeGetInfoService.update(priceGetInfo);
                 //领取后 发送短信至用户
-                //todo
+                String[] phones = {phoneNum.toString()};
+                String content = "恭喜你获得"+ priceGetInfo.getPrizeName() + ",兑换码为" + priceGetInfo.getCheckCode() + ",兑换时间为" + DateTimeUtils.getDateString(priceGetInfo.getPrizeStartDate(),DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT) + "至" + DateTimeUtils.getDateString(priceGetInfo.getPrizeEndDate(), DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT);
+                Table table = new Table();
+                table.setId(Long.parseLong(deskId));
+                Runnable task = AlidayuSmsClient.sendSMS(
+                        IPUtils.getIpAddr(getRequest()),
+                        sendRecordManageService,
+                        phones,
+                        content,//短信内容
+                        TemplateSMSType.PARTNERGAME.getName(),
+                        "木爷提示",//签名,为null默认是美味点点笔
+                        getCommConfig(),//从commonApi.properties获取默认配置
+                        System.currentTimeMillis()
+                );//发送短信
+                taskExecutor.submit(task);
                 return ClientAjaxResult.success("领奖成功");
             }
         } catch (Exception e) {

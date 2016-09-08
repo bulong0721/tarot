@@ -2,6 +2,7 @@ package com.myee.tarot.core.util;
 
 import com.myee.tarot.core.Constants;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Map;
@@ -364,15 +365,16 @@ public class ValidatorUtil {
 
 	/**
 	 * 根据路径获取sessionName
-	 * @param path
+	 * @param request
 	 * @return
 	 */
-	public static Map<String,Object> getSessionName(String path){
+	public static Map<String,Object> getRequestInfo(HttpServletRequest request){
 		Map<String,Object> map = new HashMap<String, Object>();
+		String path = request.getServletPath();
 		if (path.contains("/admin/")) {
-			map.put("sessionName",Constants.ADMIN_STORE);
+			map.put(Constants.REQUEST_INFO_SESSION ,Constants.ADMIN_STORE);
 		} else if (path.contains("/shop/")) {
-			map.put("sessionName",Constants.CUSTOMER_STORE);
+			map.put(Constants.REQUEST_INFO_SESSION ,Constants.CUSTOMER_STORE);
 		}
 		return map;
 	}

@@ -73,4 +73,12 @@ public class ClientPrizeGetInfoImpl extends GenericEntityDaoImpl<Long, ClientPri
         ClientPrizeGetInfo clientPrizeGetInfo = query.where(qClientPrizeGetInfo.price.store.id.eq(storeId).and(qClientPrizeGetInfo.checkCode.eq(checkCode))).fetchOne();
         return clientPrizeGetInfo;
     }
+
+    @Override
+    public Integer countUnGetByPrizeId(Long prizeId) {
+        QClientPrizeGetInfo qClientPrizeGetInfo = QClientPrizeGetInfo.clientPrizeGetInfo;
+        JPQLQuery<ClientPrizeGetInfo> query = new JPAQuery(getEntityManager());
+        long count = query.from(qClientPrizeGetInfo).where(qClientPrizeGetInfo.price.id.eq(prizeId).and(qClientPrizeGetInfo.status.eq(Constants.CLIENT_PRIZEINFO_STATUS_UNGET))).fetchCount();
+        return (int)count;
+    }
 }
