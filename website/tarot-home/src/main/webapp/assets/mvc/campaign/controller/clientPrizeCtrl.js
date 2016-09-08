@@ -107,13 +107,14 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
                     var md = $scope;
                     md.thumbnail = [];
                     md.len = true;
-                    if(md.model.id){
-                        md.thumbnail.push({url:md.model.smallPic});
+                    if(md.model.id && md.model.smallPic){
+                        md.thumbnail.push({url:baseUrl.pushUrl+md.model.smallPic});
                         ;(md.thumbnail.length>=md.to.upAttr.upMore) && (md.len = false);
                     }
                     //删除资源
                     $scope.upRemove = function(index){
-                        console.log(index)
+                        console.log(index);
+                        $scope.model.smallPic = "";
                     }
                 }]
             },
@@ -138,13 +139,14 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
                     var md = $scope;
                     md.thumbnail = [];
                     md.len = true;
-                    if(md.model.id){
-                        md.thumbnail.push({url:md.model.bigPic});
+                    if(md.model.id && md.model.bigPic){
+                        md.thumbnail.push({url:baseUrl.pushUrl+ md.model.bigPic});
                         ;(md.thumbnail.length>=md.to.upAttr.upMore) && (md.len = false);
                     }
                     //删除资源
                     $scope.upRemove = function(index){
                         console.log(index)
+                        $scope.model.bigPic = "";
                     }
                 }]
             },
@@ -188,13 +190,11 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
         if (rowIndex > -1) {
             var data = $scope.tableOpts.data[rowIndex];
             $scope.formData.model = angular.copy(data);
-            $scope.formData.model.smallPic = $filter('myeeUrlImg')(data.smallPic);
-            $scope.formData.model.bigPic =  $filter('myeeUrlImg')(data.bigPic);
+            $scope.formData.model.smallPic =data.smallPic;
+            $scope.formData.model.bigPic =  data.bigPic;
             $scope.rowIndex = rowIndex;
         } else {
             $scope.formData.model = {};
-            $scope.formData.model.smallPic = baseConstant.myeeDefaultUrlImg;
-            $scope.formData.model.bigPic = baseConstant.myeeDefaultUrlImg;
             $scope.rowIndex = -1;
         }
         $scope.activeTab = iEditor;
@@ -204,6 +204,7 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
     $scope.$on('fileToUpload', function (event, arg) {
         var uploadId = event.targetScope.id;
         var pic = arg[0].dataMap.tree.downloadPath;
+        console.log(pic);
         if(uploadId == 'smallPic'){
             $scope.formData.model.smallPic = pic;
         }else if(uploadId == 'bigPic'){
