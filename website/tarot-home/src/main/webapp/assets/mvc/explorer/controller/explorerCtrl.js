@@ -71,8 +71,8 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
             '<a><i ng-if="row.branch.salt == row.branch.storeId && row.branch.path != \'/\'" class="btn-icon fa fa-trash-o" ng-click="cellTemplateScope.delete(row.branch)"></i></a>' +
             '<a><i ng-if="row.branch.salt != row.branch.storeId || row.branch.path == \'/\'" class="btn-icon fa fa-ban" title="没有权限删除"></i></a>' +
             '<span class="divider"></span>' +
-            '<a><i ng-if="row.branch.type == 1" class="btn-icon fa fa-download" ng-click="cellTemplateScope.download(row.branch)"></i></a>' +
-            '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-ban" title="文件夹不能下载"></i></a>',
+            '<a ng-if="row.branch.type == 1" ng-href="{{row.branch.url}}" download><i class="btn-icon fa fa-download" ></i></a>' +
+            '<a ng-if="row.branch.type == 0"><i class="btn-icon fa fa-ban" title="文件夹不能下载"></i></a>',
             cellTemplateScope: {
                 add: function (data) {
                     $scope.handleSelect(data);
@@ -105,14 +105,6 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 delete: function (data) {
                     $scope.delete(data);
                 },
-                download: function (data) {
-                    $resource(mgrDataPusher.api.download).save({salt:data.salt,path: data.path}, {}).$promise.then(
-                        function success(resp) {
-                            console.log(resp.rows[0].url)
-                            window.location.href = resp.rows[0].url;
-                        }
-                    );
-                }
             }
         }
     ];
@@ -220,9 +212,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
             }
         ],
         api: {
-            //read: './device/used/paging',
             push: '../admin/file/push',
-            download: '../admin/file/download',
             delete: '../admin/file/delete',
         }
     };

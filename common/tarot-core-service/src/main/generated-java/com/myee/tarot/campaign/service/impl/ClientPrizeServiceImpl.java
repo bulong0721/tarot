@@ -2,7 +2,7 @@ package com.myee.tarot.campaign.service.impl;
 
 import com.myee.tarot.campaign.dao.ClientPrizeDao;
 import com.myee.tarot.campaign.service.ClientPrizeService;
-import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
+import com.myee.tarot.core.util.DateTimeUtils;
 import com.myee.tarot.clientprize.domain.ClientPrize;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;

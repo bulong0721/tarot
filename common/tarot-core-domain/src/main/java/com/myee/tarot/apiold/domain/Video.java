@@ -3,6 +3,7 @@ package com.myee.tarot.apiold.domain;
 
 import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.core.GenericEntity;
+import com.myee.tarot.merchant.domain.MerchantStore;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -48,6 +49,9 @@ public class Video extends GenericEntity<Long, Video> {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "V_CREATED")
 	private Date vCreated;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "STORE_ID")
+	private MerchantStore store;
 
 	public Video(){
 
@@ -80,6 +84,14 @@ public class Video extends GenericEntity<Long, Video> {
 //		}
 //	}
 
+
+	public MerchantStore getStore() {
+		return store;
+	}
+
+	public void setStore(MerchantStore store) {
+		this.store = store;
+	}
 
 	@Override
 	public Long getId() {

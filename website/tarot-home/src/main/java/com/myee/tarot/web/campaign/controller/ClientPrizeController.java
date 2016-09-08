@@ -5,8 +5,7 @@ import com.myee.tarot.apiold.eum.TemplateSMSType;
 import com.myee.tarot.apiold.service.SendRecordService;
 import com.myee.tarot.campaign.service.ClientPrizeGetInfoService;
 import com.myee.tarot.campaign.service.ClientPrizeService;
-import com.myee.tarot.campaign.service.impl.redis.DateTimeUtils;
-import com.myee.tarot.catering.domain.Table;
+import com.myee.tarot.core.util.DateTimeUtils;
 import com.myee.tarot.clientprize.domain.ClientPrize;
 import com.myee.tarot.clientprize.domain.ClientPrizeGetInfo;
 import com.myee.tarot.core.Constants;
@@ -34,7 +33,7 @@ import java.util.*;
  * Created by Administrator on 2016/8/29.
  */
 @RestController
-public class ClientPrizeController extends BaseController{
+public class ClientPrizeController {
 
     @Autowired
     private ClientPrizeService clientPrizeService;

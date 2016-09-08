@@ -2,10 +2,10 @@ package com.myee.tarot.quartz;
 
 import com.google.common.collect.Lists;
 import com.myee.tarot.catalog.domain.VoiceLog;
+import com.myee.tarot.catalog.service.impl.elasticSearch.ESUtils;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.DateUtil;
 import com.myee.tarot.core.util.StringUtil;
-import com.myee.tarot.device.service.impl.elasticSearch.ESUtils;
 import com.opencsv.CSVReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

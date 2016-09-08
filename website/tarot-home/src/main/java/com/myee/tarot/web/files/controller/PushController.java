@@ -203,17 +203,6 @@ public class PushController {
         return ajaxResponse;
     }
 
-    @RequestMapping(value = "admin/file/download", method = RequestMethod.POST)
-    @ResponseBody
-    public AjaxResponse exportResource(@RequestParam("salt") Long orgID, @RequestParam("path") String path) {
-        String url = DOWNLOAD_HTTP + orgID.toString() + File.separator + path;
-        AjaxResponse ajaxResponse = new AjaxResponse().success();
-        Map<String, Object> map = Maps.newHashMap();
-        map.put("url", url);
-        ajaxResponse.addDataEntry(map);
-        return ajaxResponse;
-    }
-
     private void listFiles(File parentFile, Map<String, FileItem> resMap, Long orgID, Long storeId) {
         if (!parentFile.exists() || !parentFile.isDirectory() || null == parentFile.listFiles()) {
             return;

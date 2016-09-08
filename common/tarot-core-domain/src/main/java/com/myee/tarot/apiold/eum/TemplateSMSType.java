@@ -22,7 +22,7 @@ public enum TemplateSMSType {
     CHANGETABLEWARE("SMS_7835053", 22), //更换餐具
     OUT_OF_CHARGING("SMS_12891207", 23), //充电宝断开
 
-    PARTNERGAME("SMS_7880052", 100000);
+    PARTNERGAME("SMS_7880052", 100000);  //速领取短信模板，短信签名是“木爷提示”
 
     // 成员变量
     private String name;
