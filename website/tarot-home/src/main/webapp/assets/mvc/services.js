@@ -387,7 +387,7 @@ function cfromlyService(formlyConfig, $window,$q, toaster, $filter,$timeout,form
                         if(ajaxAll){
                             $q.all(ajaxAll).then(function(res){
                                 scope.progress = null;
-                                if(t.upMore && t.upMore>1){
+                                if(t.upMore && t.upMore>0){
                                     switch(t.upType) {
                                         case 2:
                                             scope.thumbnail.push({url:baseUrl.pushUrl+res[0].dataMap.tree.downloadPath})
@@ -405,7 +405,7 @@ function cfromlyService(formlyConfig, $window,$q, toaster, $filter,$timeout,form
                                 if(scope.thumbnail.length>=t.upMore){
                                     scope.len = false;
                                 }
-                                angular.element('#imgFile')[0].value = '';//初始input value
+                                angular.element('#'+scope.id)[0].value = '';//初始input value
                                 scope.$emit('fileToUpload', res);
                             })
                         }else{
@@ -532,7 +532,7 @@ function uploads($qupload,$resource) {
         },
         myeeUpload: function (file,attr,progress) {
             //木爷服务器上传
-            //,qiniuPath:qn?qn:
+            //qiniuPath:qn?qn:
             //attr.param.qiniuPath = 'key'
             var files = $resource(attr.url).save(attr.param, file).$promise;
             files.then(function (res) {
@@ -548,6 +548,29 @@ function uploads($qupload,$resource) {
         }
     }
 }
+
+/*
+* cResource
+*
+* */
+function cResource(){
+    //$resource(url)
+    return {
+        query:function(){
+
+        },
+        get:function(){
+
+        },
+        save:function(){
+
+        },
+        remove:function(){
+
+        }
+    }
+}
+
 angular
     .module('myee')
     .service('Constants', constServiceCtor)
@@ -555,3 +578,4 @@ angular
     .service('cfromly', cfromlyService)
     .factory('uploads', uploads)
     .factory('cAlerts', cAlerts)
+    .factory('cResource', cResource)
