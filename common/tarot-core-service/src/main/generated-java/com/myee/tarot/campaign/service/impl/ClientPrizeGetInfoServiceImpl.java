@@ -73,4 +73,9 @@ public class ClientPrizeGetInfoServiceImpl extends GenericEntityServiceImpl<Long
         return clientPrizeGetInfoDao.checkClientPriceInfo(storeId, checkCode);
     }
 
+    @Override
+    public Integer countUnGetByPrizeId(Long prizeId) {
+        return clientPrizeGetInfoDao.countUnGetByPrizeId(prizeId);
+    }
+
 }
