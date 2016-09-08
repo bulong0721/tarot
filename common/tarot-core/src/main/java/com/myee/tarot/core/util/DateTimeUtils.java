@@ -38,6 +38,8 @@ public class DateTimeUtils {
 
     private static Map<String, DateTimeFormatter> dateFormatCache = new ConcurrentHashMap<String, DateTimeFormatter>();
 
+    /**	yyyy*/
+    public final static String PATTERN_YEAR = "yyyy";
     /**	yyyyMM	*/
     public final static String PATTERN_SHORTMONTH = "yyyyMM";
     /**	yyyy-MM	*/
@@ -388,5 +390,39 @@ public class DateTimeUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**返回yyyy格式Integer */
+    public static Integer getYear() {
+        return TypeConverter.toInteger(getYear(new Date()));
+    }
+
+    /**返回yyyy格式 字符串*/
+    public static String getYear(Date date) {
+        if(date == null){
+            return null;
+        }
+        return TypeConverter.toString(date.getYear() + 1900);//Date类年份是从1900年算的
+    }
+
+    /**返回MM格式字符串 */
+    public static String getMonth() {
+        return getCurrentDateString().substring(5, 7);
+    }
+
+    /**返回MM格式的整型 */
+    public static Integer getMonthInt() {
+        return TypeConverter.toInteger(getMonth());
+    }
+
+    /**返回yyyyMM格式 */
+    public static Integer getYearMonth(){
+        String yearMonth = getYear() + getMonth();
+        return TypeConverter.toInteger(yearMonth);
+    }
+
+    /**返回yyyyMMdd格式Integer*/
+    public static Integer getYearMonthDay(){
+        return TypeConverter.toInteger(toShortDate(new Date()));
     }
 }
