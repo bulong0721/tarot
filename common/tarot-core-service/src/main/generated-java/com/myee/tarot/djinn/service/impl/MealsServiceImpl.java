@@ -1,5 +1,6 @@
 package com.myee.tarot.djinn.service.impl;
 
+import com.myee.djinn.dto.CommonResult;
 import com.myee.djinn.dto.WaitToken;
 import com.myee.djinn.rpc.RemoteException;
 import com.myee.djinn.server.operations.MealsService;
@@ -14,8 +15,8 @@ import java.util.List;
 @Service
 public class MealsServiceImpl implements MealsService, TransactionalAspectAware {
     @Override
-    public boolean takeNumber(WaitToken waitToken) throws RemoteException {
-        return false;
+    public CommonResult takeNumber(WaitToken waitToken) throws RemoteException {
+        return null;
     }
 
     @Override
@@ -23,10 +24,15 @@ public class MealsServiceImpl implements MealsService, TransactionalAspectAware 
         return false;
     }
 
-    @Override
-    public boolean cancelNumber(WaitToken waitToken) throws RemoteException {
-        return false;
-    }
+	@Override
+	public boolean cancelNumber(WaitToken waitToken, String reason) throws RemoteException {
+		return false;
+	}
+
+	@Override
+	public boolean doRepast(WaitToken waitToken, long tableId) throws RemoteException {
+		return false;
+	}
 
     @Override
     public List<WaitToken> listOfTableType(long l) throws RemoteException {

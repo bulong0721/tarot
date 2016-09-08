@@ -12,7 +12,17 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class CommonServiceImpl implements CommonService, TransactionalAspectAware {
-    @Override
+	@Override
+	public Boolean isConnection() throws RemoteException {
+		return true;
+	}
+
+	@Override
+	public VersionInfo latestVersion(String jsonArgs) throws RemoteException {
+		return null;
+	}
+
+	@Override
     public VersionInfo latestVersion() throws RemoteException {
         return null;
     }

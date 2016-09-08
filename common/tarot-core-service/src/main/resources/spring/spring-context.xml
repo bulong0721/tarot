@@ -66,9 +66,9 @@
 
     <bean class="org.springframework.orm.hibernate4.HibernateExceptionTranslator"/>
 
-    <bean id="wxMpService" class="me.chanjar.weixin.mp.api.WxMpServiceImpl">
+    <!--<bean id="wxMpService" class="me.chanjar.weixin.mp.api.WxMpServiceImpl">
         <property name="wxMpConfigStorage" ref="wxMpConfigStorage"/>
-    </bean>
+    </bean>-->
 
     <bean id="wxMpConfigStorage" class="me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage" scope="singleton">
         <property name="appId" value="wxe67244505b4041b6"/>
