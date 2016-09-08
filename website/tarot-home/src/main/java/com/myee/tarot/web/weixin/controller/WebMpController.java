@@ -4,10 +4,9 @@ import com.google.common.collect.Maps;
 import com.myee.djinn.dto.WaitTokenState;
 import com.myee.tarot.campaign.domain.PriceInfo;
 import com.myee.tarot.campaign.service.PriceInfoService;
-import com.myee.tarot.core.util.DateTimeUtils;
 import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.util.DateTimeUtils;
 import com.myee.tarot.core.util.StringUtil;
-import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.uitl.CacheUtil;
@@ -34,10 +33,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by Martin on 2016/1/8.
@@ -120,8 +122,8 @@ public class WebMpController {
                 //微信自带的扫二维码，已关注(获取绑定抽奖信息-代号2)
                 if (inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent() != null && inMessage.getEvent().equals(WxConsts.EVT_SCAN) && inMessage.getEventKey().substring(0, 1).equals("2")) {
                     Long storeId = Long.valueOf(inMessage.getEventKey().substring(1, inMessage.getEventKey().length()));
-                    AjaxResponse aResp = priceInfoService.savePriceInfo(inMessage.getFromUserName(), storeId);
-                    PriceInfo priceInfo = (PriceInfo) aResp.getDataMap().get("result");
+                    Map<String,Object> mapInfo = priceInfoService.savePriceInfo(inMessage.getFromUserName(), storeId);
+                    PriceInfo priceInfo = (PriceInfo) mapInfo.get("result");
                     if (priceInfo != null) {
                         Date startDate = priceInfo.getPrice().getStartDate();
                         Date endDate = priceInfo.getPrice().getEndDate();
@@ -133,7 +135,7 @@ public class WebMpController {
                         map.put("prizeUrl", Constants.MY_LOTTERY_DETAIL_URL + priceInfo.getId().toString() + "/" + inMessage.getFromUserName());
                         inMessage.setMap(map);
                     } else {
-                        map.put("prizeNotAvailable", aResp.getStatusMessage());
+                        map.put("prizeNotAvailable", mapInfo.get("status"));
                         inMessage.setMap(map);
                     }
                 }
@@ -141,8 +143,8 @@ public class WebMpController {
                 //进公众号里面的扫码(获取绑定抽奖信息-代号2)
                 if (inMessage.getMsgType() != null && inMessage.getMsgType().equals(WxConsts.XML_MSG_EVENT) && inMessage.getEvent() != null && inMessage.getEvent().equals(WxConsts.BUTTON_SCANCODE_PUSH) && inMessage.getEventKey().substring(0, 1).equals("2")) {
                     Long storeId = Long.valueOf(inMessage.getEventKey().substring(1, inMessage.getEventKey().length()));
-                    AjaxResponse aResp = priceInfoService.savePriceInfo(inMessage.getFromUserName(), storeId);
-                    PriceInfo priceInfo = (PriceInfo) aResp.getDataMap().get("result");
+                    Map<String, Object> mapInfo = priceInfoService.savePriceInfo(inMessage.getFromUserName(), storeId);
+                    PriceInfo priceInfo = (PriceInfo) mapInfo.get("result");
                     if (priceInfo != null) {
                         Date startDate = priceInfo.getPrice().getStartDate();
                         Date endDate = priceInfo.getPrice().getEndDate();
@@ -154,7 +156,7 @@ public class WebMpController {
                         map.put("prizeUrl", Constants.MY_LOTTERY_DETAIL_URL + priceInfo.getId().toString() + "/" + inMessage.getFromUserName());
                         inMessage.setMap(map);
                     } else {
-                        map.put("prizeNotAvailable", aResp.getStatusMessage());
+                        map.put("prizeNotAvailable", mapInfo.get("status"));
                         inMessage.setMap(map);
                     }
                 }
@@ -184,8 +186,8 @@ public class WebMpController {
                         inMessage.setMap(map);
                     } else {
                         Long storeId = Long.valueOf(inMessage.getEventKey().substring(9, inMessage.getEventKey().length()));
-                        AjaxResponse aResp = priceInfoService.savePriceInfo(inMessage.getFromUserName(), storeId);
-                        PriceInfo priceInfo = (PriceInfo) aResp.getDataMap().get("result");
+                        Map<String, Object> mapInfo = priceInfoService.savePriceInfo(inMessage.getFromUserName(), storeId);
+                        PriceInfo priceInfo = (PriceInfo) mapInfo.get("result");
                         if (priceInfo != null) {
                             Date startDate = priceInfo.getPrice().getStartDate();
                             Date endDate = priceInfo.getPrice().getEndDate();
@@ -197,7 +199,7 @@ public class WebMpController {
                             map.put("prizeUrl", Constants.MY_LOTTERY_DETAIL_URL + priceInfo.getId().toString() + "/" + inMessage.getFromUserName());
                             inMessage.setMap(map);
                         } else {
-                            map.put("prizeNotAvailable", aResp.getStatusMessage());
+                            map.put("prizeNotAvailable", mapInfo.get("status"));
                             inMessage.setMap(map);
                         }
                     }

@@ -131,7 +131,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             controller: 'clientPrizeCtrl',
             data: {
                 pageTitle: '活动管理',
-                subTitle: '小超人抽奖',
+                subTitle: '小超人抽奖配置',
                 datatable: 'assets/mvc/campaign/view/clientPrize_datatable.html'
             },
             resolve: {

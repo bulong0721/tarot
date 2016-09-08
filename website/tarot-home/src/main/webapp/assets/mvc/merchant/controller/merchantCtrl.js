@@ -53,7 +53,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
                             type:'file',
                             path:'logo'
                         },
-                        upMore:2
+                        upMore:1
                     }
                 },
                 controller:['$scope', function ($scope) {
