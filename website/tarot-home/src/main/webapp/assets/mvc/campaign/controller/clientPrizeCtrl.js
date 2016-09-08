@@ -103,6 +103,15 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
                     }
                 },
                 controller:['$scope', function ($scope) {
+                    //资源回显
+                    var md = $scope;
+                    md.thumbnail = [];
+                    md.len = true;
+                    if(md.model.id){
+                        md.thumbnail.push({url:md.model.smallPic});
+                        ;(md.thumbnail.length>=md.to.upAttr.upMore) && (md.len = false);
+                    }
+                    //删除资源
                     $scope.upRemove = function(index){
                         console.log(index)
                     }
@@ -125,6 +134,15 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
                     }
                 },
                 controller:['$scope', function ($scope) {
+                    //资源回显
+                    var md = $scope;
+                    md.thumbnail = [];
+                    md.len = true;
+                    if(md.model.id){
+                        md.thumbnail.push({url:md.model.bigPic});
+                        ;(md.thumbnail.length>=md.to.upAttr.upMore) && (md.len = false);
+                    }
+                    //删除资源
                     $scope.upRemove = function(index){
                         console.log(index)
                     }
@@ -170,7 +188,6 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
         if (rowIndex > -1) {
             var data = $scope.tableOpts.data[rowIndex];
             $scope.formData.model = angular.copy(data);
-            //console.log(data)
             $scope.formData.model.smallPic = $filter('myeeUrlImg')(data.smallPic);
             $scope.formData.model.bigPic =  $filter('myeeUrlImg')(data.bigPic);
             $scope.rowIndex = rowIndex;
