@@ -5,14 +5,10 @@ import com.myee.tarot.apiold.eum.TemplateSMSType;
 import com.myee.tarot.apiold.service.SendRecordService;
 import com.myee.tarot.campaign.service.ClientPrizeGetInfoService;
 import com.myee.tarot.campaign.service.ClientPrizeService;
-import com.myee.tarot.core.util.DateTimeUtils;
 import com.myee.tarot.clientprize.domain.ClientPrize;
 import com.myee.tarot.clientprize.domain.ClientPrizeGetInfo;
 import com.myee.tarot.core.Constants;
-import com.myee.tarot.core.util.AutoNumUtil;
-import com.myee.tarot.core.util.PageRequest;
-import com.myee.tarot.core.util.PageResult;
-import com.myee.tarot.core.util.ValidatorUtil;
+import com.myee.tarot.core.util.*;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
@@ -33,7 +29,7 @@ import java.util.*;
  * Created by Administrator on 2016/8/29.
  */
 @RestController
-public class ClientPrizeController {
+public class ClientPrizeController extends BaseController{
 
     @Autowired
     private ClientPrizeService clientPrizeService;
@@ -454,8 +450,6 @@ public class ClientPrizeController {
                 //领取后 发送短信至用户
                 String[] phones = {phoneNum.toString()};
                 String content = "恭喜你获得"+ priceGetInfo.getPrizeName() + ",兑换码为" + priceGetInfo.getCheckCode() + ",兑换时间为" + DateTimeUtils.getDateString(priceGetInfo.getPrizeStartDate(),DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT) + "至" + DateTimeUtils.getDateString(priceGetInfo.getPrizeEndDate(), DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT);
-                Table table = new Table();
-                table.setId(Long.parseLong(deskId));
                 Runnable task = AlidayuSmsClient.sendSMS(
                         IPUtils.getIpAddr(getRequest()),
                         sendRecordManageService,
