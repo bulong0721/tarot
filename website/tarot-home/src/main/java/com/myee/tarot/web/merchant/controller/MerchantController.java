@@ -350,18 +350,22 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = "admin/merchantStore/list", method = RequestMethod.GET)
+    @RequestMapping(value = {"admin/merchantStore/list","shop/merchantStore/list"}, method = RequestMethod.GET)
     @ResponseBody
     public AjaxPageableResponse listMerchantStore(PageRequest pageRequest , HttpServletRequest request) throws Exception {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
-            PageResult<MerchantStore> pageList = merchantStoreService.pageListByMerchant(null, pageRequest);
-
-            List<MerchantStore> merchantStoreList = pageList.getList();
-            for (MerchantStore merchantStore : merchantStoreList) {
-                resp.addDataEntry(objectToEntry(merchantStore));
+            String path = request.getServletPath();
+            if (path.contains("/admin/")) {
+                PageResult<MerchantStore> pageList = merchantStoreService.pageListByMerchant(null, pageRequest);
+                List<MerchantStore> merchantStoreList = pageList.getList();
+                for (MerchantStore merchantStore : merchantStoreList) {
+                    resp.addDataEntry(objectToEntry(merchantStore));
+                }
+                resp.setRecordsTotal(pageList.getRecordsTotal());
+            } else if (path.contains("/shop/")) {
+                resp.setRecordsTotal(0);
             }
-            resp.setRecordsTotal(pageList.getRecordsTotal());
         } catch (Exception e) {
             e.printStackTrace();
             resp.setErrorString("出错");

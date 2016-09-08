@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * clientPrizeCtrl - controller
  */
-clientPrizeCtrl.$inject = ['$scope', 'Constants','cTables','cfromly','toaster','$resource','$filter','$rootScope'];
-function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$filter,$rootScope) {
+clientPrizeCtrl.$inject = ['$scope', 'Constants','cTables','cfromly','toaster','$resource','$filter','baseConstant'];
+function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$filter,baseConstant) {
     var mgrData = {
         fields: [
             {
@@ -28,6 +28,23 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
                     required: true,
                     label: '奖券类型',
                     options:  [{name:"手机",value: 0},{name:"验证码",value: 1},{name:"谢谢惠顾",value: 2}]
+                }
+            },
+            {
+                key: 'phonePrizeType',
+                type: 'c_select',
+                className:'c_select',
+                templateOptions: {
+                    required: true,
+                    label: '手机奖券类型',
+                    options:  [{name:"实物",value: 0},{name:"电影券",value: 1}]
+                },
+                hideExpression: function ($viewValue, $modelValue, scope) {
+                    if (scope.model.type == '0') {
+                        return false;
+                    } else {
+                        return true;
+                    }
                 }
             },
             {
@@ -137,8 +154,8 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
             $scope.rowIndex = rowIndex;
         } else {
             $scope.formData.model = {};
-            $scope.formData.model.imagesSmall = $rootScope.Constant.myeeDefaultUrlImg;
-            $scope.formData.model.imagesBig = $rootScope.Constant.myeeDefaultUrlImg;
+            $scope.formData.model.imagesSmall = baseConstant.myeeDefaultUrlImg;
+            $scope.formData.model.imagesBig = baseConstant.myeeDefaultUrlImg;
             $scope.rowIndex = -1;
         }
         $scope.activeTab = iEditor;

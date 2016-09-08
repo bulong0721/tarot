@@ -22,4 +22,6 @@ public interface ClientPrizeGetInfoDao extends GenericEntityDao<Long, ClientPriz
     PageResult<ClientPrizeGetInfo> pageListOfChecked(PageRequest pageRequest, Long storeId);
 
     ClientPrizeGetInfo checkClientPriceInfo(Long storeId, String checkCode);
+
+    Integer countUnGetByPrizeId(Long prizeId);
 }

@@ -20,4 +20,6 @@ public interface ClientPrizeGetInfoService extends GenericEntityService<Long, Cl
 
     ClientPrizeGetInfo checkClientPriceInfo(Long storeId, String checkCode);
 
+    Integer countUnGetByPrizeId(Long prizeId);
+
 }

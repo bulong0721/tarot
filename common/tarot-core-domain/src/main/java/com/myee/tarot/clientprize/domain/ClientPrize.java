@@ -63,8 +63,19 @@ public class ClientPrize extends GenericEntity<Long, ClientPrize>{
     @Column(name = "DELETE_STATUS")
     private Boolean deleteStatus = Boolean.TRUE;// 逻辑删除
 
+    @Column(name = "PHONE_PRIZE_TYPE")
+    private Integer phonePrizeType; //手机中奖的奖券类型 0为实物 1为电影票
+
     @Transient
     private Long priceGetId;
+
+    public Integer getPhonePrizeType() {
+        return phonePrizeType;
+    }
+
+    public void setPhonePrizeType(Integer phonePrizeType) {
+        this.phonePrizeType = phonePrizeType;
+    }
 
     public Boolean getDeleteStatus() {
         return deleteStatus;

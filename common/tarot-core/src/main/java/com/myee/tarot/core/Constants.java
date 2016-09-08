@@ -87,6 +87,11 @@ public class Constants {
 	public final static int CLIENT_PRIZEINFO_STATUS_USED = 2;
 	public final static int CLIENT_PRIZEINFO_STATUS_EXPIRED = 3;
 
+	public final static int CLIENT_PRICE_PHONE_OBJECT = 0; //实物
+	public final static int CLIENT_PRICE_PHONE_CINEMA = 1; //电影票
+
+	public final static String REQUEST_INFO_SESSION = "sessionName";
+
 	public final static String PRICEDRAW = "PRICEDRAW";
 
 	public final static String VOICELOG_BAK = "voicelogbak"; //存放语音日志备份
