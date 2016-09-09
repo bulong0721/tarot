@@ -110,13 +110,11 @@ public class EvaluationManageController extends BaseController {
      */
     @RequestMapping(value = "/admin/serviceEvaluation/list", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxPageableResponse listPage(@ModelAttribute("paginationView") PageRequest pageRequest,
+    public AjaxPageableResponse listPage(PageRequest pageRequest,
                                @RequestParam(value = "tableId",required = false)Long tableId,
                                @RequestParam(value = "begin",required = false)Long begin,
                                @RequestParam(value = "end",required = false)Long end, HttpServletRequest request){
         AjaxPageableResponse resp = new AjaxPageableResponse();
-        pageRequest.setCount(10);
-        pageRequest.setPage(0);
         //根据当前用户获取切换的门店信息
         String sessionName = (String) ValidatorUtil.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION);
         if (sessionName == null || request.getSession().getAttribute(sessionName) == null) {
@@ -141,28 +139,48 @@ public class EvaluationManageController extends BaseController {
                 resp.setStatusMessage("结束时间不能小于开始时间");
                 return resp;
             }
-            pageRequest.getFilter().put("begin", DateTimeUtils.toMillis(begin * 1000));
-            pageRequest.getFilter().put("end", DateTimeUtils.toMillis(end * 1000));
+            //毫秒数需要乘以1000才能转成正常的日期
+            pageRequest.setBegin(DateTimeUtils.toMillis(begin * 1000));
+            pageRequest.setEnd(DateTimeUtils.toMillis(end * 1000));
         }
-        pageRequest.getFilter().put("tableId", tableId);
-        //返回的结果数值
-        Map<String,Object> result = Maps.newHashMap();
+        pageRequest.setTableId(tableId);
+        pageRequest.setStoreId(merchantStore.getId());
+        //查询评论详细
+        PageResult<Evaluation> pageResult = evaluationManageService.pageList(pageRequest);
         //查询总体平均值
-        List<Evaluation> feelAverage = (List<Evaluation>)evaluationManageService.getFeelAverage(pageRequest);
+        long count = pageResult.getRecordsTotal();
+        double feelWhole = 0;
+        double feelEnvironment = 0;
+        double feelFlavor = 0;
+        double feelService = 0;
+        for (Evaluation evaluation : pageResult.getList()) {
+            feelWhole += evaluation.getFeelWhole();
+            feelEnvironment += evaluation.getFeelEnvironment();
+            feelFlavor += evaluation.getFeelFlavor();
+            feelService += evaluation.getFeelService();
+        }
+        //因为存的参数放大了20倍，我们除以2后给前端，前端除以10即可
+        feelWhole = feelWhole / count / 2;
+        feelEnvironment = feelEnvironment / count / 2;
+        feelFlavor = feelFlavor / count / 2;
+        feelService = feelService / count / 2;
+        Map<String, Object> map = Maps.newHashMap();
+        map.put("feelWhole", feelWhole);
+        map.put("feelEnvironment", feelEnvironment);
+        map.put("feelFlavor", feelFlavor);
+        map.put("feelService", feelService);
+
         //为了前端评分参数显示不为NaN(not a number)，判断当查询结果为空时，扔个0或null就行了
-        if(null != feelAverage && feelAverage.size() > 0){
+        if(null != map && map.size() > 0){
         }
         else{
-            feelAverage = new ArrayList<Evaluation>();
-            Evaluation eTemp = new Evaluation();
-            eTemp.setFeelEnvironment(0);
-            eTemp.setFeelFlavor(0);
-            eTemp.setFeelService(0);
-            eTemp.setFeelWhole(0);
-            feelAverage.add(eTemp);
+            map = Maps.newHashMap();
+            map.put("feelWhole", 0);
+            map.put("feelEnvironment", 0);
+            map.put("feelFlavor", 0);
+            map.put("feelService", 0);
         }
-        //查询评论详细
-        PageResult<Evaluation> pageResult = evaluationManageService.listInPage(pageRequest);
+        resp.setDataMap(map);
 
         List<Evaluation> evaluationList = pageResult.getList();
         for (Evaluation evaluation : evaluationList) {
@@ -180,10 +198,10 @@ public class EvaluationManageController extends BaseController {
         map.put("active", evaluation.getActive());
         map.put("deviceRemark", evaluation.getDeviceRemark());
         map.put("evaluCreated", evaluation.getEvaluCreated());
-        map.put("feelEnvironment", evaluation.getFeelEnvironment());
-        map.put("feelWhole", evaluation.getFeelWhole());
-        map.put("feelFlavor", evaluation.getFeelFlavor());
-        map.put("feelService", evaluation.getFeelService());
+        map.put("feelEnvironment", evaluation.getFeelEnvironment() / 2);
+        map.put("feelWhole", evaluation.getFeelWhole() / 2);
+        map.put("feelFlavor", evaluation.getFeelFlavor() / 2);
+        map.put("feelService", evaluation.getFeelService() / 2);
         map.put("mealsRemark", evaluation.getMealsRemark());
         map.put("timeSecond", evaluation.getTimeSecond());
         map.put("tableName", evaluation.getTable().getName());

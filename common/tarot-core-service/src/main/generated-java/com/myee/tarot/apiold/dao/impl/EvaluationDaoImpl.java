@@ -33,48 +33,22 @@ public class EvaluationDaoImpl extends GenericEntityDaoImpl<Long, Evaluation> im
     }
 
     @Override
-    public Collection getFeelAverage(PageRequest pageRequest) {
-        QEvaluation qEvaluation = QEvaluation.evaluation;
-        JPQLQuery<Evaluation> query = new JPAQuery(getEntityManager()).select(
-                qEvaluation.feelEnvironment.avg().divide(2), qEvaluation.feelWhole.avg().divide(2), qEvaluation.feelService.avg().divide(2), qEvaluation.feelFlavor.avg().divide(2)).from(qEvaluation);
-
-        Long tableId = (Long) pageRequest.getFilter().get("tableId");
-        Date begin = (Date) pageRequest.getFilter().get("begin");
-        Date end = (Date) pageRequest.getFilter().get("end");
-
-        if (tableId != null) {
-            query.where(qEvaluation.table.id.eq(tableId));
-        }
-        if (pageRequest.getCount() > 0) {
-            query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
-        }
-        if (begin != null) {
-            query.from(qEvaluation).where(qEvaluation.evaluCreated.after(begin));
-        }
-        if (end != null) {
-            query.from(qEvaluation).where(qEvaluation.evaluCreated.before(end));
-        }
-        query.groupBy(qEvaluation.feelEnvironment, qEvaluation.feelWhole, qEvaluation.feelService, qEvaluation.feelFlavor);
-        return query.fetch();
-    }
-
-    @Override
-    public PageResult<Evaluation> listInPage(PageRequest pageRequest) {
+    public PageResult<Evaluation> pageList(PageRequest pageRequest) {
         PageResult<Evaluation> evaluationPageResult = new PageResult<>();
         QEvaluation qEvaluation = QEvaluation.evaluation;
         JPQLQuery<Evaluation> query = new JPAQuery(getEntityManager()).from(qEvaluation);
-        Long tableId = (Long) pageRequest.getFilter().get("tableId");
-        Date begin = (Date) pageRequest.getFilter().get("begin");
-        Date end = (Date) pageRequest.getFilter().get("end");
         query.where(qEvaluation.active.eq(true)).orderBy(qEvaluation.id.desc());
-        if (tableId != null) {
-            query.where(qEvaluation.table.id.eq(tableId));
+        if (pageRequest.getTableId() != null) {
+            query.where(qEvaluation.table.id.eq(pageRequest.getTableId()));
         }
-        if (begin != null) {
-            query.from(qEvaluation).where(qEvaluation.evaluCreated.after(begin));
+        if (pageRequest.getStoreId() != null) {
+            query.where(qEvaluation.table.store.id.eq(pageRequest.getStoreId()));
         }
-        if (end != null) {
-            query.from(qEvaluation).where(qEvaluation.evaluCreated.before(end));
+        if (pageRequest.getBegin() != null) {
+            query.from(qEvaluation).where(qEvaluation.evaluCreated.after(pageRequest.getBegin()));
+        }
+        if (pageRequest.getEnd() != null) {
+            query.from(qEvaluation).where(qEvaluation.evaluCreated.before(pageRequest.getEnd()));
         }
         evaluationPageResult.setRecordsTotal(query.fetchCount());
         if (pageRequest.getCount() > 0) {

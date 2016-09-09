@@ -12,7 +12,5 @@ import java.util.Collection;
 public interface EvaluationDao extends GenericEntityDao<Long, Evaluation> {
     Evaluation getLatestByTableId(Long tableId);
 
-    Collection getFeelAverage(PageRequest pageRequest);
-
-    PageResult<Evaluation> listInPage(PageRequest pageRequest);
+    PageResult<Evaluation> pageList(PageRequest pageRequest);
 }

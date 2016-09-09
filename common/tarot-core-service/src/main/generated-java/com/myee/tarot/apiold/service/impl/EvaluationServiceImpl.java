@@ -8,7 +8,6 @@ import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.Collection;
 
 /**
  * Created by Chay on 2016/8/10.
@@ -30,13 +29,8 @@ public class EvaluationServiceImpl extends GenericEntityServiceImpl<Long, Evalua
     }
 
     @Override
-    public Collection getFeelAverage(PageRequest pageRequest) {
-        return evaluationDao.getFeelAverage(pageRequest);
-    }
-
-    @Override
-    public PageResult<Evaluation> listInPage(PageRequest pageRequest) {
-        PageResult<Evaluation> evaluationPageResult = evaluationDao.listInPage(pageRequest);
+    public PageResult<Evaluation> pageList(PageRequest pageRequest) {
+        PageResult<Evaluation> evaluationPageResult = evaluationDao.pageList(pageRequest);
         return evaluationPageResult;
     }
 }
