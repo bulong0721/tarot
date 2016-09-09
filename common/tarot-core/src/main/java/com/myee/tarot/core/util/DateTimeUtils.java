@@ -425,4 +425,12 @@ public class DateTimeUtils {
     public static Integer getYearMonthDay(){
         return TypeConverter.toInteger(toShortDate(new Date()));
     }
+
+    /**	返回Date类型	,可以输入毫秒格式时间*/
+    public static Date toMillis(Long millis) {
+        if(millis == null){
+            return null;
+        }
+        return new Date(millis);
+    }
 }

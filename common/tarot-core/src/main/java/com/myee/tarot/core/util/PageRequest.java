@@ -1,6 +1,8 @@
 package com.myee.tarot.core.util;
 
+import com.google.common.collect.Maps;
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2016/6/6.
@@ -12,6 +14,8 @@ public class PageRequest implements Serializable {
     private int count;
 
     private String queryName;
+
+    private Map<String, Object> filter = Maps.newHashMap();
 
     public String getQueryName() {
         return queryName;
@@ -43,4 +47,14 @@ public class PageRequest implements Serializable {
     public int getPage() {
         return page;
     }
+
+    public Map<String, Object> getFilter() {
+        return filter;
+    }
+
+    public void setFilter(Map<String, Object> filter) {
+        this.filter = filter;
+    }
+
+
 }

@@ -1,24 +1,24 @@
 package com.myee.tarot.web.apiold.controller.v10;
 
+import com.google.common.collect.Maps;
 import com.myee.tarot.apiold.domain.Evaluation;
 import com.myee.tarot.apiold.eum.EvaluationLevelType;
 import com.myee.tarot.apiold.service.EvaluationService;
 import com.myee.tarot.apiold.view.EvaluationView;
-import com.myee.tarot.core.util.DateTimeUtils;
+import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.util.*;
 import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.catering.service.TableService;
-import com.myee.tarot.core.util.StringUtil;
-import com.myee.tarot.core.util.TypeConverter;
+import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
+import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.apiold.controller.BaseController;
 import com.myee.tarot.web.ClientAjaxResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Date;
+import org.springframework.web.bind.annotation.*;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 /**
  * Info: 评价接口
@@ -105,4 +105,90 @@ public class EvaluationManageController extends BaseController {
         }
     }
 
+    /**
+     * 分页/不分页显示评论list
+     */
+    @RequestMapping(value = "/admin/serviceEvaluation/list", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxPageableResponse listPage(@ModelAttribute("paginationView") PageRequest pageRequest,
+                               @RequestParam(value = "tableId",required = false)Long tableId,
+                               @RequestParam(value = "begin",required = false)Long begin,
+                               @RequestParam(value = "end",required = false)Long end, HttpServletRequest request){
+        AjaxPageableResponse resp = new AjaxPageableResponse();
+        pageRequest.setCount(10);
+        pageRequest.setPage(0);
+        //根据当前用户获取切换的门店信息
+        String sessionName = (String) ValidatorUtil.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION);
+        if (sessionName == null || request.getSession().getAttribute(sessionName) == null) {
+            resp.setStatus(AjaxPageableResponse.RESPONSE_STATUS_FAIURE);
+            resp.setStatusMessage("请先切换门店");
+            return resp;
+        }
+        MerchantStore merchantStore = (MerchantStore) request.getSession().getAttribute(sessionName);
+        if((begin == null || "".equals(begin)) && end != null){
+            resp.setStatus(AjaxPageableResponse.RESPONSE_STATUS_FAIURE);
+            resp.setStatusMessage("请设置查看的起始时间");
+            return resp;
+        }
+        if((end == null || "".equals(end) )&& begin != null){
+            resp.setStatus(AjaxPageableResponse.RESPONSE_STATUS_FAIURE);
+            resp.setStatusMessage("请设置查看的截止时间");
+            return resp;
+        }
+        if(begin != null && end != null) {
+            if (DateTimeUtils.toMillis(end).compareTo(DateTimeUtils.toMillis(begin)) < 0) {
+                resp.setStatus(AjaxPageableResponse.RESPONSE_STATUS_FAIURE);
+                resp.setStatusMessage("结束时间不能小于开始时间");
+                return resp;
+            }
+            pageRequest.getFilter().put("begin", DateTimeUtils.toMillis(begin * 1000));
+            pageRequest.getFilter().put("end", DateTimeUtils.toMillis(end * 1000));
+        }
+        pageRequest.getFilter().put("tableId", tableId);
+        //返回的结果数值
+        Map<String,Object> result = Maps.newHashMap();
+        //查询总体平均值
+        List<Evaluation> feelAverage = (List<Evaluation>)evaluationManageService.getFeelAverage(pageRequest);
+        //为了前端评分参数显示不为NaN(not a number)，判断当查询结果为空时，扔个0或null就行了
+        if(null != feelAverage && feelAverage.size() > 0){
+        }
+        else{
+            feelAverage = new ArrayList<Evaluation>();
+            Evaluation eTemp = new Evaluation();
+            eTemp.setFeelEnvironment(0);
+            eTemp.setFeelFlavor(0);
+            eTemp.setFeelService(0);
+            eTemp.setFeelWhole(0);
+            feelAverage.add(eTemp);
+        }
+        //查询评论详细
+        PageResult<Evaluation> pageResult = evaluationManageService.listInPage(pageRequest);
+
+        List<Evaluation> evaluationList = pageResult.getList();
+        for (Evaluation evaluation : evaluationList) {
+            resp.addDataEntry(objectToEntry(evaluation));
+        }
+        resp.setRecordsTotal(pageResult.getRecordsTotal());
+        resp.setStatus(AjaxPageableResponse.RESPONSE_STATUS_SUCCESS);
+        resp.setStatusMessage("查询成功");
+        return resp;
+    }
+
+    private Map<String, Object> objectToEntry(Evaluation evaluation) {
+        Map map = Maps.newHashMap();
+        map.put("id", evaluation.getId());
+        map.put("active", evaluation.getActive());
+        map.put("deviceRemark", evaluation.getDeviceRemark());
+        map.put("evaluCreated", evaluation.getEvaluCreated());
+        map.put("feelEnvironment", evaluation.getFeelEnvironment());
+        map.put("feelWhole", evaluation.getFeelWhole());
+        map.put("feelFlavor", evaluation.getFeelFlavor());
+        map.put("feelService", evaluation.getFeelService());
+        map.put("mealsRemark", evaluation.getMealsRemark());
+        map.put("timeSecond", evaluation.getTimeSecond());
+        map.put("tableName", evaluation.getTable().getName());
+        map.put("storeName", evaluation.getTable().getStore().getName());
+        map.put("merchantName", evaluation.getTable().getStore().getMerchant().getName());
+        return map;
+    }
 }
