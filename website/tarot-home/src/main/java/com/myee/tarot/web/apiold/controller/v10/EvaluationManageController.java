@@ -13,11 +13,15 @@ import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.apiold.controller.BaseController;
 import com.myee.tarot.web.ClientAjaxResult;
+import com.opencsv.CSVWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -41,6 +45,7 @@ public class EvaluationManageController extends BaseController {
 
     /**
      * 保存服务评价接口,30s之内重复提交的评价会覆盖，即30s之内只有最后一条评价有效
+     *
      * @param evaluationView
      * @return
      */
@@ -48,23 +53,23 @@ public class EvaluationManageController extends BaseController {
     public ClientAjaxResult save(@ModelAttribute("evaluationView") EvaluationView evaluationView) {
         logger.info("保存评价开始");
         try {
-            if(!conNotBlank(evaluationView)){
+            if (!conNotBlank(evaluationView)) {
                 return ClientAjaxResult.failed("参数不正确...");
             }
             Table table = tableManageService.findById(evaluationView.getTableId());
-            if(table == null){
+            if (table == null) {
                 return ClientAjaxResult.failed("餐桌不存在...");
             }
             Evaluation evaluation = evaluationManageService.getLatestByTableId(evaluationView.getTableId());
-            if(evaluation != null && StringUtil.isBlank(TypeConverter.toString(evaluation.getTimeSecond()))){
+            if (evaluation != null && StringUtil.isBlank(TypeConverter.toString(evaluation.getTimeSecond()))) {
                 return ClientAjaxResult.failed("数据出问题了...");
             }
-            if(evaluation == null || (evaluation != null && ((DateTimeUtils.getShortDateTimeL() - evaluation.getTimeSecond()) > 300))){
+            if (evaluation == null || (evaluation != null && ((DateTimeUtils.getShortDateTimeL() - evaluation.getTimeSecond()) > 300))) {
                 Evaluation evaluation1 = new Evaluation(evaluationView);
                 evaluation1.setTable(table);
                 evaluation1.setEvaluCreated(new Date());
                 evaluationManageService.update(evaluation1);
-            }else if(evaluation != null){
+            } else if (evaluation != null) {
                 evaluation.setDeviceRemark(evaluationView.getDeviceRemark());
                 evaluation.setMealsRemark(evaluationView.getMealsRemark());
                 evaluation.setFeelEnvironment(evaluationView.getFeelEnvironment() == null ? 0 : evaluationView.getFeelEnvironment());
@@ -76,7 +81,7 @@ public class EvaluationManageController extends BaseController {
                 evaluationManageService.update(evaluation);
             }
             return ClientAjaxResult.success();
-        }  catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             logger.error(e.getMessage(), e);
             return ClientAjaxResult.failed("糟了...系统出错了...");
@@ -84,23 +89,23 @@ public class EvaluationManageController extends BaseController {
     }
 
     //评论参数为必须至少有一个输入
-    boolean conNotBlank(EvaluationView evaluationView){
-        if(evaluationView == null || (evaluationView != null
-                && StringUtil.isBlank(TypeConverter.toString(evaluationView.getTableId())))){
+    boolean conNotBlank(EvaluationView evaluationView) {
+        if (evaluationView == null || (evaluationView != null
+                && StringUtil.isBlank(TypeConverter.toString(evaluationView.getTableId())))) {
             return false;
-        }else if(evaluationView.getTimeSecond() == null){
+        } else if (evaluationView.getTimeSecond() == null) {
             return false;
-        }else if(!StringUtil.isBlank(evaluationView.getDeviceRemark())
-                && !StringUtil.isBlank(evaluationView.getMealsRemark()) && (evaluationView.getDeviceRemark().length() > 200 || evaluationView.getMealsRemark().length() > 200)){
+        } else if (!StringUtil.isBlank(evaluationView.getDeviceRemark())
+                && !StringUtil.isBlank(evaluationView.getMealsRemark()) && (evaluationView.getDeviceRemark().length() > 200 || evaluationView.getMealsRemark().length() > 200)) {
             return false;
-        }else if(!StringUtil.isBlank(EvaluationLevelType.getName(evaluationView.getFeelWhole()))
+        } else if (!StringUtil.isBlank(EvaluationLevelType.getName(evaluationView.getFeelWhole()))
                 || !StringUtil.isBlank(EvaluationLevelType.getName(evaluationView.getFeelFlavor()))
                 || !StringUtil.isBlank(EvaluationLevelType.getName(evaluationView.getFeelService()))
                 || !StringUtil.isBlank(EvaluationLevelType.getName(evaluationView.getFeelEnvironment()))
                 || !StringUtil.isBlank(evaluationView.getDeviceRemark())
-                || !StringUtil.isBlank(evaluationView.getMealsRemark()) ){
+                || !StringUtil.isBlank(evaluationView.getMealsRemark())) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -108,12 +113,12 @@ public class EvaluationManageController extends BaseController {
     /**
      * 分页/不分页显示评论list
      */
-    @RequestMapping(value = "/admin/serviceEvaluation/list", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/superman/evaluation/list", method = RequestMethod.POST)
     @ResponseBody
     public AjaxPageableResponse listPage(PageRequest pageRequest,
-                               @RequestParam(value = "tableId",required = false)Long tableId,
-                               @RequestParam(value = "begin",required = false)Long begin,
-                               @RequestParam(value = "end",required = false)Long end, HttpServletRequest request){
+                                         @RequestParam(value = "tableId", required = false) Long tableId,
+                                         @RequestParam(value = "begin", required = false) Long begin,
+                                         @RequestParam(value = "end", required = false) Long end, HttpServletRequest request) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         //根据当前用户获取切换的门店信息
         String sessionName = (String) ValidatorUtil.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION);
@@ -123,17 +128,17 @@ public class EvaluationManageController extends BaseController {
             return resp;
         }
         MerchantStore merchantStore = (MerchantStore) request.getSession().getAttribute(sessionName);
-        if((begin == null || "".equals(begin)) && end != null){
+        if ((begin == null || "".equals(begin)) && end != null) {
             resp.setStatus(AjaxPageableResponse.RESPONSE_STATUS_FAIURE);
             resp.setStatusMessage("请设置查看的起始时间");
             return resp;
         }
-        if((end == null || "".equals(end) )&& begin != null){
+        if ((end == null || "".equals(end)) && begin != null) {
             resp.setStatus(AjaxPageableResponse.RESPONSE_STATUS_FAIURE);
             resp.setStatusMessage("请设置查看的截止时间");
             return resp;
         }
-        if(begin != null && end != null) {
+        if (begin != null && end != null) {
             if (DateTimeUtils.toMillis(end).compareTo(DateTimeUtils.toMillis(begin)) < 0) {
                 resp.setStatus(AjaxPageableResponse.RESPONSE_STATUS_FAIURE);
                 resp.setStatusMessage("结束时间不能小于开始时间");
@@ -148,7 +153,7 @@ public class EvaluationManageController extends BaseController {
         //查询评论详细
         PageResult<Evaluation> pageResult = evaluationManageService.pageList(pageRequest);
         //查询总体平均值
-        int count = (int)pageResult.getRecordsTotal();
+        int count = (int) pageResult.getRecordsTotal();
         int feelWhole = 0;
         int feelEnvironment = 0;
         int feelFlavor = 0;
@@ -171,9 +176,8 @@ public class EvaluationManageController extends BaseController {
         map.put("feelService", feelService);
 
         //为了前端评分参数显示不为NaN(not a number)，判断当查询结果为空时，扔个0或null就行了
-        if(null != map && map.size() > 0){
-        }
-        else{
+        if (null != map && map.size() > 0) {
+        } else {
             map = Maps.newHashMap();
             map.put("feelWhole", 0);
             map.put("feelEnvironment", 0);
@@ -208,5 +212,68 @@ public class EvaluationManageController extends BaseController {
         map.put("storeName", evaluation.getTable().getStore().getName());
         map.put("merchantName", evaluation.getTable().getStore().getMerchant().getName());
         return map;
+    }
+
+    @RequestMapping(value = "/admin/superman/evaluation/exportCsv", method = RequestMethod.POST)
+    @ResponseBody
+    public void exportCsv(@RequestParam(value = "tableId", required = false) Long tableId,
+                                          @RequestParam(value = "begin") Long begin,
+                                          @RequestParam(value = "end") Long end, HttpServletRequest request, HttpServletResponse resp) {
+        CSVWriter writer = null;
+        try {
+            //根据当前用户获取切换的门店信息
+            String sessionName = (String) ValidatorUtil.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION);
+            MerchantStore merchantStore = (MerchantStore) request.getSession().getAttribute(sessionName);
+            PageRequest pageRequest = new PageRequest();
+            pageRequest.setBegin(DateTimeUtils.toMillis(begin * 1000));
+            pageRequest.setEnd(DateTimeUtils.toMillis(end * 1000));
+            pageRequest.setStoreId(merchantStore.getId());
+            pageRequest.setTableId(tableId);
+            PageResult<Evaluation> pageResult = evaluationManageService.pageList(pageRequest);
+            resp.setHeader("Content-type", "text/csv;charset=gb2312");
+            resp.addHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(DateTimeUtils.toShortDateTime(new Date()) + ".csv", "utf8"));
+            writer = new CSVWriter(resp.getWriter());
+            writer.writeNext(new String[]{
+                    "品牌名称",
+                    "店铺名称",
+                    "餐桌名称",
+                    "整体评价",
+                    "口味评价",
+                    "服务评价",
+                    "环境评价",
+                    "提交时间",
+                    "用餐评价",
+                    "设备评价"
+            });
+            List<Evaluation> list = pageResult.getList();
+            for (int i = 0; i < list.size(); i++) {
+                //写csv文件
+                writeCsvFile(writer, list.get(i), i);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+    }
+
+    private void writeCsvFile(CSVWriter writer, Evaluation evaluation, Integer i) {
+        writer.writeNext(new String[]{
+                StringUtil.nullToString(evaluation.getTable().getStore().getMerchant().getName()),
+                StringUtil.nullToString(evaluation.getTable().getStore().getName()),
+                StringUtil.nullToString(evaluation.getTable().getName()),
+                StringUtil.nullToString(evaluation.getFeelWhole()),
+                StringUtil.nullToString(evaluation.getFeelFlavor()),
+                StringUtil.nullToString(evaluation.getFeelService()),
+                StringUtil.nullToString(evaluation.getFeelEnvironment()),
+                StringUtil.nullToString(DateTimeUtils.getDefaultDateString(evaluation.getEvaluCreated())),
+                StringUtil.nullToString(evaluation.getMealsRemark()),
+                StringUtil.nullToString(evaluation.getDeviceRemark())
+        });
     }
 }
