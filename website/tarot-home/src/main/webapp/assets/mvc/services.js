@@ -316,7 +316,38 @@ function cfromlyService(formlyConfig, $window,$q, toaster, $filter,$timeout,form
         ].join(' ')
     });
 
-    //file
+    /*
+     *file
+     *多上传fromly配置
+     * templateOptions: {
+        upAttr:{//添加实时上传属性
+                name: 'img',//这个name是用来判断上传文件的类型，不判断为空('') || null 格式：[img|video|txt]
+                upType:4,//{2:线上3:七牛4:(2+3)}
+                url:'./files/create',//上传后端接口
+                param:{//这是url参数
+                    type:'file',//自定义属性
+                    path:'logo'//自定义属性
+            },
+            upMore:2//多上传的数量
+        }
+    }
+    *
+    *删除某一个资源fromly配置
+    *controller:['$scope', function ($scope) {
+    * //资源回显
+         var md = $scope; //固定语句
+         md.thumbnail = [];//固定语句
+         md.len = true;//固定语句
+         if(md.model.id && md.model.smallPic){ //编辑时带ID，才执行
+             md.thumbnail.push({url:baseUrl.pushUrl+md.model.smallPic});//要回显的图片，多张用for循环
+             ;(md.thumbnail.length>=md.to.upAttr.upMore) && (md.len = false);//如果超长度，不显示上传按钮，固定语句，必须带上
+         }
+        $scope.upRemove = function(index){//删除的触发事件
+            console.log(index)
+            //删除逻辑在这里处理
+        }
+     }]
+    */
     formlyConfig.setType({
         name: 'upload',
         extends: 'input',

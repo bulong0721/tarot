@@ -4,6 +4,7 @@ import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,10 +26,6 @@ public class RollMain extends GenericEntity<Long, RollMain> {
 	@Column(name = "TYPE",columnDefinition = "TINYINT")
 	private Integer type;
 
-	@Column(name = "ROLL_TIME",columnDefinition = "TINYINT")
-	private Integer rollTime;//轮播时间
-
-
 	@Column(name = "TITLE",length = 100)
 	private String title;
 
@@ -41,10 +38,11 @@ public class RollMain extends GenericEntity<Long, RollMain> {
 	private MerchantStore store;
 
 	@OneToMany(mappedBy = "rollMain", targetEntity = RollDetail.class, fetch = FetchType.LAZY)
-	private List<RollDetail> rollDetailList;
+	private List<RollDetail> rollDetailList  = new ArrayList<RollDetail>();
 
-	@Column(name = "IS_APP",columnDefinition = "TINYINT")
-	private Integer isApp;//是否为后端访问
+	//是否为后端访问,前端传入参数，不需要持久化到数据库
+	@Transient
+	private Integer isApp;
 
 	@Column(name = "ACTIVE", columnDefinition = "BIT")
 	private Boolean active = Boolean.TRUE;
@@ -71,6 +69,8 @@ public class RollMain extends GenericEntity<Long, RollMain> {
 	private Date timeEnd;
 	@Column(name = "ORDER_SEQ",columnDefinition = "TINYINT")
 	private Integer orderSeq;//轮播优先级
+	@Column(name = "ROLL_TIME",columnDefinition = "TINYINT")
+	private Integer rollTime;//轮播时间
 
 	public RollMain(){
 

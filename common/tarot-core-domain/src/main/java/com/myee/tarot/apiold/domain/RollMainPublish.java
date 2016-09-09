@@ -46,8 +46,19 @@ public class RollMainPublish extends GenericEntity<Long, RollMainPublish> {
 	@Column(name = "RMP_CREATED")
 	private Date rMPCreated;
 
+	@Column(name = "ROLL_TIME",columnDefinition = "TINYINT")
+	private Integer rollTime;//轮播时间
+
 	public RollMainPublish(){
 
+	}
+
+	public Integer getRollTime() {
+		return rollTime;
+	}
+
+	public void setRollTime(Integer rollTime) {
+		this.rollTime = rollTime;
 	}
 
 	@Override

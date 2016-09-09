@@ -5,6 +5,9 @@ import com.myee.tarot.apiold.domain.QRollMain;
 import com.myee.tarot.apiold.domain.RollMain;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.StringUtil;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;
@@ -42,5 +45,37 @@ public class RollMainDaoImpl extends GenericEntityDaoImpl<Long, RollMain> implem
         }
 
         return query.fetch();
+    }
+
+    public Long countByStore(Long id){
+        QRollMain qRollMain = QRollMain.rollMain;
+
+        JPQLQuery<RollMain> query = new JPAQuery(getEntityManager());
+
+        query.from(qRollMain);
+        query.where(qRollMain.store.id.eq(id).and(qRollMain.active.eq(true)));
+        return query.fetchCount();
+    }
+
+    public PageResult<RollMain> pageByTypeStore(PageRequest pageRequest, Integer type, Long storeId){
+        PageResult<RollMain> pageList = new PageResult<RollMain>();
+        QRollMain qRollMain = QRollMain.rollMain;
+        JPQLQuery<RollMain> query = new JPAQuery(getEntityManager());
+        query.from(qRollMain);
+        if(storeId != null){
+            query.where(qRollMain.store.id.eq(storeId));
+        }
+        if(type != null){
+            query.where(qRollMain.type.eq(type));
+        }
+        if(!StringUtil.isBlank(pageRequest.getQueryName())){
+            query.where(qRollMain.title.like("%" + pageRequest.getQueryName() + "%"));
+        }
+        pageList.setRecordsTotal(query.fetchCount());
+        if( pageRequest.getCount() > 0){
+            query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
+        }
+        pageList.setList(query.fetch());
+        return pageList;
     }
 }

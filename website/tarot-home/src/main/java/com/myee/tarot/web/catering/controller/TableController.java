@@ -482,7 +482,7 @@ public class TableController {
     }
 
     //superMenu---------------------------------------------------
-    @RequestMapping(value = {"admin/catering/superMenu/save", "shop/catering/superMenu/save"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"admin/superman/superMenu/save", "shop/superman/superMenu/save"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse addSuperMenu(@RequestBody MenuInfo menuInfo, HttpServletRequest request) throws Exception {
         AjaxResponse resp;
@@ -520,7 +520,7 @@ public class TableController {
         return resp;
     }
 
-    @RequestMapping(value = {"admin/catering/superMenu/delete", "shop/catering/superMenu/delete"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"admin/superman/superMenu/delete", "shop/superman/superMenu/delete"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse delSuperMenu(@RequestBody MenuInfo menuInfo, HttpServletRequest request) throws Exception {
         AjaxResponse resp;
@@ -557,7 +557,7 @@ public class TableController {
         }
     }
 
-    @RequestMapping(value = {"admin/catering/superMenu/paging", "shop/catering/superMenu/paging"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"admin/superman/superMenu/paging", "shop/superman/superMenu/paging"}, method = RequestMethod.GET)
     public
     @ResponseBody
     AjaxPageableResponse pageSuperMenus(Model model, HttpServletRequest request, PageRequest pageRequest) {
@@ -576,7 +576,7 @@ public class TableController {
         return resp;
     }
 
-    @RequestMapping(value = {"admin/catering/superMenu/upload","shop/catering/superMenu/upload"} )
+    @RequestMapping(value = {"admin/superman/superMenu/upload","shop/superman/superMenu/upload"} )
     @ResponseBody
     public AjaxResponse fileUpload(@RequestParam("file") CommonsMultipartFile[] files, HttpServletRequest request) {
         AjaxResponse resp = new AjaxResponse();

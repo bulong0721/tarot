@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * merchantCtrl - controller
  */
-merchantCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', '$resource'];
-function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
+merchantCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', '$resource','$filter'];
+function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
     var mgrData = {
         fields: [
             {
@@ -59,6 +59,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
                 controller:['$scope', function ($scope) {
                     $scope.upRemove = function(index){
                         console.log(index)
+                        $scope.formData.model.logo = "";
                     }
                 }]
             },
@@ -101,19 +102,25 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
             var data = $scope.tableOpts.data[rowIndex];
             $scope.formData.model = angular.copy(data);
             //console.log(data)
-            $scope.formData.model.imgFile = data.logo?data.logo:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt?imageView2/1/w/150/h/95";
+            $scope.formData.model.imgFile = $filter('myeeUrlImg')(data.logo);
 
             $scope.rowIndex = rowIndex;
         } else {
+            $scope.formData.model.imgFile = $filter('myeeUrlImg')('');
             $scope.formData.model = {};
             $scope.rowIndex = -1;
         }
+
         $scope.activeTab = iEditor;
     };
 
     //上传控件监听器
-    $scope.$on('fileToUpload', function (event, arg) {
-        console.log(arg)
+    $scope.$on('fileToUpload', function (event, res) {
+        console.log(res)
+        //把上传结果赋值到formly.model对象对应字段
+        var pic = res[1].dataMap.tree.downloadPath;
+        $scope.toasterManage($scope.toastUploadSucc);
+        $scope.formData.model.imgFile = $scope.formData.model.logo = pic;
         //上传文件到后台
 
         /*$resource(mgrData.api.upload).save({path: "logo", type: "file"}, arg).$promise.then(function (res) {

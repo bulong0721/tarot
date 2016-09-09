@@ -4,6 +4,8 @@ import com.myee.tarot.apiold.dao.RollMainDao;
 import com.myee.tarot.apiold.domain.RollMain;
 import com.myee.tarot.apiold.service.RollMainService;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +28,13 @@ public class RollMainServiceImpl extends GenericEntityServiceImpl<Long, RollMain
 
     public List<RollMain> listByTypeStoreTime(Long storeId, int type,Date now){
         return rollMainDao.listByTypeStoreTime(storeId, type,now);
+    }
+
+    public Long countByStore(Long id){
+        return rollMainDao.countByStore(id);
+    }
+
+    public PageResult<RollMain> pageByTypeStore(PageRequest pageRequest, Integer type, Long storeId){
+        return rollMainDao.pageByTypeStore( pageRequest,  type,  storeId);
     }
 }

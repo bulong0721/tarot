@@ -15,6 +15,7 @@ import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.ClientAjaxResult;
 import com.myee.tarot.web.apiold.controller.BaseController;
 import com.myee.tarot.web.apiold.util.AlidayuSmsClient;
+import com.myee.tarot.web.apiold.util.CommonLoginParam;
 import com.myee.tarot.web.apiold.util.IPUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,7 @@ public class ClientPrizeController extends BaseController {
     public AjaxResponse saveClientPrize(@RequestBody ClientPrize clientPrize, HttpServletRequest request) {
         AjaxResponse resp = new AjaxResponse();
         try {
-            String sessionName = ValidatorUtil.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
+            String sessionName = CommonLoginParam.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
             //从session中读取merchantStore信息，如果为空，则提示用户先切换门店
             if (request.getSession().getAttribute(sessionName) == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -115,7 +116,7 @@ public class ClientPrizeController extends BaseController {
     public AjaxPageableResponse pageListOfPrize(HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
-            String sessionName = ValidatorUtil.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
+            String sessionName = CommonLoginParam.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
             //从session中读取merchantStore信息，如果为空，则提示用户先切换门店
             if (request.getSession().getAttribute(sessionName) == null) {
                 resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -147,7 +148,7 @@ public class ClientPrizeController extends BaseController {
     public AjaxResponse deleteClientPrize(@RequestBody ClientPrize clientPrize, HttpServletRequest request) {
         AjaxResponse resp = new AjaxResponse();
         try {
-            String sessionName = ValidatorUtil.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
+            String sessionName = CommonLoginParam.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
             //从session中读取merchantStore信息，如果为空，则提示用户先切换门店
             if (request.getSession().getAttribute(sessionName) == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -179,7 +180,7 @@ public class ClientPrizeController extends BaseController {
     public AjaxPageableResponse pageListOfPrizeInfoChecked(HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
-            String sessionName = ValidatorUtil.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
+            String sessionName = CommonLoginParam.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
             //从session中读取merchantStore信息，如果为空，则提示用户先切换门店
             if (request.getSession().getAttribute(sessionName) == null) {
                 resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -211,7 +212,7 @@ public class ClientPrizeController extends BaseController {
     public AjaxResponse checkClientPriceInfo(@RequestParam("checkCode") String checkCode, HttpServletRequest request) {
         AjaxResponse resp = new AjaxResponse();
         try {
-            String sessionName = ValidatorUtil.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
+            String sessionName = CommonLoginParam.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
             //从session中读取merchantStore信息，如果为空，则提示用户先切换门店
             if (request.getSession().getAttribute(sessionName) == null) {
                 resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);

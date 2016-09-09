@@ -91,6 +91,8 @@ public class Constants {
 	public final static int CLIENT_PRICE_PHONE_CINEMA = 1; //电影票
 
 	public final static String REQUEST_INFO_SESSION = "sessionName";
+	public final static String REQUEST_INFO_USERTYPE = "userType";
+	public final static String REQUEST_INFO_USERID = "userId";//根据userType，从adminUser表取Id还是从Custom表取Id
 
 	public final static String PRICEDRAW = "PRICEDRAW";
 
@@ -111,10 +113,13 @@ public class Constants {
 	public final static String MY_LOTTERY_DETAIL_URL = "http://www.myee7.com/tarot_test/customerClient/index.html#!/myCouponView/";
 
 	public static final String OFF_ALLOW_EXCEL = "((doc)|(wps)|(vsd)|(docx))";	//只允许符合此规则的excel（正则）
+	public static final String OFF_ALLOW_IMAGE = "((jpg)|(png)|(bmp))";	//只允许符合此规则的图片（正则）
+	public static final String OFF_ALLOW_VIDEO = "((rmvb)|(mp4)|(avi)|(wav))";	//只允许符合此规则的视频（正则）
+	public static final String OFF_ALLOW_AUDIO = "((mp3)|(vmv)|(wav))";	//只允许符合此规则的音频（正则）
 
-	//本店活动
+	//本店活动,普通用户账号
 	public final static int API_OLD_TYPE_SHOP = 0;
-	//木爷活动
+	//木爷活动，木爷管理员账号
 	public final static int API_OLD_TYPE_MUYE = 1;
 	//木爷活动最大发布数量
 	public final static int ROLL_MAIN_PUBLISH_MAX = 5;
@@ -126,5 +131,21 @@ public class Constants {
 	public final static int MATERIAL_PUBLISH_MAX = 30;
 	//木爷广告最大发布数量
 	public final static int ADVERTISEMENT_PUBLISH_MAX = 5;
+
+	//文件校验类型
+	public final static int FILE_VALID_TYPE_DEFAULT = 0;
+	public final static int FILE_VALID_TYPE_APK = 1;
+	public final static int FILE_VALID_TYPE_TEXT = 2;
+	public final static int FILE_VALID_TYPE_AUDIO = 3;
+	public final static int FILE_VALID_TYPE_VIDEO = 4;
+	public final static int FILE_VALID_TYPE_IMAGE = 5;
+	public final static int FILE_VALID_TYPE_BIN = 6;//二进制文件
+
+	public static final String UPLOAD_IMAGE_PATH = "picture/";
+	public static final String UPLOAD_VIDEO_PATH = "video/";
+	public static final String UPLOAD_AUDIO_PATH = "audio/";
+	public static final String UPLOAD_MATERIAL_PATH = "material/";
+	public static final String UPLOAD_DEFAULT_PATH = "default/";
+
 
 }

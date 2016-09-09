@@ -13,6 +13,7 @@ import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.apiold.controller.BaseController;
 import com.myee.tarot.web.ClientAjaxResult;
+import com.myee.tarot.web.apiold.util.CommonLoginParam;
 import com.opencsv.CSVWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,7 +134,7 @@ public class EvaluationManageController extends BaseController {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         PageRequest pageRequest = new PageRequest();
         //根据当前用户获取切换的门店信息
-        String sessionName = (String) ValidatorUtil.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION);
+        String sessionName = (String) CommonLoginParam.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION);
         if (sessionName == null || request.getSession().getAttribute(sessionName) == null) {
             resp.setStatus(AjaxPageableResponse.RESPONSE_STATUS_FAIURE);
             resp.setStatusMessage("请先切换门店");
@@ -212,7 +213,7 @@ public class EvaluationManageController extends BaseController {
         CSVWriter writer = null;
         try {
             //根据当前用户获取切换的门店信息
-            String sessionName = (String) ValidatorUtil.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION);
+            String sessionName = (String) CommonLoginParam.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION);
             MerchantStore merchantStore = (MerchantStore) request.getSession().getAttribute(sessionName);
             PageRequest pageRequest = new PageRequest();
             //毫秒数乘以1000保证转换后的时间正常
