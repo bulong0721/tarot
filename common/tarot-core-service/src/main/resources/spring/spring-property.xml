@@ -14,7 +14,6 @@
                 <value>classpath:redis.properties</value>
                 <value>classpath:download.properties</value>
                 <value>classpath:email.properties</value>
-                <value>classpath:configs.properties</value>
                 <value>classpath:commApi.properties</value>
                 <value>classpath:weixin.properties</value>
             </list>

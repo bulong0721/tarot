@@ -11,6 +11,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.7</java.version>
         <java-version>1.7</java-version>
         <jdk-version>1.7</jdk-version>
         <version.querydsl>4.1.0</version.querydsl>
@@ -289,6 +290,11 @@
                 <version>7.0.8</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.4</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.ignite</groupId>
                 <artifactId>ignite-spring</artifactId>
                 <version>${version.ignite}</version>
@@ -298,11 +304,32 @@
                 <artifactId>ignite-indexing</artifactId>
                 <version>${version.ignite}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson</artifactId>
+                <version>2.3.0</version>
+            </dependency>
             <dependency>
                 <groupId>io.searchbox</groupId>
                 <artifactId>jest</artifactId>
                 <version>2.0.3</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId>
+                <version>4.0.40.Final</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.github.binarywang</groupId>
+                <artifactId>weixin-java-mp</artifactId>
+                <version>2.1.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>redis.clients</groupId>
+                        <artifactId>jedis</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <!-- elasticsearch  -->
 

@@ -6,7 +6,7 @@ import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.DateUtil;
 import com.myee.tarot.datacenter.service.WaitTokenService;
 import com.myee.tarot.merchant.domain.MerchantStore;
-import com.myee.tarot.weixin.domain.WxWaitToken;
+import com.myee.tarot.wechat.domain.WxWaitToken;
 import com.opencsv.CSVReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

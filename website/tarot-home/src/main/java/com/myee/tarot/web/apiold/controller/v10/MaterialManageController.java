@@ -7,7 +7,7 @@ import com.myee.tarot.apiold.service.MaterialPublishService;
 import com.myee.tarot.apiold.view.MaterialBusinessDTView;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.web.apiold.controller.BaseController;
-import com.myee.tarot.weixin.domain.ClientAjaxResult;
+import com.myee.tarot.web.ClientAjaxResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

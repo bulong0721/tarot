@@ -50,11 +50,11 @@
             </bean>
         </property>
         <property name="jpaProperties">
-            <util:map>
+            <map>
                 <entry key="hibernate.default_schema" value="${db.schema}"/>
                 <entry key="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl.auto}"/>
                 <entry key="hibernate.show_sql" value="true"/>
-            </util:map>
+            </map>
         </property>
 
         <property name="loadTimeWeaver">
@@ -66,9 +66,9 @@
 
     <bean class="org.springframework.orm.hibernate4.HibernateExceptionTranslator"/>
 
-    <bean id="wxMpService" class="me.chanjar.weixin.mp.api.WxMpServiceImpl">
+    <!--<bean id="wxMpService" class="me.chanjar.weixin.mp.api.WxMpServiceImpl">
         <property name="wxMpConfigStorage" ref="wxMpConfigStorage"/>
-    </bean>
+    </bean>-->
 
     <bean id="wxMpConfigStorage" class="me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage" scope="singleton">
         <property name="appId" value="wxe67244505b4041b6"/>
@@ -77,24 +77,24 @@
         <property name="aesKey" value="DKigNihAx9rcVHKJvc9D6xBnXCFHTUe4MnTBw01bLM7"/>
     </bean>
 
-    <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" scope="singleton">
-        <property name="hostName" value="${redis.host}"/>
-        <property name="port" value="${redis.port}"/>
-        <property name="usePool" value="true"/>
-        <property name="poolConfig" ref="jedisConfig"/>
-    </bean>
+    <!--<bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" scope="singleton">-->
+        <!--<property name="hostName" value="${redis.host}"/>-->
+        <!--<property name="port" value="${redis.port}"/>-->
+        <!--<property name="usePool" value="true"/>-->
+        <!--<property name="poolConfig" ref="jedisConfig"/>-->
+    <!--</bean>-->
 
-    <bean id="jedisConfig" class="redis.clients.jedis.JedisPoolConfig">
-        <property name="maxTotal" value="${redis.pool.maxTotal}"/>
-        <property name="maxIdle" value="${redis.pool.maxIdle}"/>
-        <property name="timeBetweenEvictionRunsMillis" value="${redis.pool.timeBetweenEvictionRunsMillis}"/>
-        <property name="minEvictableIdleTimeMillis" value="${redis.pool.minEvictableIdleTimeMillis}"/>
-        <property name="testOnBorrow" value="${redis.pool.testOnBorrow}"/>
-    </bean>
+    <!--<bean id="jedisConfig" class="redis.clients.jedis.JedisPoolConfig">-->
+        <!--<property name="maxTotal" value="${redis.pool.maxTotal}"/>-->
+        <!--<property name="maxIdle" value="${redis.pool.maxIdle}"/>-->
+        <!--<property name="timeBetweenEvictionRunsMillis" value="${redis.pool.timeBetweenEvictionRunsMillis}"/>-->
+        <!--<property name="minEvictableIdleTimeMillis" value="${redis.pool.minEvictableIdleTimeMillis}"/>-->
+        <!--<property name="testOnBorrow" value="${redis.pool.testOnBorrow}"/>-->
+    <!--</bean>-->
 
-    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
-        <property name="connectionFactory" ref="connectionFactory"/>
-    </bean>
+    <!--<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">-->
+        <!--<property name="connectionFactory" ref="connectionFactory"/>-->
+    <!--</bean>-->
 
     <!-- Définition de la gestion des transactions -->
     <tx:annotation-driven/>
@@ -111,6 +111,8 @@
         <tx:attributes>
             <tx:method name="get*" read-only="true"/>
             <tx:method name="list*" read-only="true"/>
+            <tx:method name="page*" read-only="true"/>
+            <tx:method name="find*" read-only="true"/>
             <tx:method name="search*" read-only="true"/>
             <tx:method name="*" read-only="false" rollback-for="com.myee.tarot.core.exception.ServiceException"/>
         </tx:attributes>

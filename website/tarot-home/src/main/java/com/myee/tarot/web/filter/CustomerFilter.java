@@ -6,7 +6,7 @@ import com.myee.tarot.customer.service.CustomerService;
 import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantService;
-import com.myee.tarot.web.util.SessionUtil;
+import com.myee.tarot.core.web.util.SessionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
