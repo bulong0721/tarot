@@ -141,7 +141,7 @@ public class PartnerApiManageController extends BaseController {
                     mobiles.split(","),
                     "短信内容",//短信模板
                     TemplateSMSType.getName(template),
-                    "酷奇",//签名
+                    getCommConfig().getAlidayuSignNameCooky(),//签名
                     getCommConfig(),
                     System.currentTimeMillis());//发送短信
             taskExecutor.submit(task);

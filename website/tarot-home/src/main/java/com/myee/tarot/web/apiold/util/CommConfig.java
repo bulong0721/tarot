@@ -27,6 +27,12 @@ public class CommConfig {
     //阿里大鱼短信签名【美味点点笔】
     private String alidayuSignNameActionPen;
 
+    //阿里大鱼短信签名【木爷提示】
+    private String alidayuSignNameMuyePartner;
+
+    //阿里大鱼短信签名【酷奇】
+    private String alidayuSignNameCooky;
+
     //阿里大鱼短信类型
     private String alidayuSmsType;
 
@@ -35,6 +41,22 @@ public class CommConfig {
 
     //阿里大鱼短信签名
     private String alidayuSignNameLuckDraw;
+
+    public String getAlidayuSignNameMuyePartner() {
+        return alidayuSignNameMuyePartner;
+    }
+
+    public void setAlidayuSignNameMuyePartner(String alidayuSignNameMuyePartner) {
+        this.alidayuSignNameMuyePartner = alidayuSignNameMuyePartner;
+    }
+
+    public String getAlidayuSignNameCooky() {
+        return alidayuSignNameCooky;
+    }
+
+    public void setAlidayuSignNameCooky(String alidayuSignNameCooky) {
+        this.alidayuSignNameCooky = alidayuSignNameCooky;
+    }
 
     public String getQiniuHttpApiUrl() {
         return qiniuHttpApiUrl;

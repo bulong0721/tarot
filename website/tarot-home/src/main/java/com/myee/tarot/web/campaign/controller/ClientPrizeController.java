@@ -463,7 +463,7 @@ public class ClientPrizeController extends BaseController {
                         phones,
                         content,//短信内容
                         TemplateSMSType.PARTNERGAME.getName(),
-                        "木爷提示",//签名,为null默认是美味点点笔
+                        getCommConfig().getAlidayuSignNameMuyePartner(),//签名,为null默认是美味点点笔
                         getCommConfig(),//从commonApi.properties获取默认配置
                         System.currentTimeMillis()
                 );//发送短信

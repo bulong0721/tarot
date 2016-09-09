@@ -41,6 +41,8 @@
         <property name="alidayuApiAppkey" value="${alidayu_api_appkey}"/>
         <property name="alidayuApiSecret" value="${alidayu_api_secret}"/>
         <property name="alidayuSignNameActionPen" value="${alidayu_sign_name_action_pen}"/>
+        <property name="alidayuSignNameMuyePartner" value="${alidayu_sign_name_muye_partner}"/>
+        <property name="alidayuSignNameCooky" value="${alidayu_sign_name_cooky}"/>
         <property name="alidayuSmsType" value="${alidayu_sms_type}"/>
         <property name="alidayuSendParam" value="${alidayu_send_param}"/>
         <property name="alidayuSignNameLuckDraw" value="${alidayu_sign_name_luck_draw}"/>

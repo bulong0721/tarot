@@ -126,7 +126,7 @@ public class AlidayuSmsClient {
 					record.setFlag(i);
 					record.setPartner(1);//设置为1，第三方发送
 					record.setTemplateNum(templateNum);
-					record.setDescription(Joiner.on(',').join(smsNum) + ",ip=" + ip + ",templateID=" + templateNum + ",st=" + st + ",et=" + et);
+					record.setDescription(Joiner.on(',').join(smsNum) + ",ip=" + ip + ",templateID=" + templateNum + ",st=" + st + ",et=" + et + ",content= " + argName );
 					record.setCreated(dt);
 					sendRecordManageService.update(record);
 				} catch (Exception e) {

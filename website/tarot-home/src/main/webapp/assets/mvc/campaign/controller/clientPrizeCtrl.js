@@ -212,4 +212,8 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
         }
 
     });
+
+    $scope.checkCodeUp = function (file) {
+        console.log(file)
+    }
 }

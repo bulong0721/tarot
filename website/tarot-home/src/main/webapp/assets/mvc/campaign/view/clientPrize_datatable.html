@@ -23,8 +23,9 @@
                     <th width="10%" class="center">总量</th>
                     <th width="10%" class="center">剩余</th>
                     <th width="15%" class="center">描述</th>
-                    <th width="10%" class="center">状态</th>
-                    <th width="15%" class="center">操作</th>
+                    <th class="center">状态</th>
+                    <th class="center">上传</th>
+                    <th class="center">操作</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -42,6 +43,10 @@
                     <td>{{::row.leftNum}}</td>
                     <td>{{::row.description}}</td>
                     <td class="center"><span ng-class="{true: 'label label-primary', false: 'label label-danger'}[row.activeStatus]">{{row.activeStatus?'开启':'关闭'}}</span></td>
+                    <td class="center"><span class="btn btn-sm btn-success upMenuBut">
+                        <i class="fa fa-upload bigger-120"></i><span>导入兑换码</span>
+                        <input type="file" onchange="angular.element(this).scope().checkCodeUp(this)"/>
+                    </span></td>
                     <td class="center">
                         <a ng-click="goEditor($index)"><i class="btn-icon fa fa-pencil"></i></a>
                         <span class="divider"></span>
