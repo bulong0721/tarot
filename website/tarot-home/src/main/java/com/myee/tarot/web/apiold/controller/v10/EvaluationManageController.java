@@ -148,11 +148,11 @@ public class EvaluationManageController extends BaseController {
         //查询评论详细
         PageResult<Evaluation> pageResult = evaluationManageService.pageList(pageRequest);
         //查询总体平均值
-        long count = pageResult.getRecordsTotal();
-        double feelWhole = 0;
-        double feelEnvironment = 0;
-        double feelFlavor = 0;
-        double feelService = 0;
+        int count = (int)pageResult.getRecordsTotal();
+        int feelWhole = 0;
+        int feelEnvironment = 0;
+        int feelFlavor = 0;
+        int feelService = 0;
         for (Evaluation evaluation : pageResult.getList()) {
             feelWhole += evaluation.getFeelWhole();
             feelEnvironment += evaluation.getFeelEnvironment();

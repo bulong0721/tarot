@@ -127,12 +127,4 @@ public class Constants {
 	//木爷广告最大发布数量
 	public final static int ADVERTISEMENT_PUBLISH_MAX = 5;
 
-	public static final String ROLL_SUPERADMIN = "SUPERADMIN";
-
-	public static final String ROLL_CLIENTUSER = "CLIENTUSER";
-
-	public static final String ROLL_BRANDUSER = "BRANDUSER";
-
-	public static final String ROLL_JF = "JF";//服务修改桌子对应手机号的权限
-
 }
