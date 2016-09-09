@@ -2,27 +2,24 @@ package com.myee.tarot.web.apiold.controller.v10;
 
 import com.google.common.collect.Lists;
 import com.myee.tarot.apiold.domain.BaseDataInfo;
+import com.myee.tarot.cache.uitl.RedissonUtil;
 import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.catering.service.TableTypeService;
-import com.myee.tarot.uitl.CacheUtil;
 import com.myee.tarot.web.apiold.controller.BaseController;
-import com.myee.tarot.weixin.domain.ClientAjaxResult;
+import com.myee.tarot.web.ClientAjaxResult;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ignite.Ignite;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.cache.Cache;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Info: 商户餐桌类型管理接口
@@ -41,7 +38,7 @@ public class TableTypeController extends BaseController {
     @Autowired
     private TableTypeService tableTypeService;
     @Autowired
-    private Ignite ignite;
+    private RedissonClient   redisson;
 
     /**
      * 商户菜品列表
@@ -64,7 +61,7 @@ public class TableTypeController extends BaseController {
                 timestamp = 0l;
             }
 
-            Cache<String, BaseDataInfo> tableTypeInfoCache = CacheUtil.tableTypeInfoCache(ignite);
+            Map<String, BaseDataInfo> tableTypeInfoCache = RedissonUtil.commonCache(redisson).getTableTypeCache();
             BaseDataInfo tableTypes = tableTypeInfoCache.get(shopId);
             if (tableTypes!=null) {
                 if(timestamp == tableTypes.getTimestamp()){

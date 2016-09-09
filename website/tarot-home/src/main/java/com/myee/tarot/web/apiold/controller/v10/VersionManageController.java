@@ -3,7 +3,7 @@ package com.myee.tarot.web.apiold.controller.v10;
 import com.myee.tarot.apiold.domain.VersionInfo;
 import com.myee.tarot.apiold.service.VersionService;
 import com.myee.tarot.web.apiold.controller.BaseController;
-import com.myee.tarot.weixin.domain.ClientAjaxResult;
+import com.myee.tarot.web.ClientAjaxResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

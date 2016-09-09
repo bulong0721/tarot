@@ -5,11 +5,10 @@ import com.myee.tarot.apiold.domain.OrderInfo;
 import com.myee.tarot.apiold.service.OrderInfoService;
 import com.myee.tarot.core.util.DateUtil;
 import com.myee.tarot.web.apiold.controller.BaseController;
-import com.myee.tarot.weixin.domain.ClientAjaxResult;
+import com.myee.tarot.web.ClientAjaxResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.*;
 
 /**

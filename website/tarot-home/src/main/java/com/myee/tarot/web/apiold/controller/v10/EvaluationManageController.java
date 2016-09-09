@@ -10,7 +10,7 @@ import com.myee.tarot.catering.service.TableService;
 import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.core.util.TypeConverter;
 import com.myee.tarot.web.apiold.controller.BaseController;
-import com.myee.tarot.weixin.domain.ClientAjaxResult;
+import com.myee.tarot.web.ClientAjaxResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

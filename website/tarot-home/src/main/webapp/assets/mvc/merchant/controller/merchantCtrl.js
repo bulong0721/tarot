@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * merchantCtrl - controller
  */
-merchantCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', '$resource','$filter'];
-function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
+merchantCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', '$resource'];
+function merchantCtrl($scope, Constants, cTables, cfromly, $resource) {
     var mgrData = {
         fields: [
             {
@@ -44,13 +44,23 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
                 id: 'imgFile',
                 key: 'imgFile',
                 type: 'upload',
-                name: 'img',//这个name是用来判断上传文件的类型，不判断为空('') || null
-                templateOptions: {type: 'file', label: '商户图标', required: false, placeholder: '商户图标'}
-            },
-            {
-                key: 'images',
-                type: 'c_images',
-                templateOptions: {label: '商户图标预览', Multi: false}
+                templateOptions: {type: 'file', label: '商户图标', required: false, placeholder: '商户图标',
+                    upAttr:{
+                        name: 'img',//这个name是用来判断上传文件的类型，不判断为空('') || null
+                        upType:4,
+                        url:'./files/create',
+                        param:{//这是url参数
+                            type:'file',
+                            path:'logo'
+                        },
+                        upMore:1
+                    }
+                },
+                controller:['$scope', function ($scope) {
+                    $scope.upRemove = function(index){
+                        console.log(index)
+                    }
+                }]
             },
             {
                 key: 'description',
@@ -86,11 +96,13 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
 
     //点击编辑
     $scope.goEditor = function (rowIndex) {
-        angular.element('#imgFile')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
+        //angular.element('#imgFile')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
         if (rowIndex > -1) {
             var data = $scope.tableOpts.data[rowIndex];
             $scope.formData.model = angular.copy(data);
-            $scope.formData.model.images = $filter('myeeUrlImg')(data.logo);
+            //console.log(data)
+            $scope.formData.model.imgFile = data.logo?data.logo:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt?imageView2/1/w/150/h/95";
+
             $scope.rowIndex = rowIndex;
         } else {
             $scope.formData.model = {};
@@ -101,12 +113,10 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
 
     //上传控件监听器
     $scope.$on('fileToUpload', function (event, arg) {
-        //console.log(arg)
+        console.log(arg)
         //上传文件到后台
-        $resource(mgrData.api.upload).save({
-            path: "logo",
-            type: "file"
-        }, arg).$promise.then(function (res) {
+
+        /*$resource(mgrData.api.upload).save({path: "logo", type: "file"}, arg).$promise.then(function (res) {
             //console.log(res)
             if (0 != res.status) {
                 $scope.toasterManage($scope.toastError, res);
@@ -115,9 +125,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
             var pic = res.dataMap.tree.downloadPath;
             $scope.toasterManage($scope.toastUploadSucc);
             $scope.formData.model.logo = pic;
-
-            //console.log($scope.formData.model.images)
-            $scope.formData.model.images = $filter('myeeUrlImg')( pic);
-        })
+            $scope.formData.model.imgFile = $scope.formData.model.logo = res.dataMap.tree.downloadPath;
+        })*/
     });
 }

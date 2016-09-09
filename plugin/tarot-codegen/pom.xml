@@ -26,11 +26,11 @@
             <artifactId>querydsl-apt</artifactId>
             <version>${version.querydsl}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.openjpa</groupId>
-            <artifactId>openjpa</artifactId>
-            <version>2.4.1</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.openjpa</groupId>-->
+            <!--<artifactId>openjpa</artifactId>-->
+            <!--<version>2.4.1</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-maven-plugin</artifactId>

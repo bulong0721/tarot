@@ -87,26 +87,68 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
             },
 
             {
-                id: 'smallImage',
+                id: 'smallPic',
+                key: 'smallPic',
                 type: 'upload',
-                name: 'img',
-                templateOptions: {type: 'file', label: '奖券小图标', required: false, placeholder: '奖券小图标'}
+                templateOptions: {type: 'file', label: '奖券小图标', required: false, placeholder: '奖券小图标',
+                    upAttr:{
+                        name: 'img',//这个name是用来判断上传文件的类型，不判断为空('') || null
+                        upType:2,
+                        url:'./files/create',
+                        param:{//这是url参数
+                            type:'file',
+                            path:'prizeLogo'
+                        },
+                        upMore:1
+                    }
+                },
+                controller:['$scope', function ($scope) {
+                    //资源回显
+                    var md = $scope;
+                    md.thumbnail = [];
+                    md.len = true;
+                    if(md.model.id && md.model.smallPic){
+                        md.thumbnail.push({url:baseUrl.pushUrl+md.model.smallPic});
+                        ;(md.thumbnail.length>=md.to.upAttr.upMore) && (md.len = false);
+                    }
+                    //删除资源
+                    $scope.upRemove = function(index){
+                        console.log(index);
+                        $scope.model.smallPic = "";
+                    }
+                }]
             },
             {
-                key: 'imagesSmall',
-                type: 'c_images',
-                templateOptions: {label: '奖券小图标预览', Multi: false}
-            },
-            {
-                id: 'bigImage',
+                id: 'bigPic',
+                key: 'bigPic',
                 type: 'upload',
-                name: 'img',
-                templateOptions: {type: 'file', label: '奖券大图标', required: false, placeholder: '奖券大图标'}
-            },
-            {
-                key: 'imagesBig',
-                type: 'c_images',
-                templateOptions: {label: '奖券大图标预览', Multi: false}
+                templateOptions: {type: 'file', label: '奖券大图标', required: false, placeholder: '奖券大图标',
+                    upAttr:{
+                        name: 'img',//这个name是用来判断上传文件的类型，不判断为空('') || null
+                        upType:2,
+                        url:'./files/create',
+                        param:{//这是url参数
+                            type:'file',
+                            path:'prizeLogo'
+                        },
+                        upMore:1
+                    }
+                },
+                controller:['$scope', function ($scope) {
+                    //资源回显
+                    var md = $scope;
+                    md.thumbnail = [];
+                    md.len = true;
+                    if(md.model.id && md.model.bigPic){
+                        md.thumbnail.push({url:baseUrl.pushUrl+ md.model.bigPic});
+                        ;(md.thumbnail.length>=md.to.upAttr.upMore) && (md.len = false);
+                    }
+                    //删除资源
+                    $scope.upRemove = function(index){
+                        console.log(index)
+                        $scope.model.bigPic = "";
+                    }
+                }]
             },
             {
                 key: 'description',
@@ -143,19 +185,16 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
     var iEditor = 1;
     //点击编辑
     $scope.goEditor = function (rowIndex) {
-        angular.element('#smallImage')[0].value = '';
-        angular.element('#bigImage')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
+        //.element('#smallImage')[0].value = '';
+        //angular.element('#bigImage')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
         if (rowIndex > -1) {
             var data = $scope.tableOpts.data[rowIndex];
             $scope.formData.model = angular.copy(data);
-            //console.log(data)
-            $scope.formData.model.imagesSmall = $filter('myeeUrlImg')(data.smallPic);
-            $scope.formData.model.imagesBig =  $filter('myeeUrlImg')(data.bigPic);
+            $scope.formData.model.smallPic =data.smallPic;
+            $scope.formData.model.bigPic =  data.bigPic;
             $scope.rowIndex = rowIndex;
         } else {
             $scope.formData.model = {};
-            $scope.formData.model.imagesSmall = baseConstant.myeeDefaultUrlImg;
-            $scope.formData.model.imagesBig = baseConstant.myeeDefaultUrlImg;
             $scope.rowIndex = -1;
         }
         $scope.activeTab = iEditor;
@@ -163,27 +202,14 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
 
     //上传控件监听器
     $scope.$on('fileToUpload', function (event, arg) {
-        //console.log(event)
-        //上传文件到后台
         var uploadId = event.targetScope.id;
-        $resource(mgrData.api.upload).save({
-            path: "prizeLogo",
-            type: "file"
-        }, arg).$promise.then(function (res) {
-                //console.log(res)
-                if (0 != res.status) {
-                    $scope.toasterManage($scope.toastError, res);
-                    return;
-                }
-                $scope.toasterManage($scope.toastUploadSucc);
-                var pic = res.dataMap.tree.downloadPath;
-                if(uploadId == "smallImage"){
-                    $scope.formData.model.smallPic = pic;
-                    $scope.formData.model.imagesSmall = $filter('myeeUrlImg')(pic);
-                }else if(uploadId == "bigImage"){
-                    $scope.formData.model.bigPic = pic;
-                    $scope.formData.model.imagesBig = $filter('myeeUrlImg')(pic);
-                }
-            })
+        var pic = arg[0].dataMap.tree.downloadPath;
+        console.log(pic);
+        if(uploadId == 'smallPic'){
+            $scope.formData.model.smallPic = pic;
+        }else if(uploadId == 'bigPic'){
+            $scope.formData.model.bigPic = pic;
+        }
+
     });
 }

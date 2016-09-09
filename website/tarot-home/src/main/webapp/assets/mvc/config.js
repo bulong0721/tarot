@@ -38,6 +38,11 @@ function ctrlManagerLoader(oclazyload, dir, ctrl) {
             files: ['assets/plugins/ui-tree/angular-tree-grid.css', 'assets/plugins/ui-tree/angular-tree-grid.js']
         },
         {
+            serie: true,
+            name: 'ngQiniu',
+            files: ['assets/plugins/qiniu/ngQiniu.js']
+        },
+        {
             name: 'myee',//属于哪个模块
             files: ['assets/mvc/' + dir + '/controller/' + ctrl]
         }
@@ -88,7 +93,16 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
                     return ctrlManagerLoader($ocLazyLoad, 'merchant', 'merchantCtrl.js')
-                }
+                },
+                /*qiniu:function($ocLazyLoad){
+                    return $ocLazyLoad.load([
+                        {
+                            serie: true,
+                            name:'ngQiniu',
+                            files: ['assets/plugins/qiniu/ngQiniu.js']
+                        }
+                    ])
+                }*/
             }
         })
         .state('campaign', {
@@ -117,7 +131,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             controller: 'clientPrizeCtrl',
             data: {
                 pageTitle: '活动管理',
-                subTitle: '小超人抽奖',
+                subTitle: '小超人抽奖配置',
                 datatable: 'assets/mvc/campaign/view/clientPrize_datatable.html'
             },
             resolve: {
@@ -573,5 +587,5 @@ angular
         $rootScope.$state = $state;
     })
     .constant('baseConstant',{
-        myeeDefaultUrlImg:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt?imageView2/1/w/150/h/95"
+        myeeDefaultUrlImg:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt"
     });

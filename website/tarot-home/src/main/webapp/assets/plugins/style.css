@@ -10215,13 +10215,22 @@ table tr:hover,table>tbody>tr:nth-of-type(odd):hover {background-color: #f6fefc;
 
 .formly-field-datepicker .form-group,.formly-field-upload .form-group,.formly-field-c_images {overflow: inherit !important;  width: 100%;   display: inline-block; margin: 0;}
 .formly-field-datepicker .form-group label,.formly-field-upload .form-group label {width: 16.66666667%; float: left}
-.formly-field-upload .form-group input[type=file] {margin-left: 15px; display: inline-block;}
 .formly-field-datepicker p {margin: 0; max-width: 450px;}
 .formly-field-c_images img {width: 100px}
 
 .formly input[type=checkbox]:checked {  background-color: #4a90e2;  border-color: #4a90e2 !important;  }
 .formly input[type=checkbox] {  -webkit-appearance: none;  -moz-appearance: none;  appearance: none;  outline: 0;  background-color: #fff;  border: 2px solid #757575;  position: relative;  width: 20px;  height: 20px;  vertical-align: top;  border-radius: 2px;  padding: 0;  margin: 5px 10px 0 0;  }
 .formly input[type=checkbox]:after {  border: 2px solid transparent;  border-left: 0;  border-top: 0;  content: " ";  top: 0px;  left: 6px;  position: absolute;  width: 5px;  height: 13px;  -webkit-transform: rotate(45deg);  transform: rotate(45deg);  border-color: #fff;  }
+
+.uploadFileT,.uploadFileF {position: relative; display: inline-block; margin-left: 15px;cursor: pointer}
+.uploadFileT ul,.uploadFileT li,.uploadFileF ul,.uploadFileF li {list-style: none;margin: 0;padding: 0}
+.uploadFileT li {margin-right: 10px;display: inline-block;position: relative; vertical-align: middle;}
+.uploadFileT li i {background: transparent;display: none}
+.uploadFileT li:hover i {display: box; display: -webkit-box;   display: -moz-box;color: #fff}
+.uploadFileT input[type=file] {width: 100px; height: 63px; display: inline-block; margin: 0; padding: 0; z-index: 10;position: absolute; top: 0; left: 0; opacity: 0; cursor: pointer}
+.uploadFileT img {width: 100px;}
+.uploadFileT video {width: 200px !important;}
+.uploadFileT span,.uploadFileT i { position: absolute; top: 50%; left: 50%; background: rgba(0,0,0,.5); text-align: center; color: #fff; font-size: 17px; margin-left: -10px; margin-top: -10px;}
 
 .file-box {
     float: none;

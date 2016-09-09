@@ -12,10 +12,10 @@ import com.myee.tarot.core.util.*;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.web.ClientAjaxResult;
 import com.myee.tarot.web.apiold.controller.BaseController;
 import com.myee.tarot.web.apiold.util.AlidayuSmsClient;
 import com.myee.tarot.web.apiold.util.IPUtils;
-import com.myee.tarot.weixin.domain.ClientAjaxResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ import java.util.*;
  * Created by Administrator on 2016/8/29.
  */
 @RestController
-public class ClientPrizeController extends BaseController{
+public class ClientPrizeController extends BaseController {
 
     @Autowired
     private ClientPrizeService clientPrizeService;

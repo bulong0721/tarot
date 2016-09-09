@@ -9,18 +9,14 @@ import com.myee.tarot.campaign.domain.PriceInfo;
 import com.myee.tarot.campaign.service.MerchantActivityService;
 import com.myee.tarot.campaign.service.ModeSwitchService;
 import com.myee.tarot.campaign.service.PriceInfoService;
-import com.myee.tarot.core.util.DateTimeUtils;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
 import com.myee.tarot.core.util.*;
-import com.myee.tarot.core.util.ajax.AjaxResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by Administrator on 2016/7/14.
@@ -73,21 +69,21 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
     }
 
     @Override
-    public AjaxResponse savePriceInfo(String keyId, Long storeId) throws ServiceException {
-        AjaxResponse resp = new AjaxResponse();
+    public Map<String,Object> savePriceInfo(String keyId, Long storeId) throws ServiceException {
+        Map<String,Object> mapInfo = new HashMap<String,Object>();
         //在抽奖前需要查看微信抽奖模式 是否开启
-        /*ModeSwitch modeSwitch = modeSwitchService.findByStoreId(storeId);
+       /* ModeSwitch modeSwitch = modeSwitchService.findByStoreId(storeId);
         if(modeSwitch==null||modeSwitch.getStatus() == Constants.WECHAT_CLOSE){
-            resp.setErrorString("商户微信模式未开启");
-            resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
-            return resp;
-        }*/
+            mapInfo.put("errorString", "商户微信模式未开启");
+            mapInfo.put("status", -1);
+            return mapInfo;
+        }
         //通过keyId和storeId查看此人是否今天已经抽取过奖券
-        /*boolean canDraw = findByStoreIdAndKeyIdToday(storeId,keyId);
+        boolean canDraw = findByStoreIdAndKeyIdToday(storeId,keyId);
         if(!canDraw){
-            resp.setErrorString("你今天已抽取过，请明天再来抽取");
-            resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
-            return resp;
+            mapInfo.put("errorString", "你今天已抽取过，请明天再来抽取");
+            mapInfo.put("status", -1);
+            return mapInfo;
         }*/
         PriceInfo priceInfo = new PriceInfo();
         priceInfo.setKeyId(keyId);
@@ -105,9 +101,9 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
                 activity.setActivityStatus(Constants.ACITIVITY_END);
                 merchantActivityService.update(activity);
             }
-            resp.setErrorString("活动已结束");
-            resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
-            return resp;
+            mapInfo.put("errorString","活动已结束");
+            mapInfo.put("status", -1);
+            return mapInfo;
         }
         PriceInfo info = getRandomPrice(priceInfo, priceList, activity.getPrices());
         // 更新redis的list
@@ -121,9 +117,9 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
         merchantActivityService.update(activity);
         super.save(priceInfo);
         PriceInfo result = super.findById(priceInfo.getId());
-        resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
-        resp.addEntry("result", result);
-        return resp;
+        mapInfo.put("status",0);
+        mapInfo.put("result",result);
+        return mapInfo;
     }
 
     @Override

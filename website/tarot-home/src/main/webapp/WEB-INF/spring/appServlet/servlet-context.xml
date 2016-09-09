@@ -14,7 +14,6 @@
     <mvc:resources mapping="/assets/**" location="/assets/"/>
     <mvc:resources mapping="/admin/assets/**" location="/assets/"/>
     <mvc:resources mapping="/shop/assets/**" location="/assets/"/>
-    <mvc:resources mapping="/weixin/**" location="/assetswx/"/>
     <mvc:resources mapping="/businessClient/**" location="/businessClient/"/>
     <mvc:resources mapping="/customerClient/**" location="/customerClient/"/>
 
@@ -31,8 +30,6 @@
     <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
         <property name="defaultLocale" value="en"></property>
     </bean>
-
-    <bean id="messages" class="com.myee.tarot.web.util.LabelUtil"/>
 
     <!-- 发送短信加载配置文件-->
     <bean id="commConfig" class="com.myee.tarot.web.apiold.util.CommConfig" scope="singleton">
