@@ -17,38 +17,38 @@ import org.springframework.stereotype.Service;
 @Service
 @Scope("singleton")
 public class BootStrapFactoryBean extends AbstractFactoryBean<ServerBootstrap> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BootStrapFactoryBean.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BootStrapFactoryBean.class);
 
-    @Value("${djinn.port}")
-    private int              djinnPort;
-    @Autowired
-    private CommonService    commonService;
-    @Autowired
-    private DataStoreService dataStoreService;
-    @Autowired
-    private MealsService     mealsService;
-    private ServerBootstrap  instance;
+	@Value("${djinn.port}")
+	private int djinnPort;
+	@Autowired
+	private CommonService commonService;
+	@Autowired
+	private DataStoreService dataStoreService;
+	@Autowired
+	private MealsService mealsService;
+	private ServerBootstrap instance;
 
-    @Override
-    public Class<?> getObjectType() {
-        return ServerBootstrap.class;
-    }
+	@Override
+	public Class<?> getObjectType() {
+		return ServerBootstrap.class;
+	}
 
-    @Override
-    protected synchronized ServerBootstrap createInstance() throws Exception {
-        if (null == instance) {
-            final NettyServerConfig nettyServerConfig = new NettyServerConfig();
-            nettyServerConfig.setListenPort(djinnPort);
-            instance = new ServerBootstrap(nettyServerConfig);
-            instance.initialize();
-            try {
-                BackendService serviceStub = new BackendServiceStub(commonService, dataStoreService, mealsService);
-                instance.export(serviceStub, BackendService.class);
-            } catch (Exception e) {
-                LOGGER.error("ServerBootstrap export error", e);
-            }
-            instance.start();
-        }
-        return instance;
-    }
+	@Override
+	protected synchronized ServerBootstrap createInstance() throws Exception {
+		if (null == instance) {
+			final NettyServerConfig nettyServerConfig = new NettyServerConfig();
+			nettyServerConfig.setListenPort(djinnPort);
+			instance = new ServerBootstrap(nettyServerConfig);
+			instance.initialize();
+			try {
+				BackendService serviceStub = new BackendServiceStub(commonService, dataStoreService, mealsService);
+				instance.export(serviceStub, BackendService.class, CommonService.class, DataStoreService.class, MealsService.class);
+			} catch (Exception e) {
+				LOGGER.error("ServerBootstrap export error", e);
+			}
+			instance.start();
+		}
+		return instance;
+	}
 }
