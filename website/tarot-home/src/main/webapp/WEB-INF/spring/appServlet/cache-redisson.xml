@@ -4,10 +4,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
     <bean id="redisson" class="com.myee.tarot.cache.redisson.RedissonBean">
-        <property name="nodeAddresses">
-            <array>
-                <value>172.16.0.15:6479</value>
-            </array>
-        </property>
+        <property name="masterAddress" value="${redis.masterAddress}" />
     </bean>
 </beans>

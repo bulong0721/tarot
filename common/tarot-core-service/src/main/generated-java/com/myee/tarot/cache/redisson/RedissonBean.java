@@ -33,6 +33,7 @@ public class RedissonBean implements FactoryBean<RedissonClient>, InitializingBe
     private String[] nodeAddresses              = new String[0];
     private Codec    codec                      = new FastJsonCodec();
     private ReadMode readMode                   = ReadMode.MASTER;
+    private String   masterAddress              = "127.0.0.1:6379";
 
     @Override
     public RedissonClient getObject() throws Exception {
@@ -66,7 +67,7 @@ public class RedissonBean implements FactoryBean<RedissonClient>, InitializingBe
                 .setPassword(password)
                 .setSubscriptionsPerConnection(subscriptionsPerConnection)
                 .setClientName(clientName)
-                .setMasterAddress("172.16.0.15:6479");
+                .setMasterAddress(masterAddress);
         redisson = Redisson.create(config);
     }
 
@@ -195,5 +196,13 @@ public class RedissonBean implements FactoryBean<RedissonClient>, InitializingBe
 
     public void setReadMode(ReadMode readMode) {
         this.readMode = readMode;
+    }
+
+    public String getMasterAddress() {
+        return masterAddress;
+    }
+
+    public void setMasterAddress(String masterAddress) {
+        this.masterAddress = masterAddress;
     }
 }

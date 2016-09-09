@@ -66,35 +66,12 @@
 
     <bean class="org.springframework.orm.hibernate4.HibernateExceptionTranslator"/>
 
-    <!--<bean id="wxMpService" class="me.chanjar.weixin.mp.api.WxMpServiceImpl">
-        <property name="wxMpConfigStorage" ref="wxMpConfigStorage"/>
-    </bean>-->
-
     <bean id="wxMpConfigStorage" class="me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage" scope="singleton">
         <property name="appId" value="wxe67244505b4041b6"/>
         <property name="secret" value="ae3b4cd8a550fab663c90ab16d548579"/>
         <property name="token" value="clever"/>
         <property name="aesKey" value="DKigNihAx9rcVHKJvc9D6xBnXCFHTUe4MnTBw01bLM7"/>
     </bean>
-
-    <!--<bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" scope="singleton">-->
-        <!--<property name="hostName" value="${redis.host}"/>-->
-        <!--<property name="port" value="${redis.port}"/>-->
-        <!--<property name="usePool" value="true"/>-->
-        <!--<property name="poolConfig" ref="jedisConfig"/>-->
-    <!--</bean>-->
-
-    <!--<bean id="jedisConfig" class="redis.clients.jedis.JedisPoolConfig">-->
-        <!--<property name="maxTotal" value="${redis.pool.maxTotal}"/>-->
-        <!--<property name="maxIdle" value="${redis.pool.maxIdle}"/>-->
-        <!--<property name="timeBetweenEvictionRunsMillis" value="${redis.pool.timeBetweenEvictionRunsMillis}"/>-->
-        <!--<property name="minEvictableIdleTimeMillis" value="${redis.pool.minEvictableIdleTimeMillis}"/>-->
-        <!--<property name="testOnBorrow" value="${redis.pool.testOnBorrow}"/>-->
-    <!--</bean>-->
-
-    <!--<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">-->
-        <!--<property name="connectionFactory" ref="connectionFactory"/>-->
-    <!--</bean>-->
 
     <!-- Définition de la gestion des transactions -->
     <tx:annotation-driven/>
