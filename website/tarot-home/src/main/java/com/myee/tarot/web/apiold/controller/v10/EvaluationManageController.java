@@ -43,6 +43,7 @@ public class EvaluationManageController extends BaseController {
     @Autowired
     private TableService tableManageService;
 
+    private static final int MAX_EXPORT_COUNT = 50000;
     /**
      * 保存服务评价接口,30s之内重复提交的评价会覆盖，即30s之内只有最后一条评价有效
      *
@@ -116,9 +117,9 @@ public class EvaluationManageController extends BaseController {
     @RequestMapping(value = "/admin/superman/evaluation/list", method = RequestMethod.POST)
     @ResponseBody
     public AjaxPageableResponse listPage(PageRequest pageRequest,
-                                         @RequestParam(value = "tableId", required = false) Long tableId,
-                                         @RequestParam(value = "begin", required = false) Long begin,
-                                         @RequestParam(value = "end", required = false) Long end, HttpServletRequest request) {
+            @RequestParam(value = "tableId", required = false) Long tableId,
+            @RequestParam(value = "begin", required = false) Long begin,
+            @RequestParam(value = "end", required = false) Long end, HttpServletRequest request) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         //根据当前用户获取切换的门店信息
         String sessionName = (String) ValidatorUtil.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION);
@@ -158,17 +159,24 @@ public class EvaluationManageController extends BaseController {
         int feelEnvironment = 0;
         int feelFlavor = 0;
         int feelService = 0;
-        for (Evaluation evaluation : pageResult.getList()) {
+        List<Evaluation> list = pageResult.getList();
+        for (Evaluation evaluation : list) {
             feelWhole += evaluation.getFeelWhole();
             feelEnvironment += evaluation.getFeelEnvironment();
             feelFlavor += evaluation.getFeelFlavor();
             feelService += evaluation.getFeelService();
         }
         //因为存的参数放大了20倍，我们除以2后给前端，前端除以10即可
-        feelWhole = feelWhole / count / 2;
-        feelEnvironment = feelEnvironment / count / 2;
-        feelFlavor = feelFlavor / count / 2;
-        feelService = feelService / count / 2;
+        if (list.size() > 0) {
+            if (feelWhole > 0)
+                feelWhole = feelWhole / count / 2;
+            if (feelEnvironment > 0)
+                feelEnvironment = feelEnvironment / count / 2;
+            if(feelFlavor > 0)
+                feelFlavor = feelFlavor / count / 2;
+            if (feelService > 0)
+                feelService = feelService / count / 2;
+        }
         Map<String, Object> map = Maps.newHashMap();
         map.put("feelWhole", feelWhole);
         map.put("feelEnvironment", feelEnvironment);
@@ -217,18 +225,21 @@ public class EvaluationManageController extends BaseController {
     @RequestMapping(value = "/admin/superman/evaluation/exportCsv", method = RequestMethod.POST)
     @ResponseBody
     public void exportCsv(@RequestParam(value = "tableId", required = false) Long tableId,
-                                          @RequestParam(value = "begin") Long begin,
-                                          @RequestParam(value = "end") Long end, HttpServletRequest request, HttpServletResponse resp) {
+                          @RequestParam(value = "begin") Long begin,
+                          @RequestParam(value = "end") Long end, HttpServletRequest request, HttpServletResponse resp) {
         CSVWriter writer = null;
         try {
             //根据当前用户获取切换的门店信息
             String sessionName = (String) ValidatorUtil.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION);
             MerchantStore merchantStore = (MerchantStore) request.getSession().getAttribute(sessionName);
             PageRequest pageRequest = new PageRequest();
+            //毫秒数乘以1000保证转换后的时间正常
             pageRequest.setBegin(DateTimeUtils.toMillis(begin * 1000));
             pageRequest.setEnd(DateTimeUtils.toMillis(end * 1000));
             pageRequest.setStoreId(merchantStore.getId());
             pageRequest.setTableId(tableId);
+            //我们默认只输出前5W条数据
+            pageRequest.setCount(MAX_EXPORT_COUNT);
             PageResult<Evaluation> pageResult = evaluationManageService.pageList(pageRequest);
             resp.setHeader("Content-type", "text/csv;charset=gb2312");
             resp.addHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(DateTimeUtils.toShortDateTime(new Date()) + ".csv", "utf8"));

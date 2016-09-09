@@ -50,6 +50,7 @@ public class EvaluationDaoImpl extends GenericEntityDaoImpl<Long, Evaluation> im
         if (pageRequest.getEnd() != null) {
             query.from(qEvaluation).where(qEvaluation.evaluCreated.before(pageRequest.getEnd()));
         }
+        query.orderBy(qEvaluation.id.desc());
         evaluationPageResult.setRecordsTotal(query.fetchCount());
         if (pageRequest.getCount() > 0) {
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
