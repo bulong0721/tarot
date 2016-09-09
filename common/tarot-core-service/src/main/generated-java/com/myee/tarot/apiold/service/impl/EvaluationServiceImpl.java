@@ -4,8 +4,11 @@ import com.myee.tarot.apiold.dao.EvaluationDao;
 import com.myee.tarot.apiold.domain.Evaluation;
 import com.myee.tarot.apiold.service.EvaluationService;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.Collection;
 
 /**
  * Created by Chay on 2016/8/10.
@@ -24,5 +27,16 @@ public class EvaluationServiceImpl extends GenericEntityServiceImpl<Long, Evalua
     @Override
     public Evaluation getLatestByTableId(Long tableId){
         return evaluationDao.getLatestByTableId(tableId);
+    }
+
+    @Override
+    public Collection getFeelAverage(PageRequest pageRequest) {
+        return evaluationDao.getFeelAverage(pageRequest);
+    }
+
+    @Override
+    public PageResult<Evaluation> listInPage(PageRequest pageRequest) {
+        PageResult<Evaluation> evaluationPageResult = evaluationDao.listInPage(pageRequest);
+        return evaluationPageResult;
     }
 }
