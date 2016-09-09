@@ -49,6 +49,11 @@ public class EvaluationManageController extends BaseController {
     private static final int SEARCH = 1;
 
     private static final int EXPORT = 2;
+
+    private static final int AVG = 1;
+
+    private static final int DETAIL_LIST = 2;
+
     /**
      * 保存服务评价接口,30s之内重复提交的评价会覆盖，即30s之内只有最后一条评价有效
      *
@@ -121,11 +126,12 @@ public class EvaluationManageController extends BaseController {
      */
     @RequestMapping(value = "/admin/superman/evaluation/list", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxPageableResponse listPage(PageRequest pageRequest,
+    public AjaxPageableResponse listDetailByPage(
             @RequestParam(value = "tableId", required = false) Long tableId,
             @RequestParam(value = "begin", required = false) Long begin,
             @RequestParam(value = "end", required = false) Long end, HttpServletRequest request) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
+        PageRequest pageRequest = new PageRequest();
         //根据当前用户获取切换的门店信息
         String sessionName = (String) ValidatorUtil.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION);
         if (sessionName == null || request.getSession().getAttribute(sessionName) == null) {
@@ -157,8 +163,9 @@ public class EvaluationManageController extends BaseController {
         pageRequest.setTableId(tableId);
         pageRequest.setStoreId(merchantStore.getId());
         //查询评论详细
-        PageResult<Evaluation> pageResult = evaluationManageService.pageList(pageRequest);
-        Map map = calculateAvg(pageResult, SEARCH);
+        PageResult<Evaluation> pageResultAvg = evaluationManageService.pageList(pageRequest, AVG);
+        PageResult<Evaluation> pageResultList = evaluationManageService.pageList(pageRequest, DETAIL_LIST);
+        Map map = calculateAvg(pageResultAvg, SEARCH);
         //为了前端评分参数显示不为NaN(not a number)，判断当查询结果为空时，扔个0或null就行了
         if (null != map && map.size() > 0) {
         } else {
@@ -169,12 +176,11 @@ public class EvaluationManageController extends BaseController {
             map.put("feelService", 0);
         }
         resp.setDataMap(map);
-
-        List<Evaluation> evaluationList = pageResult.getList();
+        List<Evaluation> evaluationList = pageResultList.getList();
         for (Evaluation evaluation : evaluationList) {
             resp.addDataEntry(objectToEntry(evaluation));
         }
-        resp.setRecordsTotal(pageResult.getRecordsTotal());
+        resp.setRecordsTotal(pageResultList.getRecordsTotal());
         resp.setStatus(AjaxPageableResponse.RESPONSE_STATUS_SUCCESS);
         resp.setStatusMessage("查询成功");
         return resp;
@@ -216,9 +222,10 @@ public class EvaluationManageController extends BaseController {
             pageRequest.setTableId(tableId);
             //我们默认只输出前5W条数据
             pageRequest.setCount(MAX_EXPORT_COUNT);
-            PageResult<Evaluation> pageResult = evaluationManageService.pageList(pageRequest);
+            PageResult<Evaluation> pageResultAvg = evaluationManageService.pageList(pageRequest, AVG);
+            PageResult<Evaluation> pageResultList = evaluationManageService.pageList(pageRequest, DETAIL_LIST);
             //计算平均值
-            Map map = calculateAvg(pageResult, EXPORT);
+            Map map = calculateAvg(pageResultAvg, EXPORT);
             resp.setHeader("Content-type", "text/csv;charset=gb2312");
             resp.addHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(DateTimeUtils.toShortDateTime(new Date()) + ".csv", "utf8"));
             writer = new CSVWriter(resp.getWriter());
@@ -247,7 +254,7 @@ public class EvaluationManageController extends BaseController {
                     null,
                     null
             });
-            List<Evaluation> list = pageResult.getList();
+            List<Evaluation> list = pageResultList.getList();
             for (int i = 0; i < list.size(); i++) {
                 //写csv文件
                 writeCsvFile(writer, list.get(i), i);
@@ -270,10 +277,10 @@ public class EvaluationManageController extends BaseController {
                 StringUtil.nullToString(evaluation.getTable().getStore().getMerchant().getName()),
                 StringUtil.nullToString(evaluation.getTable().getStore().getName()),
                 StringUtil.nullToString(evaluation.getTable().getName()),
-                StringUtil.nullToString(df.format((float)evaluation.getFeelWhole()/20)),
-                StringUtil.nullToString(df.format((float)evaluation.getFeelFlavor()/20)),
-                StringUtil.nullToString(df.format((float)evaluation.getFeelService()/20)),
-                StringUtil.nullToString(df.format((float)evaluation.getFeelEnvironment()/20)),
+                StringUtil.nullToString(df.format((float) evaluation.getFeelWhole() / 20)),
+                StringUtil.nullToString(df.format((float) evaluation.getFeelFlavor() / 20)),
+                StringUtil.nullToString(df.format((float) evaluation.getFeelService() / 20)),
+                StringUtil.nullToString(df.format((float) evaluation.getFeelEnvironment() / 20)),
                 StringUtil.nullToString(DateTimeUtils.getDefaultDateString(evaluation.getEvaluCreated())),
                 StringUtil.nullToString(evaluation.getMealsRemark()),
                 StringUtil.nullToString(evaluation.getDeviceRemark())
@@ -308,31 +315,36 @@ public class EvaluationManageController extends BaseController {
             }
         }
         //因为存的参数放大了20倍，我们除以2后给前端，前端除以10即可
-        if (list.size() > 0 && type == SEARCH) {
-            if (feelWhole > 0)
-                feelWhole = feelWhole / count / 2;
-            if (feelEnvironment > 0)
-                feelEnvironment = feelEnvironment / count / 2;
-            if(feelFlavor > 0)
-                feelFlavor = feelFlavor / count / 2;
-            if (feelService > 0)
-                feelService = feelService / count / 2;
-        } else {
-            if (feelWholeF > 0)
-                feelWholeF = feelWholeF / count / 20;
-            if (feelEnvironmentF > 0)
-                feelEnvironmentF = feelEnvironmentF / count / 20;
-            if(feelFlavorF > 0)
-                feelFlavorF = feelFlavorF / count / 20;
-            if (feelServiceF > 0)
-                feelServiceF = feelServiceF / count / 20;
+        if (list.size() > 0) {
+            switch (type) {
+                case 1: //查询
+                    if (feelWhole > 0)
+                        feelWhole = feelWhole / count / 2;
+                    if (feelEnvironment > 0)
+                        feelEnvironment = feelEnvironment / count / 2;
+                    if (feelFlavor > 0)
+                        feelFlavor = feelFlavor / count / 2;
+                    if (feelService > 0)
+                        feelService = feelService / count / 2;
+                    break;
+                case 2: //导出
+                    if (feelWholeF > 0)
+                        feelWholeF = feelWholeF / count / 20;
+                    if (feelEnvironmentF > 0)
+                        feelEnvironmentF = feelEnvironmentF / count / 20;
+                    if (feelFlavorF > 0)
+                        feelFlavorF = feelFlavorF / count / 20;
+                    if (feelServiceF > 0)
+                        feelServiceF = feelServiceF / count / 20;
+                    break;
+            }
         }
         Map<String, Object> map = Maps.newHashMap();
         DecimalFormat df = new DecimalFormat("0.0");//格式化小数，不足的补0
         map.put("feelWhole", type == SEARCH ? feelWhole : df.format(feelWholeF));
         map.put("feelEnvironment", type == SEARCH ? feelEnvironment : df.format(feelEnvironmentF));
         map.put("feelFlavor", type == SEARCH ? feelFlavor : df.format(feelFlavorF));
-        map.put("feelService",type == SEARCH ? feelService : df.format(feelServiceF));
+        map.put("feelService", type == SEARCH ? feelService : df.format(feelServiceF));
         return map;
     }
 }
