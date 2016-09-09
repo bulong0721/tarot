@@ -252,8 +252,8 @@ h5 {
 .nav.nav-second-level.collapse[style] {
     height: auto !important;
 }
-.nav.child_menu {padding-left: 36px;}
-.nav.child_menu li {padding-left: 36px;}
+.nav.child_menu {padding-left: 28px;}
+
 .nav.child_menu li:after {
     border-left: 1px solid #425668;
     bottom: 0;
@@ -276,7 +276,7 @@ h5 {
     border-radius: 50%;
 }
 .nav.child_menu>li>a {
-    padding: 9px;
+    padding: 9px 9px 9px 36px;
 }
 .nav.child_menu>li>a:hover {background: none}
 .nav-header a {
