@@ -299,6 +299,26 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 }
             }
         })
+        .state('superman.statistic', {
+            abstract: true,
+            url: "/statistic",
+            template: "<div ui-view></div>",
+            data: {pageTitle: '统计'}
+        })
+        .state('superman.statistic.serviceEvaluation', {
+            url: "/serviceEvaluation",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'superMenuMgrCtrl',
+            data: {
+                subTitle: '服务评价',
+                datatable: 'assets/mvc/cater/view/super_menu_datatable.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
+                }
+            }
+        })
         .state('superman.storeResource', {
             abstract: true,
             url: "/storeResource",
