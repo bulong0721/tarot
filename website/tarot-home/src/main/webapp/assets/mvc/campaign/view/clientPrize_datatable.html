@@ -45,7 +45,7 @@
                     <td class="center"><span ng-class="{true: 'label label-primary', false: 'label label-danger'}[row.activeStatus]">{{row.activeStatus?'开启':'关闭'}}</span></td>
                     <td class="center"><span class="btn btn-sm btn-success upMenuBut">
                         <i class="fa fa-upload bigger-120"></i><span>导入兑换码</span>
-                        <input type="file" onchange="angular.element(this).scope().checkCodeUp(this)"/>
+                        <input type="file" data-id="{{row.id}}" onchange="angular.element(this).scope().checkCodeUp(this,this.getAttribute('data-id'))"/>
                     </span></td>
                     <td class="center">
                         <a ng-click="goEditor($index)"><i class="btn-icon fa fa-pencil"></i></a>

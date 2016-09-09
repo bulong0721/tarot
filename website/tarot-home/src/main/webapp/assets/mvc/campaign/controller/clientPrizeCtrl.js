@@ -213,7 +213,8 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
 
     });
 
-    $scope.checkCodeUp = function (file) {
+    $scope.checkCodeUp = function (file,id) {
         console.log(file)
+        console.log(id)
     }
 }
