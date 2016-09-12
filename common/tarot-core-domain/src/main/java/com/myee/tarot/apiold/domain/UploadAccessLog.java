@@ -24,7 +24,7 @@ public class UploadAccessLog extends GenericEntity<Long, UploadAccessLog> {
 	private com.myee.tarot.catering.domain.Table table;
 
 	@Column(name = "ACTION_ID")
-	private Long actionId;//功能ID
+	private Long actionId;//功能ID,不用manyToOne(外键)关联UploadAction是因为app那边上传的时候有可能ID在库中还没有录入，而导致数据插入失败。
 
 	@Column(name = "CLICK_NUM",columnDefinition = "TINYINT")
 	private Integer clickNum;//点击次数

@@ -467,7 +467,10 @@ public class FilesController {
      *                查找文件规则:升级包都是差分升级包，由1升2,2再升3....，所以查询版本号的时候，是取当前版本号+1的升级包
      * @return
      */
+    @RequestMapping("api/files/boardUpdate")
+    @ResponseBody
     public AjaxResponse boardUpdateUrl(String version) {
+        AjaxResponse resp = AjaxResponse.success();
         try {
             if (StringUtil.isBlank(version)) {
                 return AjaxResponse.failed(-1, "版本号为空");
@@ -480,6 +483,7 @@ public class FilesController {
             String softwareVersion = calSoftwareVersionNext(versionSplit[1]);
             String hardwareVersion = versionSplit[2];
             File dest = FileUtils.getFile(DOWNLOAD_HOME, Constants.BOARD_UPDATE_BASEPATH, productName + "/" + hardwareVersion + "/" + softwareVersion);
+            LOGGER.info("文件保存路径:"+dest.getPath());
             //只取zip结尾的文件
             FileFilter fileFilter = new FileFilter() {
                 @Override
@@ -491,11 +495,13 @@ public class FilesController {
                 }
             };
             File[] listFile = dest.listFiles(fileFilter);
-            if(listFile.length != 1){
-                return AjaxResponse.failed(-1,"升级文件数量不匹配");
+            if(listFile == null || listFile.length != 1){
+                return AjaxResponse.failed(-1,"升级文件未准备好");
             }
-            return null;
-
+            String downloadUrl = DOWNLOAD_HTTP + Constants.BOARD_UPDATE_BASEPATH + productName + "/" + hardwareVersion + "/" + softwareVersion + "/" + listFile[0].getName();
+            resp.addEntry("downloadPath", downloadUrl);
+            LOGGER.info("文件下载url:" + downloadUrl);
+            return resp;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return AjaxResponse.failed(-1, "出错");
@@ -512,9 +518,10 @@ public class FilesController {
     private String calSoftwareVersionNext(String softVersion) throws Exception{
         int length = softVersion.length();
         //版本号前缀
-        String preSoftVersion = softVersion.substring(1, length - 4);
+        String preSoftVersion = softVersion.substring(0, length - 3);
         //当前软件版本号的数字
         int thisVersion = Integer.parseInt(softVersion.substring(length - 3));
-        return preSoftVersion + (thisVersion + 1);
+        LOGGER.info("格式化字符串输出:"+String.format("%03d",thisVersion + 1 ));
+        return preSoftVersion + String.format("%03d",thisVersion + 1 );
     }
 }
