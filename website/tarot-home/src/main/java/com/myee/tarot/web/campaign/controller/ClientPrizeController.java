@@ -93,21 +93,17 @@ public class ClientPrizeController extends BaseController {
                 if (clientPrize.getId() != null) {
                     int remainInPool = clientPrizeGetInfoService.countUnGetByPrizeId(clientPrize.getId());
                     total = total.intValue() - remainInPool;
-                    if(total< 0) {
-                        total = 0;
-                    }
                 }
+                if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_THANKYOU) {
+                    clientPrize.setPhonePrizeType(null);
+                    clientPrize.setName("谢谢惠顾");
+                }
+            } else {
+                clientPrize.setTotal(null);
+                clientPrize.setPhonePrizeType(null);
             }
             clientPrize.setLeftNum(total);
             clientPrize.setStore(merchantStore);
-            if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_SCANCODE) {
-                clientPrize.setLeftNum(null);
-                clientPrize.setTotal(null);
-                clientPrize.setPhonePrizeType(null);
-            } else if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_THANKYOU) {
-                clientPrize.setPhonePrizeType(null);
-                clientPrize.setName("谢谢惠顾");
-            }
             ClientPrize updatePrize = clientPrizeService.update(clientPrize);
             resp.addEntry("updateResult", objectToEntry(updatePrize));
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);

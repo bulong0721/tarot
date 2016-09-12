@@ -13,4 +13,6 @@ public interface ClientPrizeTicketDao extends GenericEntityDao<Long,ClientPrizeT
     List<ClientPrizeTicket> listLimitTickets(int limit,Long prizeId);
 
     Long countTickets(Long prizeId,String name,Date startDate,Date endDate);
+
+    List<ClientPrizeTicket> listUnGet();
 }
