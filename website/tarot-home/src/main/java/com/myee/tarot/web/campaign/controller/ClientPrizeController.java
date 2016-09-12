@@ -5,8 +5,10 @@ import com.myee.tarot.apiold.eum.TemplateSMSType;
 import com.myee.tarot.apiold.service.SendRecordService;
 import com.myee.tarot.campaign.service.ClientPrizeGetInfoService;
 import com.myee.tarot.campaign.service.ClientPrizeService;
+import com.myee.tarot.campaign.service.ClientPrizeTicketService;
 import com.myee.tarot.clientprize.domain.ClientPrize;
 import com.myee.tarot.clientprize.domain.ClientPrizeGetInfo;
+import com.myee.tarot.clientprize.domain.ClientPrizeTicket;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.*;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
@@ -16,13 +18,17 @@ import com.myee.tarot.web.ClientAjaxResult;
 import com.myee.tarot.web.apiold.controller.BaseController;
 import com.myee.tarot.web.apiold.util.AlidayuSmsClient;
 import com.myee.tarot.web.apiold.util.IPUtils;
+import jodd.io.FileNameUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.*;
 
 /**
@@ -35,6 +41,8 @@ public class ClientPrizeController extends BaseController {
     private ClientPrizeService clientPrizeService;
     @Autowired
     private ClientPrizeGetInfoService clientPrizeGetInfoService;
+    @Autowired
+    private ClientPrizeTicketService clientPrizeTicketService;
     @Autowired
     private ThreadPoolTaskExecutor taskExecutor;
     @Autowired
@@ -77,11 +85,17 @@ public class ClientPrizeController extends BaseController {
             }
             //添加 修改
             MerchantStore merchantStore = (MerchantStore) request.getSession().getAttribute(sessionName);
-            int total = clientPrize.getTotal();
-            //设置剩余数量  防止重置超奖池
-            if (clientPrize.getId() != null) {
-                int remainInPool = clientPrizeGetInfoService.countUnGetByPrizeId(clientPrize.getId());
-                total = total - remainInPool;
+            Integer total = null;
+            if(clientPrize.getType() != Constants.CLIENT_PRIZE_TYPE_SCANCODE){
+                total = clientPrize.getTotal();
+                //设置剩余数量  防止重置超奖池
+                if (clientPrize.getId() != null) {
+                    int remainInPool = clientPrizeGetInfoService.countUnGetByPrizeId(clientPrize.getId());
+                    total = total.intValue() - remainInPool;
+                    if(total< 0) {
+                        total = 0;
+                    }
+                }
             }
             clientPrize.setLeftNum(total);
             clientPrize.setStore(merchantStore);
@@ -255,6 +269,65 @@ public class ClientPrizeController extends BaseController {
             e.printStackTrace();
         }
         return AjaxResponse.failed(-1);
+
+    }
+
+    /**
+     * 奖券兑换码 txt文件上传分析
+     * @param files
+     * @param prizeId
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = {"admin/clientPrize/checkCodeUpload", "shop/clientPrize/checkCodeUpload"}, method = RequestMethod.POST)
+    public AjaxResponse checkCodeUpload(@RequestParam("file") CommonsMultipartFile[] files, @RequestParam("prizeId")Long prizeId ,HttpServletRequest request){
+        LOGGER.info("----奖券兑换码上传----,对应奖券ID:" + prizeId);
+        for (int i = 0; i < files.length; i++) {
+            String fileName = files[i].getOriginalFilename();
+            LOGGER.info("fileName---------->" + fileName);
+            if (!files[i].isEmpty()) {
+                String type = files[i].getContentType();
+                if(!type.equals("text/plain")){
+                    return AjaxResponse.failed( -1,"请上传txt文档，其他格式不支持");
+                }
+                // name_start_end 按照上述格式上传 分解 获取有效的时限
+                String newFileName = FileNameUtil.removeExtension(fileName);
+                String[] nameInfo = newFileName.split("_");
+                Date startDate = DateTimeUtils.getDateByString(nameInfo[1], DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT);
+                Date endDate = DateTimeUtils.getDateByString(nameInfo[2], DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT);
+                if(startDate==null || endDate == null){
+                    return AjaxResponse.failed(-1,"上传的txt文档名不规范");
+                }
+                int startTime = (int) System.currentTimeMillis();
+                try {
+                    BufferedReader d = new BufferedReader(new InputStreamReader(files[i].getInputStream(),"utf-8"));
+                    String valueString = null;
+                    while ((valueString = d.readLine())!=null) {
+                        //先过滤判定是否存在
+                        boolean isExistTicket = clientPrizeTicketService.isExistPrizeTicket(prizeId,valueString,startDate,endDate);
+                        if(!isExistTicket){
+                            ClientPrizeTicket ticket = new ClientPrizeTicket();
+                            ClientPrize prize = clientPrizeService.findById(prizeId);
+                            ticket.setPrize(prize);
+                            ticket.setTicketCode(valueString);
+                            ticket.setStartDate(startDate);
+                            ticket.setEndDate(endDate);
+                            clientPrizeTicketService.update(ticket);
+                        }
+                    }
+                    d.close();
+                    int finalTime = (int) System.currentTimeMillis();
+                    LOGGER.info( (finalTime - startTime) +"");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    LOGGER.error("上传出错:"+e.getMessage());
+                    return AjaxResponse.failed(-1, "糟糕,服务器出错了");
+                }
+            }
+        }
+
+        return AjaxResponse.success("上传成功");
 
     }
 
@@ -453,9 +526,21 @@ public class ClientPrizeController extends BaseController {
                 String[] phones = {phoneNum.toString()};
                 String content = null;
                 if (priceGetInfo.getPrice().getPhonePrizeType() == Constants.CLIENT_PRICE_PHONE_OBJECT) {
-                    content = "恭喜你获得" + priceGetInfo.getPrizeName() + ",兑换码为" + priceGetInfo.getCheckCode() + ",兑换时间为" + DateTimeUtils.getDateString(priceGetInfo.getPrizeStartDate(), DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT) + "至" + DateTimeUtils.getDateString(priceGetInfo.getPrizeEndDate(), DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT);
+                    content = "恭喜您获得" + priceGetInfo.getPrizeName() + "一份,凭此短信到餐厅服务台领取,兑奖码：" + priceGetInfo.getCheckCode()+ ",当天领取有效,转发无效";
                 } else if (priceGetInfo.getPrice().getPhonePrizeType() == Constants.CLIENT_PRICE_PHONE_CINEMA) {
-                    content = "恭喜获得电影票";
+                    //查取2张电影券票
+                    int limit = 2;
+                    List<ClientPrizeTicket> tickets = clientPrizeTicketService.listLimitTickets(limit,priceGetInfo.getPrice().getId());
+                    if(tickets!=null && tickets.size() == 2){
+                        //修改电影票的状态
+                        for (ClientPrizeTicket ticket : tickets) {
+                            ticket.setStatus(Constants.CLIENT_PRIZE_TICKET_NO);
+                            clientPrizeTicketService.update(ticket);
+                        }
+                        content = "恭喜您获得" + priceGetInfo.getPrizeName() + "2张,兑换码为" + tickets.get(0).getTicketCode()+","+ tickets.get(1).getTicketCode()+ ",有效期至"+ DateTimeUtils.getDateString(tickets.get(1).getEndDate(),DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT) + "兑换方法：" ;
+                    } else {
+                        return ClientAjaxResult.failed("你手慢了，电影票已被领取完");
+                    }
                 }
                 Runnable task = AlidayuSmsClient.sendSMS(
                         IPUtils.getIpAddr(getRequest()),

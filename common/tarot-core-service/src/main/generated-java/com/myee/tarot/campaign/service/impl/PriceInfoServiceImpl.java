@@ -91,35 +91,33 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
         priceInfo.setStatus(Constants.PRICEINFO_UNUSED);
         priceInfo.setGetDate(new Date());
         MerchantActivity activity = merchantActivityService.findStoreActivity(storeId);
-        // 从redis中获取抽奖规则list,判定list是否为空，为空后直接修改活动状态，直接为结束
-        //List<Integer> priceList = redisUtil.getList(Constants.PRICEDRAW + "_"+ storeId,Integer.class);
         //改从数据库直接获取
-        List<Integer> priceList = JSON.parseArray(activity.getPriceList(), Integer.class);
-        if (priceList == null || priceList.size() == 0) {
-            // MerchantActivity merchantActivity = merchantActivityService.findStoreActivity(storeId);
-            if (activity.getActivityStatus() != Constants.ACITIVITY_END) {
-                activity.setActivityStatus(Constants.ACITIVITY_END);
-                merchantActivityService.update(activity);
+        if (activity != null) {
+            List<Integer> priceList = JSON.parseArray(activity.getPriceList(), Integer.class);
+            if (priceList == null || priceList.size() == 0) {
+                // MerchantActivity merchantActivity = merchantActivityService.findStoreActivity(storeId);
+                if (activity.getActivityStatus() != Constants.ACITIVITY_END) {
+                    activity.setActivityStatus(Constants.ACITIVITY_END);
+                    merchantActivityService.update(activity);
+                }
+                mapInfo.put("errorString","活动已结束");
+                mapInfo.put("status", -1);
+                return mapInfo;
             }
-            mapInfo.put("errorString","活动已结束");
-            mapInfo.put("status", -1);
+            PriceInfo info = getRandomPrice(priceInfo, priceList, activity.getPrices());
+            //更新数据库List
+            activity.setPriceList(JSON.toJSONString(priceList));
+            merchantActivityService.update(activity);
+            super.save(priceInfo);
+            PriceInfo result = super.findById(priceInfo.getId());
+            mapInfo.put("status",0);
+            mapInfo.put("result",result);
+            return mapInfo;
+        } else {
+            mapInfo.put("status",-1);
+            mapInfo.put("errorString","该商户暂无奖券");
             return mapInfo;
         }
-        PriceInfo info = getRandomPrice(priceInfo, priceList, activity.getPrices());
-        // 更新redis的list
-        /*if(priceList.size()==0){
-            redisUtil.delete(Constants.PRICEDRAW + "_" + storeId);
-        }else{
-            redisUtil.set(Constants.PRICEDRAW + "_" + storeId, priceList, 365, TimeUnit.DAYS);
-        }*/
-        //更新数据库List
-        activity.setPriceList(JSON.toJSONString(priceList));
-        merchantActivityService.update(activity);
-        super.save(priceInfo);
-        PriceInfo result = super.findById(priceInfo.getId());
-        mapInfo.put("status",0);
-        mapInfo.put("result",result);
-        return mapInfo;
     }
 
     @Override
