@@ -221,8 +221,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             data: {
                 subTitle: '资源管理',
                 datatable: 'assets/mvc/explorer/view/explorer_datatable.html',
-                editor: 'assets/mvc/explorer/view/explorer_push.html',
-                other1: 'assets/mvc/explorer/view/explorer_editor.html'
+                editor: 'assets/mvc/explorer/view/explorer_editor.html',
+                other1: 'assets/mvc/explorer/view/explorer_push.html'
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
