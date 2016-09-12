@@ -180,7 +180,6 @@ public class EvaluationManageController extends BaseController {
         map.put("id", evaluation.getId());
         map.put("active", evaluation.getActive());
         map.put("deviceRemark", evaluation.getDeviceRemark());
-        map.put("evaluCreated", evaluation.getEvaluCreated());
         map.put("feelEnvironment", evaluation.getFeelEnvironment() / 2);
         map.put("feelWhole", evaluation.getFeelWhole() / 2);
         map.put("feelFlavor", evaluation.getFeelFlavor() / 2);
