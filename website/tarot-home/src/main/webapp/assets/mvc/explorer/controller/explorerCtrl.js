@@ -329,7 +329,8 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
     };
     //formly配置项push
     $scope.formDataPusher = {
-        fields: mgrDataPusher.fields
+        fields: mgrDataPusher.fields,
+        model:{}
     };
 
     //formly配置项editor

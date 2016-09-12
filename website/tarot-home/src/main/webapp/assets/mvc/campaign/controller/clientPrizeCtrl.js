@@ -169,7 +169,8 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
             read: './clientPrize/pagingList',
             update: './saveClientPrize',
             delete: './deleteClientPrize',
-            upload: './files/create'
+            upload: './files/create',
+            uploadCheckCode:'./clientPrize/checkCodeUpload'
         }
     };
     cTables.initNgMgrCtrl(mgrData, $scope);
@@ -216,5 +217,17 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
     $scope.checkCodeUp = function (file,id) {
         console.log(file)
         console.log(id)
+        var fd = new FormData();
+        fd.append('file', file.files[0]);
+        fd.append('prizeId',id);
+        $resource(mgrData.api.uploadCheckCode).save({},fd).$promise.then(function(res){
+            console.log(res);
+            if (0 != res.status) {
+                $scope.toasterManage($scope.toastError, res);
+                return;
+            } else {
+                $scope.toasterManage($scope.toastUploadSucc);
+            }
+        });
     }
 }
