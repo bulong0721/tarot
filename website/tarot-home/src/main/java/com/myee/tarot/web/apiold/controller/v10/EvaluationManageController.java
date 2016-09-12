@@ -121,7 +121,7 @@ public class EvaluationManageController extends BaseController {
     /**
      * 分页/不分页显示评论list
      */
-    @RequestMapping(value = "/admin/superman/evaluation/list", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/superman/evaluation/list", method = RequestMethod.GET)
     @ResponseBody
     public AjaxPageableResponse listDetailByPage(WhereRequest whereRequest, HttpServletRequest request) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
@@ -192,7 +192,7 @@ public class EvaluationManageController extends BaseController {
         return map;
     }
 
-    @RequestMapping(value = "/admin/superman/evaluation/exportCsv", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/superman/evaluation/exportCsv", method = RequestMethod.GET)
     @ResponseBody
     public void exportCsv(WhereRequest whereRequest, HttpServletRequest request, HttpServletResponse resp) {
         CSVWriter writer = null;
