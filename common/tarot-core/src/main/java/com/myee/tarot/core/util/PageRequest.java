@@ -16,14 +16,6 @@ public class PageRequest implements Serializable {
 
     private String queryName;
 
-    private Long tableId;
-
-    private Date begin;
-
-    private Date end;
-
-    private Long storeId;
-
     public String getQueryName() {
         return queryName;
     }
@@ -53,37 +45,5 @@ public class PageRequest implements Serializable {
 
     public int getPage() {
         return page;
-    }
-
-    public Long getTableId() {
-        return tableId;
-    }
-
-    public void setTableId(Long tableId) {
-        this.tableId = tableId;
-    }
-
-    public Date getBegin() {
-        return begin;
-    }
-
-    public void setBegin(Date begin) {
-        this.begin = begin;
-    }
-
-    public Date getEnd() {
-        return end;
-    }
-
-    public void setEnd(Date end) {
-        this.end = end;
-    }
-
-    public Long getStoreId() {
-        return storeId;
-    }
-
-    public void setStoreId(Long storeId) {
-        this.storeId = storeId;
     }
 }

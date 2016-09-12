@@ -4,8 +4,8 @@ import com.myee.tarot.apiold.dao.EvaluationDao;
 import com.myee.tarot.apiold.domain.Evaluation;
 import com.myee.tarot.apiold.service.EvaluationService;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
-import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.WhereRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,8 +29,8 @@ public class EvaluationServiceImpl extends GenericEntityServiceImpl<Long, Evalua
     }
 
     @Override
-    public PageResult<Evaluation> pageList(PageRequest pageRequest, int type) {
-        PageResult<Evaluation> evaluationPageResult = evaluationDao.pageList(pageRequest, type);
+    public PageResult<Evaluation> pageList(WhereRequest whereRequest, int type) {
+        PageResult<Evaluation> evaluationPageResult = evaluationDao.pageList(whereRequest, type);
         return evaluationPageResult;
     }
 }
