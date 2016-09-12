@@ -7,7 +7,7 @@ angular.module('myee', [])
 explorerCtrl.$inject = ['$scope', '$resource', '$filter','cfromly','Constants','cAlerts','toaster'];
 function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toaster) {
 
-    var iDatatable = 0, iPush = 1, iEditor = 2;
+    var iDatatable = 0, iPush = 2, iEditor = 1;
     $scope.activeTab = iDatatable;
     var nodeTypes =[{name:'目录',value:0},{name:'文件',value:1}];
     $scope.treeControl = {};

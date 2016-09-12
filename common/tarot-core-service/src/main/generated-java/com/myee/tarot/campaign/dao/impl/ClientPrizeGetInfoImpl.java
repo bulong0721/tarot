@@ -56,7 +56,7 @@ public class ClientPrizeGetInfoImpl extends GenericEntityDaoImpl<Long, ClientPri
         if(storeId != null){
             query.where(qClientPrizeGetInfo.price.store.id.eq(storeId));
         }
-        query.where(qClientPrizeGetInfo.status.eq(Constants.CLIENT_PRIZEINFO_STATUS_USED));
+        query.where(qClientPrizeGetInfo.status.eq(Constants.CLIENT_PRIZEINFO_STATUS_USED)).orderBy(qClientPrizeGetInfo.getDate.desc());
         pageList.setRecordsTotal(query.fetchCount());
         if( pageRequest.getCount() > 0){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
