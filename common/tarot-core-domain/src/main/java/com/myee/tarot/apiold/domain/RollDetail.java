@@ -17,21 +17,11 @@ public class RollDetail extends GenericEntity<Long, RollDetail> {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TABLE_ID")
-	private Table table;
-
-	@Column(name = "FLAG",columnDefinition = "TINYINT")
-	private Integer flag;
-
-	@Column(name = "TEMPLATENUM",length = 20)
-	private String templateNum;
+	@Column(name = "TITLE",length = 255)
+	private String title;
 
 	@Column(name = "DESCRIPTION",length = 255)
 	private String description;
-
-	@Column(name = "PARTNER")
-	private Integer partner;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATED")
@@ -41,10 +31,6 @@ public class RollDetail extends GenericEntity<Long, RollDetail> {
 	private Long createdL;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "STORE_ID")
-	private MerchantStore store;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ROLL_MAIN_ID")
 	private RollMain rollMain;
 
@@ -52,8 +38,22 @@ public class RollDetail extends GenericEntity<Long, RollDetail> {
 	@JoinColumn(name = "PIC_ID")
 	private Picture pic;
 
+	@Column(name = "ORDER_SEQ",columnDefinition = "TINYINT")
+	private Integer orderSeq;//轮播优先级
+
+	@Column(name = "ROLL_TIME",columnDefinition = "TINYINT")
+	private Integer rollTime;//轮播时间
+
 	public RollDetail(){
 
+	}
+
+	public Integer getRollTime() {
+		return rollTime;
+	}
+
+	public void setRollTime(Integer rollTime) {
+		this.rollTime = rollTime;
 	}
 
 	public Picture getPic() {
@@ -72,30 +72,6 @@ public class RollDetail extends GenericEntity<Long, RollDetail> {
 		this.id = id;
 	}
 
-	public Table getTable() {
-		return table;
-	}
-
-	public void setTable(Table table) {
-		this.table = table;
-	}
-
-	public Integer getFlag() {
-		return flag;
-	}
-
-	public void setFlag(Integer flag) {
-		this.flag = flag;
-	}
-
-	public String getTemplateNum() {
-		return templateNum;
-	}
-
-	public void setTemplateNum(String templateNum) {
-		this.templateNum = templateNum;
-	}
-
 	public String getDescription() {
 		return description;
 	}
@@ -104,12 +80,20 @@ public class RollDetail extends GenericEntity<Long, RollDetail> {
 		this.description = description;
 	}
 
-	public Integer getPartner() {
-		return partner;
+	public Integer getOrderSeq() {
+		return orderSeq;
 	}
 
-	public void setPartner(Integer partner) {
-		this.partner = partner;
+	public void setOrderSeq(Integer orderSeq) {
+		this.orderSeq = orderSeq;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public Date getCreated() {
@@ -126,14 +110,6 @@ public class RollDetail extends GenericEntity<Long, RollDetail> {
 
 	public void setCreatedL(Long createdL) {
 		this.createdL = createdL;
-	}
-
-	public MerchantStore getStore() {
-		return store;
-	}
-
-	public void setStore(MerchantStore store) {
-		this.store = store;
 	}
 
 	public RollMain getRollMain() {

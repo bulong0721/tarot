@@ -29,8 +29,8 @@ public class EvaluationServiceImpl extends GenericEntityServiceImpl<Long, Evalua
     }
 
     @Override
-    public PageResult<Evaluation> pageList(PageRequest pageRequest) {
-        PageResult<Evaluation> evaluationPageResult = evaluationDao.pageList(pageRequest);
+    public PageResult<Evaluation> pageList(PageRequest pageRequest, int type) {
+        PageResult<Evaluation> evaluationPageResult = evaluationDao.pageList(pageRequest, type);
         return evaluationPageResult;
     }
 }

@@ -4,6 +4,7 @@ package com.myee.tarot.apiold.domain;
 import com.myee.tarot.catering.domain.*;
 import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.core.GenericEntity;
+import com.myee.tarot.merchant.domain.MerchantStore;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -58,6 +59,10 @@ public class Material extends GenericEntity<Long, Material> {
 	@Column(name = "M_CREATED")
 	private Date mCreated;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "STORE_ID")
+	private MerchantStore store;
+
 	public Material(){
 
 	}
@@ -107,6 +112,14 @@ public class Material extends GenericEntity<Long, Material> {
 //	public void setTable(Table table) {
 //		this.table = table;
 //	}
+
+	public MerchantStore getStore() {
+		return store;
+	}
+
+	public void setStore(MerchantStore store) {
+		this.store = store;
+	}
 
 	public String getPreviewPath() {
 		return previewPath;

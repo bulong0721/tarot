@@ -11,5 +11,5 @@ import com.myee.tarot.core.util.PageResult;
 public interface EvaluationService extends GenericEntityService<Long, Evaluation> {
     Evaluation getLatestByTableId(Long tableId);
 
-    PageResult<Evaluation> pageList(PageRequest pageRequest);
+    PageResult<Evaluation> pageList(PageRequest pageRequest, int type);
 }

@@ -9,6 +9,7 @@ import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.web.apiold.util.CommonLoginParam;
 import com.myee.tarot.web.files.FileDTO;
 import com.myee.tarot.web.files.HotfixSetVo;
 import com.myee.tarot.web.files.HotfixVo;
@@ -274,12 +275,7 @@ public class FilesController {
             String storeIdStr;
             if(storeId == null ) {
                 String requestPath = request.getServletPath();
-                String sessionName = null;
-                if (requestPath.contains("/admin/")) {
-                    sessionName = Constants.ADMIN_STORE;
-                } else if (path.contains("/shop/")) {
-                    sessionName = Constants.CUSTOMER_STORE;
-                }
+                String sessionName = CommonLoginParam.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
                 MerchantStore merchantStore  = (MerchantStore) request.getSession().getAttribute(sessionName);
                 storeIdStr = String.valueOf(merchantStore.getId());
             }

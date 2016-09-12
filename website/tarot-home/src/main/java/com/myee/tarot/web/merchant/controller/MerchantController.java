@@ -19,6 +19,7 @@ import com.myee.tarot.profile.domain.Address;
 import com.myee.tarot.profile.domain.GeoZone;
 import com.myee.tarot.profile.service.GeoZoneService;
 import com.myee.tarot.core.util.StringUtil;
+import com.myee.tarot.web.apiold.util.CommonLoginParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -504,12 +505,7 @@ public class MerchantController {
         AjaxResponse resp = new AjaxResponse();
         try {
             String path = request.getServletPath();
-            String sessionName = null;
-            if(path.contains("/admin/")) {
-                sessionName = Constants.ADMIN_STORE;
-            }else if(path.contains("/shop/")){
-                sessionName = Constants.CUSTOMER_STORE;
-            }
+            String sessionName = CommonLoginParam.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
             //从session中读取merchantStore信息，如果为空，则提示用户先切换门店
             if (request.getSession().getAttribute(sessionName) == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);

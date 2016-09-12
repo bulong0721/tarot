@@ -23,6 +23,13 @@ public class AjaxPageableResponse extends AjaxResponse {
         recordsTotal = rows.size();
     }
 
+    public static AjaxPageableResponse failed(int statusCode, String statusMessage) {
+        AjaxPageableResponse response = new AjaxPageableResponse();
+        response.setStatus(statusCode);
+        response.setStatusMessage(statusMessage);
+        return response;
+    }
+
     public long getRecordsTotal() {
         return recordsTotal;
     }

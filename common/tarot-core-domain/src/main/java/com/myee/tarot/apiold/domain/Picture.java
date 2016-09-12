@@ -17,6 +17,10 @@ public class Picture extends GenericEntity<Long, Picture> {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
 	private Long id;
 
+	//预览路径
+	@Column(name = "PREVIEW_PATH",length = 255)
+	private String previewPath;
+
 	//本地路径
 	@Column(name = "PIC_PATH",length = 255)
 	private String picPath;
@@ -29,10 +33,10 @@ public class Picture extends GenericEntity<Long, Picture> {
 	@Column(name = "YEAR",columnDefinition = "TINYINT")
 	private Integer year;
 	//图片创建的年月天(作为文件夹分类用)
-	@Column(name = "MONTH",columnDefinition = "TINYINT")
+	@Column(name = "MONTH")
 	private Integer month;
 	//图片创建的年月天(作为文件夹分类用)
-	@Column(name = "DAY",columnDefinition = "TINYINT")
+	@Column(name = "DAY")
 	private Integer day;
 	//图片菜品种类（未定义）(作为文件夹分类用),0：未分类，1：优惠专区，2：广告图片，3：菜品图片,4:点点笔截图...
 	@Column(name = "KIND",columnDefinition = "TINYINT")
@@ -53,8 +57,29 @@ public class Picture extends GenericEntity<Long, Picture> {
 	@Column(name = "V_CREATED")
 	private Date vCreated;
 
+	//本店图片用，管理员查询的时候不受此字段限制
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "STORE_ID")
+	private MerchantStore store;
+
 	public Picture(){
 
+	}
+
+	public MerchantStore getStore() {
+		return store;
+	}
+
+	public void setStore(MerchantStore store) {
+		this.store = store;
+	}
+
+	public String getPreviewPath() {
+		return previewPath;
+	}
+
+	public void setPreviewPath(String previewPath) {
+		this.previewPath = previewPath;
 	}
 
 	public Long getId() {

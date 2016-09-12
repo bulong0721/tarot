@@ -94,11 +94,11 @@ function superMenuMgrCtrl($scope, cTables, cfromly,$resource,$filter) {
             }
         ],
         api: {
-            read: './catering/superMenu/paging',
-            update: './catering/superMenu/save',
-            delete: './catering/superMenu/delete',
+            read: './superman/superMenu/paging',
+            update: './superman/superMenu/save',
+            delete: './superman/superMenu/delete',
             upload: './files/create',
-            uploadMenu: './catering/superMenu/upload'
+            uploadMenu: './superman/superMenu/upload'
         }
     };
 
