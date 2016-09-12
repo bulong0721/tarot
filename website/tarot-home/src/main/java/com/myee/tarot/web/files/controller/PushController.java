@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.myee.djinn.dto.PushResourceDTO;
+import com.myee.djinn.endpoint.EndpointInterface;
 import com.myee.djinn.endpoint.OrchidService;
 import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
 import com.myee.tarot.admin.domain.AdminUser;
@@ -231,7 +232,7 @@ public class PushController {
     @RequestMapping(value = "admin/file/push", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse pushResource(@Valid @RequestBody PushResourceDTO pushResourceDTO, HttpServletRequest request) {
-        OrchidService eptService = null;
+        EndpointInterface endpointInterface = null;
         if (pushResourceDTO == null
                 || StringUtil.isNullOrEmpty(pushResourceDTO.getUniqueNo())
                 || pushResourceDTO.getAppId() == null
@@ -239,11 +240,11 @@ public class PushController {
             return AjaxResponse.failed(-1, "数据有误");
         }
         try {
-            eptService = serverBootstrap.getClient(OrchidService.class, pushResourceDTO.getUniqueNo());
+            endpointInterface = serverBootstrap.getClient(EndpointInterface.class, pushResourceDTO.getUniqueNo());
         } catch (Exception e) {
             return AjaxResponse.failed(-2, "连接客户端错误");
         }
-        if (eptService == null) {
+        if (endpointInterface == null) {
             return AjaxResponse.failed(-3, "获取接口出错");
         }
         if (pushResourceDTO.getContent() == null || pushResourceDTO.getContent().size() <= 0) {
@@ -254,7 +255,7 @@ public class PushController {
         try {
             MerchantStore merchantStore = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
             //入库
-            isSuccess = eptService.pushResource(pushResourceDTO);
+            isSuccess = endpointInterface.receiveNotice(pushResourceDTO);
             notification.setAppId(pushResourceDTO.getAppId());
             notification.setContent(JSONArray.toJSONString(pushResourceDTO.getContent()));
             notification.setStoragePath(pushResourceDTO.getStoragePath());
