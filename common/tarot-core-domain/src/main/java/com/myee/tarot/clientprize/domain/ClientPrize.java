@@ -46,7 +46,7 @@ public class ClientPrize extends GenericEntity<Long, ClientPrize>{
     @Transient
     private Integer leftNumCache; //暂时存储
 
-    @ManyToOne(targetEntity = MerchantStore.class, optional = false)
+    @ManyToOne(targetEntity = MerchantStore.class, optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "STORE_ID")
     @JSONField(serialize = false)
     private MerchantStore store; //发起活动商店

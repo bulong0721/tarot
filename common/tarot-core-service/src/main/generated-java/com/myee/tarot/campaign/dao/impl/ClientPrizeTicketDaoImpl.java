@@ -32,4 +32,12 @@ public class ClientPrizeTicketDaoImpl extends GenericEntityDaoImpl<Long, ClientP
         Long count = query.from(qClientPrizeTicket).where(qClientPrizeTicket.prize.id.eq(prizeId).and(qClientPrizeTicket.ticketCode.eq(name).and(qClientPrizeTicket.startDate.eq(startDate).and(qClientPrizeTicket.endDate.eq(endDate))))).fetchCount();
         return count;
     }
+
+    @Override
+    public List<ClientPrizeTicket> listUnGet() {
+        QClientPrizeTicket qClientPrizeTicket = QClientPrizeTicket.clientPrizeTicket;
+        JPQLQuery<ClientPrizeTicket> query = new JPAQuery(getEntityManager());
+        List<ClientPrizeTicket> tickets = query.from(qClientPrizeTicket).where(qClientPrizeTicket.status.eq(Constants.CLIENT_PRIZE_TICKET_YES)).fetch();
+        return tickets;
+    }
 }
