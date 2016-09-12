@@ -1,5 +1,6 @@
 package com.myee.tarot.web.apiold.controller.v10;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.myee.tarot.apiold.domain.Evaluation;
 import com.myee.tarot.apiold.eum.EvaluationLevelType;
@@ -164,11 +165,13 @@ public class EvaluationManageController extends BaseController {
             map.put("feelFlavor", 0);
             map.put("feelService", 0);
         }
-        resp.setDataMap(map);
         List<Evaluation> evaluationList = pageResultList.getList();
+        List<Map> evaluationMapList = Lists.newArrayList();
         for (Evaluation evaluation : evaluationList) {
-            resp.addDataEntry(objectToEntry(evaluation));
+            evaluationMapList.add(objectToEntry(evaluation));
         }
+        map.put("list",evaluationMapList);
+        resp.addDataEntry(map);
         resp.setRecordsTotal(pageResultList.getRecordsTotal());
         resp.setStatus(AjaxPageableResponse.RESPONSE_STATUS_SUCCESS);
         resp.setStatusMessage("查询成功");
