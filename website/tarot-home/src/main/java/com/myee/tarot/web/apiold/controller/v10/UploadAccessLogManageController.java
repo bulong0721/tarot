@@ -115,7 +115,7 @@ public class UploadAccessLogManageController extends BaseController {
 //                                upLog.setOrgId(excelData.getString("var5") == null ? null : TypeConverter.toLong(excelData.getString("var5")));//餐厅ID
 //                                upLog.setTableId(excelData.getString("var6") == null ? null : TypeConverter.toLong(excelData.getString("var6")));//餐桌ID
                                     upLog.setTable(table);
-                                    upLog.setDiscription(excelData.getString("var7") == null ? null : excelData.getString("var7"));//描述
+                                    upLog.setDescription(excelData.getString("var7") == null ? null : excelData.getString("var7"));//描述
                                     upLog.setLevelSecondId(excelData.getString("var8") == null ? null : TypeConverter.toLong(excelData.getString("var8")));//二级功能ID
                                     upLog.setCreated(now);
                                     //数据库增加了tableId+uploadAccessId的联合主键，不让插入重复数据
@@ -192,7 +192,7 @@ public class UploadAccessLogManageController extends BaseController {
 //                                    upLog.setOrgId(ss[5] == null ? null : TypeConverter.toLong(ss[5]));//餐厅ID
 //                                    upLog.setTableId(ss[6] == null ? null : TypeConverter.toLong(ss[6]));//餐桌ID
                                     upLog.setTable(table);
-                                    upLog.setDiscription(ss[7] == null ? null : ss[7]);//描述
+                                    upLog.setDescription(ss[7] == null ? null : ss[7]);//描述
                                     upLog.setLevelSecondId(ss[8] == null || ss[8].equals("null") ? null : TypeConverter.toLong(ss[8]));//二级功能ID
                                     upLog.setCreated(now);
                                     //数据库增加了tableId+uploadAccessId的联合主键，不让插入重复数据
@@ -220,7 +220,7 @@ public class UploadAccessLogManageController extends BaseController {
 //                                    upLog.setClientId(ss[4] == null ? null : TypeConverter.toLong(ss[4]));//品牌ID
 //                                    upLog.setOrgId(ss[5] == null ? null : TypeConverter.toLong(ss[5]));//餐厅ID
 //                                    upLog.setTableId(ss[6] == null ? null : TypeConverter.toLong(ss[6]));//餐桌ID
-//                                    upLog.setDiscription(ss[7] == null ? null : ss[7]);//描述
+//                                    upLog.setDescription(ss[7] == null ? null : ss[7]);//描述
 //                                    upLog.setLevelSecondId(ss[8] == null || ss[8].equals("null") ? null : TypeConverter.toLong(ss[8]));//二级功能ID
 //                                    upLog.setCreated(now);
 //                                    uploadAccessLogManageService.addEntity(upLog);

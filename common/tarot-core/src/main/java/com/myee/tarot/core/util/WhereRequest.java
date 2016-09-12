@@ -25,6 +25,10 @@ public class WhereRequest extends PageRequest {
 
     private String voiceLogType;
 
+    private Long tableId;
+
+    private Long storeId;
+
     public String getEventLevel() {
         return eventLevel;
     }
@@ -87,5 +91,21 @@ public class WhereRequest extends PageRequest {
 
     public void setVoiceLogType(String voiceLogType) {
         this.voiceLogType = voiceLogType;
+    }
+
+    public Long getTableId() {
+        return tableId;
+    }
+    public void setTableId(Long tableId) {
+
+        this.tableId = tableId;
+    }
+
+    public Long getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(Long storeId) {
+        this.storeId = storeId;
     }
 }

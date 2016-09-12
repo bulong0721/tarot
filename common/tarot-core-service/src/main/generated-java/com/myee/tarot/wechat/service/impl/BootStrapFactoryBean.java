@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Scope("singleton")
 public class BootStrapFactoryBean extends AbstractFactoryBean<ServerBootstrap> {
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(BootStrapFactoryBean.class);
 
 	@Value("${djinn.port}")
@@ -43,7 +44,7 @@ public class BootStrapFactoryBean extends AbstractFactoryBean<ServerBootstrap> {
 			instance.initialize();
 			try {
 				BackendService serviceStub = new BackendServiceStub(commonService, dataStoreService, mealsService);
-				instance.export(serviceStub, BackendService.class, CommonService.class, DataStoreService.class, MealsService.class);
+				instance.export(serviceStub, BackendService.class);
 			} catch (Exception e) {
 				LOGGER.error("ServerBootstrap export error", e);
 			}

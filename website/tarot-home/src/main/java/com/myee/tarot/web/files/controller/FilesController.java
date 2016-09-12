@@ -28,6 +28,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.*;
 
@@ -43,19 +44,19 @@ public class FilesController {
     private String DOWNLOAD_HOME;
     @Value("${cleverm.push.http}")
     private String DOWNLOAD_HTTP;
-    private static final String GZIP_DIR   = "temp/";
+    private static final String GZIP_DIR = "temp/";
 
-    private static final String RESOURCE_TYPE_DIR   = "default";
-    private static final String RESOURCE_TYPE_FILE  = "file";
+    private static final String RESOURCE_TYPE_DIR = "default";
+    private static final String RESOURCE_TYPE_FILE = "file";
 
-    private static final String RESOURCE_PARAM_ID           = "id";
-    private static final String RESOURCE_PARAM_OPERATION    = "operation";
-    private static final String RESOURCE_PARAM_TEXT         = "text";
-    private static final String RESOURCE_PARAM_TYPE         = "type";
+    private static final String RESOURCE_PARAM_ID = "id";
+    private static final String RESOURCE_PARAM_OPERATION = "operation";
+    private static final String RESOURCE_PARAM_TEXT = "text";
+    private static final String RESOURCE_PARAM_TYPE = "type";
 
-    private static final String RESOURCE_OPERATION_CREATE    = "create_node";
-    private static final String RESOURCE_OPERATION_DELETE    = "delete_node";
-    private static final String RESOURCE_OPERATION_RENAME    = "rename_node";
+    private static final String RESOURCE_OPERATION_CREATE = "create_node";
+    private static final String RESOURCE_OPERATION_DELETE = "delete_node";
+    private static final String RESOURCE_OPERATION_RENAME = "rename_node";
 
    /* @RequestMapping(value = "/admin/files/list.html")
     public
@@ -105,18 +106,18 @@ public class FilesController {
             jt.setType(dto.isLeaf() ? RESOURCE_TYPE_FILE : RESOURCE_TYPE_DIR);
             jt.setLastModify(new Date(dto.getMtime()));
             jt.setDetailType(dto.getType());
-            jt.setDownloadPath(getDownloadPath(dto.getId(),dto.isLeaf()));
+            jt.setDownloadPath(getDownloadPath(dto.getId(), dto.isLeaf()));
             tree.add(jt);
         }
         return tree;
     }
 
     //根据FileDTO换算对应的下载文件的URL
-    private String getDownloadPath(String filePath,Boolean isLeaf){
-        if(isLeaf) {//是文件，才有下载链接
+    private String getDownloadPath(String filePath, Boolean isLeaf) {
+        if (isLeaf) {//是文件，才有下载链接
             String tempFilePath = filePath.replaceAll("\\\\", "/");//把路径中的反斜杠替换成斜杠
-            String tempDownloadPath = DOWNLOAD_HOME.replaceAll("\\\\","/")+"/";//准备用于替换成url的下载文件夹路径
-            String path = tempFilePath.replaceAll(tempDownloadPath,DOWNLOAD_HTTP);
+            String tempDownloadPath = DOWNLOAD_HOME.replaceAll("\\\\", "/") + "/";//准备用于替换成url的下载文件夹路径
+            String path = tempFilePath.replaceAll(tempDownloadPath, DOWNLOAD_HTTP);
             return path;
         }
         return "";
@@ -128,7 +129,7 @@ public class FilesController {
         AjaxResponse resp = new AjaxResponse();
         List<TreeFileItem> tree = Lists.newArrayList();
         String id = request.getParameter(RESOURCE_PARAM_ID);
-        if(id == null ){
+        if (id == null) {
             return AjaxResponse.failed(-1);
         }
 
@@ -158,7 +159,7 @@ public class FilesController {
             jt.setType(dto.isLeaf() ? RESOURCE_TYPE_FILE : RESOURCE_TYPE_DIR);
             jt.setLastModify(new Date(dto.getMtime()));
             jt.setDetailType(dto.getType());
-            jt.setDownloadPath(getDownloadPath(dto.getId(),dto.isLeaf()));
+            jt.setDownloadPath(getDownloadPath(dto.getId(), dto.isLeaf()));
             tree.add(jt);
         }
         resp.addEntry("tree", tree);
@@ -209,12 +210,12 @@ public class FilesController {
             try {
                 File file = new File(id);
                 //目前不允许删除文件夹
-                if(file.isDirectory()){
+                if (file.isDirectory()) {
                     return null;
                 }
 
                 boolean isCopy = moveToRecycle(file);//复制文件到回收站
-                if(isCopy){ //复制成功后执行删除
+                if (isCopy) { //复制成功后执行删除
                     boolean isDelete = delete(file);
 
                     if (isDelete) {
@@ -261,9 +262,9 @@ public class FilesController {
      * @throws IllegalStateException
      * @throws IOException
      */
-    @RequestMapping(value = {"services/public/files/upload","admin/files/create","shop/files/create"})
+    @RequestMapping(value = {"services/public/files/upload", "admin/files/create", "shop/files/create"})
     @ResponseBody
-    public AjaxResponse createResource(@RequestParam("file") CommonsMultipartFile file, String path, @RequestParam(value = "storeId",required = false)Long storeId,HttpServletRequest request) throws IllegalStateException, IOException {
+    public AjaxResponse createResource(@RequestParam("file") CommonsMultipartFile file, String path, @RequestParam(value = "storeId", required = false) Long storeId, HttpServletRequest request) throws IllegalStateException, IOException {
         AjaxResponse resp = AjaxResponse.success();
         try {
             String type = request.getParameter("type");
@@ -273,19 +274,18 @@ public class FilesController {
                 return resp;
             }
             String storeIdStr;
-            if(storeId == null ) {
+            if (storeId == null) {
                 String requestPath = request.getServletPath();
                 String sessionName = CommonLoginParam.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
-                MerchantStore merchantStore  = (MerchantStore) request.getSession().getAttribute(sessionName);
+                MerchantStore merchantStore = (MerchantStore) request.getSession().getAttribute(sessionName);
                 storeIdStr = String.valueOf(merchantStore.getId());
-            }
-            else {
+            } else {
                 storeIdStr = String.valueOf(storeId);
             }
-            if(StringUtil.isNullOrEmpty(storeIdStr) || StringUtil.equals("null", StringUtil.toLowerCase(storeIdStr))) {
-                return AjaxResponse.failed(-1,"店铺ID不能为空");
+            if (StringUtil.isNullOrEmpty(storeIdStr) || StringUtil.equals("null", StringUtil.toLowerCase(storeIdStr))) {
+                return AjaxResponse.failed(-1, "店铺ID不能为空");
             }
-            File dest  = FileUtils.getFile(DOWNLOAD_HOME, storeIdStr, File.separator + path);
+            File dest = FileUtils.getFile(DOWNLOAD_HOME, storeIdStr, File.separator + path);
 
             if (type.equals(RESOURCE_TYPE_DIR)) {
                 dest.mkdirs();
@@ -302,7 +302,7 @@ public class FilesController {
                 jt.setType("file");
                 jt.setLastModify(new Date(dest.lastModified()));
                 jt.setDetailType(FilenameUtils.getExtension(fileName));
-                jt.setDownloadPath( storeIdStr + "/" + path + "/" + file.getFileItem().getName());//返回相对路径
+                jt.setDownloadPath(storeIdStr + "/" + path + "/" + file.getFileItem().getName());//返回相对路径
                 resp.addEntry("tree", jt);
             }
             //20160708文本编辑放到另一个接口，以后再做
@@ -319,6 +319,7 @@ public class FilesController {
 
     /**
      * 用zip压缩文件，源文件的文件名不能包含空格
+     *
      * @param pushRes
      * @param compress
      * @param request
@@ -326,19 +327,19 @@ public class FilesController {
      */
     @RequestMapping("admin/files/packResource")
     @ResponseBody
-    public HotfixSetVo packResource(String pushRes, boolean compress,HttpServletRequest request) {
+    public HotfixSetVo packResource(String pushRes, boolean compress, HttpServletRequest request) {
         HotfixSetVo hotfixSetVo = new HotfixSetVo();
         List<TreeFileItem> resList = JSON.parseArray(pushRes, TreeFileItem.class);
         Set<HotfixVo> hotfixSet = Sets.newHashSet();
         hotfixSetVo.setPublisher(currentUser(request).getName());
         if (compress) {
-            String basePath = DOWNLOAD_HOME+ "/"+ GZIP_DIR;
+            String basePath = DOWNLOAD_HOME + "/" + GZIP_DIR;
             String fileName = "";
             /*File gzFile = new File(basePath);
             gzFile.mkdirs(); //建立压缩文件根目录*/
             File zipFile = new File(basePath);
             zipFile.mkdirs(); //建立压缩文件根目录
-            if(null != resList){
+            if (null != resList) {
                 for (TreeFileItem treeFileItem : resList) {
                     //用gz压缩文件:gz里面的文件名也会变成md5的名字，不太友好
                     /*fileName = CryptoUtil.md5(treeFileItem.getText()) + ".gz";
@@ -361,7 +362,7 @@ public class FilesController {
                 for (TreeFileItem treeFileItem : resList) {
                     if (RESOURCE_TYPE_FILE == treeFileItem.getType()) {
                         String targetDir = treeFileItem.getId();
-                        hotfixSet.add(new HotfixVo(treeFileItem.getText(), getDownloadPath(treeFileItem.getId(),true), targetDir, false));
+                        hotfixSet.add(new HotfixVo(treeFileItem.getText(), getDownloadPath(treeFileItem.getId(), true), targetDir, false));
                     }
                 }
             }
@@ -370,7 +371,7 @@ public class FilesController {
         return hotfixSetVo;
     }
 
-    public AdminUser currentUser(HttpServletRequest request){
+    public AdminUser currentUser(HttpServletRequest request) {
         return (AdminUser) request.getSession().getAttribute(Constants.ADMIN_USER);
     }
 
@@ -390,6 +391,7 @@ public class FilesController {
 
     /**
      * 循环删除文件夹及文件
+     *
      * @param file
      * @return
      */
@@ -419,6 +421,7 @@ public class FilesController {
 
     /**
      * 移到文件至回收站
+     *
      * @param file
      * @return
      */
@@ -426,8 +429,8 @@ public class FilesController {
         try {
             if (file.exists()) {
                 String tempFilePath = file.getPath().replaceAll("\\\\", "/");//把路径中的反斜杠替换成斜杠
-                String tempDownloadPath = DOWNLOAD_HOME.replaceAll("\\\\","/")+"/";//准备用于替换成url的下载文件夹路径
-                String tempTargetPath = (DOWNLOAD_HOME + File.separator + "deleted" + File.separator).replaceAll("\\\\","/");
+                String tempDownloadPath = DOWNLOAD_HOME.replaceAll("\\\\", "/") + "/";//准备用于替换成url的下载文件夹路径
+                String tempTargetPath = (DOWNLOAD_HOME + File.separator + "deleted" + File.separator).replaceAll("\\\\", "/");
                 String targetPath = tempFilePath.replaceAll(tempDownloadPath, tempTargetPath);
 //                targetPath = targetPath.replaceAll("/","\\\\");//把路径转回linux兼容
                 if (file.isFile()) {
@@ -455,4 +458,63 @@ public class FilesController {
         return false;
     }
 
+    /**
+     * 根据软硬件版本号
+     *
+     * @param version version规则: Cooky - C001      M01        A001       - RK3288_v2
+     *                项目名    通用版本  头部或胸部   软件版本号    硬件版本号
+     *                存储路径规则: 100/boardUpdate/项目名/硬件版本号/软件版本号
+     *                查找文件规则:升级包都是差分升级包，由1升2,2再升3....，所以查询版本号的时候，是取当前版本号+1的升级包
+     * @return
+     */
+    public AjaxResponse boardUpdateUrl(String version) {
+        try {
+            if (StringUtil.isBlank(version)) {
+                return AjaxResponse.failed(-1, "版本号为空");
+            }
+            String[] versionSplit = version.split("-");
+            if (versionSplit.length != 3) {
+                return AjaxResponse.failed(-1, "版本号格式不正确");
+            }
+            String productName = versionSplit[0];
+            String softwareVersion = calSoftwareVersionNext(versionSplit[1]);
+            String hardwareVersion = versionSplit[2];
+            File dest = FileUtils.getFile(DOWNLOAD_HOME, Constants.BOARD_UPDATE_BASEPATH, productName + "/" + hardwareVersion + "/" + softwareVersion);
+            //只取zip结尾的文件
+            FileFilter fileFilter = new FileFilter() {
+                @Override
+                public boolean accept(File file) {
+                    if(file.getName().endsWith(".zip")){
+                        return true;
+                    }
+                    return false;
+                }
+            };
+            File[] listFile = dest.listFiles(fileFilter);
+            if(listFile.length != 1){
+                return AjaxResponse.failed(-1,"升级文件数量不匹配");
+            }
+            return null;
+
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return AjaxResponse.failed(-1, "出错");
+        }
+
+    }
+
+    /**
+     * 计算当前版本号的下一个版本号
+     *
+     * @param softVersion
+     * @return
+     */
+    private String calSoftwareVersionNext(String softVersion) throws Exception{
+        int length = softVersion.length();
+        //版本号前缀
+        String preSoftVersion = softVersion.substring(1, length - 4);
+        //当前软件版本号的数字
+        int thisVersion = Integer.parseInt(softVersion.substring(length - 3));
+        return preSoftVersion + (thisVersion + 1);
+    }
 }

@@ -51,10 +51,6 @@ public class EvaluationManageController extends BaseController {
 
     private static final int EXPORT = 2;
 
-    private static final int AVG = 1;
-
-    private static final int DETAIL_LIST = 2;
-
     /**
      * 保存服务评价接口,30s之内重复提交的评价会覆盖，即30s之内只有最后一条评价有效
      *
@@ -125,14 +121,10 @@ public class EvaluationManageController extends BaseController {
     /**
      * 分页/不分页显示评论list
      */
-    @RequestMapping(value = "/admin/superman/evaluation/list", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/superman/evaluation/list", method = RequestMethod.GET)
     @ResponseBody
-    public AjaxPageableResponse listDetailByPage(
-            @RequestParam(value = "tableId", required = false) Long tableId,
-            @RequestParam(value = "begin", required = false) Long begin,
-            @RequestParam(value = "end", required = false) Long end, HttpServletRequest request) {
+    public AjaxPageableResponse listDetailByPage(WhereRequest whereRequest, HttpServletRequest request) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
-        PageRequest pageRequest = new PageRequest();
         //根据当前用户获取切换的门店信息
         String sessionName = (String) CommonLoginParam.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION);
         if (sessionName == null || request.getSession().getAttribute(sessionName) == null) {
@@ -141,31 +133,27 @@ public class EvaluationManageController extends BaseController {
             return resp;
         }
         MerchantStore merchantStore = (MerchantStore) request.getSession().getAttribute(sessionName);
-        if ((begin == null || "".equals(begin)) && end != null) {
+        if (StringUtil.isNullOrEmpty(whereRequest.getBeginDate(), true)) {
             resp.setStatus(AjaxPageableResponse.RESPONSE_STATUS_FAIURE);
             resp.setStatusMessage("请设置查看的起始时间");
             return resp;
         }
-        if ((end == null || "".equals(end)) && begin != null) {
+        if (StringUtil.isNullOrEmpty(whereRequest.getEndDate(), true)) {
             resp.setStatus(AjaxPageableResponse.RESPONSE_STATUS_FAIURE);
             resp.setStatusMessage("请设置查看的截止时间");
             return resp;
         }
-        if (begin != null && end != null) {
-            if (DateTimeUtils.toMillis(end).compareTo(DateTimeUtils.toMillis(begin)) < 0) {
+        if (StringUtil.isNullOrEmpty(whereRequest.getBeginDate(), true) && StringUtil.isNullOrEmpty(whereRequest.getEndDate(), true)) {
+            if (DateTimeUtils.toMillis(Long.valueOf(whereRequest.getEndDate())).compareTo(DateTimeUtils.toMillis(Long.valueOf(whereRequest.getBeginDate()))) < 0) {
                 resp.setStatus(AjaxPageableResponse.RESPONSE_STATUS_FAIURE);
                 resp.setStatusMessage("结束时间不能小于开始时间");
                 return resp;
             }
-            //毫秒数需要乘以1000才能转成正常的日期
-            pageRequest.setBegin(DateTimeUtils.toMillis(begin * 1000));
-            pageRequest.setEnd(DateTimeUtils.toMillis(end * 1000));
         }
-        pageRequest.setTableId(tableId);
-        pageRequest.setStoreId(merchantStore.getId());
+        whereRequest.setStoreId(merchantStore.getId());
         //查询评论详细
-        PageResult<Evaluation> pageResultAvg = evaluationManageService.pageList(pageRequest, AVG);
-        PageResult<Evaluation> pageResultList = evaluationManageService.pageList(pageRequest, DETAIL_LIST);
+        PageResult<Evaluation> pageResultAvg = evaluationManageService.pageList(whereRequest, Constants.SUPERMAN_EVALUATION_AVG);
+        PageResult<Evaluation> pageResultList = evaluationManageService.pageList(whereRequest, Constants.SUPERMAN_EVALUATION_DETAIL_LIST);
         Map map = calculateAvg(pageResultAvg, SEARCH);
         //为了前端评分参数显示不为NaN(not a number)，判断当查询结果为空时，扔个0或null就行了
         if (null != map && map.size() > 0) {
@@ -205,26 +193,19 @@ public class EvaluationManageController extends BaseController {
         return map;
     }
 
-    @RequestMapping(value = "/admin/superman/evaluation/exportCsv", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/superman/evaluation/exportCsv", method = RequestMethod.GET)
     @ResponseBody
-    public void exportCsv(@RequestParam(value = "tableId", required = false) Long tableId,
-                          @RequestParam(value = "begin") Long begin,
-                          @RequestParam(value = "end") Long end, HttpServletRequest request, HttpServletResponse resp) {
+    public void exportCsv(WhereRequest whereRequest, HttpServletRequest request, HttpServletResponse resp) {
         CSVWriter writer = null;
         try {
             //根据当前用户获取切换的门店信息
             String sessionName = (String) CommonLoginParam.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION);
             MerchantStore merchantStore = (MerchantStore) request.getSession().getAttribute(sessionName);
-            PageRequest pageRequest = new PageRequest();
-            //毫秒数乘以1000保证转换后的时间正常
-            pageRequest.setBegin(DateTimeUtils.toMillis(begin * 1000));
-            pageRequest.setEnd(DateTimeUtils.toMillis(end * 1000));
-            pageRequest.setStoreId(merchantStore.getId());
-            pageRequest.setTableId(tableId);
+            whereRequest.setStoreId(merchantStore.getId());
             //我们默认只输出前5W条数据
-            pageRequest.setCount(MAX_EXPORT_COUNT);
-            PageResult<Evaluation> pageResultAvg = evaluationManageService.pageList(pageRequest, AVG);
-            PageResult<Evaluation> pageResultList = evaluationManageService.pageList(pageRequest, DETAIL_LIST);
+            whereRequest.setCount(MAX_EXPORT_COUNT);
+            PageResult<Evaluation> pageResultAvg = evaluationManageService.pageList(whereRequest, Constants.SUPERMAN_EVALUATION_AVG);
+            PageResult<Evaluation> pageResultList = evaluationManageService.pageList(whereRequest, Constants.SUPERMAN_EVALUATION_DETAIL_LIST);
             //计算平均值
             Map map = calculateAvg(pageResultAvg, EXPORT);
             resp.setHeader("Content-type", "text/csv;charset=gb2312");

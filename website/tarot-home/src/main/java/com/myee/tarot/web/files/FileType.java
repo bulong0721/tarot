@@ -22,7 +22,7 @@ public class FileType {
     }
 
     /**
-     * Discription:[getAllFileType,常见文件头信息]
+     * Description:[getAllFileType,常见文件头信息]
      */
     private static void getAllFileType()
     {

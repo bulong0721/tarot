@@ -151,5 +151,9 @@ public class Constants {
 	public static final String UPLOAD_MATERIAL_PATH = "material/";
 	public static final String UPLOAD_DEFAULT_PATH = "default/";
 
+    //自研主板升级基础路径
+    public static final String BOARD_UPDATE_BASEPATH = "100/boardUpdate/";
 
+    public static final int SUPERMAN_EVALUATION_AVG = 1; //服务评价的类型-查平均值
+    public static final int SUPERMAN_EVALUATION_DETAIL_LIST = 2; //服务评价的类型-查详情列表
 }
