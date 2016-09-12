@@ -185,7 +185,7 @@ public class EvaluationManageController extends BaseController {
         map.put("feelFlavor", evaluation.getFeelFlavor() / 2);
         map.put("feelService", evaluation.getFeelService() / 2);
         map.put("mealsRemark", evaluation.getMealsRemark());
-        map.put("timeSecond", evaluation.getTimeSecond());
+        map.put("timeSecond", DateTimeUtils.toDate(evaluation.getTimeSecond()).getTime() / 1000);
         map.put("tableName", evaluation.getTable().getName());
         map.put("storeName", evaluation.getTable().getStore().getName());
         map.put("merchantName", evaluation.getTable().getStore().getMerchant().getName());

@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -316,6 +315,16 @@ public class DateTimeUtils {
             return dateTime.replace(".", "-");
         }
         return dateTime;
+    }
+
+    /**	返回Date对象,可以输入yyyyMMdd格式和yyyyMMddHHmmss格式*/
+    public static Date toDate(Long dateTime) {
+        if(dateTime == null){
+            return null;
+        }
+        String dateStr = String.valueOf(dateTime);
+        Date d = toDate(dateStr);
+        return d;
     }
 
     /**
