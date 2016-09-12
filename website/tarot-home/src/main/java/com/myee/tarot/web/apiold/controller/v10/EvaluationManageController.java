@@ -152,8 +152,8 @@ public class EvaluationManageController extends BaseController {
         }
         whereRequest.setStoreId(merchantStore.getId());
         //查询评论详细
-        PageResult<Evaluation> pageResultAvg = evaluationManageService.pageList(whereRequest, Constants.AVG);
-        PageResult<Evaluation> pageResultList = evaluationManageService.pageList(whereRequest, Constants.DETAIL_LIST);
+        PageResult<Evaluation> pageResultAvg = evaluationManageService.pageList(whereRequest, Constants.SUPERMAN_EVALUATION_AVG);
+        PageResult<Evaluation> pageResultList = evaluationManageService.pageList(whereRequest, Constants.SUPERMAN_EVALUATION_DETAIL_LIST);
         Map map = calculateAvg(pageResultAvg, SEARCH);
         //为了前端评分参数显示不为NaN(not a number)，判断当查询结果为空时，扔个0或null就行了
         if (null != map && map.size() > 0) {
@@ -204,8 +204,8 @@ public class EvaluationManageController extends BaseController {
             whereRequest.setStoreId(merchantStore.getId());
             //我们默认只输出前5W条数据
             whereRequest.setCount(MAX_EXPORT_COUNT);
-            PageResult<Evaluation> pageResultAvg = evaluationManageService.pageList(whereRequest, Constants.AVG);
-            PageResult<Evaluation> pageResultList = evaluationManageService.pageList(whereRequest, Constants.DETAIL_LIST);
+            PageResult<Evaluation> pageResultAvg = evaluationManageService.pageList(whereRequest, Constants.SUPERMAN_EVALUATION_AVG);
+            PageResult<Evaluation> pageResultList = evaluationManageService.pageList(whereRequest, Constants.SUPERMAN_EVALUATION_DETAIL_LIST);
             //计算平均值
             Map map = calculateAvg(pageResultAvg, EXPORT);
             resp.setHeader("Content-type", "text/csv;charset=gb2312");

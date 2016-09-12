@@ -37,7 +37,7 @@ public class EvaluationDaoImpl extends GenericEntityDaoImpl<Long, Evaluation> im
         PageResult<Evaluation> evaluationPageResult = new PageResult<Evaluation>();
         QEvaluation qEvaluation = QEvaluation.evaluation;
         JPQLQuery<Evaluation> query = new JPAQuery(getEntityManager()).from(qEvaluation);
-        if (type != Constants.AVG) {
+        if (type != Constants.SUPERMAN_EVALUATION_AVG) {
             query.where(qEvaluation.active.eq(true));
         }
         if (whereRequest.getTableId() != null) {
@@ -46,12 +46,12 @@ public class EvaluationDaoImpl extends GenericEntityDaoImpl<Long, Evaluation> im
         if (whereRequest.getStoreId() != null) {
             query.where(qEvaluation.table.store.id.eq(whereRequest.getStoreId()));
         }
-        if (whereRequest.getBeginDate() != null && whereRequest.getEndDate() != null && type != Constants.AVG) {
+        if (whereRequest.getBeginDate() != null && whereRequest.getEndDate() != null && type != Constants.SUPERMAN_EVALUATION_AVG) {
             query.from(qEvaluation).where(qEvaluation.timeSecond.between(DateTimeUtils.getDateByStringEs(whereRequest.getBeginDate()).getTime(), DateTimeUtils.getDateByStringEs(whereRequest.getEndDate()).getTime()));
         }
         query.orderBy(qEvaluation.id.desc());
         evaluationPageResult.setRecordsTotal(query.fetchCount());
-        if (whereRequest.getCount() > 0 && type != Constants.AVG) {
+        if (whereRequest.getCount() > 0 && type != Constants.SUPERMAN_EVALUATION_AVG) {
             query.offset(whereRequest.getOffset()).limit(whereRequest.getCount());
         }
         evaluationPageResult.setList(query.fetch());
