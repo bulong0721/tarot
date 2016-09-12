@@ -1,7 +1,6 @@
 package com.myee.tarot.apiold.domain;
 
 
-import com.myee.tarot.catering.domain.*;
 import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.core.GenericEntity;
 
@@ -36,8 +35,8 @@ public class UploadAccessLog extends GenericEntity<Long, UploadAccessLog> {
 	@Column(name = "TIME_STAY")
 	private Long timeStay;//浏览停留时长，秒为单位
 
-	@Column(name = "DISCRIPTION",length = 255)
-	private String discription;//描述
+	@Column(name = "DESCRIPTION",length = 255)
+	private String description;//描述
 
 	@Column(name = "LEVEL_SECOND_ID")
 	private Long levelSecondId;//二级功能ID
@@ -138,12 +137,12 @@ public class UploadAccessLog extends GenericEntity<Long, UploadAccessLog> {
 		this.timeStay = timeStay;
 	}
 
-	public String getDiscription() {
-		return discription;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDiscription(String discription) {
-		this.discription = discription;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public Long getLevelSecondId() {
