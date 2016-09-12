@@ -2,6 +2,7 @@ package com.myee.tarot.quartz;
 
 import com.myee.tarot.campaign.service.ClientPrizeGetInfoService;
 import com.myee.tarot.campaign.service.ClientPrizeService;
+import com.myee.tarot.campaign.service.ClientPrizeTicketService;
 import com.myee.tarot.campaign.service.PriceInfoService;
 import com.myee.tarot.core.exception.ServiceException;
 import org.slf4j.Logger;
@@ -27,6 +28,8 @@ public class QuartzForCampaign {
     private ClientPrizeGetInfoService clientPrizeGetInfoService;
     @Autowired
     private ClientPrizeService clientPrizeService;
+    @Autowired
+    private ClientPrizeTicketService clientPrizeTicketService;
 
     //@Scheduled(cron = "0/5 * *  * * ? ")//测试每隔1秒隔行一次
     public void run(){
@@ -74,6 +77,19 @@ public class QuartzForCampaign {
             e.printStackTrace();
         }
         LOGGER.info("检测结束");
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?") //每隔5分钟执行一次
+    //定时更改电影券
+    public void checkExpireTickets() {
+        LOGGER.info("检测过期电影券");
+        try {
+            clientPrizeTicketService.checkExpireTickets();
+        } catch (Exception e) {
+            LOGGER.error("检测电影券出现错误");
+            e.printStackTrace();
+        }
+        LOGGER.info("检测过期电影券结束");
     }
 
 }

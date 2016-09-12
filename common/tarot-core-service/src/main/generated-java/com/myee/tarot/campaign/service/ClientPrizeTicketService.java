@@ -12,4 +12,5 @@ import java.util.List;
 public interface ClientPrizeTicketService extends GenericEntityService<Long ,ClientPrizeTicket>{
     List<ClientPrizeTicket> listLimitTickets(int limit, Long prizeId);
     Boolean isExistPrizeTicket(Long prizeId,String name,Date startDate,Date endDate);
+    void checkExpireTickets();
 }

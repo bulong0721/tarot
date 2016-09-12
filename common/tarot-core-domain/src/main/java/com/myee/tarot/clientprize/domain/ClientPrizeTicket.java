@@ -34,13 +34,13 @@ public class ClientPrizeTicket extends GenericEntity<Long, ClientPrizeTicket> {
     private Date endDate;
 
     @Column(name = "status")
-    private Boolean status = Boolean.TRUE; //是否已发
+    private Integer status; //是否已发 1为未发 0为已发 2为过期
 
-    public Boolean getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
