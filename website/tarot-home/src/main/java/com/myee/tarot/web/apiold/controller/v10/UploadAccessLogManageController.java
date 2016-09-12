@@ -40,7 +40,6 @@ import java.util.List;
  * History: <p>如果有修改过程，请记录</P>
  */
 @RestController
-@RequestMapping("/api/v10")
 public class UploadAccessLogManageController extends BaseController {
 
     private Logger logger = LoggerFactory.getLogger(UploadAccessLogManageController.class);
@@ -72,7 +71,7 @@ public class UploadAccessLogManageController extends BaseController {
      * @param file
      * @return
      */
-    @RequestMapping(value = "/uploadAccessLog/save")
+    @RequestMapping(value = "/api/v10/uploadAccessLog/save")
     public ClientAjaxResult queryVideoList(@RequestParam(value = "orgId") Long orgId,
                                            @RequestParam(value = "tableId") Long tableId,
                                            @RequestParam(value = "path") String path,
