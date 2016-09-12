@@ -494,6 +494,8 @@ public class FilesController {
             if(listFile.length != 1){
                 return AjaxResponse.failed(-1,"升级文件数量不匹配");
             }
+            return null;
+
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return AjaxResponse.failed(-1, "出错");
