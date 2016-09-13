@@ -534,7 +534,7 @@ public class ClientPrizeController extends BaseController {
                             ticket.setStatus(Constants.CLIENT_PRIZE_TICKET_NO);
                             clientPrizeTicketService.update(ticket);
                         }
-                        content = "恭喜您获得" + priceGetInfo.getPrizeName() + "2张,兑换码为" + tickets.get(0).getTicketCode()+","+ tickets.get(1).getTicketCode()+ ",有效期至"+ DateTimeUtils.getDateString(tickets.get(1).getEndDate(),DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT) + "兑换方法：" ;
+                        content = "恭喜您获得格瓦拉" + priceGetInfo.getPrizeName() + "2张,兑换码为" + tickets.get(0).getTicketCode()+","+ tickets.get(1).getTicketCode()+ ",有效期至"+ DateTimeUtils.getDateString(tickets.get(1).getEndDate(),DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT) + ",请到格瓦拉";
                     } else {
                         return ClientAjaxResult.failed("你手慢了，电影票已被领取完");
                     }
