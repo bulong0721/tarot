@@ -2,13 +2,13 @@ package com.myee.tarot.web.datacenter.controller;
 
 import com.google.common.collect.Maps;
 import com.myee.tarot.catalog.domain.VoiceLog;
+import com.myee.tarot.catalog.service.impl.elasticSearch.EntityQueryDto;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.DateTimeUtils;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
-import com.myee.tarot.core.web.EntityQueryDto;
 import com.myee.tarot.catalog.service.impl.elasticSearch.ESUtils;
 import com.opencsv.CSVWriter;
 import org.slf4j.Logger;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;

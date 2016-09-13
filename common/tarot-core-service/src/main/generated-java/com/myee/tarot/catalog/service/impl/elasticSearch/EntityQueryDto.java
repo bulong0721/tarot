@@ -1,4 +1,4 @@
-package com.myee.tarot.core.web;
+package com.myee.tarot.catalog.service.impl.elasticSearch;
 
 /**
  * Created by Ray.Fu on 2016/8/18.

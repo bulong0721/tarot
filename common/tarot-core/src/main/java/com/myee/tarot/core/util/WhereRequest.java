@@ -1,8 +1,7 @@
 package com.myee.tarot.core.util;
 
-import com.myee.tarot.core.util.PageRequest;
 
-import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,6 +27,16 @@ public class WhereRequest extends PageRequest {
     private Long tableId;
 
     private Long storeId;
+
+    private Integer group;
+
+    private Integer analysisLevel;
+
+    private Long actionId;
+
+    private Long merchantId;
+
+    private List<Integer> inList;
 
     public String getEventLevel() {
         return eventLevel;
@@ -107,5 +116,45 @@ public class WhereRequest extends PageRequest {
 
     public void setStoreId(Long storeId) {
         this.storeId = storeId;
+    }
+
+    public Integer getGroup() {
+        return group;
+    }
+
+    public void setGroup(Integer group) {
+        this.group = group;
+    }
+
+    public Integer getAnalysisLevel() {
+        return analysisLevel;
+    }
+
+    public void setAnalysisLevel(Integer analysisLevel) {
+        this.analysisLevel = analysisLevel;
+    }
+
+    public Long getActionId() {
+        return actionId;
+    }
+
+    public void setActionId(Long actionId) {
+        this.actionId = actionId;
+    }
+
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
+    }
+
+    public List<Integer> getInList() {
+        return inList;
+    }
+
+    public void setInList(List<Integer> inList) {
+        this.inList = inList;
     }
 }

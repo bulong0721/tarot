@@ -1,14 +1,17 @@
 package com.myee.tarot.web.apiold.controller.v10;
 
+import com.google.common.collect.Maps;
 import com.myee.tarot.apiold.domain.UploadAccessLog;
 import com.myee.tarot.apiold.service.UploadAccessLogService;
-import com.myee.tarot.core.util.DateTimeUtils;
+import com.myee.tarot.core.util.*;
 import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.catering.service.TableService;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
-import com.myee.tarot.core.util.TypeConverter;
+import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
+import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.apiold.controller.BaseController;
+import com.myee.tarot.web.apiold.util.CommonLoginParam;
 import com.myee.tarot.web.apiold.util.ExcelData;
 import com.myee.tarot.web.files.FileType;
 import com.myee.tarot.web.ClientAjaxResult;
@@ -20,16 +23,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
-
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Info: 视频接口
@@ -60,14 +59,15 @@ public class UploadAccessLogManageController extends BaseController {
     private ThreadPoolTaskExecutor taskExecutor;
 
     //需要人为计算点击行为停留时间的action表，因为apk那边没办法监测这些行为
-    private final static int[] needCountAction = {6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 31,32};
+    private final static int[] needCountAction = {6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 31, 32};
     //不需要人为计算点击行为停留时间的action表，因为是瞬发行为
-    private final static int[] avoidCountAction = {1, 2, 3, 4, 5, 28, 29, 30,33,34,35};
+    private final static int[] avoidCountAction = {1, 2, 3, 4, 5, 28, 29, 30, 33, 34, 35};
 
 
     /**
      * 导入excel数据到数据库(app端点击数据的收集)
      * 20160823点点笔有笔方案在使用的接口，当老后台停用后再开启该接口
+     *
      * @param file
      * @return
      */
@@ -102,8 +102,8 @@ public class UploadAccessLogManageController extends BaseController {
                                     UploadAccessLog upLog = new UploadAccessLog();
                                     ExcelData excelData = dataList.get(i);
                                     //餐桌信息如果不存在，则跳过该条数据，作为无用数据
-                                    Table table = tableService.findById( TypeConverter.toLong(excelData.getString("var6")) );
-                                    if(table == null){
+                                    Table table = tableService.findById(TypeConverter.toLong(excelData.getString("var6")));
+                                    if (table == null) {
                                         continue;
                                     }
                                     upLog.setUploadAccessId(excelData.getString("var0") == null ? null : TypeConverter.toLong(excelData.getString("var0")));//pad上传的ID
@@ -179,7 +179,7 @@ public class UploadAccessLogManageController extends BaseController {
                                     String[] ss = list.get(i);
                                     //餐桌信息如果不存在，则跳过该条数据，作为无用数据
                                     Table table = tableService.findById(TypeConverter.toLong(ss[6]));
-                                    if(table == null){
+                                    if (table == null) {
                                         continue;
                                     }
                                     UploadAccessLog upLog = new UploadAccessLog();
@@ -275,7 +275,7 @@ public class UploadAccessLogManageController extends BaseController {
 
                 long time = DateTimeUtils.toDate(dataList.get(j).getString("var2")).getTime() - DateTimeUtils.toDate(excelData.getString("var2")).getTime();
                 long c = time % 1000 == 0 ? time / 1000 : time / 1000 + 1;
-                c = (c <= 0 || c>= 7776000) ? 0 : c; //为负数,或差了3个月的则置0，防止错误数据影响
+                c = (c <= 0 || c >= 7776000) ? 0 : c; //为负数,或差了3个月的则置0，防止错误数据影响
                 return c;//ms数除以1000转换为s
             } else {
                 //excel上传的停留时间单位是秒
@@ -322,7 +322,7 @@ public class UploadAccessLogManageController extends BaseController {
 
                 long time = Long.parseLong(dataList.get(j)[2]) - Long.parseLong(csvData[2]);//新格式直接是ms数
                 long c = time % 1000 == 0 ? time / 1000 : time / 1000 + 1;
-                c = (c <= 0 || c>= 7776000) ? 0 : c; //为负数,或差了3个月的则置0，防止错误数据影响
+                c = (c <= 0 || c >= 7776000) ? 0 : c; //为负数,或差了3个月的则置0，防止错误数据影响
                 return c;//ms数除以1000转换为s
             } else {
                 //csv上传的停留时间单位是毫秒
@@ -339,11 +339,12 @@ public class UploadAccessLogManageController extends BaseController {
      * 上传点点笔产品状态日志接口，每天2次
      * 20160817因为要加新字段，先迁移到点点笔api后台
      * 20160823因为字段还不稳定，先不移植到tarot
+     *
      * @param jsonStatus
      * @param resp
      * @return
      */
-/*    @RequestMapping("uploadProductStatusLog/save")
+   /* @RequestMapping("uploadProductStatusLog/save")
     @ResponseBody
     public ClientAjaxResult uploadProductStatusLog(@RequestParam("jsonStatus") String jsonStatus,
                                                    HttpServletResponse resp) {
@@ -466,5 +467,115 @@ public class UploadAccessLogManageController extends BaseController {
 
     File getResFile(Long orgID, String absPath) {
         return FileUtils.getFile(DOWNLOAD_HOME, Long.toString(orgID), absPath);
+    }
+
+    @RequestMapping(value = "/admin/superman/uploadAccessLog/list", method = RequestMethod.GET)
+    @ResponseBody
+    public AjaxPageableResponse list(WhereRequest whereRequest, HttpServletRequest request) {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
+        //根据当前用户获取切换的门店信息
+        String sessionName = (String) CommonLoginParam.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION);
+        if (sessionName == null || request.getSession().getAttribute(sessionName) == null) {
+            resp.setStatus(AjaxPageableResponse.RESPONSE_STATUS_FAIURE);
+            resp.setStatusMessage("请先切换门店");
+            return resp;
+        }
+        MerchantStore merchantStore = (MerchantStore) request.getSession().getAttribute(sessionName);
+        if (StringUtil.isNullOrEmpty(whereRequest.getBeginDate(), true)) {
+            resp.setStatus(AjaxPageableResponse.RESPONSE_STATUS_FAIURE);
+            resp.setStatusMessage("请设置查看的起始时间");
+            return resp;
+        }
+        if (StringUtil.isNullOrEmpty(whereRequest.getEndDate(), true)) {
+            resp.setStatus(AjaxPageableResponse.RESPONSE_STATUS_FAIURE);
+            resp.setStatusMessage("请设置查看的截止时间");
+            return resp;
+        }
+        if (StringUtil.isNullOrEmpty(whereRequest.getBeginDate(), true) && StringUtil.isNullOrEmpty(whereRequest.getEndDate(), true)) {
+            if (DateTimeUtils.toMillis(Long.valueOf(whereRequest.getEndDate())).compareTo(DateTimeUtils.toMillis(Long.valueOf(whereRequest.getBeginDate()))) < 0) {
+                resp.setStatus(AjaxPageableResponse.RESPONSE_STATUS_FAIURE);
+                resp.setStatusMessage("结束时间不能小于开始时间");
+                return resp;
+            }
+        }
+        //当只要分析二级行为时，actionId必须存在
+        if (whereRequest.getAnalysisLevel() != null && whereRequest.getAnalysisLevel() == 2 && whereRequest.getActionId() == null) {
+            return resp.failed(-1, "请输入要分析二级行为关联的一级行为ID");
+        }
+
+        //返回的结果数组
+        Map<String, Object> result = new HashMap<String, Object>();
+        if (whereRequest.getGroup() != null && whereRequest.getGroup() != 1 && whereRequest.getGroup() != 0) {
+            whereRequest.setGroup(0);
+        }
+        //1级行为要分析的actionId的list，为null则输出所有1级行为。
+        //目前我们设置的是报表显示6种，导出excel的时候全部28都输出
+        List<Integer> inList = new ArrayList<Integer>(Arrays.asList(
+                Constants.SUPERMAN_ACTION_ORDER,
+                Constants.SUPERMAN_ACTION_WATER,
+                Constants.SUPERMAN_ACTION_PAPER,
+                Constants.SUPERMAN_ACTION_CALL_PAY,
+                Constants.SUPERMAN_ACTION_OTHER,
+                Constants.SUPERMAN_ACTION_TIDY));
+        whereRequest.setInList(inList);
+
+        //分析1级行为
+        if (whereRequest.getAnalysisLevel() != null && (whereRequest.getAnalysisLevel() == 0 || whereRequest.getAnalysisLevel() == 1)) {
+            PageResult<UploadAccessLog> level1Analysis = uploadAccessLogManageService.getLevel1Analysis(whereRequest);
+//            Long total1TimeStay = uploadAccessLogManageService.countTimeStay(inList, whereRequest);
+//            Long total1Click = uploadAccessLogManageService.countClick(inList, whereRequest);
+//
+//            //            result.put("level1Analysis",level1Analysis);
+//            result.put("total1Click", total1Click);
+//            result.put("total1TimeStay", total1TimeStay);
+//            result.put("total1AnalysisNum", level1Analysis.getRecordsTotal());
+//            List<UploadAccessLog> uploadAccessLogs = level1Analysis.getList();
+//            for (UploadAccessLog uploadAccessLog : uploadAccessLogs) {
+//                resp.addDataEntry(objectToEntry(uploadAccessLog));
+//            }
+        }
+
+        //分析二级行为，目前只有id为4、21、22、31的1级行为才有二级行为
+        if (null != whereRequest.getActionId()
+                && (whereRequest.getAnalysisLevel() == 0 || whereRequest.getAnalysisLevel() == 2)
+                && (whereRequest.getActionId() == Constants.SUPERMAN_ACTION_CALL_PAY
+                || whereRequest.getActionId() == Constants.SUPERMAN_ACTION_ACTIVITY_DISCOUNT
+                || whereRequest.getActionId() == Constants.SUPERMAN_ACTION_ACTIVITY_STORE
+                || whereRequest.getActionId() == Constants.SUPERMAN_ACTION_VIDEO_AD_CLICK
+                || whereRequest.getActionId() == Constants.SUPERMAN_ACTION_PRIZE_SERVER_LUCKYID)) {
+            //查询二级行为不需要限定id
+            //            whereRequest.loadFilter().remove("inList");
+//            PageResult<UploadAccessLog> level2Analysis = uploadAccessLogManageService.getLevel2Analysisby(whereRequest);
+//            Long total2TimeStay = uploadAccessLogManageService.countLv2TimeStay(whereRequest);
+//            Long total2Click = uploadAccessLogManageService.countLv2Click(whereRequest);
+//
+//            //            result.put("level2Analysis",level2Analysis);
+//            result.put("total2Click", total2Click);
+//            result.put("total2TimeStay", total2TimeStay);
+//            result.put("total2AnalysisNum", level2Analysis.size());
+//            List<UploadAccessLog> uploadAccessLogs = level2Analysis.getList();
+//            for (UploadAccessLog uploadAccessLog : uploadAccessLogs) {
+//                resp.addDataEntry(objectToEntry(uploadAccessLog));
+//            }
+        }
+        resp.setDataMap(result);
+        return resp;
+    }
+
+    private Map<String, Object> objectToEntry(UploadAccessLog uploadAccessLog) {
+        Map map = Maps.newHashMap();
+        map.put("id", uploadAccessLog.getId());
+        map.put("active", uploadAccessLog.getTable().getId());
+//        map.put("deviceRemark", evaluation.getDeviceRemark());
+//        map.put("feelEnvironment", evaluation.getFeelEnvironment() / 2);
+//        map.put("feelWhole", evaluation.getFeelWhole() / 2);
+//        map.put("feelFlavor", evaluation.getFeelFlavor() / 2);
+//        map.put("feelService", evaluation.getFeelService() / 2);
+//        map.put("mealsRemark", evaluation.getMealsRemark());
+//        map.put("timeSecond", DateTimeUtils.toDate(evaluation.getTimeSecond()).getTime());
+//        map.put("tableName", evaluation.getTable().getName());
+//        map.put("storeName", evaluation.getTable().getStore().getName());
+//        map.put("merchantName", evaluation.getTable().getStore().getMerchant().getName());
+        return map;
     }
 }

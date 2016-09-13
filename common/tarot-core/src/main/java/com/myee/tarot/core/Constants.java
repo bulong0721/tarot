@@ -156,4 +156,45 @@ public class Constants {
 
     public static final int SUPERMAN_EVALUATION_AVG = 1; //服务评价的类型-查平均值
     public static final int SUPERMAN_EVALUATION_DETAIL_LIST = 2; //服务评价的类型-查详情列表
+
+	public static final int SUPERMAN_ACTION_ORDER                    = 1;//点餐加菜
+	public static final int SUPERMAN_ACTION_WATER                    = 2;//添加茶水
+	public static final int SUPERMAN_ACTION_PAPER                    = 3;//湿巾纸巾
+	public static final int SUPERMAN_ACTION_CALL_PAY                 = 4;//呼叫结账
+	public static final int SUPERMAN_ACTION_OTHER                    = 5;//其他服务
+	public static final int SUPERMAN_ACTION_DEMO                     = 6;//DEMO引导
+	public static final int SUPERMAN_ACTION_EVALUATE                 = 7;//服务评价
+	public static final int SUPERMAN_ACTION_PAY                      = 8;//自助买单
+	public static final int SUPERMAN_ACTION_DISCOUNT                 = 9;//优惠专区
+	public static final int SUPERMAN_ACTION_DRIVING                  = 10;//代驾服务
+	public static final int SUPERMAN_ACTION_PROMOTION                = 11;//本店推介
+	public static final int SUPERMAN_ACTION_WEATHER                  = 12;//今日天气
+	public static final int SUPERMAN_ACTION_NEWS                     = 13;//今日头条
+	public static final int SUPERMAN_ACTION_SURROUND_ENTERTAINMENT   = 14;//周边玩乐
+	public static final int SUPERMAN_ACTION_STORE_ONLINE             = 15;//在线商场
+	public static final int SUPERMAN_ACTION_SURROUND_DISCOUNT        = 16;//周边优惠
+	public static final int SUPERMAN_ACTION_VIDEO_FUN                = 17;//视频娱乐
+	public static final int SUPERMAN_ACTION_MAGAZINE                 = 18;//电子杂志
+	public static final int SUPERMAN_ACTION_GAME                     = 19;//手游试玩
+	public static final int SUPERMAN_ACTION_SETTING                  = 20;//设置
+	public static final int SUPERMAN_ACTION_ACTIVITY_DISCOUNT        = 21;//优惠专区活动
+	public static final int SUPERMAN_ACTION_ACTIVITY_STORE           = 22;//本店推介活动
+	public static final int SUPERMAN_ACTION_DEVICE_START             = 23;//开机时间
+	public static final int SUPERMAN_ACTION_DEVICE_CLOSE             = 24;//关机时间
+	public static final int SUPERMAN_ACTION_EVALUATE_SUBMIT          = 25;//评价提交
+	public static final int SUPERMAN_ACTION_REWARD                   = 26;//打赏
+	public static final int SUPERMAN_ACTION_VIDEO_PLAY               = 27;//视频界面
+	public static final int SUPERMAN_ACTION_TIDY                     = 28;//收拾桌面
+	public static final int SUPERMAN_ACTION_ADD_SOUP                 = 29;//火锅加汤
+	public static final int SUPERMAN_ACTION_CHANGE_DISHWARE          = 30;//更换餐具
+	public static final int SUPERMAN_ACTION_VIDEO_AD_CLICK           = 31;//视频广告详情
+	public static final int SUPERMAN_ACTION_PRIZE_GOIN               = 32;//抽奖活动
+	public static final int SUPERMAN_ACTION_PRIZE_CLICKDRAW          = 33;//点击抽奖
+	public static final int SUPERMAN_ACTION_PRIZE_INPUTPHONE         = 34;//输入手机号
+	public static final int SUPERMAN_ACTION_PRIZE_RECEIVEGOODS       = 35;//领取奖品
+	public static final int SUPERMAN_ACTION_PRIZE_SERVER_LUCKYID     = 36;//云端奖券
+	public static final int SUPERMAN_ACTION_RESERVE                  = 100;//预留功能
+	public static final int SUPERMAN_ACTION_DRIVING_URL              = 1000;//代驾跳转
+
+
 }
