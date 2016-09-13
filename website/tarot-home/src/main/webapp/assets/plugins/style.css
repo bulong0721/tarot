@@ -10107,6 +10107,9 @@ th.center, td.center {
 
 /*/!*====================================new style====================================*!/*/
 address {margin: 0}
+/*nav top logo*/
+.profile-element {color: #fff;}
+.profile-element.img-circle {border-radius: 50%; width: 60px; height: 60px}
 /*login.jsp*/
 .loginBg {background:#fff url("http://7xl2nm.com2.z0.glb.qiniucdn.com/FlmzrRwz8qdWq-0pHxPHN5_GLpWf") right bottom no-repeat; }
 .loginMain { border: #eee 4px solid;  padding: 30px 45px;   margin-top: 200px;}

@@ -1,7 +1,7 @@
 /**
  * Created by Martin on 2016/4/12.
  */
-function constServiceCtor($resource, $q) {
+function constServiceCtor($resource, $q,$rootScope) {
     var vm = this;
 
     //获取产品类型
@@ -33,7 +33,7 @@ function constServiceCtor($resource, $q) {
         var deferred = $q.defer();
         $resource('./merchantStore/getSwitch').get({}, function (resp) {
             if (resp.rows.length > 0) {
-                vm.thisMerchantStore = resp.rows[0];
+                $rootScope.storeInfo = vm.thisMerchantStore = resp.rows[0];
             }
             deferred.resolve(vm.thisMerchantStore);
         });

@@ -2,23 +2,12 @@
     <div class="sidebar-collapse">
         <ul side-navigation class="nav metismenu" id="side-menu">
             <li class="nav-header">
-
-                <div class="profile-element" uib-dropdown>
-                    <a uib-dropdown-toggle href>
-                            <span class="clear">
-                                <span class="block m-t-xs">
-                                    <strong class="font-bold">{{main.userName}}</strong>
-                             </span>
-                                <span class="text-muted text-xs block">Example menu<b class="caret"></b></span>
-                            </span>
-                    </a>
-                    <ul uib-dropdown-menu="" class="animated fadeInRight m-t-xs">
-                        <li><a href="">Logout</a></li>
-                    </ul>
+                <div class="profile-element">
+                    <span><img class="logo" ng-src="{{base.pushUrl+storeInfo.merchant.logo}}" /></span>
+                    <span class="clear"></span>
+                    <span>{{storeInfo.merchant.name}}</span>
                 </div>
-                <div class="logo-element">
-                    IN+
-                </div>
+                <div class="logo-element">MYEE</div>
             </li>
 
             <li ng-class="{active: $state.includes('merchant')}">
