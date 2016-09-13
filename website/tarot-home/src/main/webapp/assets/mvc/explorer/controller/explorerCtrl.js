@@ -76,7 +76,7 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
             cellTemplateScope: {
                 add: function (data) {
                     $scope.handleSelect(data);
-                    $scope.formData.options.resetModel();
+                    //$scope.formData.options.resetModel();
                     $scope.activeTab = iEditor;
                     $scope.formData.model ={
                         salt:data.salt,
@@ -282,7 +282,11 @@ function explorerCtrl($scope, $resource, $filter,cfromly,Constants,cAlerts,toast
                 templateOptions: {required: false,type: 'file', label: '上传文件' },
                 hideExpression: function ($viewValue, $modelValue, scope) {
                     return scope.model.type == 0?true:false;//true新增文件夹时隐藏文件内容输入框 false新增时显示批量修改
-                }
+                },
+                controller:['$scope', function ($scope) {
+                    //资源回显
+                    $scope.len = true;
+                }],
                 //expressionProperties: {
                 //    'templateOptions.disabled': 'model.ifEditor', // disabled when ifEditor is true
                 //    //'templateOptions.disabled': 'model.editorModel==1?true:false'
