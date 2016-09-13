@@ -521,7 +521,7 @@ public class FilesController {
         String preSoftVersion = softVersion.substring(0, length - 3);
         //当前软件版本号的数字
         int thisVersion = Integer.parseInt(softVersion.substring(length - 3));
-        LOGGER.info("格式化字符串输出:"+String.format("%03d",thisVersion + 1 ));
+//        LOGGER.info("格式化字符串输出:"+String.format("%03d",thisVersion + 1 ));
         return preSoftVersion + String.format("%03d",thisVersion + 1 );
     }
 }

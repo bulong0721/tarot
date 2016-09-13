@@ -3,6 +3,7 @@ package com.myee.tarot.web.merchant.controller;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.util.DateTimeUtils;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
@@ -63,13 +64,13 @@ public class MerchantController {
             }
             Merchant merchant1 = merchantService.update(merchant);//新建或更新
 
-            Long counts = merchantStoreService.getCountById(merchant1.getId(), null);
+            Long counts = merchantStoreService.getCountById(null, merchant1.getId());
             if (counts == 0) {
                 //新建商户后，如果商户下没有门店自动新建一个默认店铺
                 MerchantStore merchantStore = new MerchantStore();
                 merchantStore.setMerchant(merchant1);
                 merchantStore.setName(merchant1.getName() + "默认门店");
-                merchantStore.setCode("defaultCode0000"+merchant1.getId());
+                merchantStore.setCode("defaultCode0000"+ DateTimeUtils.toShortDateTime(new Date()));
                 merchantStoreService.update(merchantStore);
             }
 

@@ -47,7 +47,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
                 templateOptions: {type: 'file', label: '商户图标', required: false, placeholder: '商户图标',
                     upAttr:{
                         name: 'img',//这个name是用来判断上传文件的类型，不判断为空('') || null
-                        upType:4,
+                        upType:2,
                         url:'./files/create',
                         param:{//这是url参数
                             type:'file',
@@ -57,9 +57,18 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
                     }
                 },
                 controller:['$scope', function ($scope) {
+                    //资源回显
+                    var md = $scope;
+                    md.thumbnail = [];
+                    md.len = true;
+                    if(md.model.id && md.model.imgFile){
+                        md.thumbnail.push({url:baseUrl.pushUrl+md.model.imgFile});
+                        ;(md.thumbnail.length>=md.to.upAttr.upMore) && (md.len = false);
+                    }
+                    //删除资源
                     $scope.upRemove = function(index){
-                        console.log(index)
-                        $scope.formData.model.logo = "";
+                        console.log(index);
+                        $scope.model.logo = ""; //若是数组用这种方式删scope.thumbnail.splice(index,1);
                     }
                 }]
             },
@@ -102,11 +111,9 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
             var data = $scope.tableOpts.data[rowIndex];
             $scope.formData.model = angular.copy(data);
             //console.log(data)
-            $scope.formData.model.imgFile = $filter('myeeUrlImg')(data.logo);
-
+            $scope.formData.model.imgFile = data.logo;
             $scope.rowIndex = rowIndex;
         } else {
-            $scope.formData.model.imgFile = $filter('myeeUrlImg')('');
             $scope.formData.model = {};
             $scope.rowIndex = -1;
         }
@@ -120,19 +127,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
         //把上传结果赋值到formly.model对象对应字段
         var pic = res[1].dataMap.tree.downloadPath;
         $scope.toasterManage($scope.toastUploadSucc);
-        $scope.formData.model.imgFile = $scope.formData.model.logo = pic;
-        //上传文件到后台
+        $scope.formData.model.logo = pic;
 
-        /*$resource(mgrData.api.upload).save({path: "logo", type: "file"}, arg).$promise.then(function (res) {
-            //console.log(res)
-            if (0 != res.status) {
-                $scope.toasterManage($scope.toastError, res);
-                return;
-            }
-            var pic = res.dataMap.tree.downloadPath;
-            $scope.toasterManage($scope.toastUploadSucc);
-            $scope.formData.model.logo = pic;
-            $scope.formData.model.imgFile = $scope.formData.model.logo = res.dataMap.tree.downloadPath;
-        })*/
     });
 }
