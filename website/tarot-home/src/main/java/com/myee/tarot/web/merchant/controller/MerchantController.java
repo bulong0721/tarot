@@ -553,6 +553,7 @@ public class MerchantController {
         entry.put("phone", merchantStore.getPhone());
         entry.put("postalCode", merchantStore.getPostalCode());
         entry.put("ratings", merchantStore.getRatings());
+        LOGGER.info(merchantStore.getMerchant().getLogo());
         entry.put("merchant", merchantStore.getMerchant());
         entry.put("address", merchantStore.getAddress());
         return entry;
