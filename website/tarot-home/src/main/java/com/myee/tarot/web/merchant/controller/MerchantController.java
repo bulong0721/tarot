@@ -220,7 +220,8 @@ public class MerchantController {
         entry.put("businessType", merchant.getBusinessType());
         entry.put("businessTypeKey", new BusinessType().getBusinessTypeName(merchant.getBusinessType()));
         String suisineType = merchant.getCuisineType();
-        entry.put("cuisineType",(suisineType == null || "".equals(suisineType))?"": new CuisineType().getCuisineTypeName(merchant.getCuisineType()));
+        entry.put("cuisineType", merchant.getCuisineType());
+        entry.put("cuisineTypeKey",(suisineType == null || "".equals(suisineType))?"": new CuisineType().getCuisineTypeName(merchant.getCuisineType()));
         entry.put("logo", merchant.getLogo());
         entry.put("description", merchant.getDescription());
         return entry;
