@@ -322,14 +322,14 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
         .state('superman.statistic.serviceEvaluation', {
             url: "/serviceEvaluation",
             templateUrl: "assets/mvc/desktop/view/manager.html",
-            controller: 'superMenuMgrCtrl',
+            controller: 'evaluationCtrl',
             data: {
                 subTitle: '服务评价',
-                datatable: 'assets/mvc/cater/view/super_menu_datatable.html'
+                datatable: 'assets/mvc/superman/view/evaluation_report.html'
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
-                    return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
+                    return ctrlManagerLoader($ocLazyLoad, 'superman', 'evaluationCtrl.js')
                 }
             }
         })

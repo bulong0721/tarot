@@ -1,0 +1,38 @@
+<div class="space-6"></div>
+<div class="alert alert-info">
+    <div class="form-inline">
+        <!--<div class="form-group">
+            <span class="form-control" ng-click="WeekDate(0)">上周</span>
+            <span class="form-control" ng-click="WeekDate(1)">本周</span>
+        </div>-->
+        <div class="form-group m-l">
+            <c-Datepicker placeholder="开始日期"  model="where.beginDate" style="width:150px;"></c-Datepicker>
+            <i class="fa fa-exchange"></i>
+            <c-Datepicker placeholder="结束日期" model="where.endDate" style="width:150px;"></c-Datepicker>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-sm btn-danger m-l" type="button" ng-click="search()"><i class="fa fa-search"></i><span class="bold">搜索</span></button>
+        </div>
+    </div>
+</div>
+<div class="space-6"></div>
+<div class="row">
+    <div class="col-xs-12">
+        <table ng-table="tableOpts" class="table table-striped table-bordered">
+            <thead style="display: none;"></thead>
+            <tbody>
+                <tr>
+                    <td class="center" ng-if="$data.length<=0">没有查找到数据</td>
+                </tr>
+                <tr ng-repeat="row in $data[0].list">
+                    <td>
+                        <p><span class="common-rating rating-16x16"><span class="rate-stars" style="width:{{row.feelWhole*2}}%"></span></span><time class="m-l10">{{row.timeSecond | dateFormatter}}</time></p>
+                        <p><b>餐饮：</b>{{row.mealsRemark}}</p>
+                        <p ng-if="l.deviceRemark"><b>设备：</b>{{row.deviceRemark}}</p>
+                        <p><small>{{row.merchantName}} {{row.storeName}} {{row.tableName}}</small></p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
