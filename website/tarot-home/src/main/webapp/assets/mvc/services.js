@@ -335,18 +335,15 @@ function cfromlyService(formlyConfig, $window,$q, toaster, $filter,$timeout,form
     *删除某一个资源fromly配置
     *controller:['$scope', function ($scope) {
     * //资源回显
-         var md = $scope; //固定语句
-         md.thumbnail = [];//固定语句
-         md.len = true;//固定语句
-         if(md.model.id && md.model.smallPic){ //编辑时带ID，才执行
-             md.thumbnail.push({url:baseUrl.pushUrl+md.model.smallPic});//要回显的图片，多张用for循环
-             ;(md.thumbnail.length>=md.to.upAttr.upMore) && (md.len = false);//如果超长度，不显示上传按钮，固定语句，必须带上
+         $scope.editFile = function(call){
+             if($scope.model.smallPic){
+                call({url:baseUrl.pushUrl+ $scope.model.smallPic})
+             }
+         };
+         //删除资源
+         $scope.upRemove = function(index){
+            console.log(index);
          }
-        $scope.upRemove = function(index){//删除的触发事件
-            console.log(index)
-            //删除逻辑在这里处理
-        }
-     }]
     */
     formlyConfig.setType({
         name: 'upload',
@@ -369,10 +366,21 @@ function cfromlyService(formlyConfig, $window,$q, toaster, $filter,$timeout,form
         },
         link: function (scope, el, attrs) {
             //初始化 [缩略图|多图长度|样式]
+            scope.thumbnail = [];
+            scope.len = true;
             scope.upClass = false;
             //判断是否upAttr
             if(scope.to.upAttr){
                 var t = scope.to.upAttr;
+
+                //判断是否是编辑
+                if(scope.model.id){
+                    scope.editFile(function(arr){
+                        scope.thumbnail.push(arr);
+                        ;(scope.thumbnail.length>=scope.to.upAttr.upMore) && (scope.len = false);
+                    });
+                }
+
                 //判断属性是否完整
                 if(!t.param && !t.upType && !t.url){
                     console.error('请完整设置upType[number] url[str] param[obj]');

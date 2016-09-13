@@ -104,13 +104,11 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
                 },
                 controller:['$scope', function ($scope) {
                     //资源回显
-                    var md = $scope;
-                    md.thumbnail = [];
-                    md.len = true;
-                    if(md.model.id && md.model.smallPic){
-                        md.thumbnail.push({url:baseUrl.pushUrl+md.model.smallPic});
-                        ;(md.thumbnail.length>=md.to.upAttr.upMore) && (md.len = false);
-                    }
+                    $scope.editFile = function(call){
+                        if($scope.model.smallPic){
+                            call({url:baseUrl.pushUrl+ $scope.model.smallPic})
+                        }
+                    };
                     //删除资源
                     $scope.upRemove = function(index){
                         console.log(index);
@@ -136,13 +134,11 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
                 },
                 controller:['$scope', function ($scope) {
                     //资源回显
-                    var md = $scope;
-                    md.thumbnail = [];
-                    md.len = true;
-                    if(md.model.id && md.model.bigPic){
-                        md.thumbnail.push({url:baseUrl.pushUrl+ md.model.bigPic});
-                        ;(md.thumbnail.length>=md.to.upAttr.upMore) && (md.len = false);
-                    }
+                    $scope.editFile = function(call){
+                        if($scope.model.bigPic){
+                            call({url:baseUrl.pushUrl+ $scope.model.bigPic})
+                        }
+                    };
                     //删除资源
                     $scope.upRemove = function(index){
                         console.log(index)

@@ -58,18 +58,17 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
                 },
                 controller:['$scope', function ($scope) {
                     //资源回显
-                    var md = $scope;
-                    md.thumbnail = [];
-                    md.len = true;
-                    if(md.model.id && md.model.imgFile){
-                        md.thumbnail.push({url:baseUrl.pushUrl+md.model.imgFile});
-                        ;(md.thumbnail.length>=md.to.upAttr.upMore) && (md.len = false);
-                    }
+                    $scope.editFile = function(call){
+                        if($scope.model.imgFile){
+                            call({url:baseUrl.pushUrl+$scope.model.imgFile})
+                        }
+                    };
+
                     //删除资源
                     $scope.upRemove = function(index){
                         console.log(index);
                         $scope.model.logo = ""; //若是数组用这种方式删scope.thumbnail.splice(index,1);
-                    }
+                    };
                 }]
             },
             {
