@@ -199,4 +199,7 @@ public class Constants {
 	public static final String VOICE_LOG_TYPE_CHAT = "聊天";
 	public static final String VOICE_LOG_TYPE_TALKSHOW = "脱口秀";
 
+	public static final String ES_QUERY_INDEX = "log";
+	public static final String ES_QUERY_TYPE = "voiceLog";
+
 }

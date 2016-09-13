@@ -49,9 +49,6 @@ public class VoiceLogController {
     private static final int TYPE_CHAT_NUM = 1;
     private static final int MAX_QUERY_COUNT = 10000;
 
-    private static final String ES_QUERY_INDEX = "log";
-    private static final String ES_QUERY_TYPE = "voiceLog";
-
     /**
      * 下载
      *
@@ -85,7 +82,7 @@ public class VoiceLogController {
             queries.put("voiceType", voiceLogTypeDto);
         }
         try {
-            PageResult<VoiceLog> voiceLogPageResult = esUtils.searchPageQueries(ES_QUERY_INDEX, ES_QUERY_TYPE, queries, 1, MAX_QUERY_COUNT, VoiceLog.class);//默认上限查询10000条数据
+            PageResult<VoiceLog> voiceLogPageResult = esUtils.searchPageQueries(Constants.ES_QUERY_INDEX, Constants.ES_QUERY_TYPE, queries, 1, MAX_QUERY_COUNT, VoiceLog.class);//默认上限查询10000条数据
             List<VoiceLog> voiceLogList = voiceLogPageResult.getList();
             resp.setHeader("Content-type", "text/csv;charset=gb2312");
             resp.addHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(DateTimeUtils.getNormalNameDateTime() + "voiceLog.csv", "utf8"));
@@ -141,7 +138,7 @@ public class VoiceLogController {
             queries.put("voiceType", voiceLogTypeDto);
         }
 
-        PageResult<VoiceLog> voiceLogList = esUtils.searchPageQueries(ES_QUERY_INDEX, ES_QUERY_TYPE, queries, whereRequest.getPage(), whereRequest.getCount(), VoiceLog.class);
+        PageResult<VoiceLog> voiceLogList = esUtils.searchPageQueries(Constants.ES_QUERY_INDEX, Constants.ES_QUERY_TYPE, queries, whereRequest.getPage(), whereRequest.getCount(), VoiceLog.class);
         for (VoiceLog voiceLog : voiceLogList.getList()) {
             resp.addDataEntry(objectToEntry(voiceLog));
         }
