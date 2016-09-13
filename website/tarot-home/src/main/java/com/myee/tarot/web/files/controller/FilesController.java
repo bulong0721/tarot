@@ -286,7 +286,6 @@ public class FilesController {
                 return AjaxResponse.failed(-1, "店铺ID不能为空");
             }
             File dest = FileUtils.getFile(DOWNLOAD_HOME, storeIdStr, File.separator + path);
-
             if (type.equals(RESOURCE_TYPE_DIR)) {
                 dest.mkdirs();
             } else if (!file.isEmpty() && type.equals(RESOURCE_TYPE_FILE)) {

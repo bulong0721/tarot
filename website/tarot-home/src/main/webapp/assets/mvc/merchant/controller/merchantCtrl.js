@@ -128,6 +128,5 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
         var pic = res[1].dataMap.tree.downloadPath;
         $scope.toasterManage($scope.toastUploadSucc);
         $scope.formData.model.logo = pic;
-
     });
 }

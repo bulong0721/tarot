@@ -73,7 +73,6 @@ public class MerchantController {
                 merchantStore.setCode("defaultCode0000"+ DateTimeUtils.toShortDateTime(new Date()));
                 merchantStoreService.update(merchantStore);
             }
-
             resp = AjaxResponse.success();
             resp.addEntry("updateResult", objectToEntry(merchant1));
         } catch (Exception e) {
