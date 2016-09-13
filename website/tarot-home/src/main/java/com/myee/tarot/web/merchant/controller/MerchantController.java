@@ -62,6 +62,7 @@ public class MerchantController {
                 resp.setErrorString("名称/商户类型不能为空");
                 return resp;
             }
+            merchant.setCuisineType(StringUtil.isBlank(merchant.getCuisineType())?"":merchant.getCuisineType());
             Merchant merchant1 = merchantService.update(merchant);//新建或更新
 
             Long counts = merchantStoreService.getCountById(null, merchant1.getId());

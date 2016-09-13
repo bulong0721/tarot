@@ -125,7 +125,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
     $scope.$on('fileToUpload', function (event, res) {
         console.log(res)
         //把上传结果赋值到formly.model对象对应字段
-        var pic = res[1].dataMap.tree.downloadPath;
+        var pic = res[0].dataMap.tree.downloadPath;
         $scope.toasterManage($scope.toastUploadSucc);
         $scope.formData.model.logo = pic;
     });
