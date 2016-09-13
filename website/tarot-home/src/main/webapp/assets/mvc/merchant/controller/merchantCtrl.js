@@ -110,7 +110,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
         if (rowIndex > -1) {
             var data = $scope.tableOpts.data[rowIndex];
             $scope.formData.model = angular.copy(data);
-            //console.log(data)
+            console.log(data)
             $scope.formData.model.imgFile = data.logo;
             $scope.rowIndex = rowIndex;
         } else {
