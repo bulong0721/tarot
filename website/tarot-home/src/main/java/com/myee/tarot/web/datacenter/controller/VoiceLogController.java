@@ -46,6 +46,9 @@ public class VoiceLogController {
     private static EntityQueryDto keywordDto = new EntityQueryDto();
     private static EntityQueryDto voiceLogTypeDto = new EntityQueryDto();
 
+    private static final int TYPE_CHAT_NUM = 1;
+    private static final int MAX_QUERY_COUNT = 10000;
+
     /**
      * 下载
      *
@@ -79,10 +82,10 @@ public class VoiceLogController {
             queries.put("voiceType", voiceLogTypeDto);
         }
         try {
-            PageResult<VoiceLog> voiceLogPageResult = esUtils.searchPageQueries("log6", "voiceLog6", queries, 1, 10000, VoiceLog.class);//默认上限查询10000条数据
+            PageResult<VoiceLog> voiceLogPageResult = esUtils.searchPageQueries(Constants.ES_QUERY_INDEX, Constants.ES_QUERY_TYPE, queries, 1, MAX_QUERY_COUNT, VoiceLog.class);//默认上限查询10000条数据
             List<VoiceLog> voiceLogList = voiceLogPageResult.getList();
             resp.setHeader("Content-type", "text/csv;charset=gb2312");
-            resp.addHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(DateTimeUtils.getNormalNameDateTime() + "语音日志.csv", "utf8"));
+            resp.addHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(DateTimeUtils.getNormalNameDateTime() + "voiceLog.csv", "utf8"));
             writer = new CSVWriter(resp.getWriter());
             writer.writeNext(new String[]{
                     "序号",
@@ -135,7 +138,7 @@ public class VoiceLogController {
             queries.put("voiceType", voiceLogTypeDto);
         }
 
-        PageResult<VoiceLog> voiceLogList = esUtils.searchPageQueries("log6", "voiceLog6", queries, whereRequest.getPage(), whereRequest.getCount(), VoiceLog.class);
+        PageResult<VoiceLog> voiceLogList = esUtils.searchPageQueries(Constants.ES_QUERY_INDEX, Constants.ES_QUERY_TYPE, queries, whereRequest.getPage(), whereRequest.getCount(), VoiceLog.class);
         for (VoiceLog voiceLog : voiceLogList.getList()) {
             resp.addDataEntry(objectToEntry(voiceLog));
         }
@@ -148,7 +151,7 @@ public class VoiceLogController {
         Map entry = new HashMap();
         entry.put("dateTimeStr", voiceLog.getDateTimeStr());
         entry.put("storeName", voiceLog.getStoreName());
-        entry.put("voiceType", voiceLog.getVoiceType().equals("1") ? "聊天" : "脱口秀");
+        entry.put("voiceType", voiceLog.getVoiceType().equals(TYPE_CHAT_NUM) ? Constants.VOICE_LOG_TYPE_CHAT : Constants.VOICE_LOG_TYPE_TALKSHOW);
         entry.put("cookyListen", voiceLog.getCookieListen());
         entry.put("cookySpeak", voiceLog.getCookieSpeak());
         return entry;

@@ -585,6 +585,7 @@ angular
     .run(function ($rootScope, $state) {
         $rootScope.storeInfo = {};
         $rootScope.$state = $state;
+        $rootScope.baseUrl={pushUrl:baseUrl.pushUrl,qiniuCdn:baseUrl.qiniuCdn};
     })
     .constant('baseConstant',{
         myeeDefaultUrlImg:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt"

@@ -196,5 +196,10 @@ public class Constants {
 	public static final int SUPERMAN_ACTION_RESERVE                  = 100;//预留功能
 	public static final int SUPERMAN_ACTION_DRIVING_URL              = 1000;//代驾跳转
 
+	public static final String VOICE_LOG_TYPE_CHAT = "聊天";
+	public static final String VOICE_LOG_TYPE_TALKSHOW = "脱口秀";
+
+	public static final String ES_QUERY_INDEX = "log";
+	public static final String ES_QUERY_TYPE = "voiceLog";
 
 }

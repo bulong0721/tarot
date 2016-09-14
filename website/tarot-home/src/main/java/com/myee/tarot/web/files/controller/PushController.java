@@ -250,7 +250,7 @@ public class PushController {
         if (pushResourceDTO.getContent() == null || pushResourceDTO.getContent().size() <= 0) {
             return AjaxResponse.failed(-4, "推送内容为空或格式错误");
         }
-        Boolean isSuccess = null;
+        boolean isSuccess = false;
         Notification notification = new Notification();
         try {
             MerchantStore merchantStore = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
@@ -264,7 +264,7 @@ public class PushController {
             notification.setAdminUser((AdminUser) request.getSession().getAttribute(Constants.ADMIN_USER));
             notification.setStore(merchantStore);
             notification.setCreateTime(new Date());
-            if (isSuccess != null && isSuccess) {
+            if (isSuccess) {
                 notification.setSuccess(true);
                 notification.setComment("推送成功");
                 notificationService.update(notification);

@@ -32,6 +32,10 @@ public class QuartzForVoiceLog {
     @Autowired
     private ESUtils esUtils;
 
+    private static final String TYPE_CHAT = "1";
+    private static final String TYPE_TALKSHOW = "2";
+
+
 //    @Scheduled(cron = "* 0/2 * * * ? ")  //每天23PM跑定时任务语音日志放到Es并移动文件
     public void parseFileToDb() {
         //获取路径下所有的csv文件
@@ -65,12 +69,12 @@ public class QuartzForVoiceLog {
                                 voiceLog.setDateTime(DateUtil.getDateTime(voiceLog.getDateTimeStr()));
                                 voiceLog.setCookieListen(ss[1] == null ? null : ss[1]);//Cooky- Listen
                                 voiceLog.setCookieSpeak(ss[2] == null ? null : ss[2].toString());//Cooky- Speak
-                                voiceLog.setVoiceType(ss[3] == null ? null : ss[3].toString().equals("聊天") ? "1" : "2");
+                                voiceLog.setVoiceType(ss[3] == null ? null : ss[3].toString().equals(Constants.VOICE_LOG_TYPE_CHAT) ? TYPE_CHAT : TYPE_TALKSHOW);
                                 voiceLog.setStoreId(ss[5] == null ? null : Long.valueOf(ss[5]));
                                 voiceLog.setStoreName(ss[6] == null ? null : ss[6].toString());
                                 voiceLogList.add(voiceLog);
                             }
-                            esUtils.bulkAddList("log6", "voiceLog6", voiceLogList);
+                            esUtils.bulkAddList(Constants.ES_QUERY_INDEX, Constants.ES_QUERY_TYPE, voiceLogList);
                             csvReader.close();
                             moveToRecycle(file);
                         }
