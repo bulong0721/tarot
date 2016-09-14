@@ -50,14 +50,7 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
             {
                 key: 'total',
                 type: 'c_input',
-                templateOptions: {type: 'text', label: '奖券数量', required: true, placeholder: '奖券数量'},
-                hideExpression: function ($viewValue, $modelValue, scope) {
-                    if (scope.model.type != '1') {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                }
+                templateOptions: {type: 'text', label: '奖券数量', required: true, placeholder: '奖券数量'}
             },
             {
                 key: 'startDate',

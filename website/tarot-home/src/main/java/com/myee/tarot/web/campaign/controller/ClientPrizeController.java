@@ -86,20 +86,16 @@ public class ClientPrizeController extends BaseController {
             }
             //添加 修改
             MerchantStore merchantStore = (MerchantStore) request.getSession().getAttribute(sessionName);
-            Integer total = null;
-            if(clientPrize.getType() != Constants.CLIENT_PRIZE_TYPE_SCANCODE){
-                total = clientPrize.getTotal();
-                //设置剩余数量  防止重置超奖池
-                if (clientPrize.getId() != null) {
-                    int remainInPool = clientPrizeGetInfoService.countUnGetByPrizeId(clientPrize.getId());
-                    total = total.intValue() - remainInPool;
-                }
-                if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_THANKYOU) {
-                    clientPrize.setPhonePrizeType(null);
-                    clientPrize.setName("谢谢惠顾");
-                }
-            } else {
-                clientPrize.setTotal(null);
+            //设置剩余数量  防止重置超奖池
+            Integer total = clientPrize.getTotal();
+            if (clientPrize.getId() != null) {
+                int remainInPool = clientPrizeGetInfoService.countUnGetByPrizeId(clientPrize.getId());
+                total = total.intValue() - remainInPool;
+            }
+            if(clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_SCANCODE){
+                clientPrize.setPhonePrizeType(null);
+            } else if(clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_THANKYOU){
+                clientPrize.setName("谢谢惠顾");
                 clientPrize.setPhonePrizeType(null);
             }
             clientPrize.setLeftNum(total);
@@ -424,36 +420,20 @@ public class ClientPrizeController extends BaseController {
             List<ClientPrize> activeClientPrize = clientPrizeService.listActive(shopId);
             if (activeClientPrize != null && activeClientPrize.size() != 0) {
                 int totalLeft = 0;
-                int leftPhoneTotal = 0;
                 //先获取剩余手机奖券的
                 for (ClientPrize clientPrize : activeClientPrize) {
-                    if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_PHONE) {
-                        int leftNum = clientPrize.getLeftNum().intValue();
-                        leftPhoneTotal += leftNum;
-                        totalLeft += leftNum;
-                    } else if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_THANKYOU) {
-                        int leftNum = clientPrize.getLeftNum().intValue();
-                        totalLeft += leftNum;
-                    }
+                    int leftNum = clientPrize.getLeftNum();
+                    totalLeft += leftNum;
                 }
-                //随机生成二维码计算数量
+                if(totalLeft == 0) {
+                    return ClientAjaxResult.failed("该店奖券已被抽完");
+                }
                 Random random = new Random();
-                for (ClientPrize clientPrize : activeClientPrize) {
-                    if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_SCANCODE) {
-                        int randomLeft = random.nextInt(leftPhoneTotal) + 1;
-                        clientPrize.setLeftNumCache(randomLeft);
-                        totalLeft += randomLeft;
-                    }
-                }
                 //从总量随机抽取一个
                 int randomPrizeNum = random.nextInt(totalLeft) + 1;
                 int compareNum = 0;
                 for (ClientPrize clientPrize : activeClientPrize) {
-                    if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_SCANCODE) {
-                        compareNum += clientPrize.getLeftNumCache();
-                    } else {
-                        compareNum += clientPrize.getLeftNum();
-                    }
+                    compareNum += clientPrize.getLeftNum();
                     if (randomPrizeNum <= compareNum) {
                         //获取到抽到的奖项
                         if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_PHONE) {
@@ -466,10 +446,7 @@ public class ClientPrizeController extends BaseController {
                             getInfo.setStatus(Constants.CLIENT_PRIZEINFO_STATUS_UNGET);
                             ClientPrizeGetInfo clientPrizeGetInfo = clientPrizeGetInfoService.update(getInfo);
                             clientPrize.setPriceGetId(clientPrizeGetInfo.getId());
-                        } else if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_SCANCODE) {
-                            //无需消奖
-                            clientPrize.setPriceGetId(-1L);
-                        } else if (clientPrize.getType() == Constants.CLIENT_PRIZE_TYPE_THANKYOU) {
+                        } else {
                             clientPrize.setLeftNum(clientPrize.getLeftNum() - 1);
                             clientPrizeService.update(clientPrize);
                             clientPrize.setPriceGetId(-1L);
