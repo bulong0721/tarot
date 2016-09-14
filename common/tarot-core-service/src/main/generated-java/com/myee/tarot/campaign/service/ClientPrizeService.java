@@ -16,6 +16,8 @@ public interface ClientPrizeService extends GenericEntityService<Long, ClientPri
 
     List<ClientPrize> listActive(Long storeId);
 
+    List<ClientPrize> listActiveAndAboveZero(Long storeId);
+
     ClientPrize getThankYouPrize(Long storeId);
 
     void scanClientPrizeOverDate();

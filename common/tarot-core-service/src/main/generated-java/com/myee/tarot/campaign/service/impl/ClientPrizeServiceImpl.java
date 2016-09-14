@@ -39,6 +39,11 @@ public class ClientPrizeServiceImpl extends GenericEntityServiceImpl<Long, Clien
     }
 
     @Override
+    public List<ClientPrize> listActiveAndAboveZero(Long storeId) {
+        return clientPrizeDao.listActiveAndAboveZero(storeId);
+    }
+
+    @Override
     public ClientPrize getThankYouPrize(Long storeId) {
         return clientPrizeDao.getThankYouPrize(storeId);
     }

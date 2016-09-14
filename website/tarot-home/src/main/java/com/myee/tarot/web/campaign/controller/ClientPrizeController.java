@@ -417,7 +417,7 @@ public class ClientPrizeController extends BaseController {
     public ClientAjaxResult getRandomClientPrizeInfo(@RequestParam("orgId") Long shopId,
                                                      @RequestParam("deskId") String deskId) {
         try {
-            List<ClientPrize> activeClientPrize = clientPrizeService.listActive(shopId);
+            List<ClientPrize> activeClientPrize = clientPrizeService.listActiveAndAboveZero(shopId);
             if (activeClientPrize != null && activeClientPrize.size() != 0) {
                 int totalLeft = 0;
                 //先获取剩余手机奖券的
@@ -455,7 +455,7 @@ public class ClientPrizeController extends BaseController {
                     }
                 }
             } else {
-                return ClientAjaxResult.failed("该店奖券已停止");
+                return ClientAjaxResult.failed("该店奖券已被抽完");
             }
         } catch (Exception e) {
             e.printStackTrace();
