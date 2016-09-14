@@ -30,19 +30,6 @@ public class StringUtil {
         }
     }
 
-    public static double determineSimilarity(String test1, String test2) {
-        String first = new String(test1);
-        first = first.replaceAll("[ \\t\\n\\r\\f\\v\\/'-]", "");
-        Long originalChecksum = StringUtil.getChecksum(first);
-        String second = new String(test2);
-        second = second.replaceAll("[ \\t\\n\\r\\f\\v\\/'-]", "");
-        Long myChecksum = StringUtil.getChecksum(second);
-        StatCalc calc = new StatCalc();
-        calc.enter(originalChecksum);
-        calc.enter(myChecksum);
-        return calc.getStandardDeviation();
-    }
-
     /**
      * Protect against HTTP Response Splitting
      *
@@ -162,35 +149,6 @@ public class StringUtil {
             }
             return new String(padding).concat(str);
         }
-    }
-
-    /**
-     * 微信公众号使用，暂时不了解是否通用
-     * @param cs
-     * @return
-     */
-    public static boolean isBlankWeiXin(CharSequence cs) {
-        int strLen;
-        if(cs != null && (strLen = cs.length()) != 0) {
-            for(int i = 0; i < strLen; ++i) {
-                if(!Character.isWhitespace(cs.charAt(i))) {
-                    return false;
-                }
-            }
-
-            return true;
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * 微信公众号使用，暂时不了解是否通用
-     * @param cs
-     * @return
-     */
-    public static boolean isNotBlankWeiXin(CharSequence cs) {
-        return !isBlankWeiXin(cs);
     }
 
     public static boolean isNumeric(CharSequence cs) {

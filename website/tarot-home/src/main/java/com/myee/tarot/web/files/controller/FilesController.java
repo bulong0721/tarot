@@ -14,6 +14,7 @@ import com.myee.tarot.web.files.FileDTO;
 import com.myee.tarot.web.files.HotfixSetVo;
 import com.myee.tarot.web.files.HotfixVo;
 import com.myee.tarot.web.files.TreeFileItem;
+import jodd.io.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -396,26 +397,12 @@ public class FilesController {
      */
     public static boolean delete(File file) {
         try {
-            if (file.exists()) {
-                if (file.isFile()) {
-                    file.delete();
-                } else if (file.isDirectory()) {
-                    File files[] = file.listFiles();
-                    for (int i = 0; i < files.length; i++) {
-                        delete(files[i]);
-                    }
-                    file.delete();
-
-                }
-                return true;
-            } else {
-                LOGGER.error("所删除的文件不存在！" + '\n');
-                return false;
-            }
-        } catch (Exception e) {
-            LOGGER.error("unable to delete the folder!");
+            FileUtil.delete(file);
+            return true;
+        } catch (IOException e) {
+            LOGGER.error("Unable to delete: ", e);
+            return false;
         }
-        return false;
     }
 
     /**

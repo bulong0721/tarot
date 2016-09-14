@@ -1,11 +1,6 @@
 package com.myee.tarot.core.util;
 
-import com.myee.tarot.core.Constants;
-
-import javax.servlet.http.HttpServletRequest;
 import java.util.EmptyStackException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

@@ -1,8 +1,8 @@
 angular.module('myee', [])
     .controller('evaluationCtrl', evaluationCtrl);
 
-evaluationCtrl.$inject = ['$scope','cTables'];
-function evaluationCtrl($scope,cTables) {
+evaluationCtrl.$inject = ['$scope', 'cTables'];
+function evaluationCtrl($scope, cTables) {
     //获取数据配置
     var mgrOpts = {
         api: {
