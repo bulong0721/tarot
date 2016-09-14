@@ -3,7 +3,7 @@
         <ul side-navigation class="nav metismenu" id="side-menu">
             <li class="nav-header">
                 <div class="profile-element">
-                    <span><img class="logo" ng-src="{{baseUrl.pushUrl+storeInfo.merchant.logo}}" /></span>
+                    <span><img class="logo" ng-src="{{storeInfo.merchant.logo | myeeUrlImg}}"/></span>
                     <span class="clear"></span>
                     <span>{{storeInfo.merchant.name}}</span>
                 </div>
