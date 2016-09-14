@@ -460,8 +460,8 @@ public class FilesController {
     /**
      * 根据软硬件版本号
      *
-     * @param version version规则: Cooky - C001      M01        A001       - RK3288_v2
-     *                项目名    通用版本  头部或胸部   软件版本号    硬件版本号
+     * @param version version规则: Cooky - C001      M01        A001       - RK3288_v2   -20160804
+     *                            项目名    通用版本  头部或胸部   软件版本号    硬件版本号    时间
      *                存储路径规则: 100/boardUpdate/项目名/硬件版本号/软件版本号
      *                查找文件规则:升级包都是差分升级包，由1升2,2再升3....，所以查询版本号的时候，是取当前版本号+1的升级包
      * @return
@@ -475,12 +475,13 @@ public class FilesController {
                 return AjaxResponse.failed(-1, "版本号为空");
             }
             String[] versionSplit = version.split("-");
-            if (versionSplit.length != 3) {
+            if (versionSplit.length != 4) {
                 return AjaxResponse.failed(-1, "版本号格式不正确");
             }
             String productName = versionSplit[0];
             String softwareVersion = calSoftwareVersionNext(versionSplit[1]);
             String hardwareVersion = versionSplit[2];
+//            String time = versionSplit[3];
             File dest = FileUtils.getFile(DOWNLOAD_HOME, Constants.BOARD_UPDATE_BASEPATH, productName + "/" + hardwareVersion + "/" + softwareVersion);
             LOGGER.info("文件保存路径:"+dest.getPath());
             //只取zip结尾的文件

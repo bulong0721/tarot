@@ -515,7 +515,12 @@ public class MerchantController {
                 return resp;
             }
             MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(sessionName);
-            resp.addDataEntry(objectToEntry(merchantStore1));
+            Map entry = objectToEntry(merchantStore1);
+
+            //因为懒加载可能导致修改商户后，关联查询出来点商户信息没更新，所以强制重新查询一次
+            Merchant merchant = merchantService.findById(merchantStore1.getMerchant().getId());
+            entry.put("merchant",merchant);
+            resp.addDataEntry(entry);
         } catch (Exception e) {
             e.printStackTrace();
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -553,7 +558,6 @@ public class MerchantController {
         entry.put("phone", merchantStore.getPhone());
         entry.put("postalCode", merchantStore.getPostalCode());
         entry.put("ratings", merchantStore.getRatings());
-        LOGGER.info(merchantStore.getMerchant().getLogo());
         entry.put("merchant", merchantStore.getMerchant());
         entry.put("address", merchantStore.getAddress());
         return entry;
