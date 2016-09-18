@@ -127,6 +127,9 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 	}
 
 	String toHourString(Date time) {
+		if(null == time){
+			return "";
+		}
 		return new DateTime(time.getTime()).toString("HH:mm");
 	}
 
@@ -144,7 +147,8 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 		shopDetail.setDescription(merchantStore.getDescription());
 		shopDetail.setExperience(merchantStore.isExperience());
 		shopDetail.setShopType(merchantStore.getStoreType());
-		shopDetail.setScore(merchantStore.getScore());
+		Float score = merchantStore.getScore();
+		shopDetail.setScore(score == null ? 0 : score );
 		Merchant merchant = merchantStore.getMerchant();
 		shopDetail.setMerchant(merchant != null ? JSON.toJSONString(merchant) : "");
 		shopDetail.setClientId(merchant != null ? merchant.getId() : null);
