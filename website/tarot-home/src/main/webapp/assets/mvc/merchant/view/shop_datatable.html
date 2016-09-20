@@ -45,15 +45,15 @@
                         <td>{{::row.phone}}</td>
                         <td>{{::row.code}}</td>
                         <td class="center">
-                            <a ng-click="goShopBindEditor($index)" title="设置引流"><i class="btn-icon fa fa-share"></i></a>
+                            <a ng-click="goShopBindEditor($index)" tooltip-placement="top" uib-tooltip="设置引流"><i class="btn-icon fa fa-share"></i></a>
                             <span class="divider"></span>
-                            <a ng-click="row.showDetail=!row.showDetail" title="引流详细"><i class="btn-icon fa fa-bars"></i></a>
+                            <a ng-click="row.showDetail=!row.showDetail" tooltip-placement="top" uib-tooltip="引流详细"><i class="btn-icon fa fa-bars"></i></a>
                         </td>
                         <td class="center">
-                            <a ng-click="goEditorCustom($index)" title="编辑"><i class="btn-icon fa fa-pencil"></i></a>
+                            <a ng-click="goEditorCustom($index)" tooltip-placement="top" uib-tooltip="编辑"><i class="btn-icon fa fa-pencil"></i></a>
                             <span class="divider"></span>
-                            <a ng-if="row.id != thisStoreId" ng-click="doDelete($index)" title="删除"><i class="btn-icon fa fa-trash-o"></i></a>
-                            <a ng-if="row.id == thisStoreId" title="当前切换的门店，不能删除"><i class="btn-icon fa fa-ban"></i></a>
+                            <a ng-if="row.id != thisStoreId" ng-click="doDelete($index)" tooltip-placement="top" uib-tooltip="删除"><i class="btn-icon fa fa-trash-o"></i></a>
+                            <a ng-if="row.id == thisStoreId" tooltip-placement="top" uib-tooltip="当前切换的门店，不能删除"><i class="btn-icon fa fa-ban"></i></a>
                         </td>
                     </tr>
                     <tr ng-repeat-end ng-if="row.showDetail">
