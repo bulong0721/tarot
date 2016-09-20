@@ -125,6 +125,7 @@ function switchMerchant(Constants,$resource,$state,$rootScope,NgTableParams,toas
                         $rootScope.rightSidebar = !$rootScope.rightSidebar;
                         //刷新当前页面的显示
                         $rootScope.storeInfo = $scope.merchantStoreSelect = Constants.thisMerchantStore = resp.rows[0];
+                        Constants.thisMerchant = Constants.thisMerchantStore.merchant;
                         toaster.success({ body:"门店切换成功"});
                         $state.go($state.current, {}, {reload: true});
                     });

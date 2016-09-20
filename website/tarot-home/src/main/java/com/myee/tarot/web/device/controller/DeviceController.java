@@ -377,14 +377,19 @@ public class DeviceController {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
+            DeviceUsed deviceUsed1 = deviceUsedService.findById(deviceUsed.getId());
+
+            if(deviceUsed1.getProductUsed() != null){
+                return AjaxResponse.failed(-1,"已有关联设备组，无法删除！请取消关联后重试。");
+            }
+
             //先手动删除所有该对象关联的属性，再删除该对象。因为关联关系是属性多对一该对象，关联字段放在属性表里，不能通过删对象级联删除属性。
             deviceUsedAttributeService.deleteByDeviceUsedId(deviceUsed.getId());
 
-            DeviceUsed deviceUsed1 = deviceUsedService.findById(deviceUsed.getId());
             deviceUsedService.delete(deviceUsed1);
             return AjaxResponse.success();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             return AjaxResponse.failed(-1,"在其他地方被使用，无法删除");
         }
     }
@@ -647,10 +652,16 @@ public class DeviceController {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
+
+            ProductUsed productUsed1 = productUsedService.findById(productUsed.getId());
+            if(productUsed1.getDeviceUsed() != null){
+                return AjaxResponse.failed(-1,"已有关联设备，无法删除！请取消关联后重试。");
+            }
+
             //先手动删除所有该对象关联的属性，再删除该对象。因为关联关系是属性多对一该对象，关联字段放在属性表里，不能通过删对象级联删除属性。
             productUsedAttributeService.deleteByProductUsedId(productUsed.getId());
 
-            ProductUsed productUsed1 = productUsedService.findById(productUsed.getId());
+
             productUsedService.delete(productUsed1);
             return AjaxResponse.success();
         } catch (Exception e) {

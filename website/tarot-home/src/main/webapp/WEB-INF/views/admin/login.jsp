@@ -29,7 +29,7 @@
                 <button type="submit" class="btn btn-primary btn-block">登录</button>
             </form>
             <p class="m-t">
-                <small>木爷机器人 &copy; 2016</small>
+                <small>上海木爷机器人技术有限公司 &copy; 2016</small>
             </p>
         </div>
     </div>

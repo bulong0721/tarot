@@ -106,7 +106,7 @@ public class WechatServiceImpl implements WechatService {
                 .end();
 
         //点击菜单按钮查询排队进展
-        newRouter.rule().async(false)
+       newRouter.rule().async(false)
                 .msgType(WxConsts.XML_MSG_EVENT)
                 .event(WxConsts.EVT_SCANCODE_PUSH).eventKey("V1001_QUERY_INPUT")
                 .handler(this.progressHandler)
@@ -117,6 +117,13 @@ public class WechatServiceImpl implements WechatService {
                 .msgType(WxConsts.XML_MSG_EVENT)
                 .event(WxConsts.EVT_SCANCODE_PUSH).eventKey("QUERY_SCAN_UPDATED")
                 .handler(this.progressHandler)
+                .end();
+
+        //微信扫描 需存在
+        newRouter.rule().async(false)
+                .msgType(WxConsts.XML_MSG_EVENT)
+                .event(WxConsts.EVT_SCAN)
+                .handler(this.lotteryHandler)
                 .end();
 
         //扫码抽奖
