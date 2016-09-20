@@ -2,9 +2,12 @@ package com.myee.tarot.admin.web.handler;
 
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.admin.service.AdminUserService;
+import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.ProviderNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
@@ -33,6 +36,11 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
             user.setLastLogin(new Date());
 
             userService.update(user);
+            String securityCode = request.getParameter(Constants.REQUEST_SECURITY_CODE);
+            String sessionCode = (String) request.getSession().getAttribute(Constants.SESSION_SECURITY_CODE);
+            if(StringUtil.isNullOrEmpty(sessionCode) || !sessionCode.equalsIgnoreCase(securityCode)){
+//                authentication.setAuthenticated(false);
+            }
             response.sendRedirect(request.getContextPath() + "/admin/home.html");
         } catch (Exception e) {
             LOGGER.error("User authenticationSuccess", e);

@@ -9,6 +9,9 @@
 
     <global-method-security secured-annotations="enabled" jsr250-annotations="enabled" pre-post-annotations="enabled"/>
 
+    <beans:bean id="userLogoutSuccessHandler" class="com.myee.tarot.core.security.UserLogoutSuccessHandler">
+    </beans:bean>
+
     <!-- JDBC CustomerService details -->
     <beans:bean id="customerDetailsService"
                 class="com.myee.tarot.customer.service.CustomerDetailsServiceImpl">
@@ -26,6 +29,15 @@
     <beans:bean id="adminAccessDenied"
                 class="com.myee.tarot.core.security.AdminAccessDeniedHandler">
         <beans:property name="accessDeniedUrl" value="/admin/denied.html"/>
+    </beans:bean>
+
+    <beans:bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <beans:property name="basenames">
+            <beans:list>
+                <beans:value>classpath:messages_zh_CN</beans:value>
+                <beans:value>org/springframework/security/messages</beans:value>
+            </beans:list>
+        </beans:property>
     </beans:bean>
 
     <!-- updates last user logon timestamp -->
@@ -59,7 +71,7 @@
                 authentication-failure-url="/admin/login.html?login_error=true"
                 default-target-url="/admin/home.html"/>
         <logout invalidate-session="true"
-                logout-success-url="/admin/home.html"
+                success-handler-ref="userLogoutSuccessHandler"
                 logout-url="/admin/j_spring_security_logout"/>
         <access-denied-handler ref="adminAccessDenied"/>
     </http>
@@ -90,7 +102,7 @@
                 authentication-failure-url="/shop/login.html?login_error=true"
                 default-target-url="/shop/home.html"/>
         <logout invalidate-session="true"
-                logout-success-url="/shop/home.html"
+                success-handler-ref="userLogoutSuccessHandler"
                 logout-url="/shop/j_spring_security_logout"/>
         <access-denied-handler error-page="/shop/denied.html"/>
     </http>

@@ -15,12 +15,16 @@
         <div class="loginMain">
             <h3>木爷终端管理系统</h3>
             <p class="client-status info"><i class="fa fa-coffee"></i>请输入您的登录信息.</p>
+            ${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message}
             <form class="m-t" role="form" method="post" action="../admin/j_spring_security_check">
                 <div class="form-group">
                     <input type="text" name="username" class="form-control" placeholder="用户名" required="">
                 </div>
                 <div class="form-group">
                     <input type="password" name="password" class="form-control" placeholder="密码" required="">
+                </div>
+                <div class="form-group">
+                    <input type="text" name="securityCode" class="form-control" placeholder="验证码" required="">
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">登录</button>
             </form>

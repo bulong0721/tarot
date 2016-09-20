@@ -5,6 +5,8 @@ import java.util.Locale;
 
 public class Constants {
 
+	public static final String SESSION_SECURITY_CODE = "sessionSecurityCode";
+	public static final String REQUEST_SECURITY_CODE = "securityCode";
 	public final static String TEST_ENVIRONMENT       = "TEST";
 	public final static String PRODUCTION_ENVIRONMENT = "PRODUCTION";
 	public final static String SHOP_URI               = "/shop";
