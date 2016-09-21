@@ -23,9 +23,9 @@
                 <div class="form-group">
                     <input type="password" name="password" class="form-control" placeholder="密码" required="">
                 </div>
-                <div class="form-group">
-                    <input type="text" name="securityCode" class="form-control" placeholder="验证码" required="">
-                </div>
+                <%--<div class="form-group">--%>
+                    <%--<input type="text" name="securityCode" class="form-control" placeholder="验证码" required="">--%>
+                <%--</div>--%>
                 <button type="submit" class="btn btn-primary btn-block">登录</button>
             </form>
             <p class="m-t">
