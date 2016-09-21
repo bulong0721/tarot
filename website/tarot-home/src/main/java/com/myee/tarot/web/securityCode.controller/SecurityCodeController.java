@@ -16,13 +16,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.util.StringUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 
 @Controller
 public class SecurityCodeController {
+
+	@RequestMapping(value = {"admin/security/code/validate", "shop/security/code/validate"}, method = {RequestMethod.GET, RequestMethod.POST})
+	@ResponseBody
+	public boolean validateSecurityCode(HttpServletRequest request, HttpServletResponse response){
+		String securityCode = request.getParameter(Constants.REQUEST_SECURITY_CODE);
+		String sessionCode = (String) request.getSession().getAttribute(Constants.SESSION_SECURITY_CODE);
+		if(StringUtil.isNullOrEmpty(sessionCode) || !sessionCode.equalsIgnoreCase(securityCode)){
+                return false;
+		}
+		return true;
+	}
 
 	@RequestMapping(value = {"admin/security/code", "shop/security/code"}, method = {RequestMethod.GET, RequestMethod.POST})
 	public void generate(HttpServletRequest request, HttpServletResponse response){

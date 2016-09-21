@@ -2,6 +2,8 @@ package com.myee.tarot.customer.web.handler;
 
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.admin.service.AdminUserService;
+import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.customer.domain.Customer;
 import com.myee.tarot.customer.service.CustomerService;
 import org.slf4j.Logger;
@@ -31,6 +33,11 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
         try {
             Customer customer = customerService.getByUsername(userName);
 
+            String securityCode = request.getParameter(Constants.REQUEST_SECURITY_CODE);
+            String sessionCode = (String) request.getSession().getAttribute(Constants.SESSION_SECURITY_CODE);
+            if(StringUtil.isNullOrEmpty(sessionCode) || !sessionCode.equalsIgnoreCase(securityCode)){
+                authentication.setAuthenticated(false);
+            }
             response.sendRedirect(request.getContextPath() + "/shop/home.html");
         } catch (Exception e) {
             LOGGER.error("User authenticationSuccess", e);

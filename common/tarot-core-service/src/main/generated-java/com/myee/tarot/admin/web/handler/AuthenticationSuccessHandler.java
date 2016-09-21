@@ -39,7 +39,7 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
             String securityCode = request.getParameter(Constants.REQUEST_SECURITY_CODE);
             String sessionCode = (String) request.getSession().getAttribute(Constants.SESSION_SECURITY_CODE);
             if(StringUtil.isNullOrEmpty(sessionCode) || !sessionCode.equalsIgnoreCase(securityCode)){
-//                authentication.setAuthenticated(false);
+                authentication.setAuthenticated(false);
             }
             response.sendRedirect(request.getContextPath() + "/admin/home.html");
         } catch (Exception e) {

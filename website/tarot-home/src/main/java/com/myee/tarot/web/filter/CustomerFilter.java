@@ -56,6 +56,9 @@ public class CustomerFilter extends HandlerInterceptorAdapter {
         if (store == null && user != null) {
 //            store = merchantStoreService.getByCode(storeCode);
             store = user.getMerchantStore();
+            if(store == null){
+                return false;
+            }
             Merchant merchant = merchantService.findById(store.getMerchant().getId());
             request.getSession().setAttribute(Constants.CUSTOMER_STORE, store);
             request.getSession().setAttribute(Constants.CUSTOMER_MERCHANT , merchant);
