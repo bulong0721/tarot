@@ -35,7 +35,7 @@
         </div>
     </div>
     <!-- Mainly scripts -->
-    <script src="assets/plugins/jquery/jquery-1.5.1.min.js"></script>
+    <script src="assets/plugins/jquery/jquery-2.1.1.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $("#codeImg").bind("click", changeCode);
