@@ -24,7 +24,7 @@
                 <div class="form-group input-group">
                     <input type="text" name="securityCode" id="securityCode" class="form-control" placeholder="验证码" required="">
                     <div class="input-group-btn">
-                        <img style="height:22px;" id="codeImg" alt="点击更换" title="点击更换" src="" />
+                        <img style="height:34px;" id="codeImg" alt="点击更换" title="点击更换" src="" />
                     </div>
                 </div>
                 <div class="form-group"><button type="submit" class="btn btn-primary btn-block">登录</button></div>
@@ -38,8 +38,13 @@
 <script src="assets/plugins/jquery/jquery-2.1.1.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        changeCode();
+
         $("#codeImg").bind("click", changeCode);
+        function changeCode(){
+            console.log(1)
+            $("#codeImg").attr("src", "../code?rnd=" + Math.random());
+        }
+        changeCode();
 
         $("form").submit(function(){
             var form = $(this);
@@ -62,10 +67,6 @@
                 $("#to-recover").trigger("click");
             }
         });
-
-        function changeCode() {
-            $("#codeImg").attr("src", "../code");
-        }
     });
 </script>
 </body>
