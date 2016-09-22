@@ -45,7 +45,7 @@
                 var form = $(this);
                 $.ajax({
                     type: 'GET',
-                    url: 'security/code/validate?securityCode='+$('#securityCode').val(),
+                    url: '../code/validate?securityCode='+$('#securityCode').val(),
                     success: function(res){
                         if(res){
                             form.unbind('submit').submit();
@@ -64,7 +64,7 @@
             });
 
             function changeCode() {
-                $("#codeImg").attr("src", "../shop/security/code");
+                $("#codeImg").attr("src", "../code");
             }
         });
     </script>

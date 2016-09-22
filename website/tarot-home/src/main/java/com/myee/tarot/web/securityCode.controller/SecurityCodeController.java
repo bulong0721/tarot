@@ -24,9 +24,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 @Controller
+@RequestMapping("/code")
 public class SecurityCodeController {
 
-	@RequestMapping(value = {"admin/security/code/validate", "shop/security/code/validate"}, method = {RequestMethod.GET, RequestMethod.POST})
+	@RequestMapping(value = {"/validate"}, method = {RequestMethod.GET, RequestMethod.POST})
 	@ResponseBody
 	public boolean validateSecurityCode(HttpServletRequest request, HttpServletResponse response){
 		String securityCode = request.getParameter(Constants.REQUEST_SECURITY_CODE);
@@ -37,7 +38,7 @@ public class SecurityCodeController {
 		return true;
 	}
 
-	@RequestMapping(value = {"admin/security/code", "shop/security/code"}, method = {RequestMethod.GET, RequestMethod.POST})
+	@RequestMapping
 	public void generate(HttpServletRequest request, HttpServletResponse response){
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		String code = drawImg(output);

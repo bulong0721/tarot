@@ -60,8 +60,8 @@
         <intercept-url pattern="/admin/users/resetPassword.html*" access="permitAll"/>
         <intercept-url pattern="/admin/users/resetPasswordSecurityQtn.html*" access="permitAll"/>
         <intercept-url pattern="/admin/assets/**" access="permitAll"/>
-        <intercept-url pattern="/admin/security/code" access="permitAll"/>
-        <intercept-url pattern="/admin/security/code/validate" access="permitAll"/>
+        <intercept-url pattern="/code" access="permitAll"/>
+        <intercept-url pattern="/code/validate" access="permitAll"/>
         <intercept-url pattern="/admin" access="hasRole('AUTH')"/>
         <intercept-url pattern="/admin/" access="hasRole('AUTH')"/>
         <intercept-url pattern="/admin/**" access="hasRole('AUTH')"/>
@@ -93,8 +93,8 @@
         <intercept-url pattern="/shop/users/resetPassword.html*" access="permitAll"/>
         <intercept-url pattern="/shop/users/resetPasswordSecurityQtn.html*" access="permitAll"/>
         <intercept-url pattern="/shop/assets/**" access="permitAll"/>
-        <intercept-url pattern="/shop/security/code" access="permitAll"/>
-        <intercept-url pattern="/shop/security/code/validate" access="permitAll"/>
+        <intercept-url pattern="/code" access="permitAll"/>
+        <intercept-url pattern="/code/validate" access="permitAll"/>
         <intercept-url pattern="/shop" access="hasRole('AUTH_CUSTOMER')"/>
         <intercept-url pattern="/shop/" access="hasRole('AUTH_CUSTOMER')"/>
         <intercept-url pattern="/shop/**" access="hasRole('AUTH_CUSTOMER')"/>
