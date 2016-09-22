@@ -55,7 +55,8 @@
                             form.unbind('submit').submit();
                             return true;
                         }else{
-                            $('#error').html('验证码错误')
+                            $('#error').html('验证码错误');
+                            changeCode();
                         }
                     }
                 });
