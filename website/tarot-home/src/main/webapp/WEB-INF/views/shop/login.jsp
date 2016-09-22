@@ -35,14 +35,10 @@
         </div>
     </div>
     <!-- Mainly scripts -->
-    <script src="assets/plugins/jquery/jquery-2.1.1.min.js"></script>
+    <script src="assets/plugins/jquery/jquery-1.5.1.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $("#codeImg").bind("click", changeCode);
-            function changeCode(){
-                console.log(1)
-                $("#codeImg").attr("src", "../code?rnd=" + Math.random());
-            }
             changeCode();
 
             $("form").submit(function(){
@@ -67,6 +63,15 @@
                     $("#to-recover").trigger("click");
                 }
             });
+
+            function genTimestamp() {
+                var time = new Date();
+                return time.getTime();
+            }
+
+            function changeCode(){
+                $("#codeImg").attr("src", "../code?t=" + genTimestamp());
+            }
         });
     </script>
 </body>

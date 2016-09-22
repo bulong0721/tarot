@@ -33,7 +33,8 @@ public class SecurityCodeController {
 		String securityCode = request.getParameter(Constants.REQUEST_SECURITY_CODE);
 		String sessionCode = (String) request.getSession().getAttribute(Constants.SESSION_SECURITY_CODE);
 		if(StringUtil.isNullOrEmpty(sessionCode) || !sessionCode.equalsIgnoreCase(securityCode)){
-                return false;
+			request.getSession().removeAttribute(Constants.SESSION_SECURITY_CODE);
+			return false;
 		}
 		return true;
 	}
