@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * productUsedCtrl - controller
  */
-productUsedCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables', 'cfromly', 'NgTableParams', '$q','cAlerts','toaster'];
-function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableParams, $q,cAlerts,toaster) {
+productUsedCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables', 'cfromly', 'NgTableParams', '$q','cAlerts','toaster','$filter'];
+function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableParams, $q,cAlerts,toaster,$filter) {
 
     var iDatatable = 0, iEditor = 1;
     //绑定产品相关参数
@@ -61,15 +61,23 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
 
     $scope.showCase.currentRowIndex = 0;
 
+    $scope.filterBindOptions = function(){
+        var deferred = $q.defer();
+        //tables获取数据,获取该门店下可绑定的所有设备
+        $scope.tableBindOpts = new NgTableParams({}, {
+            counts: [],
+            dataset: $filter('filter')($scope.initalBindProductList,$scope.showCase.nameFilter || "")
+        });
+        $scope.loadByInit = true;
+        $scope.tableOpts.page(1);
+        $scope.tableBindOpts.reload();
+        deferred.resolve($scope.tableBindOpts);
+        return deferred.promise;
+    }
+
     $scope.goDeviceBindProductEditor = function (rowIndex) {
         initalBindProduct().then(function () {
-            //tables获取数据,获取该门店下可绑定的所有设备
-            $scope.tableBindOpts = new NgTableParams({}, {
-                counts: [],
-                dataset: $scope.initalBindProductList
-            });
-
-            $scope.tableBindOpts.reload().then(function () {
+            $scope.filterBindOptions().then(function () {
                 $scope.addNew = true;
 
                 if ($scope.tableOpts && rowIndex > -1) {

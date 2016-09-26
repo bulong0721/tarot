@@ -71,7 +71,7 @@
                             <div class="col-xs-12" ng-model="showCase">
                                 <div class="ibox float-e-margins">
                                     <p class="text-danger">请选择要关联的设备:</p>
-                                    <p><input type="text" placeholder="输入关键字以筛选" ng-model="nameFilter" class="form-control ng-pristine ng-valid ng-empty ng-touched"></p>
+                                    <p><input type="text" ng-keyup="filterBindOptions()" placeholder="输入关键字以筛选" ng-model="showCase.nameFilter" class="form-control ng-pristine ng-valid ng-empty ng-touched"></p>
                                     <table id="example" ng-table="tableBindOpts" class="table table-condensed table-striped table-bordered">
                                         <thead>
                                         <tr>
@@ -86,7 +86,7 @@
                                         <tr>
                                             <td colspan="9" class="center" ng-if="$data.length<=0">没有查找到数据</td>
                                         </tr>
-                                        <tr ng-repeat="row in $data | filter : nameFilter">
+                                        <tr ng-repeat="row in $data">
                                             <td class="center"><input type="checkbox" ng-model="showCase.selected[row.id]" ng-click="showCase.toggleOne(showCase.selected)"></td>
                                             <td ng-show="false">{{::row.id}}</td>
                                             <td>{{::row.name}}</td>
@@ -98,12 +98,12 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="text-center col-xs-8">
+                            <button class="btn btn-primary" ng-click="processBindSubmit()"><i class="fa fa-sm fa-check"></i>&nbsp;提交</button>
+                            <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
+                        </div>
+                    </formly-form>
                 </div>
-                <div class="text-center col-xs-8">
-                    <button class="btn btn-primary" ng-click="processBindSubmit()"><i class="fa fa-sm fa-check"></i>&nbsp;提交</button>
-                    <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
-                </div>
-                </formly-form>
             </div>
         </uib-tab>
     </uib-tabset>
