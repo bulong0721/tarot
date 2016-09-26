@@ -128,4 +128,6 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
         $scope.toasterManage($scope.toastUploadSucc);
         $scope.formData.model.logo = pic;
     });
+
+    $scope.tips = "*商户管理不受切换门店影响";
 }

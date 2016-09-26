@@ -61,4 +61,6 @@ function deviceTypeCtrl($scope,$resource, Constants,cTables,cfromly,cAlerts) {
 
     };
 
+    $scope.tips = "*设备类型所有门店通用，不受切换门店影响";
+
 }

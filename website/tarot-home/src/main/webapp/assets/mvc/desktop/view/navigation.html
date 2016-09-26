@@ -15,7 +15,7 @@
                         class="fa arrow"></span></a>
                 <ul class="nav nav-second-level" ng-class="{in: $state.includes('merchant')}">
                     <li ng-class="{active: $state.includes('merchant.shop')}"><a ui-sref="merchant.shop">门店列表</a></li>
-                    <li ng-class="{active: $state.includes('merchant.merchant')}"><a ui-sref="merchant.merchant">编辑商户</a></li>
+                    <li ng-class="{active: $state.includes('merchant.merchant')}"><a ui-sref="merchant.merchant">商户管理</a></li>
                 </ul>
             </li>
 
@@ -37,44 +37,44 @@
                 </ul>
             </li>
 
-            <li ng-class="{active: $state.includes('superman')}">
-                <a href="device"><i class="fa fa-lg fa-laptop"></i> <span class="nav-label">小超人设置</span> <span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level" ng-class="{in: $state.includes('superman')}">
-                    <li ui-sref-active="active"><a ui-sref="superman.menu">菜品管理</a></li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="superman.storeResource">本店资源查看<span class="fa fa arrow"></span></a>
-                        <ul class="nav child_menu">
-                            <li ui-sref-active="active"><a ui-sref="superman.storeResource.activity">本店活动</a></li>
-                            <li ui-sref-active="active"><a ui-sref="superman.storeResource.video">本店视频</a></li>
-                        </ul>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="superman.MYResource">木爷资源管理<span class="fa fa arrow"></span></a>
-                        <ul class="nav child_menu">
-                            <li ui-sref-active="active"><a ui-sref="superman.MYResource.activity">木爷活动资源</a></li>
-                            <li ui-sref-active="active"><a ui-sref="superman.MYResource.video">木爷视频资源</a></li>
-                            <li ui-sref-active="active"><a ui-sref="superman.MYResource.ad">内嵌广告资源</a></li>
-                            <li ui-sref-active="active"><a ui-sref="superman.MYResource.material">木爷素材资源</a></li>
-                        </ul>
-                    </li>
-                    <li ui-sref-active="active">
-                        <a ui-sref="superman.push">木爷资源推送<span class="fa fa arrow"></span></a>
-                        <ul class="nav child_menu">
-                            <li ui-sref-active="active"><a ui-sref="superman.push.activity">木爷活动推送</a></li>
-                            <li ui-sref-active="active"><a ui-sref="superman.push.video">木爷视频推送</a></li>
-                            <li ui-sref-active="active"><a ui-sref="superman.push.ad">内嵌广告推送</a></li>
-                            <li ui-sref-active="active"><a ui-sref="superman.push.material">木爷素材推送</a></li>
-                        </ul>
-                    </li>
+            <!--<li ng-class="{active: $state.includes('superman')}">-->
+                <!--<a href="device"><i class="fa fa-lg fa-laptop"></i> <span class="nav-label">小超人设置</span> <span class="fa arrow"></span></a>-->
+                <!--<ul class="nav nav-second-level" ng-class="{in: $state.includes('superman')}">-->
+                    <!--<li ui-sref-active="active"><a ui-sref="superman.menu">菜品管理</a></li>-->
+                    <!--<li ui-sref-active="active">-->
+                        <!--<a ui-sref="superman.storeResource">本店资源查看<span class="fa fa arrow"></span></a>-->
+                        <!--<ul class="nav child_menu">-->
+                            <!--<li ui-sref-active="active"><a ui-sref="superman.storeResource.activity">本店活动</a></li>-->
+                            <!--<li ui-sref-active="active"><a ui-sref="superman.storeResource.video">本店视频</a></li>-->
+                        <!--</ul>-->
+                    <!--</li>-->
+                    <!--<li ui-sref-active="active">-->
+                        <!--<a ui-sref="superman.MYResource">木爷资源管理<span class="fa fa arrow"></span></a>-->
+                        <!--<ul class="nav child_menu">-->
+                            <!--<li ui-sref-active="active"><a ui-sref="superman.MYResource.activity">木爷活动资源</a></li>-->
+                            <!--<li ui-sref-active="active"><a ui-sref="superman.MYResource.video">木爷视频资源</a></li>-->
+                            <!--<li ui-sref-active="active"><a ui-sref="superman.MYResource.ad">内嵌广告资源</a></li>-->
+                            <!--<li ui-sref-active="active"><a ui-sref="superman.MYResource.material">木爷素材资源</a></li>-->
+                        <!--</ul>-->
+                    <!--</li>-->
+                    <!--<li ui-sref-active="active">-->
+                        <!--<a ui-sref="superman.push">木爷资源推送<span class="fa fa arrow"></span></a>-->
+                        <!--<ul class="nav child_menu">-->
+                            <!--<li ui-sref-active="active"><a ui-sref="superman.push.activity">木爷活动推送</a></li>-->
+                            <!--<li ui-sref-active="active"><a ui-sref="superman.push.video">木爷视频推送</a></li>-->
+                            <!--<li ui-sref-active="active"><a ui-sref="superman.push.ad">内嵌广告推送</a></li>-->
+                            <!--<li ui-sref-active="active"><a ui-sref="superman.push.material">木爷素材推送</a></li>-->
+                        <!--</ul>-->
+                    <!--</li>-->
 
-                    <li ui-sref-active="active">
-                        <a ui-sref="superman.statistic">统计<span class="fa fa arrow"></span></a>
-                        <ul class="nav child_menu">
-                            <li ui-sref-active="active"><a ui-sref="superman.statistic.serviceEvaluation">服务评价</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
+                    <!--<li ui-sref-active="active">-->
+                        <!--<a ui-sref="superman.statistic">统计<span class="fa fa arrow"></span></a>-->
+                        <!--<ul class="nav child_menu">-->
+                            <!--<li ui-sref-active="active"><a ui-sref="superman.statistic.serviceEvaluation">服务评价</a></li>-->
+                        <!--</ul>-->
+                    <!--</li>-->
+                <!--</ul>-->
+            <!--</li>-->
 
             <li ng-class="{active: $state.includes('device')}">
                 <a href="device"><i class="fa fa-lg fa-camera-retro"></i> <span class="nav-label">设备管理</span> <span class="fa arrow"></span></a>
