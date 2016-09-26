@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import java.io.*;
 import java.util.Iterator;
@@ -36,7 +35,7 @@ public class QuartzForVoiceLog {
     private static final String TYPE_TALKSHOW = "2";
 
 
-//    @Scheduled(cron = "* 0/2 * * * ? ")  //每天23PM跑定时任务语音日志放到Es并移动文件
+    @Scheduled(cron = "* 0/2 * * * ? ")  //每天23PM跑定时任务语音日志放到Es并移动文件
     public void parseFileToDb() {
         //获取路径下所有的csv文件
         File[] fileArr = getFiles(new File(DOWNLOAD_HOME + File.separator + Constants.ADMIN_PACK + File.separator + Constants.VOICELOG));
