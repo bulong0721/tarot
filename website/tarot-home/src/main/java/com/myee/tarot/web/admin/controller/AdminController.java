@@ -23,7 +23,7 @@ public class AdminController {
     @Value("${qiniu_cdn}")
     private String qiniuCdn;
 
-    @RequestMapping(value = {"admin/home.html", "admin/", "admin"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"admin/home.html", "admin/", "admin","admin/home"}, method = RequestMethod.GET)
     public ModelAndView displayDashboard(HttpServletRequest request, HttpServletResponse response) throws Exception {
         ModelAndView mv = new ModelAndView("admin/home");
         Map<String,Object> entry = new HashMap<String ,Object>();

@@ -24,7 +24,7 @@ public class CustomerController {
     @Value("${qiniu_cdn}")
     private String qiniuCdn;
 
-    @RequestMapping(value = {"shop/home.html", "shop/", "shop"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"shop/home.html", "shop/", "shop","shop/home"}, method = RequestMethod.GET)
     public ModelAndView displayDashboard(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         ModelAndView mv = new ModelAndView("shop/home");
         Map<String,Object> entry = new HashMap<String ,Object>();
