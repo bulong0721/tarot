@@ -71,6 +71,10 @@ public class QuartzForVoiceLog {
                                 voiceLog.setVoiceType(ss[3] == null ? null : ss[3].toString().equals(Constants.VOICE_LOG_TYPE_CHAT) ? TYPE_CHAT : TYPE_TALKSHOW);
                                 voiceLog.setStoreId(ss[5] == null ? null : Long.valueOf(ss[5]));
                                 voiceLog.setStoreName(ss[6] == null ? null : ss[6].toString());
+                                voiceLog.setMerchantId(ss[7] == null ? null : Long.valueOf(ss[7]));
+                                voiceLog.setMerchantName(ss[8] == null ? null : ss[8].toString());
+                                voiceLog.setDeviceName(ss[9] == null ? null : ss[9].toString());
+                                voiceLog.setDeviceType(ss[10] == null ? null : ss[10].toString());
                                 voiceLogList.add(voiceLog);
                             }
                             esUtils.bulkAddList(Constants.ES_QUERY_INDEX, Constants.ES_QUERY_TYPE, voiceLogList);

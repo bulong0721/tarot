@@ -23,6 +23,14 @@ public class VoiceLog {
 
     private Date dateTime;
 
+    private Long merchantId; //商户ID
+
+    private String merchantName; //商户名称
+
+    private String deviceName; //设备名称
+
+    private String deviceType; //设备类型
+
     public String getDateTimeStr() {
         return dateTimeStr;
     }
@@ -77,5 +85,37 @@ public class VoiceLog {
 
     public void setDateTime(Date dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
+    }
+
+    public String getMerchantName() {
+        return merchantName;
+    }
+
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
+    }
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
+
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
     }
 }

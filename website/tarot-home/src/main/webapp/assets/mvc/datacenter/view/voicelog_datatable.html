@@ -27,11 +27,13 @@
                 <thead>
                 <tr>
                     <th width="5%" class="center">序号</th>
+                    <th width="10%" class="center">设备类型</th>
+                    <th width="10%" class="center">设备名称</th>
                     <th width="15%" class="center">日期-时间</th>
-                    <th width="20%" class="center">提问</th>
-                    <th width="20%" class="center">回答</th>
+                    <th width="15%" class="center">提问</th>
+                    <th width="15%" class="center">回答</th>
                     <th width="15%" class="center">种类</th>
-                    <th width="15%" class="center">店铺</th>
+                    <th width="15%" class="center">商户</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -40,11 +42,13 @@
                 </tr>
                 <tr ng-repeat="row in $data">
                     <td>{{::$index+1}}</td>
+                    <td>{{::row.deviceType}}</td>
+                    <td>{{::row.deviceName}}</td>
                     <td>{{::row.dateTimeStr}}</td>
                     <td>{{::row.cookyListen}}</td>
                     <td>{{::row.cookySpeak}}</td>
                     <td>{{::row.voiceType}}</td>
-                    <td>{{::row.storeName}}</td>
+                    <td>{{::row.merchantName}}</td>
                 </tr>
                 </tbody>
             </table>

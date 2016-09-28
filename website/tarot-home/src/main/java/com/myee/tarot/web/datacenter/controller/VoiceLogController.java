@@ -93,7 +93,9 @@ public class VoiceLogController {
                     "Cooky提问",
                     "Cooky回答",
                     "种类",
-                    "商铺"
+                    "设备类型",
+                    "设备名称",
+                    "商户"
             });
             for (int i = 0; i < voiceLogList.size(); i++) {
                 //写csv文件
@@ -137,7 +139,6 @@ public class VoiceLogController {
             voiceLogTypeDto.setQueryPattern(Constants.ES_QUERY_PATTERN_MUST);
             queries.put("voiceType", voiceLogTypeDto);
         }
-
         PageResult<VoiceLog> voiceLogList = esUtils.searchPageQueries(Constants.ES_QUERY_INDEX, Constants.ES_QUERY_TYPE, queries, whereRequest.getPage(), whereRequest.getCount(), VoiceLog.class);
         for (VoiceLog voiceLog : voiceLogList.getList()) {
             resp.addDataEntry(objectToEntry(voiceLog));
@@ -150,7 +151,9 @@ public class VoiceLogController {
     private Map objectToEntry(VoiceLog voiceLog) {
         Map entry = new HashMap();
         entry.put("dateTimeStr", voiceLog.getDateTimeStr());
-        entry.put("storeName", voiceLog.getStoreName());
+        entry.put("merchantName", voiceLog.getMerchantName());
+        entry.put("deviceName",voiceLog.getDeviceName());
+        entry.put("deviceType",voiceLog.getDeviceType());
         entry.put("voiceType", voiceLog.getVoiceType().equals(TYPE_CHAT_NUM) ? Constants.VOICE_LOG_TYPE_CHAT : Constants.VOICE_LOG_TYPE_TALKSHOW);
         entry.put("cookyListen", voiceLog.getCookieListen());
         entry.put("cookySpeak", voiceLog.getCookieSpeak());
@@ -160,11 +163,13 @@ public class VoiceLogController {
     private void writeCsvFile(CSVWriter writer, VoiceLog log, Integer i) {
         writer.writeNext(new String[]{
                 i + 1 + "",
+                StringUtil.nullToString(log.getDeviceType()),
+                StringUtil.nullToString(log.getDeviceName()),
                 StringUtil.nullToString(log.getDateTimeStr()),
                 StringUtil.nullToString(log.getCookieListen()),
                 StringUtil.nullToString(log.getCookieSpeak()),
                 StringUtil.nullToString(log.getVoiceType()),
-                StringUtil.nullToString(log.getStoreName())
+                StringUtil.nullToString(log.getMerchantName())
         });
     }
 }
