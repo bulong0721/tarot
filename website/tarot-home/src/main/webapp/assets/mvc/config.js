@@ -30,7 +30,7 @@ function ctrlManagerLoader(oclazyload, dir, ctrl) {
         {
             serie: true,
             name: 'ngTable',
-            files: ['assets/plugins/ng-table/ng-table.js', 'assets/plugins/ng-table/ng-table.css']
+            files: ['assets/plugins/ng-table/ng-table.js', 'assets/plugins/ng-table/ng-table.css', 'assets/plugins/bootstrap/bootstrap-table.css']
         },
         {
             serie: true,
