@@ -10423,3 +10423,14 @@ table tr:hover,table>tbody>tr:nth-of-type(odd):hover {background-color: #f6fefc;
     color: darkred;
     margin-bottom: 10px;
 }
+
+.d-title {
+    height: 35px;
+    line-height: 35px;
+    padding: 0 48px 0 10px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #999;
+    background-color: #cdcdda;
+    border-bottom: 1px solid #c7ced8;
+}
