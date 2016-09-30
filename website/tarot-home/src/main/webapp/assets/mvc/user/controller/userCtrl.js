@@ -28,7 +28,7 @@ function userMgrCtrl($scope, cTables, cfromly) {
                 key: 'activeStatusFlag',
                 type: 'c_input',
                 className: 'formly-min-checkbox',
-                templateOptions: {label: '状态', placeholder: '状态',type: 'checkbox'}
+                templateOptions: {label: '激活账号', placeholder: '激活账号',type: 'checkbox'}
             }
         ],
         api: {
@@ -38,4 +38,5 @@ function userMgrCtrl($scope, cTables, cfromly) {
     };
 
     cTables.initNgMgrCtrl(mgrData, $scope);
+    $scope.tips = "*新建的管理员账号将绑定当前所切换的门店";
 }

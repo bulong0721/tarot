@@ -552,8 +552,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'userMgrCtrl',
             data: {
-                pageTitle: '用户管理',
-                subTitle: '用户管理',
+                pageTitle: '账号管理',
+                subTitle: '管理员用户',
                 datatable: 'assets/mvc/user/view/user_datatable.html',
                 editor: 'assets/mvc/user/view/user_editor.html'
             },
@@ -563,12 +563,28 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 }
             }
         })
+        .state('user.customer', {
+            url: "/customer",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'customerMgrCtrl',
+            data: {
+                pageTitle: '账号管理',
+                subTitle: '普通用户',
+                datatable: 'assets/mvc/user/view/customer_datatable.html',
+                editor: 'assets/mvc/user/view/customer_editor.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'user', 'customerCtrl.js')
+                }
+            }
+        })
         .state('user.role', {
             url: "/role",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'roleMgrCtrl',
             data: {
-                pageTitle: '角色管理',
+                pageTitle: '账号管理',
                 subTitle: '角色管理',
                 datatable: 'assets/mvc/user/view/role_datatable.html'
             },

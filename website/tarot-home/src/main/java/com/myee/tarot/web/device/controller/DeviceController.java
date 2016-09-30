@@ -543,6 +543,7 @@ public class DeviceController {
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error("Error while paging products", e);
+            resp.setErrorString("出错");
         }
         return resp;
     }

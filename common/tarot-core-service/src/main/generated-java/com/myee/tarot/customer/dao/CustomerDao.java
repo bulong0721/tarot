@@ -1,6 +1,8 @@
 package com.myee.tarot.customer.dao;
 
 import com.myee.tarot.core.dao.GenericEntityDao;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.customer.domain.Customer;
 
 import java.util.List;
@@ -21,4 +23,6 @@ public interface CustomerDao extends GenericEntityDao<Long, Customer> {
     Customer getByEmail(String emailAddress);
 
     List<Customer> listByEmail(String emailAddress);
+
+    PageResult<Customer> pageByStore(Long storeId, PageRequest pageRequest);
 }

@@ -20,12 +20,12 @@ import java.util.Map;
 @Table(name = "C_CUSTOMER")
 public class Customer extends GenericEntity<Long, Customer> {
     @Id
-    @Column(name = "ADDRESS_ID", unique = true, nullable = false)
+    @Column(name = "CUSTOMER_ID", unique = true, nullable = false)
     @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "CUSTOMER_SEQ_NEXT_VAL",allocationSize=1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     protected Long id;
 
-    @Column(name = "USER_NAME")
+    @Column(name = "USER_NAME",unique = true)
     protected String username;
 
     @Column(name = "PASSWORD")
@@ -77,7 +77,7 @@ public class Customer extends GenericEntity<Long, Customer> {
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerAddress.class, cascade = {CascadeType.ALL})
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Where(clause = "archived != 'Y'")
+//    @Where(clause = "archived != 'Y'")
     protected List<CustomerAddress> customerAddresses = new ArrayList<CustomerAddress>();
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerPhone.class, cascade = {CascadeType.ALL})

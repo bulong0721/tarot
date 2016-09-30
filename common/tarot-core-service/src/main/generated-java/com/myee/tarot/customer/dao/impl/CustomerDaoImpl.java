@@ -1,6 +1,9 @@
 package com.myee.tarot.customer.dao.impl;
 
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.customer.dao.CustomerDao;
 import com.myee.tarot.customer.domain.Customer;
 import com.myee.tarot.customer.domain.QCustomer;
@@ -21,6 +24,7 @@ public class CustomerDaoImpl extends GenericEntityDaoImpl<Long, Customer> implem
         QCustomer qCustomer = QCustomer.customer;
         JPQLQuery<Customer> query = new JPAQuery<Customer>(getEntityManager());
         query.from(qCustomer);
+        query.where(qCustomer.username.eq(username));
 
         Customer customer = query.fetchFirst();
         return customer;
@@ -49,5 +53,25 @@ public class CustomerDaoImpl extends GenericEntityDaoImpl<Long, Customer> implem
     @Override
     public List<Customer> listByEmail(String emailAddress) {
         return null;
+    }
+
+    @Override
+    public PageResult<Customer> pageByStore(Long storeId, PageRequest pageRequest){
+        PageResult<Customer> pageList = new PageResult<Customer>();
+        QCustomer qCustomer = QCustomer.customer;
+        JPQLQuery<Customer> query = new JPAQuery(getEntityManager());
+        query.from(qCustomer);
+        query.where(qCustomer.merchantStore.id.eq(storeId));
+
+        if (!StringUtil.isBlank(pageRequest.getQueryName())) {
+            query.where( (qCustomer.firstName.like("%" + pageRequest.getQueryName() + "%")).or
+                    (qCustomer.lastName.like("%" + pageRequest.getQueryName() + "%")) );
+        }
+        pageList.setRecordsTotal(query.fetchCount());
+        if( pageRequest.getCount() > 0){
+            query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
+        }
+        pageList.setList(query.fetch());
+        return pageList;
     }
 }

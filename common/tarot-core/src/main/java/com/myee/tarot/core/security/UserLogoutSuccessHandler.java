@@ -16,6 +16,13 @@ public class UserLogoutSuccessHandler implements LogoutSuccessHandler {
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         request.getSession().removeAttribute(Constants.SESSION_SECURITY_CODE);
-        response.sendRedirect(request.getContextPath() + "/admin/home.html");
+        String path = request.getServletPath();
+        if (path.contains("/admin/")) {
+            response.sendRedirect(request.getContextPath() + "/admin/home.html");
+        } else if (path.contains("/shop/")) {
+            response.sendRedirect(request.getContextPath() + "/shop/home.html");
+        } else {
+            response.sendRedirect(request.getContextPath() + "/shop/home.html");
+        }
     }
 }

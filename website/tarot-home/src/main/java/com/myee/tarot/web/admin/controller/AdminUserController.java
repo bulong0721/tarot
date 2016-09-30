@@ -2,8 +2,15 @@ package com.myee.tarot.web.admin.controller;
 
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.admin.service.AdminUserService;
+import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
+import com.myee.tarot.customer.domain.Customer;
+import com.myee.tarot.customer.service.CustomerService;
+import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.profile.domain.Role;
 import com.myee.tarot.profile.service.RoleService;
 import org.slf4j.Logger;
@@ -27,17 +34,21 @@ import java.util.Map;
 @Controller
 public class AdminUserController {
     private static final Logger LOGGER           = LoggerFactory.getLogger(AdminUserController.class);
-    private static final String DEFAULT_PASSWORD = "123456";
+    private static final String DEFAULT_PASSWORD = "1234561";
+    private static final String DEFAULT_CUSTOMER_PASSWORD = "123456";
 
     @Autowired
     private AdminUserService userService;
 
     @Autowired
+    private CustomerService customerService;
+
+    @Autowired
     private RoleService roleService;
 
     @RequestMapping(value = "admin/users/save", method = RequestMethod.POST)
-    @ResponseBody
-    public AjaxResponse addUser(@RequestBody AdminUser user, HttpServletRequest request) throws Exception {
+     @ResponseBody
+     public AjaxResponse addUser(@RequestBody AdminUser user, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         if (null != user.getId()) {
             AdminUser dbUser = userService.findById(user.getId());
@@ -48,6 +59,12 @@ public class AdminUserController {
             dbUser.setActiveStatusFlag(user.getActiveStatusFlag());
             user = dbUser;
         } else {
+            //新建账号将绑定切换的门店
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"请先切换门店");
+            }
+            MerchantStore merchantStore1 = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
+            user.setMerchantStore(merchantStore1);
             user.setPassword(DEFAULT_PASSWORD);
         }
         user = userService.update(user);
@@ -72,9 +89,78 @@ public class AdminUserController {
             entry.put("activeStatusFlag", user.getActiveStatusFlag());
             entry.put("lastLogin", user.getLastLogin());
             entry.put("loginIP", user.getLoginIP());
+            entry.put("storeName", user.getMerchantStore().getName());
             resp.addDataEntry(entry);
         }
         return resp;
+    }
+
+    @RequestMapping(value = "admin/customers/save", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse addCustomer(@RequestBody Customer user, HttpServletRequest request) throws Exception {
+        AjaxResponse resp;
+        Customer userOld = customerService.getByUsername(user.getUsername());
+        if( userOld != null && userOld.getId() != user.getId() ){
+            return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"已有该用户名");
+        }
+        if (null != user.getId()) {
+            Customer dbUser = customerService.findById(user.getId());
+            dbUser.setEmailAddress(user.getEmailAddress());
+            dbUser.setFirstName(user.getFirstName());
+            dbUser.setLastName(user.getLastName());
+            dbUser.setUsername(user.getUsername());
+            dbUser.setReceiveEmail(user.isReceiveEmail());
+            dbUser.setDeactivated(user.isDeactivated());
+            user = dbUser;
+        } else {
+            //新建账号将绑定切换的门店
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"请先切换门店");
+            }
+            MerchantStore merchantStore1 = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
+            user.setMerchantStore(merchantStore1);
+            user.setPasswordChangeRequired(false);
+            user.setRegistered(true);
+            user.setPassword(DEFAULT_CUSTOMER_PASSWORD);
+        }
+        user = customerService.update(user);
+        resp = AjaxResponse.success();
+        resp.addEntry("updateResult", user);
+        return resp;
+    }
+
+    @RequestMapping(value = "admin/customers/paging", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    AjaxPageableResponse pageCustomer(Model model, HttpServletRequest request, PageRequest pageRequest) {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
+        if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            resp.setErrorString("请先切换门店");
+            return resp;
+        }
+        MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+
+        PageResult<Customer> pageList = customerService.pageByStore(merchantStore1.getId(), pageRequest);
+        List<Customer> customerList = pageList.getList();
+        for (Customer customer : customerList) {
+            resp.addDataEntry(objectToEntry(customer));
+        }
+        resp.setRecordsTotal(pageList.getRecordsTotal());
+
+        return resp;
+    }
+
+    //把类转换成entry返回给前端，解耦和
+    private Map objectToEntry(Customer customer) {
+        Map entry = new HashMap();
+        entry.put("id", customer.getId());
+        entry.put("emailAddress", customer.getEmailAddress());
+        entry.put("firstName", customer.getFirstName());
+        entry.put("lastName", customer.getLastName());
+        entry.put("username", customer.getUsername());
+        entry.put("receiveEmail", customer.isReceiveEmail());
+        entry.put("deactivated", customer.isDeactivated());
+        return entry;
     }
 
     @RequestMapping(value = "admin/roles/paging", method = RequestMethod.GET)
