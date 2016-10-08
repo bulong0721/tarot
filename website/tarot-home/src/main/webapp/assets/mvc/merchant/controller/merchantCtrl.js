@@ -78,6 +78,11 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
                     style: {attribute: 'style'}
                 },
                 templateOptions: {label: '商户描述', placeholder: '商户描述', rows: 10, style: 'max-width:500px'}
+            },
+            {
+                key: 'imgCrop',
+                type: 'c_img_crop',
+                templateOptions: {label: '商户图标裁剪'}
             }
         ],
         api: {
@@ -130,4 +135,5 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
     });
 
     $scope.tips = "*商户管理不受切换门店影响";
+
 }

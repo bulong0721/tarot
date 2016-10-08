@@ -33,6 +33,11 @@ function ctrlManagerLoader(oclazyload, dir, ctrl) {
             files: ['assets/plugins/ng-table/ng-table.js', 'assets/plugins/ng-table/ng-table.css', 'assets/plugins/bootstrap/bootstrap-table.css']
         },
         {
+            //serie: true,
+            name: 'ngImgCrop',
+            files: ['assets/plugins/ngImgCrop/ng-img-crop.js', 'assets/plugins/ngImgCrop/ng-img-crop.css']
+        },
+        {
             serie: true,
             name: 'treeGrid',
             files: ['assets/plugins/ui-tree/angular-tree-grid.css', 'assets/plugins/ui-tree/angular-tree-grid.js']

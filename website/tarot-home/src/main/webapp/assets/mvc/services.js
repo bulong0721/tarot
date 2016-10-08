@@ -316,6 +316,37 @@ function cfromlyService(formlyConfig, $window,$q, toaster, $filter,$timeout,form
         ].join(' ')
     });
 
+    //ngImgCrop
+    formlyConfig.setType({
+        name: 'c_img_crop',
+        template: [
+            '<label for="{{::id}}" class="col-sm-2 control-label">',
+            '{{to.label}}',
+            '</label>',
+            '<div>Select an image file: <input type="file" id="fileInput" onchange="angular.element(this).scope().handleFileSelect(this)" /></div>',
+            '<div class="cropArea">',
+            '<img-crop area-type="square" image="myImage" result-image="myCroppedImage"></img-crop>',
+            '</div>',
+            '<div><img ng-src="{{myCroppedImage}}" /></div>'
+        ].join(' '),
+        link: function (scope, el, attrs) {
+            scope.myImage='';
+            scope.myCroppedImage='';
+            scope.handleFileSelect = function(evt) {
+                var file = evt.files[0];
+                var reader = new FileReader();
+                console.log(reader)
+                reader.onload = function (evt) {
+                    scope.$apply(function($scope){
+                        scope.myImage = evt.target.result;
+                    });
+
+                };
+                reader.readAsDataURL(file);
+            };
+        }
+    });
+
     /*
      *file
      *多上传fromly配置
