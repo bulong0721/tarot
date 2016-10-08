@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * campaignCtrl - controller
  */
-campaignCtrl.$inject = ['$scope', 'Constants','cTables','cfromly','toaster'];
-function campaignCtrl($scope, Constants,cTables,cfromly,toaster) {
+campaignCtrl.$inject = ['$scope', 'Constants','cTables','cfromly','toaster','$timeout'];
+function campaignCtrl($scope, Constants,cTables,cfromly,toaster,$timeout) {
     var mgrData = {
         api: {
             read: './api/info/findHistoryInfoByStoreToday'
@@ -25,7 +25,7 @@ function campaignCtrl($scope, Constants,cTables,cfromly,toaster) {
                 $scope.loadByInit = true;
                 $scope.tableOpts.reload();
             }else{
-                toaster.error({ body:data.statusMessage});
+                $timeout(function () {toaster.error({ body:data.statusMessage})}, 0);
             }
         })
 

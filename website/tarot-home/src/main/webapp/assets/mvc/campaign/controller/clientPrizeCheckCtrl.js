@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * campaignCtrl - controller
  */
-clientPrizeCheckCtrl.$inject = ['$scope', 'Constants','cTables','cfromly','toaster'];
-function clientPrizeCheckCtrl($scope, Constants,cTables,cfromly,toaster) {
+clientPrizeCheckCtrl.$inject = ['$scope', 'Constants','cTables','cfromly','toaster','$timeout'];
+function clientPrizeCheckCtrl($scope, Constants,cTables,cfromly,toaster,$timeout) {
     var mgrData = {
         api: {
             read: './clientPrizeInfo/pagingListOfChecked'
@@ -25,7 +25,7 @@ function clientPrizeCheckCtrl($scope, Constants,cTables,cfromly,toaster) {
                 $scope.loadByInit = true;
                 $scope.tableOpts.reload();
             }else{
-                toaster.error({ body:data.statusMessage});
+                $timeout(function () {toaster.error({ body:data.statusMessage})}, 0);
             }
         })
 
