@@ -40,9 +40,9 @@
                     <td class="center"><span ng-class="{true: 'label label-primary', false: 'label label-danger'}[row.receiveEmail]">{{row.receiveEmail?'接收':'不接收'}}</span></td>
                     <td class="center"><span ng-class="{true: 'label label-danger', false: 'label label-primary'}[row.deactivated]">{{row.deactivated?'冻结':'激活'}}</span></td>
                     <td class="center">
-                        <a ng-click="goEditor($index)"><i class="btn-icon fa fa-pencil"></i></a>
+                        <a ng-click="goEditor($index)" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
                         <span class="divider"></span>
-                        <a ng-click="doDelete($index)"><i class="btn-icon fa fa-trash-o"></i></a>
+                        <a ng-click="doDelete($index)" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
                     </td>
                 </tr>
                 </tbody>

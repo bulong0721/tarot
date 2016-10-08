@@ -31,19 +31,19 @@
                     <td colspan="8" class="center" ng-if="$data.length<=0">没有查找到数据</td>
                 </tr>
                 <tr ng-repeat-start="row in $data">
-                    <td class="center"><a ng-click="row.showDetail=!row.showDetail"><i class="btn-icon fa fa-bars"></i></a></td>
+                    <td class="center"><a ng-click="row.showDetail=!row.showDetail" uib-tooltip="{{lang_zh.attrDetail}}"><i class="btn-icon fa fa-bars"></i></a></td>
                     <td>{{::row.code}}</td>
                     <td>{{::row.name}}</td>
                     <td>{{::row.type}}</td>
                     <td>{{::row.productNum}}</td>
                     <td>{{::row.description}}</td>
                     <td class="center">
-                        <a ng-click="goDeviceBindProductEditor($index)"><i class="btn-icon fa fa-link"></i></a>
+                        <a ng-click="goDeviceBindProductEditor($index)" uib-tooltip="{{lang_zh.bindDevice}}"><i class="btn-icon fa fa-link"></i></a>
                     </td>
                     <td class="center">
-                        <a ng-click="goEditorCustom($index)"><i class="btn-icon fa fa-pencil"></i></a>
+                        <a ng-click="goEditorCustom($index)" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
                         <span class="divider"></span>
-                        <a ng-click="doDelete($index)"><i class="btn-icon fa fa-trash-o"></i></a>
+                        <a ng-click="doDelete($index)" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
                     </td>
                 </tr>
                 <tr ng-repeat-end ng-if="row.showDetail">
@@ -53,7 +53,7 @@
                         <tr>
                             <th width="35%" class="center">属性名</th>
                             <th width="45%" class="center">属性值</th>
-                            <th class="center"><a ng-click="insertAttr(row)"><i class="btn-icon fa fa-plus"></i></a></th>
+                            <th class="center"><a ng-click="insertAttr(row)" uib-tooltip="{{lang_zh.add}}"><i class="btn-icon fa fa-plus"></i></a></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -73,11 +73,11 @@
                                 </div>
                             </td>
                             <td class="center">
-                                <a ng-switch-default ng-click="attr.editing=true"><i class="btn-icon fa fa-pencil"></i></a>
-                                <a ng-switch-when="true" ng-click="updateAttr(row, attr)"><i class="btn-icon fa fa-check"></i></a>
+                                <a ng-switch-default ng-click="attr.editing=true" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
+                                <a ng-switch-when="true" ng-click="updateAttr(row, attr)" uib-tooltip="{{lang_zh.update}}"><i class="btn-icon fa fa-check"></i></a>
                                 <span class="divider"></span>
-                                <a ng-switch-default ng-click="deleteAttr(row, attr)"><i class="btn-icon fa fa-trash-o"></i></a>
-                                <a ng-switch-when="true" ng-click="attr.editing=false"><i class="btn-icon fa fa-close"></i></a>
+                                <a ng-switch-default ng-click="deleteAttr(row, attr)" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
+                                <a ng-switch-when="true" ng-click="cancelAttr(row,attr)" uib-tooltip="{{lang_zh.cancel}}"><i class="btn-icon fa fa-close"></i></a>
                             </td>
                         </tr>
                         </tbody>

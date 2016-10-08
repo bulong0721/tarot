@@ -607,7 +607,29 @@ angular
         $rootScope.storeInfo = {};
         $rootScope.$state = $state;
         $rootScope.baseUrl={pushUrl:baseUrl.pushUrl,qiniuCdn:baseUrl.qiniuCdn};
+        $rootScope.lang_zh = {
+            edit:"编辑",
+            update:"保存",
+            delete:"删除",
+            cancel:"取消",
+            add:"新增",
+            download:"下载",
+            bindProduct:"关联设备组",
+            bindDevice:"关联设备",
+            bindDeviceDetail:"关联设备详细",
+            attrDetail:"详细属性",
+            flowDetail:"引流详细",
+            flowSet:"设置引流",
+            noDeleteThisShop:"当前切换的门店，不能删除",
+            noDeleteThisMerchant:"当前切换的门店所属的商户，不能删除",
+            noEditFolder:"文件夹不能编辑",
+            noAuthDelete:"没有权限删除",
+            noAddFile:"文件不能新增",
+            noDownloadFolder:"文件夹不能下载",
+            addResource:"添加"
+        };
     })
     .constant('baseConstant',{
-        myeeDefaultUrlImg:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt"
+        myeeDefaultUrlImg:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt",
     });
+

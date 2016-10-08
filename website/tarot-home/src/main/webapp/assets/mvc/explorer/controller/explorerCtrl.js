@@ -4,9 +4,9 @@ angular.module('myee', [])
 /**
  * explorerCtrl - controller
  */
-explorerCtrl.$inject = ['$scope', '$resource', '$filter', 'cfromly', 'Constants', 'cAlerts', 'toaster'];
-function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, toaster) {
-
+explorerCtrl.$inject = ['$scope', '$resource', '$filter', 'cfromly', 'Constants', 'cAlerts', 'toaster','$rootScope'];
+function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, toaster,$rootScope) {
+    var lang = $rootScope.lang_zh;
     var iDatatable = 0, iPush = 2, iEditor = 1;
     $scope.activeTab = iDatatable;
     var nodeTypes = [{name: '目录', value: 0}, {name: '文件', value: 1}];
@@ -62,17 +62,17 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
         {
             displayName: '操作',
             columnWidth: '150',
-            cellTemplate: '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-plus" tooltip-placement="top" uib-tooltip="添加" ng-click="cellTemplateScope.add(row.branch)"></i></a>' +
-            '<a><i ng-if="row.branch.type == 1" class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="文件不能新增"></i></a>' +
+            cellTemplate: '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-plus" tooltip-placement="top" uib-tooltip="'+ lang.addResource +'" ng-click="cellTemplateScope.add(row.branch)"></i></a>' +
+            '<a><i ng-if="row.branch.type == 1" class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="'+ lang.noAddFile +'"></i></a>' +
             '<span class="divider"></span>' +
-            '<a><i ng-if="row.branch.type == 1" class="btn-icon fa fa-pencil" tooltip-placement="top" uib-tooltip="编辑" ng-click="cellTemplateScope.edit(row.branch)"></i></a>' +
-            '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="文件夹不能编辑"></i></a>' +
+            '<a><i ng-if="row.branch.type == 1" class="btn-icon fa fa-pencil" tooltip-placement="top" uib-tooltip="'+ lang.edit +'" ng-click="cellTemplateScope.edit(row.branch)"></i></a>' +
+            '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="'+ lang.noEditFolder +'"></i></a>' +
             '<span class="divider"></span>' +
-            '<a><i ng-if="row.branch.salt == row.branch.storeId && row.branch.path != \'/\'" class="btn-icon fa fa-trash-o" tooltip-placement="top" uib-tooltip="删除" ng-click="cellTemplateScope.delete(row.branch)"></i></a>' +
-            '<a><i ng-if="row.branch.salt != row.branch.storeId || row.branch.path == \'/\'" class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="没有权限删除"></i></a>' +
+            '<a><i ng-if="row.branch.salt == row.branch.storeId && row.branch.path != \'/\'" class="btn-icon fa fa-trash-o" tooltip-placement="top" uib-tooltip="'+ lang.delete +'" ng-click="cellTemplateScope.delete(row.branch)"></i></a>' +
+            '<a><i ng-if="row.branch.salt != row.branch.storeId || row.branch.path == \'/\'" class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="'+ lang.noAuthDelete +'"></i></a>' +
             '<span class="divider"></span>' +
-            '<a ng-if="row.branch.type == 1" ng-href="{{row.branch.url}}" tooltip-placement="top" uib-tooltip="下载" download><i class="btn-icon fa fa-download" ></i></a>' +
-            '<a ng-if="row.branch.type == 0"><i class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="文件夹不能下载"></i></a>',
+            '<a ng-if="row.branch.type == 1" ng-href="{{row.branch.url}}" tooltip-placement="top" uib-tooltip="'+ lang.download +'" download><i class="btn-icon fa fa-download" ></i></a>' +
+            '<a ng-if="row.branch.type == 0"><i class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="'+ lang.noDownloadFolder +'"></i></a>',
             cellTemplateScope: {
                 add: function (data) {
                     $scope.handleSelect(data);
@@ -118,6 +118,8 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
             );
         }
     };
+
+
 
     //点击推送按钮时调用
     $scope.goSend = function () {

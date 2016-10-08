@@ -33,7 +33,7 @@
                     <td colspan="9" class="center" ng-if="$data.length<=0">没有查找到数据</td>
                 </tr>
                 <tr ng-repeat-start="row in $data">
-                    <td class="center"><a ng-click="row.showDetail=!row.showDetail"><i class="btn-icon fa fa-bars"></i></a></td>
+                    <td class="center"><a ng-click="row.showDetail=!row.showDetail" uib-tooltip="{{lang_zh.bindDeviceDetail}}"><i class="btn-icon fa fa-bars"></i></a></td>
                     <td>{{::row.name}}</td>
                     <td>{{::row.description}}</td>
                     <td>{{::row.scanCode}}</td>
@@ -41,12 +41,12 @@
                     <td class="center">{{::row.tableType.name}}</td>
                     <td class="center">{{::row.tableZone.name}}</td>
                     <td class="center">
-                        <a ng-click="goDeviceBindProductEditor($index)"><i class="btn-icon fa fa-link"></i></a>
+                        <a ng-click="goDeviceBindProductEditor($index)" uib-tooltip="{{lang_zh.bindDevice}}"><i class="btn-icon fa fa-link"></i></a>
                     </td>
                     <td class="center">
-                        <a ng-click="goEditorCustom($index)"><i class="btn-icon fa fa-pencil"></i></a>
+                        <a ng-click="goEditorCustom($index)" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
                         <span class="divider"></span>
-                        <a ng-click="doDelete($index)"><i class="btn-icon fa fa-trash-o"></i></a>
+                        <a ng-click="doDelete($index)" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
                     </td>
                 </tr>
                 <tr ng-repeat-end ng-if="row.showDetail">

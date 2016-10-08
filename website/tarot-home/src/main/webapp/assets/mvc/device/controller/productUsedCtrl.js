@@ -282,41 +282,5 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
         $scope.showInfoEditor = false;
     };
 
-    $scope.insertAttr = function (product) {
-        if (!product.attributes) {
-            product.attributes = [];
-        }
-        product.attributes.push({name: '', value: '', editing: true});
-    };
-
-    $scope.updateAttr = function (product, attr) {
-        var xhr = $resource(mgrData.api.updateAttr);
-        xhr.save({id: product.id}, attr).$promise.then(function (result) {
-            if (0 != result.status) {
-                $scope.toasterManage($scope.toastError,result);
-                return;
-            }
-            $scope.toasterManage($scope.toastOperationSucc);
-            attr.editing = false;
-        });
-    };
-
-    $scope.deleteAttr = function (product, attr) {
-        cAlerts.confirm('确定删除?',function(){
-            //点击确定回调
-            var xhr = $resource(mgrData.api.deleteAttr);
-            xhr.save({id: product.id}, attr).$promise.then(function (result) {
-                if (0 != result.status) {
-                    $scope.toasterManage($scope.toastError,result);
-                    return;
-                }
-                $scope.toasterManage($scope.toastDeleteSucc);
-                var index = product.attributes.indexOf(attr);
-                product.attributes.splice(index, 1);
-            });
-        },function(){
-            //点击取消回调
-        });
-
-    };
+    cTables.initAttrNgMgr(mgrData,$scope);
 }
