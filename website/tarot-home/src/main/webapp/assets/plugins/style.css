@@ -10439,3 +10439,10 @@ table tr:hover,table>tbody>tr:nth-of-type(odd):hover {background-color: #f6fefc;
     background-color: #cdcdda;
     border-bottom: 1px solid #c7ced8;
 }
+/*ng-img-crop*/
+.cropArea {
+    background: #E4E4E4;
+    overflow: hidden;
+    width:500px;
+    height:350px;
+}
