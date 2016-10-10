@@ -1,5 +1,5 @@
-<div class="datatable-tips">{{tips}}</div>
 <a class="btn btn-sm btn-danger" ng-click="goEditor()"><i class="ace-icon fa fa-plus bigger-120"></i>新增商户</a>
+<i class="ace-icon fa fa-question-circle" tooltip-placement="top" uib-tooltip="{{tips}}"></i>
 <div class="space-6"></div>
 <div class="alert alert-info">
     <div class="form-inline">
@@ -38,9 +38,9 @@
                     </td>
                     <td class="center">{{::row.description}}</td>
                     <td class="center">
-                        <a ng-click="goEditor($index)"><i class="btn-icon fa fa-pencil" tooltip-placement="top" uib-tooltip="{{lang_zh.edit}}"></i></a>
+                        <a ng-click="goEditor($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
                         <span class="divider"></span>
-                        <a ng-if="row.id != thisMerchantId" ng-click="doDelete($index)"><i class="btn-icon fa fa-trash-o" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"></i></a>
+                        <a ng-if="row.id != thisMerchantId" ng-click="doDelete($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
                         <a ng-if="row.id == thisMerchantId" tooltip-placement="top" uib-tooltip="{{lang_zh.noDeleteThisMerchant}}"><i class="btn-icon fa fa-ban"></i></a>
                     </td>
                 </tr>

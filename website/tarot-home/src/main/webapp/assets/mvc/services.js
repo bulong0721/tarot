@@ -369,19 +369,18 @@ function cfromlyService(formlyConfig, $window,$q, toaster, $filter,$timeout,form
             '<label for="{{::id}}" class="col-sm-2 control-label">',
             '{{to.label}}',
             '</label>',
-            '<div>Select an image file: <input type="file" id="fileInput" onchange="angular.element(this).scope().handleFileSelect(this)" /></div>',
+            //'<div><img ng-src="{{myCroppedImage}}"/></div>',
+            '<div class="col-sm-8"><div>Select an image file: <input type="file" id="fileInput" onchange="angular.element(this).scope().handleFileSelect(this)" /></div>',
             '<div class="cropArea">',
             '<img-crop area-type="square" image="myImage" result-image="myCroppedImage"></img-crop>',
-            '</div>',
-            '<div><img ng-src="{{myCroppedImage}}" /></div>'
+            '</div></div>'
         ].join(' '),
         link: function (scope, el, attrs) {
             scope.myImage='';
-            scope.myCroppedImage='';
+            scope.myCroppedImage= '';
             scope.handleFileSelect = function(evt) {
                 var file = evt.files[0];
                 var reader = new FileReader();
-                console.log(reader)
                 reader.onload = function (evt) {
                     scope.$apply(function($scope){
                         scope.myImage = evt.target.result;

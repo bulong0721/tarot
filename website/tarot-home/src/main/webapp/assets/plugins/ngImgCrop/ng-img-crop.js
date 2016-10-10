@@ -1561,9 +1561,6 @@
                         cropEXIF.getData(newImage,function(){
 
                             var orientation=cropEXIF.getTag(newImage,'Orientation');
-                            console.log(newImage.width);
-                            console.log(newImage.height);
-                            console.log(newImage)
                             if([3,6,8].indexOf(orientation)>-1) {
                                 var canvas = document.createElement("canvas"),
                                     ctx=canvas.getContext("2d"),

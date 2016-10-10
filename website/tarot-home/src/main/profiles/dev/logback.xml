@@ -32,7 +32,11 @@
         </encoder>
     </appender>
 
-    <root level="INFO">
+    <logger name="com.myee.tarot" level="DEBUG"/>
+    <logger name="org.springframework" level="DEBUG"/>
+    <logger name="org.hibernate" level="DEBUG"/>
+
+    <root level="DEBUG">
         <appender-ref ref="console"/>
         <appender-ref ref="fileLogAppender"/>
     </root>

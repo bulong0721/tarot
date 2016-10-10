@@ -38,6 +38,8 @@ public class Merchant extends GenericEntity<Long, Merchant> {
     @Column(name = "DESCRIPTION",length = 255)
     private String description;
 
+    @Transient
+    private String logoBase64;
 //    @OneToMany(mappedBy = "merchant", targetEntity = MerchantStore.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
 //    @MapKey(name = "name")
 //    protected Map<String, MerchantStore> merchantStore = new HashMap<String, MerchantStore>();
@@ -98,4 +100,12 @@ public class Merchant extends GenericEntity<Long, Merchant> {
 //        return merchantStore;
 //    }
 
+
+    public String getLogoBase64() {
+        return logoBase64;
+    }
+
+    public void setLogoBase64(String logoBase64) {
+        this.logoBase64 = logoBase64;
+    }
 }

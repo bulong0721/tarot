@@ -21,14 +21,18 @@ import com.myee.tarot.profile.domain.GeoZone;
 import com.myee.tarot.profile.service.GeoZoneService;
 import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.web.apiold.util.CommonLoginParam;
+import com.myee.tarot.web.apiold.util.FileValidCreateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.File;
 import java.util.*;
 
 /**
@@ -46,13 +50,14 @@ public class MerchantController {
     private GeoZoneService          geoZoneService;
     @Autowired
     private SaleCorpMerchantService saleCorpMerchantService;
-
+    @Value("${cleverm.push.dirs}")
+    private String DOWNLOAD_HOME;
     /**
      * 商户接口
      */
     @RequestMapping(value = "admin/merchant/save", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse saveMerchant(@RequestBody Merchant merchant, HttpServletRequest request) throws Exception {
+    public AjaxResponse saveMerchant(/*@RequestParam(value = "file") String imgBase64,*/@RequestBody Merchant merchant, HttpServletRequest request) throws Exception {
         AjaxResponse resp = null;
         try {
             //验证name,CuisineType,BusinessType不能为空
@@ -62,6 +67,19 @@ public class MerchantController {
                 resp.setErrorString("名称/商户类型不能为空");
                 return resp;
             }
+
+            //处理logo截图
+            Boolean logoSaveSucc = false;
+            String path = "";
+            String imgBase64 = merchant.getLogoBase64();
+            if(imgBase64 != null && !StringUtil.isBlank(imgBase64)){
+                path = "images/logo/" + System.currentTimeMillis() +".png" ;
+                logoSaveSucc = FileValidCreateUtil.createBase64Img(imgBase64, DOWNLOAD_HOME+ "/"+path);
+            }
+            if(logoSaveSucc){
+                merchant.setLogo(path);
+            }
+
             merchant.setCuisineType(StringUtil.isBlank(merchant.getCuisineType())?"":merchant.getCuisineType());
             Merchant merchant1 = merchantService.update(merchant);//新建或更新
 

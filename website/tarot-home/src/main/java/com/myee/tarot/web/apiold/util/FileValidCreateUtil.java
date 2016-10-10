@@ -13,15 +13,67 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import sun.misc.BASE64Decoder;
 
-import java.io.File;
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
 
 /**
  * Created by chay on 2016/9/6.
  */
 public class FileValidCreateUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileValidCreateUtil.class);
+
+    /**
+     * 保存base64图片
+     * @param imgBase64
+     * @param path 保存路径及文件名
+     */
+    public static Boolean createBase64Img(
+            String imgBase64,
+            String path){
+        // 对字节数组字符串进行Base64解码并生成图片
+        if (imgBase64 == null) { // 图像数据为空
+            return false;
+        }
+        BASE64Decoder decoder = new BASE64Decoder();
+        try {
+            // Base64解码
+            //拆分头和数据，java解码不能有头，而html显示必须有头
+            String[] base64String = imgBase64.split(",");
+            if(base64String.length != 2){
+                return false;
+            }
+            byte[] b = decoder.decodeBuffer(base64String[1]);
+            for (int i = 0; i < b.length; ++i) {
+                if (b[i] < 0) {// 调整异常数据
+                    b[i] += 256;
+                }
+            }
+            // 生成jpeg图片
+            File dest = FileUtils.getFile(path);
+            if(!dest.exists()){
+                FileUtils.getFile(dest.getParent()).mkdirs();
+                dest.createNewFile();
+            }
+
+            FileOutputStream out = new FileOutputStream(path);
+            out.write(b);
+            out.flush();
+            out.close();
+
+
+//            ByteArrayInputStream bais = new ByteArrayInputStream(b);
+//            BufferedImage bi1 =ImageIO.read(bais);
+//            ImageIO.write(bi1, "png", dest);//不管输出什么格式图片，此处不需改动
+
+            return true;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return false;
+        }
+    }
 
     /**
      * 小超人验证并上传文件接口

@@ -43,32 +43,18 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
             {
                 id: 'imgFile',
                 key: 'imgFile',
-                type: 'upload',
-                templateOptions: {type: 'file', label: '商户图标', required: false, placeholder: '商户图标',
-                    upAttr:{
-                        name: 'img',//这个name是用来判断上传文件的类型，不判断为空('') || null
-                        upType:2,
-                        url:'./files/create',
-                        param:{//这是url参数
-                            type:'file',
-                            path:'logo'
-                        },
-                        upMore:1
-                    }
-                },
+                type: 'c_images',
+                templateOptions: {type: 'file', label: '商户图标预览', required: false, placeholder: '商户图标预览'}
+            },
+            {
+                key: 'imgCrop',
+                type: 'c_img_crop',
+                templateOptions: {label: '商户图标裁剪'},
                 controller:['$scope', function ($scope) {
-                    //资源回显
-                    $scope.editFile = function(call){
-                        if($scope.model.imgFile){
-                            call({url:baseUrl.pushUrl+$scope.model.imgFile})
-                        }
-                    };
 
-                    //删除资源
-                    $scope.upRemove = function(index){
-                        console.log(index);
-                        $scope.model.logo = ""; //若是数组用这种方式删scope.thumbnail.splice(index,1);
-                    };
+                    $scope.$watch('myCroppedImage',function(newValue,oldValue){
+                        $scope.model.logoBase64 = newValue;
+                    });
                 }]
             },
             {
@@ -78,18 +64,13 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
                     style: {attribute: 'style'}
                 },
                 templateOptions: {label: '商户描述', placeholder: '商户描述', rows: 10, style: 'max-width:500px'}
-            },
-            {
-                key: 'imgCrop',
-                type: 'c_img_crop',
-                templateOptions: {label: '商户图标裁剪'}
             }
         ],
         api: {
             read: './merchant/paging',
             update: './merchant/save',
             delete: './merchant/delete',
-            upload: './files/create'
+            //upload: './files/create'
         }
     };
     cTables.initNgMgrCtrl(mgrData, $scope);
@@ -100,6 +81,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
 
     //formly提交
     $scope.processSubmit = function () {
+        console.log($scope.formData.model.logoBase64)
         var formly = $scope.formData;
         if (formly.form.$valid) {
             //formly.options.updateInitialValue();
@@ -115,7 +97,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
             var data = $scope.tableOpts.data[rowIndex];
             $scope.formData.model = angular.copy(data);
             console.log(data)
-            $scope.formData.model.imgFile = data.logo;
+            $scope.formData.model.imgFile = baseUrl.pushUrl + data.logo;
             $scope.rowIndex = rowIndex;
         } else {
             $scope.formData.model = {};
@@ -134,6 +116,6 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
         $scope.formData.model.logo = pic;
     });
 
-    $scope.tips = "*商户管理不受切换门店影响";
+    $scope.tips = "*管理所有商户，不受切换门店影响";
 
 }

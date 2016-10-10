@@ -26,4 +26,5 @@ function roleMgrCtrl($scope, cTables,cfromly) {
     };
 
     cTables.initNgMgrCtrl(mgrOpts, $scope);
+    $scope.tips = "*管理所有角色，不受切换门店影响";
 }

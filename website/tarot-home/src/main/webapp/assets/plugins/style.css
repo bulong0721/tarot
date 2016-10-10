@@ -10224,7 +10224,7 @@ table tr:hover,table>tbody>tr:nth-of-type(odd):hover {background-color: #f6fefc;
     margin: 0 0 0 20px;
 }
 
-.formly-field-datepicker .form-group,.formly-field-upload .form-group,.formly-field-c_images {overflow: inherit !important;  width: 100%;   display: inline-block; margin: 0;}
+.formly-field-datepicker .form-group,.formly-field-upload .form-group,.formly-field-c_images,.formly-field-c_img_crop {overflow: inherit !important;  width: 100%;   display: inline-block; margin: 0;}
 .formly-field-datepicker .form-group label,.formly-field-upload .form-group label {width: 16.66666667%; float: left}
 .formly-field-datepicker p {margin: 0; max-width: 450px;}
 .formly-field-c_images img {width: 100px}

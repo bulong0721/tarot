@@ -254,5 +254,5 @@ function merchantShopCtrl($scope, Constants, cTables, cfromly, $resource, NgTabl
         });
     };
 
-    $scope.tips = "*显示当前切换的门店所属商户下的所有门店列表";
+    $scope.tips = "*管理当前切换的门店所属商户下的所有门店";
 }
