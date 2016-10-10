@@ -258,6 +258,7 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster) {
         scope.tableOpts = new NgTableParams({}, {
             counts: [],
             getData: function (params) {
+                //params.count(20);
                 if (!scope.loadByInit) {
                     return [];
                 }
@@ -358,6 +359,7 @@ function cfromlyService(formlyConfig, $window,$q, toaster, $filter,$timeout,form
             '</label>',
             '<div ng-hide="hide" class="col-sm-8">',
             '<img ng-if="!Multi"  ng-src="{{model[options.key]}}" src="http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt?imageView2/1/w/150/h/95" />',
+            '<span ng-if="to.on == true" ng-click="on()">修改</span>',
             '</div>'
         ].join(' ')
     });
@@ -370,7 +372,7 @@ function cfromlyService(formlyConfig, $window,$q, toaster, $filter,$timeout,form
             '{{to.label}}',
             '</label>',
             //'<div><img ng-src="{{myCroppedImage}}"/></div>',
-            '<div class="col-sm-8"><div>Select an image file: <input type="file" id="fileInput" onchange="angular.element(this).scope().handleFileSelect(this)" /></div>',
+            '<div class="col-sm-8"><div style="display: none"><input type="file" id="fileInput" onchange="angular.element(this).scope().handleFileSelect(this)" /></div>',
             '<div class="cropArea">',
             '<img-crop area-type="square" image="myImage" result-image="myCroppedImage"></img-crop>',
             '</div></div>'

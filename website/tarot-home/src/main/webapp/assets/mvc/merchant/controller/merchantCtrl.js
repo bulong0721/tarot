@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * merchantCtrl - controller
  */
-merchantCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', '$resource','$filter'];
-function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
+merchantCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', '$resource','$filter','$timeout'];
+function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$timeout) {
     var mgrData = {
         fields: [
             {
@@ -44,14 +44,22 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
                 id: 'imgFile',
                 key: 'imgFile',
                 type: 'c_images',
-                templateOptions: {type: 'file', label: '商户图标预览', required: false, placeholder: '商户图标预览'}
+                templateOptions: {type: 'file', label: '商户图标预览', required: false, placeholder: '商户图标预览',on:true},
+                controller:['$scope', function ($scope) {
+                    $scope.on = function(){
+                        $scope.model.imgCropBool = true;
+                        $timeout(function () {$('#fileInput').click()}, 0);;
+                    }
+                }]
             },
             {
                 key: 'imgCrop',
                 type: 'c_img_crop',
                 templateOptions: {label: '商户图标裁剪'},
+                hideExpression: function ($viewValue, $modelValue, scope) {
+                    return scope.model.imgCropBool?false:true;
+                },
                 controller:['$scope', function ($scope) {
-
                     $scope.$watch('myCroppedImage',function(newValue,oldValue){
                         $scope.model.logoBase64 = newValue;
                     });
@@ -81,7 +89,6 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter) {
 
     //formly提交
     $scope.processSubmit = function () {
-        console.log($scope.formData.model.logoBase64)
         var formly = $scope.formData;
         if (formly.form.$valid) {
             //formly.options.updateInitialValue();
