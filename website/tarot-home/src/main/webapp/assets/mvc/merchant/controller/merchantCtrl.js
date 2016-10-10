@@ -103,7 +103,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$ti
         if (rowIndex > -1) {
             var data = $scope.tableOpts.data[rowIndex];
             $scope.formData.model = angular.copy(data);
-            console.log(data)
+            //console.log(data)
             $scope.formData.model.imgFile = baseUrl.pushUrl + data.logo;
             $scope.rowIndex = rowIndex;
         } else {
@@ -116,7 +116,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$ti
 
     //上传控件监听器
     $scope.$on('fileToUpload', function (event, res) {
-        console.log(res)
+        //console.log(res)
         //把上传结果赋值到formly.model对象对应字段
         var pic = res[0].dataMap.tree.downloadPath;
         $scope.toasterManage($scope.toastUploadSucc);

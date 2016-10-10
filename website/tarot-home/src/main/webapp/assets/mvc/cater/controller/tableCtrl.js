@@ -388,9 +388,9 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly, Constants, NgTablePar
         var formly = $scope.formData;
         if (formly.form.$valid) {
             //formly.options.updateInitialValue();//这句会报错
-            console.log(formly.model.deviceUsed)
-            console.log(formly.model)
-            console.log(({deviceUsed:formly.model.deviceUsed? formly.model.deviceUsed : {name:""}}));
+            //console.log(formly.model.deviceUsed)
+            //console.log(formly.model)
+            //console.log(({deviceUsed:formly.model.deviceUsed? formly.model.deviceUsed : {name:""}}));
             var xhr = $resource(mgrData.api.update);
             xhr.save({
                 autoStart: formly.model.startNo ? formly.model.startNo : "",

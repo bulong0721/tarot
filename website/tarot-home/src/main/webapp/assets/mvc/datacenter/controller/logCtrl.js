@@ -14,7 +14,7 @@ function logListCtrl($scope, $resource, Constants, cTables, cfromly, NgTablePara
     $scope.moduleChange = function($viewValue) {
         $resource('./selfCheckLog/listFunction').query({moduleId:$viewValue== null ? '':$viewValue.value},{},function success(resp){
             var length = resp.length;
-            console.log(1111)
+            //console.log(1111)
             $scope.functionNames.splice(0, $scope.functionNames.length);
             for (var j = 0; j < length; j++) {
                 $scope.functionNames.push({name: resp[j].name, value: resp[j].value});
