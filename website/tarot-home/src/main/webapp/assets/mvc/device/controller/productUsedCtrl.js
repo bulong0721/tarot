@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * productUsedCtrl - controller
  */
-productUsedCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables', 'cfromly', 'NgTableParams', '$q','cAlerts','toaster','$filter'];
-function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableParams, $q,cAlerts,toaster,$filter) {
+productUsedCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables', 'cfromly', 'NgTableParams', '$q', 'cAlerts', 'toaster', '$filter'];
+function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableParams, $q, cAlerts, toaster, $filter) {
 
     var iDatatable = 0, iEditor = 1;
     //绑定产品相关参数
@@ -61,12 +61,12 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
 
     $scope.showCase.currentRowIndex = 0;
 
-    $scope.filterBindOptions = function(){
+    $scope.filterBindOptions = function () {
         var deferred = $q.defer();
         //tables获取数据,获取该门店下可绑定的所有设备
         $scope.tableBindOpts = new NgTableParams({}, {
             counts: [],
-            dataset: $filter('filter')($scope.initalBindProductList,$scope.showCase.nameFilter || "")
+            dataset: $filter('filter')($scope.initalBindProductList, $scope.showCase.nameFilter || "")
         });
         $scope.loadByInit = true;
         $scope.tableOpts.page(1);
@@ -126,7 +126,7 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
             'productUsedId': $scope.formBindData.model.id
         }, {}, function (respSucc) {
             if (0 != respSucc.status) {
-                $scope.toasterManage($scope.toastError,respSucc);
+                $scope.toasterManage($scope.toastError, respSucc);
                 return;
             }
 
@@ -155,7 +155,7 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
             $scope.goDataTable();
         }, function (respFail) {
             //console.log(respFail);
-            $scope.toasterManage($scope.toastError,respFail);
+            $scope.toasterManage($scope.toastError, respFail);
         });
     };
 
@@ -174,33 +174,51 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
             {
                 key: 'ifBatch',
                 type: 'c_input',
-                className:'formly-min-checkbox',
+                className: 'formly-min-checkbox',
                 templateOptions: {label: '批量新增', required: false, type: 'checkbox'},
                 defaultValue: false,//不初始化就报错，设为false也报错？？_加了hideExpression就不会报错了，奇怪？？
                 hideExpression: function ($viewValue, $modelValue, scope) {
                     if (scope.model.id) {
                         return true;   //修改时隐藏批量修改
                     } else {
-                         return false;  //新增时显示批量修改
+                        return false;  //新增时显示批量修改
                     }
                 }
             },
             {
                 key: 'code',
                 type: 'c_input',
-                templateOptions: {label: '设备组编号', required: true, placeholder: '设备组编号'},
+                templateOptions: {
+                    label: '设备组编号',
+                    required: true,
+                    placeholder: '设备组编号,8位数字以内',
+                    pattern: '^[0-9]*$',
+                    maxlength: 8
+                },
                 hideExpression: 'model.ifBatch'
             },
             {
                 key: 'startNo',
                 type: 'c_input',
-                templateOptions: {label: '开始组编号', required: true, placeholder: '开始组编号'},
+                templateOptions: {
+                    label: '开始组编号',
+                    required: true,
+                    placeholder: '开始组编号,8位数字以内',
+                    pattern: '^[0-9]*$',
+                    maxlength: 8
+                },
                 hideExpression: '!model.ifBatch'
             },
             {
                 key: 'endNo',
                 type: 'c_input',
-                templateOptions: {label: '结束组编号', required: true, placeholder: '结束组编号'},
+                templateOptions: {
+                    label: '结束组编号',
+                    required: true,
+                    placeholder: '结束组编号,8位数字以内,大于等于开始组编号',
+                    pattern: '^[0-9]*$',
+                    maxlength: 8
+                },
                 hideExpression: '!model.ifBatch'
             },
             {
@@ -219,9 +237,21 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
             {
                 key: 'productNum',
                 type: 'c_input',
-                templateOptions: {label: '设备组版本', required: true, placeholder: '设备组版本'}
+                templateOptions: {
+                    label: '设备组版本',
+                    required: true,
+                    placeholder: '设备组版本,100字以内',
+                    maxlength: 100
+                }
             },
-            {key: 'description', type: 'c_input', templateOptions: {label: '描述', placeholder: '描述'}}
+            {
+                key: 'description', type: 'c_input',
+                templateOptions: {
+                    label: '描述',
+                    placeholder: '描述,255字以内',
+                    maxlength: 255
+                }
+            }
         ],
         api: {
             read: './product/used/paging',
@@ -254,7 +284,7 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
                 autoEnd: formly.model.endNo ? formly.model.endNo : ""
             }, formly.model).$promise.then(function saveSuccess(response) {
                     if (0 != response.status) {
-                        $scope.toasterManage($scope.toastError,response);
+                        $scope.toasterManage($scope.toastError, response);
                         return;
                     }
                     //批量添加的数据添加到ngtables
@@ -270,7 +300,7 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
                     $scope.toasterManage($scope.toastOperationSucc);
                     $scope.goDataTable();
                 }, function saveFailed(response) {
-                    $scope.toasterManage($scope.toastError,response);
+                    $scope.toasterManage($scope.toastError, response);
                 });
         }
     };
@@ -282,5 +312,5 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
         $scope.showInfoEditor = false;
     };
 
-    cTables.initAttrNgMgr(mgrData,$scope);
+    cTables.initAttrNgMgr(mgrData, $scope);
 }

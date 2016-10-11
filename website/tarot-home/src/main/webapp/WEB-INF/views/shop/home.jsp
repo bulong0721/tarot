@@ -44,14 +44,14 @@
 
 <!-- jQuery and Bootstrap -->
 <script src="assets/plugins/jquery/jquery-2.1.1.min.js"></script>
-<script src="assets/plugins/jquery-ui/jquery-ui.min.js"></script>
+<%--<script src="assets/plugins/jquery-ui/jquery-ui.min.js"></script>--%>
 <script src="assets/plugins/bootstrap/bootstrap.min.js"></script>
 
 <!-- MetsiMenu -->
 <script src="assets/plugins/metisMenu/jquery.metisMenu.js"></script>
 
 <!-- SlimScroll -->
-<script src="assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<%--<script src="assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>--%>
 
 <!-- Peace JS -->
 <script src="assets/plugins/pace/pace.min.js"></script>

@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * productUsedCtrl - controller
  */
-deviceUsedCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables', 'cfromly', 'NgTableParams', '$q','cAlerts','toaster','$filter'];
-function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableParams, $q,cAlerts,toaster,$filter) {
+deviceUsedCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables', 'cfromly', 'NgTableParams', '$q', 'cAlerts', 'toaster', '$filter'];
+function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableParams, $q, cAlerts, toaster, $filter) {
 
     var iDatatable = 0, iEditor = 1;
     //绑定产品相关参数
@@ -61,12 +61,12 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
 
     $scope.showCase.currentRowIndex = 0;
 
-    $scope.filterBindOptions = function(){
+    $scope.filterBindOptions = function () {
         var deferred = $q.defer();
         //tables获取数据,获取该门店下可绑定的所有设备
         $scope.tableBindOpts = new NgTableParams({}, {
             counts: [],
-            dataset: $filter('filter')($scope.initalBindProductList,$scope.showCase.nameFilter || "")
+            dataset: $filter('filter')($scope.initalBindProductList, $scope.showCase.nameFilter || "")
         });
         $scope.loadByInit = true;
         $scope.tableOpts.page(1);
@@ -124,7 +124,7 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
             'deviceUsedId': $scope.formBindData.model.id
         }, {}, function (respSucc) {
             if (0 != respSucc.status) {
-                $scope.toasterManage($scope.toastError,respSucc);
+                $scope.toasterManage($scope.toastError, respSucc);
                 return;
             }
 
@@ -153,7 +153,7 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
             $scope.goDataTable();
         }, function (respFail) {
             //console.log(respFail);
-            $scope.toasterManage($scope.toastError,respFail);
+            $scope.toasterManage($scope.toastError, respFail);
         });
     };
 
@@ -173,11 +173,15 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
                 type: 'c_input',
                 templateOptions: {disabled: true, label: '门店名称', placeholder: '门店名称'}
             },
-            {key: 'name', type: 'c_input', templateOptions: {label: '名称', required: true, placeholder: '名称'}},
+            {
+                key: 'name',
+                type: 'c_input',
+                templateOptions: {label: '名称', required: true, placeholder: '名称,60字以内', maxlength: 60}
+            },
             {
                 key: 'ifBatch',
                 type: 'c_input',
-                className:'formly-min-checkbox',
+                className: 'formly-min-checkbox',
                 templateOptions: {label: '批量新增', required: false, type: 'checkbox'},
                 defaultValue: false,//不初始化就报错，设为false也报错？？_加了hideExpression就不会报错了，奇怪？？
                 hideExpression: function ($viewValue, $modelValue, scope) {
@@ -191,19 +195,43 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
             {
                 key: 'startNo',
                 type: 'c_input',
-                templateOptions: {label: '开始编号', required: true, placeholder: '开始编号'},
+                templateOptions: {
+                    label: '开始编号',
+                    required: true,
+                    placeholder: '8位数字内,将添加到设备名称后',
+                    pattern: '^[0-9]*$',
+                    maxlength: 8
+                },
                 hideExpression: '!model.ifBatch'
             },
             {
                 key: 'endNo',
                 type: 'c_input',
-                templateOptions: {label: '结束编号', required: true, placeholder: '结束编号'},
+                templateOptions: {
+                    label: '结束编号',
+                    required: true,
+                    placeholder: '8位数字内,大于等于开始编号,将添加到设备名称后',
+                    pattern: '^[0-9]*$',
+                    maxlength: 8
+                },
                 hideExpression: '!model.ifBatch'
             },
-            {key: 'heartbeat', type: 'c_input', templateOptions: {label: '心跳', placeholder: '心跳'}},
-            {key: 'boardNo', type: 'c_input', templateOptions: {label: '主板编号', placeholder: '主板编号',required: true}},
-            {key: 'deviceNum', type: 'c_input', templateOptions: {label: '设备号', placeholder: '设备号'}},
-            {key: 'description', type: 'c_input', templateOptions: {label: '描述', placeholder: '描述'}},
+            {key: 'heartbeat', type: 'c_input', templateOptions: {label: '心跳', placeholder: '心跳,60字以内', maxlength: 60}},
+            {
+                key: 'boardNo',
+                type: 'c_input',
+                templateOptions: {label: '主板编号', placeholder: '主板编号,60字以内', required: true, maxlength: 60}
+            },
+            {
+                key: 'deviceNum',
+                type: 'c_input',
+                templateOptions: {label: '设备号', placeholder: '设备号,60字以内', maxlength: 60}
+            },
+            {
+                key: 'description',
+                type: 'c_input',
+                templateOptions: {label: '描述', placeholder: '描述,255字以内', maxlength: 255}
+            },
             {
                 key: 'phone',
                 type: 'c_input',
@@ -211,7 +239,7 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
                     type: 'text',
                     label: '手机号',
                     placeholder: '请输入11位手机号',
-                    pattern:'^(1[3578][0-9]|14[0-7])[0-9]{8}$|(^((1[3578][0-9]|14[0-7])[0-9]{8},)*(1[3578][0-9]|14[0-7])[0-9]{8}$)'
+                    pattern: '^(1[3578][0-9]|14[0-7])[0-9]{8}$|(^((1[3578][0-9]|14[0-7])[0-9]{8},)*(1[3578][0-9]|14[0-7])[0-9]{8}$)'
                 }
             },
             {
@@ -252,7 +280,7 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
                 autoEnd: formly.model.endNo ? formly.model.endNo : ""
             }, formly.model).$promise.then(function saveSuccess(response) {
                     if (0 != response.status) {
-                        $scope.toasterManage($scope.toastError,response);
+                        $scope.toasterManage($scope.toastError, response);
                         return;
                     }
                     //批量添加的数据添加到ngtables
@@ -268,7 +296,7 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
                     $scope.toasterManage($scope.toastOperationSucc);
                     $scope.goDataTable();
                 }, function saveFailed(response) {
-                    $scope.toasterManage($scope.toastError,response);
+                    $scope.toasterManage($scope.toastError, response);
                 });
         }
     };
@@ -280,5 +308,5 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
         $scope.showInfoEditor = false;
     };
 
-    cTables.initAttrNgMgr(mgrData,$scope);
+    cTables.initAttrNgMgr(mgrData, $scope);
 }

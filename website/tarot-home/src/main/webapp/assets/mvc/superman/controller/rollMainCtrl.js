@@ -9,8 +9,8 @@ function rollMainCtrl($scope,$resource, Constants,cTables,cfromly,cAlerts) {
 
     var mgrData = {
         fields: [
-            {key: 'title', type: 'c_input', templateOptions: {label: '活动标题', required: true, placeholder: '活动标题,100字以内',max:100}},
-            {key: 'description', type: 'c_input',templateOptions: {label: '活动描述', placeholder: '活动描述,255字以内',max:255}},
+            {key: 'title', type: 'c_input', templateOptions: {label: '活动标题', required: true, placeholder: '活动标题,100字以内',maxlength:100}},
+            {key: 'description', type: 'c_input',templateOptions: {label: '活动描述', placeholder: '活动描述,255字以内',maxlength:255}},
         ],
         api: {
             read: './superman/rollMain/paging',

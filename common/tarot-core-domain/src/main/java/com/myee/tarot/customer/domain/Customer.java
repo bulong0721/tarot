@@ -25,19 +25,19 @@ public class Customer extends GenericEntity<Long, Customer> {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     protected Long id;
 
-    @Column(name = "USER_NAME",unique = true)
+    @Column(name = "USER_NAME",unique = true, length=40)
     protected String username;
 
-    @Column(name = "PASSWORD")
+    @Column(name = "PASSWORD", length=60)
     protected String password;
 
-    @Column(name = "EMAIL_ADDRESS")
+    @Column(name = "EMAIL_ADDRESS", length=60)
     protected String emailAddress;
 
-    @Column(name = "FIRST_NAME")
+    @Column(name = "FIRST_NAME", length=20)
     protected String firstName;
 
-    @Column(name = "LAST_NAME")
+    @Column(name = "LAST_NAME", length=20)
     protected String lastName;
 
     @ManyToOne(fetch = FetchType.LAZY)//懒加载会使用户登录时得到的用户信息中不包含门店，就没办法设置session默认门店__需要调用其中的属性才会加载

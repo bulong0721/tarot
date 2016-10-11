@@ -246,7 +246,6 @@ public class TableController {
                                  @RequestParam(value = "autoStart") Long autoStart,
                                  @RequestParam(value = "autoEnd") Long autoEnd,
                                  @RequestParam(value = "autoDUStart") Long autoDUStart,
-                                 @RequestParam(value = "autoDUEnd") Long autoDUEnd,
                                  HttpServletRequest request) throws Exception {
         AjaxResponse resp;
         try {
@@ -255,8 +254,7 @@ public class TableController {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            if ((autoEnd != null && autoStart != null && autoEnd < autoStart)
-                    || (autoDUEnd != null && autoDUStart != null && autoDUEnd < autoDUStart)) {
+            if (autoEnd != null && autoStart != null && autoEnd < autoStart) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("结束编号不能小于开始编号");
                 return resp;
@@ -269,7 +267,7 @@ public class TableController {
             DeviceUsed deviceUsed = null;
             String dUCommonName = null;
             String commonBoardNo = null;
-            if (dUString != null) {
+            if (dUString != null && !StringUtil.isBlank(dUString)) {
                 deviceUsed = JSON.parseObject(dUString, DeviceUsed.class);
                 if (StringUtil.isNullOrEmpty(deviceUsed.getBoardNo())) {
                     resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -308,8 +306,8 @@ public class TableController {
                     }
 
                     //同时新增并关联设备
-                    if (autoDUEnd != null && autoDUStart != null
-                            && autoDUEnd >= 0 && autoDUStart >= 0
+                    if ( autoDUStart != null
+                            && autoDUStart >= 0
                             && deviceUsed != null && dUCommonName != null && commonBoardNo != null) {
                         deviceUsed.setName(dUCommonName + (autoDUStart + i - autoStart));
                         deviceUsed.setBoardNo(String.valueOf(System.currentTimeMillis()) + "auto" + commonBoardNo + (autoDUStart + i - autoStart));

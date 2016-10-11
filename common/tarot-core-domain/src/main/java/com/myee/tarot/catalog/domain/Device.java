@@ -19,13 +19,13 @@ public class Device extends GenericEntity<Long, Device> {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     protected Long id;
 
-    @Column(name = "NAME")
+    @Column(name = "NAME", length=60)
     protected String name;
 
-    @Column(name = "VERSION_NUM")
+    @Column(name = "VERSION_NUM", length=60)
     protected String versionNum;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", length=255)
     protected String description;
 
 //    @OneToMany(mappedBy = "device", targetEntity = DeviceAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)

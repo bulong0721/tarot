@@ -11,7 +11,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$ti
             {
                 key: 'name',
                 type: 'c_input',
-                templateOptions: {type: 'text', label: '商户名称', required: true, placeholder: '商户名称'}
+                templateOptions: {type: 'text', label: '商户名称', required: true, placeholder: '商户名称,60字以内',maxlength:60}
             },
             {
                 key: 'businessType',
@@ -71,7 +71,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$ti
                 ngModelAttrs: {
                     style: {attribute: 'style'}
                 },
-                templateOptions: {label: '商户描述', placeholder: '商户描述', rows: 10, style: 'max-width:500px'}
+                templateOptions: {label: '商户描述', placeholder: '商户描述,255字以内', rows: 10, style: 'max-width:500px',maxlength:255}
             }
         ],
         api: {

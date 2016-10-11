@@ -57,12 +57,12 @@
                                 <td>
                                     <span ng-switch-default>{{::attr.name}}</span>
                                     <div class="controls" ng-switch-when="true">
-                                        <input type="text" name="attrName" ng-model="attr.name" class="editable-input form-control input-sm" required/>
+                                        <input type="text" name="attrName" ng-model="attr.name" placeholder="255字以内" class="editable-input form-control input-sm" required/>
                                     </div>
                                 <td>
                                     <span ng-switch-default>{{::attr.value}}</span>
                                     <div class="controls" ng-switch-when="true">
-                                        <input type="text" name="attrValue" ng-model="attr.value" class="editable-input form-control input-sm" required/>
+                                        <input type="text" name="attrValue" ng-model="attr.value" placeholder="255字以内" class="editable-input form-control input-sm" required/>
                                     </div>
                                 </td>
                                 <td class="center">

@@ -34,13 +34,13 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
     protected MerchantStore store;
 
     @NotEmpty
-    @Column(name = "TYPE")
+    @Column(name = "TYPE", length = 100)
     protected String type;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", length = 255)
     protected String description;
 
-    @Column(name = "PRODUCT_NUM")
+    @Column(name = "PRODUCT_NUM", length = 100)
     protected String productNum;
 
     @ManyToMany(targetEntity = DeviceUsed.class, cascade = CascadeType.REFRESH)

@@ -7,9 +7,9 @@ angular.module('myee', [])
 /**
  * roleCtrl - controller
  */
-tableMgrCtrl.$inject = ['$scope', '$resource', 'cTables', 'cfromly', 'Constants', 'NgTableParams', '$q', 'cAlerts','$filter'];
+tableMgrCtrl.$inject = ['$scope', '$resource', 'cTables', 'cfromly', 'Constants', 'NgTableParams', '$q', 'cAlerts', '$filter'];
 
-function tableMgrCtrl($scope, $resource, cTables, cfromly, Constants, NgTableParams, $q, cAlerts,$filter) {
+function tableMgrCtrl($scope, $resource, cTables, cfromly, Constants, NgTableParams, $q, cAlerts, $filter) {
 
     var iDatatable = 0, iEditor = 1;
     //绑定产品相关参数
@@ -66,12 +66,12 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly, Constants, NgTablePar
 
     $scope.showCase.currentRowIndex = 0;
 
-    $scope.filterBindOptions = function(){
+    $scope.filterBindOptions = function () {
         var deferred = $q.defer();
         //tables获取数据,获取该门店下可绑定的所有设备
         $scope.tableBindOpts = new NgTableParams({}, {
             counts: [],
-            dataset: $filter('filter')($scope.initalBindProductList,$scope.showCase.nameFilter || "")
+            dataset: $filter('filter')($scope.initalBindProductList, $scope.showCase.nameFilter || "")
         });
         $scope.loadByInit = true;
         $scope.tableOpts.page(1);
@@ -222,7 +222,7 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly, Constants, NgTablePar
                 key: 'name',
                 type: 'c_input',
                 className: 'c_formly_line',
-                templateOptions: {label: '名称', required: true, placeholder: '名称'}
+                templateOptions: {label: '名称', required: true, placeholder: '名称,50字以内', maxlength: 50}
             },
             {
                 key: 'scanCode',
@@ -231,20 +231,21 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly, Constants, NgTablePar
                 templateOptions: {
                     label: '餐桌码',
                     placeholder: '输入000-200之间的3位数字,批量添加时将自动+1递增',
-                    pattern: '(([01]{1}[0-9]{2})|([2]{1}[0]{2}))$'
+                    pattern: '(([01]{1}[0-9]{2})|([2]{1}[0]{2}))$',
+                    maxlength: 3
                 }
             },
             {
                 key: 'textId',
                 type: 'c_input',
                 className: 'c_formly_line',
-                templateOptions: {label: 'ERP ID', placeholder: '小超人点菜用'}
+                templateOptions: {label: 'ERP ID', placeholder: '小超人点菜用,10字以内', maxlength: 10}
             },
             {
                 key: 'description',
                 type: 'c_input',
                 className: 'c_formly_line',
-                templateOptions: {label: '描述', placeholder: '描述'}
+                templateOptions: {label: '描述', placeholder: '描述,255字以内', maxlength: 255}
             },
             {
                 key: 'tableType.id',
@@ -281,63 +282,75 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly, Constants, NgTablePar
             {
                 key: 'startNo',
                 type: 'c_input',
-                templateOptions: {label: '餐桌开始编号', required: true, placeholder: '餐桌开始编号'},
+                templateOptions: {
+                    label: '餐桌开始编号',
+                    required: true,
+                    placeholder: '8位数字内,将添加到餐桌名称后',
+                    pattern: '^[0-9]*$',
+                    maxlength: 8
+                },
                 hideExpression: '!model.ifBatch'
             },
             {
                 key: 'endNo',
                 type: 'c_input',
-                templateOptions: {label: '餐桌结束编号', required: true, placeholder: '餐桌结束编号'},
+                templateOptions: {
+                    label: '餐桌结束编号',
+                    required: true,
+                    placeholder: '8位数字内,大于等于餐桌开始编号,将添加到餐桌名称后',
+                    pattern: '^[0-9]*$',
+                    maxlength: 8
+                },
                 hideExpression: '!model.ifBatch'
             },
             {
                 key: 'ifBatchBind',
                 type: 'c_input',
                 className: 'formly-min-checkbox',
-                templateOptions: {label: '批量新增并关联设备', required: false, type: 'checkbox'},
+                templateOptions: {label: '批量一对一新增并关联设备', required: false, type: 'checkbox'},
                 defaultValue: false,//不初始化就报错，设为false也报错？？_加了hideExpression就不会报错了，奇怪？？
                 hideExpression: '!model.ifBatch'
             },
             {
                 key: 'startDeviceUsedNo',
                 type: 'c_input',
-                templateOptions: {label: '设备起始编号', required: true, placeholder: '设备起始编号'},
-                hideExpression: '!model.ifBatchBind || !model.ifBatch'
-            },
-            {
-                key: 'endDeviceUsedNo',
-                type: 'c_input',
-                templateOptions: {label: '设备结束编号', required: true, placeholder: '设备结束编号'},
+                templateOptions: {
+                    label: '设备起始编号',
+                    required: true,
+                    placeholder: '8位数字内,将添加到设备名称后,批量自增+1',
+                    pattern: '^[0-9]*$',
+                    maxlength: 8
+                },
                 hideExpression: '!model.ifBatchBind || !model.ifBatch'
             },
             {
                 key: 'dU.name',
                 type: 'c_input',
-                templateOptions: {label: '名称', required: true, placeholder: '名称'},
+                templateOptions: {label: '名称', required: true, placeholder: '名称,60字以内',maxlength: 60},
                 hideExpression: '!model.ifBatchBind || !model.ifBatch'
             },
             {
                 key: 'dU.heartbeat',
                 type: 'c_input',
-                templateOptions: {label: '心跳', placeholder: '心跳'},
+                templateOptions: {label: '心跳', placeholder: '心跳,60字以内',maxlength: 60},
                 hideExpression: '!model.ifBatchBind || !model.ifBatch'
             },
             {
                 key: 'dU.boardNo',
                 type: 'c_input',
-                templateOptions: {label: '主板编号', placeholder: '主板编号', required: true},
+                templateOptions: {label: '主板编号', placeholder: '主板编号,60字以内',maxlength: 60, required: true},
                 hideExpression: '!model.ifBatchBind || !model.ifBatch'
             },
             {
                 key: 'dU.deviceNum',
                 type: 'c_input',
-                templateOptions: {label: '设备号', placeholder: '设备号'},
+                templateOptions: {label: '设备号', placeholder: '设备号,60字以内',maxlength: 60},
                 hideExpression: '!model.ifBatchBind || !model.ifBatch'
             },
             {
                 key: 'dU.description',
                 type: 'c_input',
-                templateOptions: {label: '描述', placeholder: '描述'},
+                templateOptions: {label: '描述', placeholder: '描述,255字以内',maxlength: 255},
                 hideExpression: '!model.ifBatchBind || !model.ifBatch'
             },
             {
@@ -396,8 +409,7 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly, Constants, NgTablePar
                 autoStart: formly.model.startNo ? formly.model.startNo : "",
                 autoEnd: formly.model.endNo ? formly.model.endNo : "",
                 autoDUStart: formly.model.startDeviceUsedNo ? formly.model.startDeviceUsedNo : "",
-                autoDUEnd: formly.model.endDeviceUsedNo ? formly.model.endDeviceUsedNo : "",
-                dUString:formly.model.dU? formly.model.dU : {}
+                dUString: formly.model.dU ? formly.model.dU : ""
             }, formly.model).$promise.then(function saveSuccess(response) {
                     if (0 != response.status) {
                         $scope.toasterManage($scope.toastError, response);

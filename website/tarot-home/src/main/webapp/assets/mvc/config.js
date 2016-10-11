@@ -630,6 +630,7 @@ angular
         };
     })
     .constant('baseConstant',{
-        myeeDefaultUrlImg:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt",
+        //myeeDefaultUrlImg:"http://cdn.myee7.com/FuMJj5jpAK8_wd2c0KvdwEmCaATt", //长方形logo
+        myeeDefaultUrlImg:"http://cdn.myee7.com/FtHyBUTUJ6slWaftvc-NtSJhu6Kg?imageView2/1/w/150/h/95",//正方形logo
     });
 

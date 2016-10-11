@@ -36,12 +36,12 @@
                         <td>
                             <span ng-switch-default>{{::attr.name}}</span>
                             <div class="controls" ng-switch-when="true">
-                                <input type="text" name="attrName" ng-model="attr.name" class="editable-input form-control input-sm" required/>
+                                <input type="text" name="attrName" ng-model="attr.name" placeholder="255字以内" class="editable-input form-control input-sm" required/>
                             </div>
                         <td>
                             <span ng-switch-default>{{::attr.value}}</span>
                             <div class="controls" ng-switch-when="true">
-                                <input type="text" name="attrValue" ng-model="attr.value" class="editable-input form-control input-sm" required/>
+                                <input type="text" name="attrValue" ng-model="attr.value" placeholder="255字以内" class="editable-input form-control input-sm" required/>
                             </div>
                         </td>
                         <td class="center">
@@ -49,7 +49,7 @@
                             <a ng-switch-when="true" ng-click="updateAttr(formData.model, attr)"><i class="btn-icon fa fa-check"></i></a>
                             <span class="divider"></span>
                             <a ng-switch-default ng-click="deleteAttr(formData.model, attr)"><i class="btn-icon fa fa-trash-o"></i></a>
-                            <a ng-switch-when="true" ng-click="attr.editing=false"><i class="btn-icon fa fa-close"></i></a>
+                            <a ng-switch-when="true" ng-click="cancelAttr(formData.model,attr)"><i class="btn-icon fa fa-close"></i></a>
                         </td>
                     </tr>
                     </tbody>

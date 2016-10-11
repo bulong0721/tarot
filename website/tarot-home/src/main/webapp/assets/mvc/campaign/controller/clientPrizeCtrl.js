@@ -11,7 +11,7 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
             {
                 key: 'name',
                 type: 'c_input',
-                templateOptions: {type: 'text', label: '奖券名称', required: true, placeholder: '奖券名称'},
+                templateOptions: {type: 'text', label: '奖券名称', required: true, placeholder: '奖券名称,255字以内',maxlength:255},
                 hideExpression: function ($viewValue, $modelValue, scope) {
                     if (scope.model.type != '2') {
                         return false;
@@ -50,7 +50,7 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
             {
                 key: 'total',
                 type: 'c_input',
-                templateOptions: {type: 'text', label: '奖券数量', required: true, placeholder: '奖券数量'}
+                templateOptions: {type: 'text', label: '奖券数量', required: true, placeholder: '奖券数量,11位以内数字',maxlength:11,pattern: '^[0-9]*$'}
             },
             {
                 key: 'startDate',
@@ -145,7 +145,7 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
                 ngModelAttrs: {
                     style: {attribute: 'style'}
                 },
-                templateOptions: {label: '奖券描述', placeholder: '奖券描述', rows: 10,style: 'max-width:500px'}
+                templateOptions: {label: '奖券描述', placeholder: '奖券描述,255字以内', rows: 10,style: 'max-width:500px',maxlength:255}
             },
             {
                 key: 'activeStatus',

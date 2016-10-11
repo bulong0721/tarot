@@ -20,22 +20,22 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     protected Long id;
 
-    @Column(name = "NAME")
+    @Column(name = "NAME", length=60)
     protected String name;
 
-    @Column(name = "HEARTBEAT")
+    @Column(name = "HEARTBEAT", length=60)
     protected String heartbeat;
 
-    @Column(name = "BOARD_NO")
+    @Column(name = "BOARD_NO", length=60)
     protected String boardNo;
 
-    @Column(name = "DEVICE_NUM")
+    @Column(name = "DEVICE_NUM", length=60)
     protected String deviceNum;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", length=255)
     protected String description;
 
-    @Column(name = "PHONE")
+    @Column(name = "PHONE", length=11)
     private String phone;
 
     @ManyToOne(targetEntity = MerchantStore.class, optional = false)

@@ -18,10 +18,10 @@ public class ProductUsedAttribute extends GenericEntity<Long, ProductUsedAttribu
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     protected Long id;
 
-    @Column(name = "NAME", nullable = false)
+    @Column(name = "NAME", nullable = false, length=255)
     protected String name;
 
-    @Column(name = "VALUE")
+    @Column(name = "VALUE", length=255)
     protected String value;
 
     @Column(name = "SEARCHABLE")

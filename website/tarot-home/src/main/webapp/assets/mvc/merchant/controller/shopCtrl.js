@@ -19,7 +19,7 @@ function merchantShopCtrl($scope, Constants, cTables, cfromly, $resource, NgTabl
             {
                 key: 'name',
                 type: 'c_input',
-                templateOptions: {label: '门店名称', required: true, placeholder: '门店名称'}
+                templateOptions: {label: '门店名称', required: true, placeholder: '门店名称,60字以内',maxlength:60}
             },
             {
                 key: 'address.province.id',
@@ -86,9 +86,9 @@ function merchantShopCtrl($scope, Constants, cTables, cfromly, $resource, NgTabl
                 className: 'c_select',
                 templateOptions: {label: '商场', options: Constants.malls}
             },
-            {key: 'address.address', type: 'c_input', templateOptions: {label: '地址', placeholder: '地址'}},
-            {key: 'phone', type: 'c_input', templateOptions: {label: '联系电话', placeholder: '联系电话'}},
-            {key: 'code', type: 'c_input', templateOptions: {label: '门店码', required: true, placeholder: '门店码'}},
+            {key: 'address.address', type: 'c_input', templateOptions: {label: '地址', placeholder: '地址,255字以内',maxlength:255}},
+            {key: 'phone', type: 'c_input', templateOptions: {label: '联系电话', placeholder: '联系电话,手机或固话,20字以内',maxlength:20}},
+            {key: 'code', type: 'c_input', templateOptions: {label: '门店码', required: true, placeholder: '门店码,字母和数字的组合,100字以内',maxlength:100,pattern:'^[a-zA-Z0-9_]*$'}},
         ],
         api: {
             read: './merchantStore/pagingByMerchant',
