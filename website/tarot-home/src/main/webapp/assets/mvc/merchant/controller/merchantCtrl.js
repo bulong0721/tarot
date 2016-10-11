@@ -104,7 +104,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$ti
             var data = $scope.tableOpts.data[rowIndex];
             $scope.formData.model = angular.copy(data);
             //console.log(data)
-            $scope.formData.model.imgFile = baseUrl.pushUrl + data.logo;
+            $scope.formData.model.imgFile = data.logo?baseUrl.pushUrl + data.logo : "";
             $scope.rowIndex = rowIndex;
         } else {
             $scope.formData.model = {};
