@@ -19,7 +19,7 @@ public class Role extends GenericEntity<Long, Role> {
     @Column(name = "ROLE_NAME", length = 20, nullable = false)
     protected String roleName;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", length = 255)
     protected String description;
 
     @Override

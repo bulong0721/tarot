@@ -15,9 +15,9 @@ function roleMgrCtrl($scope, cTables,cfromly) {
             {
                 key: 'roleName',
                 type: 'c_input',
-                templateOptions: {label: '角色名', required: true, placeholder: '角色名'}
+                templateOptions: {label: '角色名', required: true, placeholder: '角色名,20字以内', maxlength: 20}
             },
-            {key: 'description', type: 'c_input', templateOptions: {label: '描述', placeholder: '描述'}}
+            {key: 'description', type: 'c_input', templateOptions: {label: '描述', placeholder: '描述,255字以内', maxlength: 255}}
         ],
         api: {
             read: '../admin/roles/paging',
