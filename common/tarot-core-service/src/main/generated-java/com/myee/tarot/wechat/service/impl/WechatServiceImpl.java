@@ -106,16 +106,16 @@ public class WechatServiceImpl implements WechatService {
                 .end();
 
         //点击菜单按钮查询排队进展
-       newRouter.rule().async(false)
+      /* newRouter.rule().async(false)
                 .msgType(WxConsts.XML_MSG_EVENT)
                 .event(WxConsts.EVT_SCANCODE_PUSH).eventKey("V1001_QUERY_INPUT")
                 .handler(this.progressHandler)
-                .end();
+                .end();*/
 
         //扫码查询排队进展
         newRouter.rule().async(false)
                 .msgType(WxConsts.XML_MSG_EVENT)
-                .event(WxConsts.EVT_SCANCODE_PUSH).eventKey("QUERY_SCAN_UPDATED")
+                .event(WxConsts.EVT_CLICK).eventKey("QUERY_LATEST_STATUS")
                 .handler(this.progressHandler)
                 .end();
 

@@ -1,27 +1,46 @@
 package com.myee.tarot.cache.entity;
 
-import com.google.common.base.Joiner;
-import com.myee.djinn.dto.ShopDetail;
-import com.myee.djinn.dto.WaitToken;
-import com.myee.tarot.cache.redisson.FastJsonCodec;
-import org.redisson.api.*;
+import com.myee.tarot.cache.view.WxWaitTokenView;
 import org.redisson.api.annotation.REntity;
 import org.redisson.api.annotation.RId;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * Created by Martin on 2016/9/6.
  */
-@REntity(codec = FastJsonCodec.class)
+@REntity
 public class MealsCache implements Serializable {
     @RId
     private String envName;
 
-    private RMapCache<String, String> customerTokenCache;
+    private Map<String,List<WxWaitTokenView>> wxWaitTokenCache; //存入redis的排队信息
 
-    private RMapCache<String, WaitToken> waitTokenCache;
+    private Map<String,String> openIdInfo; //存放微信Id 对应的信息
+
+    public Map<String, String> getOpenIdInfo() {
+        return openIdInfo;
+    }
+
+    public void setOpenIdInfo(Map<String, String> openIdInfo) {
+        this.openIdInfo = openIdInfo;
+    }
+
+    public String getEnvName() {
+        return envName;
+    }
+
+    public void setEnvName(String envName) {
+        this.envName = envName;
+    }
+
+    public Map<String, List<WxWaitTokenView>> getWxWaitTokenCache() {
+        return wxWaitTokenCache;
+    }
+
+    public void setWxWaitTokenCache(Map<String, List<WxWaitTokenView>> wxWaitTokenCache) {
+        this.wxWaitTokenCache = wxWaitTokenCache;
+    }
 }

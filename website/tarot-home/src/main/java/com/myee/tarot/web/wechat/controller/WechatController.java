@@ -43,6 +43,7 @@ public class WechatController {
     @Autowired
     protected WechatService     coreService;
 
+
     @RequestMapping(value = "service")
     public void wechatCore(HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType("text/html;charset=utf-8");
@@ -100,11 +101,27 @@ public class WechatController {
 
     @RequestMapping(value = "generate_qrTmpPic", method = {RequestMethod.POST})
     @ResponseBody
-    public WxMpQrCodeTicket generateQrCodePic(Long shopId) {
+    public WxMpQrCodeTicket generateQrCodePic(@RequestParam("shopId")Long shopId) {
         WxMpQrCodeTicket ticket = null;
         try {
             Long startTime = System.currentTimeMillis();
             ticket = wxMpService.getQrcodeService().qrCodeCreateTmpTicket(shopId.intValue(), QRCODE_EXPIRE_SECONDS);
+            Long endTime = System.currentTimeMillis();
+            Long time = endTime - startTime;
+            logger.info("生成二维码接口时间消耗:{}毫秒", time);
+        } catch (WxErrorException e) {
+            e.printStackTrace();
+        }
+        return ticket;
+    }
+
+    @RequestMapping(value = "generate_qrTmpPic2", method = {RequestMethod.POST})
+    @ResponseBody
+    public WxMpQrCodeTicket generateQrCodePic(@RequestParam("param")String param) {
+        WxMpQrCodeTicket ticket = null;
+        try {
+            Long startTime = System.currentTimeMillis();
+            ticket = wxMpService.getQrcodeService().qrCodeCreateLastTicket(param);
             Long endTime = System.currentTimeMillis();
             Long time = endTime - startTime;
             logger.info("生成二维码接口时间消耗:{}毫秒", time);

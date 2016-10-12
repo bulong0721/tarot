@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
+
 /**
  * Created by Jelynn on 2016/7/20.
  */
@@ -43,5 +45,13 @@ public class WaitTokenDaoImpl  extends GenericEntityDaoImpl<Long, WxWaitToken> i
         }
         pageList.setList(query.fetch());
         return pageList;
+    }
+
+    @Override
+    public WxWaitToken findByShopIdAndTokenToday(Long shopId, String token, Date startToday, Date endToday) {
+        QWxWaitToken qWxWaitToken = QWxWaitToken.wxWaitToken;
+        JPQLQuery<WxWaitToken> query = new JPAQuery(getEntityManager());
+        WxWaitToken wxWaitToken = query.from(qWxWaitToken).where(qWxWaitToken.store.id.eq(shopId).and(qWxWaitToken.token.eq(token).and(qWxWaitToken.created.between(startToday,endToday)))).fetchOne();
+        return wxWaitToken;
     }
 }

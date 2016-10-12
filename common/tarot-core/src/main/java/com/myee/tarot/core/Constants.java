@@ -204,4 +204,7 @@ public class Constants {
 	public static final String ES_QUERY_INDEX = "log";
 	public static final String ES_QUERY_TYPE = "voiceLog";
 
+	public static final int WEIXIN_PRIZEDRAW = 1;  //抽奖
+	public static final int WEIXIN_LINEPROCESS= 2;   //排队进展
+
 }

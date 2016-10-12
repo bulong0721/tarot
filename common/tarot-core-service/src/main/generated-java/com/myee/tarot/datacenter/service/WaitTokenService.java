@@ -11,4 +11,6 @@ import com.myee.tarot.wechat.domain.WxWaitToken;
 public interface WaitTokenService extends GenericEntityService<Long, WxWaitToken> {
 
     PageResult<WxWaitToken> page(WhereRequest whereRequest);
+
+    WxWaitToken findByShopIdAndTokenToday(Long shopId, String token);
 }
