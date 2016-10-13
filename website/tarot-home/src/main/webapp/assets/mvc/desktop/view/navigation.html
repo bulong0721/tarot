@@ -111,6 +111,13 @@
                     <li ui-sref-active="active"><a ui-sref="user.role">角色管理</a></li>
                 </ul>
             </li>
+            <li ng-class="{active: $state.includes('remote')}">
+                <a href="user.user_list"><i class="fa fa-lg fa-group"></i> <span class="nav-label">远程监控</span> <span
+                        class="fa arrow"></span></a>
+                <ul class="nav nav-second-level" ng-class="{in: $state.includes('remote')}">
+                    <li ui-sref-active="active"><a ui-sref="remote.dUMonitor">设备远程监控</a></li>
+                </ul>
+            </li>
         </ul>
     </div>
     <div class="sidebar-footer hidden-small">

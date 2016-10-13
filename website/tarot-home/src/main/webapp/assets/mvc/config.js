@@ -598,7 +598,28 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'user', 'roleCtrl.js')
                 }
             }
+        })
+        .state('remote', {
+            abstract: true,
+            url: "/remote",
+            template: "<div ui-view></div>"
+        })
+        .state('remote.dUMonitor', {
+            url: "/dUMonitor",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'dUMonitorMgrCtrl',
+            data: {
+                pageTitle: '远程监控',
+                subTitle: '设备远程监控',
+                datatable: 'assets/mvc/remote/view/dUMonitor.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'remote', 'dUMonitorCtrl.js')
+                }
+            }
         });
+
 }
 angular
     .module('myee')

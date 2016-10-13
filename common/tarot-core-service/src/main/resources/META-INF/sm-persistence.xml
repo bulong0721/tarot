@@ -55,6 +55,10 @@
         <class>com.myee.tarot.campaign.domain.SaleCorpMerchant</class>
         <class>com.myee.tarot.campaign.domain.ModeSwitch</class>
 
+        <class>com.myee.tarot.metrics.domain.AppInfo</class>
+        <class>com.myee.tarot.metrics.domain.SystemMetrics</class>
+        <class>com.myee.tarot.metrics.domain.SystemSummary</class>
+
         <class>com.myee.tarot.datacenter.domain.SelfCheckLog</class>
         <class>com.myee.tarot.datacenter.domain.EventModule</class>
         <!--<class>com.myee.tarot.datacenter.domain.EventLevel</class>-->
