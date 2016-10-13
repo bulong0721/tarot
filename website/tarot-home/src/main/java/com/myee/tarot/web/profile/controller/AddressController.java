@@ -41,7 +41,7 @@ public class AddressController {
                 resp.addDataEntry(objectToEntry(geoZone));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             resp.setErrorString("出错");
         }
         return resp;
@@ -60,7 +60,7 @@ public class AddressController {
                 resp.add(entry);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
         return resp;
     }
@@ -75,7 +75,7 @@ public class AddressController {
                 resp.addDataEntry(objectToEntry(geoZone));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             resp.setErrorString("出错");
         }
         return resp;
@@ -94,7 +94,7 @@ public class AddressController {
                 resp.add(entry);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
         return resp;
     }
@@ -109,7 +109,7 @@ public class AddressController {
                 resp.addDataEntry(objectToEntry(geoZone));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             resp.setErrorString("出错");
         }
         return resp;
@@ -128,7 +128,7 @@ public class AddressController {
                 resp.add(entry);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
         return resp;
     }

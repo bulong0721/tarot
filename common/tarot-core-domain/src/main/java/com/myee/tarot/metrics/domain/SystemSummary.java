@@ -6,6 +6,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -56,6 +57,10 @@ public class SystemSummary extends GenericEntity<Long, SystemSummary> {
     private String ramTotal;
     @Column(name = "ROM_TOTAL", length=30)
     private String romTotal;
+
+    @Column(name = "CREATED")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
     @Override
     public Long getId() {
@@ -201,5 +206,13 @@ public class SystemSummary extends GenericEntity<Long, SystemSummary> {
 
     public void setRomTotal(String romTotal) {
         this.romTotal = romTotal;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
     }
 }

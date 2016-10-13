@@ -16,5 +16,5 @@ public interface DeviceUsedService extends GenericEntityService<Long, DeviceUsed
 
     List<DeviceUsed> listByIDs(List<Long> bindList);
 
-    DeviceUsed getStoreInfoByMbCode(String mainBoardCode);
+    DeviceUsed getByBoardNo(String mainBoardCode);
 }

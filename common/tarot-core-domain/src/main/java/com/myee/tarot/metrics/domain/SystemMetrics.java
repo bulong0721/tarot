@@ -56,6 +56,10 @@ public class SystemMetrics extends GenericEntity<Long, SystemMetrics> {
     @OneToMany(targetEntity = AppInfo.class, fetch = FetchType.LAZY)
     private List<AppInfo> appLists;
 
+    @Column(name = "CREATED")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
+
     @Override
     public Long getId() {
         return id;
@@ -184,5 +188,13 @@ public class SystemMetrics extends GenericEntity<Long, SystemMetrics> {
 
     public void setAppLists(List<AppInfo> appLists) {
         this.appLists = appLists;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
     }
 }

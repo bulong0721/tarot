@@ -8,7 +8,6 @@ import com.myee.djinn.rpc.RemoteException;
 import com.myee.djinn.server.operations.CommonService;
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catalog.service.DeviceUsedService;
-import com.myee.tarot.catering.service.TableTypeService;
 import com.myee.tarot.core.service.TransactionalAspectAware;
 import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
@@ -91,7 +90,7 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 	@Override
 	public ShopDetail ownerShop(String consistentId) throws RemoteException {
 		LOG.info(" ownerShop consistentId = {}",consistentId);
-		DeviceUsed deviceUsed = deviceUsedService.getStoreInfoByMbCode(consistentId);
+		DeviceUsed deviceUsed = deviceUsedService.getByBoardNo(consistentId);
 		MerchantStore merchantStore = deviceUsed.getStore();
 //		List<TableType> tableTypeList = tableTypeService.listByStore(merchantStore.getId());
 //		for (TableType tableType : tableTypeList) {

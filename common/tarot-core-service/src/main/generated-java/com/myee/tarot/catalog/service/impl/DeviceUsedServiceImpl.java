@@ -36,7 +36,7 @@ public class DeviceUsedServiceImpl extends GenericEntityServiceImpl<Long, Device
     }
 
     @Override
-    public DeviceUsed getStoreInfoByMbCode(String mainBoardCode) {
+    public DeviceUsed getByBoardNo(String mainBoardCode) {
         return deviceUsedDao.getStoreInfoByMbCode(mainBoardCode);
     }
 }

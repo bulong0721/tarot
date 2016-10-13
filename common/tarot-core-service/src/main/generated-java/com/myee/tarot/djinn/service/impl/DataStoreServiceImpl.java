@@ -3,15 +3,25 @@ package com.myee.tarot.djinn.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.myee.djinn.dto.DataUploadInfoDTO;
 import com.myee.djinn.dto.UploadResourceType;
+import com.myee.djinn.dto.gather.SystemMetrics;
+import com.myee.djinn.dto.gather.SystemSummary;
 import com.myee.djinn.rpc.RemoteException;
 import com.myee.djinn.server.operations.DataStoreService;
+import com.myee.tarot.catalog.domain.DeviceUsed;
+import com.myee.tarot.catalog.service.DeviceUsedService;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.service.TransactionalAspectAware;
+import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.datacenter.domain.SelfCheckLog;
 import com.myee.tarot.datacenter.domain.SelfCheckLogVO;
 import com.myee.tarot.datacenter.service.SelfCheckLogService;
+import com.myee.tarot.remote.service.SystemMetricsService;
+import com.myee.tarot.remote.service.SystemSummaryService;
+import com.myee.tarot.remote.util.MetricsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by Martin on 2016/9/6.
@@ -21,6 +31,12 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
 
 	@Autowired
 	private SelfCheckLogService selfCheckLogService;
+	@Autowired
+	private SystemMetricsService systemMetricsService;
+	@Autowired
+	private SystemSummaryService systemSummaryService;
+	@Autowired
+	private DeviceUsedService deviceUsedService;
 
 	@Override
 	public int receiveLog(long orgId, UploadResourceType fileType, String logText) throws RemoteException {
@@ -47,4 +63,24 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
 		}
 		return false;
 	}
+
+	@Override
+	public boolean uploadSystemMetrics(List<SystemMetrics> list) throws RemoteException {
+		if(list == null){
+			return false;
+		}
+
+		return MetricsUtil.updateSystemMetrics(list,deviceUsedService,systemMetricsService);
+	}
+
+	@Override
+	public boolean uploadSystemSummary(List<SystemSummary> list) throws RemoteException {
+		if(list == null){
+			return false;
+		}
+
+		return MetricsUtil.updateSystemSummary(list, deviceUsedService, systemSummaryService);
+	}
+
+
 }
