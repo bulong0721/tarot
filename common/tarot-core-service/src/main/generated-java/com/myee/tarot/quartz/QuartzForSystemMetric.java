@@ -1,11 +1,10 @@
 package com.myee.tarot.quartz;
 
 import com.alibaba.fastjson.JSON;
-import com.myee.djinn.dto.gather.SystemSummary;
-import com.myee.tarot.catalog.domain.DeviceUsed;
+import com.myee.djinn.dto.gather.SystemMetrics;
 import com.myee.tarot.catalog.service.DeviceUsedService;
 import com.myee.tarot.core.Constants;
-import com.myee.tarot.remote.service.SystemSummaryService;
+import com.myee.tarot.remote.service.SystemMetricsService;
 import com.myee.tarot.remote.util.MetricsUtil;
 import com.opencsv.CSVReader;
 import org.slf4j.Logger;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
 import java.io.*;
 import java.util.Iterator;
 import java.util.List;
@@ -23,8 +21,9 @@ import java.util.List;
  * Created by Ray.Fu on 2016/10/13.
  */
 @Component
-public class QuartzForSystemSummary {
-    private static final Logger LOGGER = LoggerFactory.getLogger(QuartzForSystemSummary.class);
+public class QuartzForSystemMetric {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuartzForSystemMetric.class);
 
     @Value("${cleverm.push.dirs}")
     private String DOWNLOAD_HOME;
@@ -33,12 +32,12 @@ public class QuartzForSystemSummary {
     private DeviceUsedService deviceUsedService;
 
     @Autowired
-    private SystemSummaryService systemSummaryService;
+    private SystemMetricsService systemMetricsService;
 
 //    @Scheduled(cron = "0 */5 * * * ?")  //每隔5分钟跑一次
     public void parseFileToDb() {
         //获取路径下所有的csv文件
-        File[] fileArr = getFiles(new File(DOWNLOAD_HOME + File.separator + "temp_summary"));
+        File[] fileArr = getFiles(new File(DOWNLOAD_HOME + File.separator + "temp_metric"));
         //解析文件List入库
         importCsvDataToMySql(fileArr);
     }
@@ -84,9 +83,10 @@ public class QuartzForSystemSummary {
                     try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "GBK"))) {
                         try (CSVReader csvReader = new CSVReader(br)) {
                             String[] strs = csvReader.readNext();//读一行，第一行是抬头，暂时没用
-                            List<SystemSummary> systemSummaries = JSON.parseArray(strs[0], SystemSummary.class);
+                            // JSON串转用户对象列表
+                            List<SystemMetrics> systemMetricses = JSON.parseArray(strs[0], SystemMetrics.class);
                             //保存入库
-                            MetricsUtil.updateSystemSummary(systemSummaries, deviceUsedService, systemSummaryService);
+                            MetricsUtil.updateSystemMetrics(systemMetricses, deviceUsedService, systemMetricsService);
 //                            esUtils.bulkAddList(Constants.ES_QUERY_INDEX, Constants.ES_QUERY_TYPE, voiceLogList);
                             csvReader.close();
                             moveToRecycle(file);
