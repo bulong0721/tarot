@@ -1,9 +1,11 @@
 package com.myee.tarot.quartz;
 
 import com.alibaba.fastjson.JSON;
-import com.myee.djinn.dto.gather.SystemMetrics;
+import com.myee.djinn.dto.metrics.SystemMetrics;
 import com.myee.tarot.catalog.service.DeviceUsedService;
 import com.myee.tarot.core.Constants;
+import com.myee.tarot.remote.service.AppInfoService;
+import com.myee.tarot.remote.service.MetricsInfoService;
 import com.myee.tarot.remote.service.SystemMetricsService;
 import com.myee.tarot.remote.util.MetricsUtil;
 import com.opencsv.CSVReader;
@@ -33,6 +35,12 @@ public class QuartzForSystemMetric {
 
     @Autowired
     private SystemMetricsService systemMetricsService;
+
+    @Autowired
+    private AppInfoService appInfoService;
+
+    @Autowired
+    private MetricsInfoService metricsInfoService;
 
 //    @Scheduled(cron = "0 */5 * * * ?")  //每隔5分钟跑一次
     public void parseFileToDb() {
@@ -86,8 +94,7 @@ public class QuartzForSystemMetric {
                             // JSON串转用户对象列表
                             List<SystemMetrics> systemMetricses = JSON.parseArray(strs[0], SystemMetrics.class);
                             //保存入库
-                            MetricsUtil.updateSystemMetrics(systemMetricses, deviceUsedService, systemMetricsService);
-//                            esUtils.bulkAddList(Constants.ES_QUERY_INDEX, Constants.ES_QUERY_TYPE, voiceLogList);
+                            MetricsUtil.updateSystemMetrics(systemMetricses, deviceUsedService, appInfoService, metricsInfoService, systemMetricsService);
                             csvReader.close();
                             moveToRecycle(file);
                         }
