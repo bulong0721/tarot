@@ -33,7 +33,7 @@ public class AppInfo extends GenericEntity<Long, AppInfo> {
     @Column(name = "VERSION_NAME", length=100)
     private String versionName;//"应用名称com.taobao.ddd"
     @Column(name = "NODE",length=100)
-    private String node; //节点类型，\monitor\summary\appinfo\,\monitor\metrics\appinfo\
+    private String node; //节点类型，用于表明当前类在节点关系中的层级，\monitor\summary\appinfo\,\monitor\metrics\appinfo\
     @Column(name = "INSTALL_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date installDate;
@@ -41,7 +41,7 @@ public class AppInfo extends GenericEntity<Long, AppInfo> {
     private int state;
     @Column(name = "TYPE",columnDefinition = "TINYINT")
     private int type;
-    @Column(name = "LOGT_IME")
+    @Column(name = "LOG_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date logTime;
     @Column(name = "CREATED")

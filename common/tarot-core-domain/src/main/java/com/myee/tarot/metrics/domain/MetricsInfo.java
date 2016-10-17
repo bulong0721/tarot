@@ -29,12 +29,12 @@ public class MetricsInfo extends GenericEntity<Long, MetricsInfo> {
     @Column(name = "NAME", length=100)
     private String name; //"ramTotal" ,"romTotal"
     @Column(name = "NODE",length=100)
-    private String node; //节点类型，\monitor\summary\metricsinfo\,\monitor\metrics\metricsinfo\
+    private String node; //节点类型，用于表明当前类在节点关系中的层级，\monitor\summary\metricsinfo\,\monitor\metrics\metricsinfo\
     @Column(name = "VALUE", length=100)
     private String value;
     @Column(name = "DESCRIPTION",length=100)
     private String description;
-    @Column(name = "LOGT_IME")
+    @Column(name = "LOG_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date logTime;//冗余数据，用于单项查询使用
     @Column(name = "CREATED")

@@ -24,7 +24,7 @@ public class SystemMetrics extends GenericEntity<Long, SystemMetrics> {
     @ManyToOne(targetEntity = DeviceUsed.class, optional = false)
     @JoinColumn(name = "BOARD_NO")
     private DeviceUsed deviceUsed;
-    @Column(name = "LOGT_IME")
+    @Column(name = "LOG_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date logTime;
     @OneToMany(targetEntity = AppInfo.class, fetch = FetchType.LAZY)
@@ -32,7 +32,7 @@ public class SystemMetrics extends GenericEntity<Long, SystemMetrics> {
     @OneToMany(targetEntity = MetricsInfo.class, fetch = FetchType.LAZY)
     private List<MetricsInfo> metricsInfoList;
     @Column(name = "NODE",length=100)
-    private String node; //节点类型，\monitor\metrics\,\monitor\summary\
+    private String node; //节点类型，用于表明当前类在节点关系中的层级，\monitor\metrics\,\monitor\summary\
     @Column(name = "CREATED")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
