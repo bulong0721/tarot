@@ -22,6 +22,9 @@ public class AppInfo extends GenericEntity<Long, AppInfo> {
     @Column(name = "APPINFO_ID", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @ManyToOne(targetEntity = SystemMetrics.class, optional = false)
+    @JoinColumn(name = "M_SYSTEM_METRICS_ID")
+    private SystemMetrics systemMetrics;
     @ManyToOne(targetEntity = DeviceUsed.class, optional = false)
     @JoinColumn(name = "BOARD_NO")
     private DeviceUsed deviceUsed;
@@ -38,6 +41,12 @@ public class AppInfo extends GenericEntity<Long, AppInfo> {
     private int state;
     @Column(name = "TYPE",columnDefinition = "TINYINT")
     private int type;
+    @Column(name = "LOGT_IME")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date logTime;
+    @Column(name = "CREATED")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
 
     @Override
@@ -96,5 +105,37 @@ public class AppInfo extends GenericEntity<Long, AppInfo> {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public String getNode() {
+        return node;
+    }
+
+    public void setNode(String node) {
+        this.node = node;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public Date getLogTime() {
+        return logTime;
+    }
+
+    public void setLogTime(Date logTime) {
+        this.logTime = logTime;
+    }
+
+    public SystemMetrics getSystemMetrics() {
+        return systemMetrics;
+    }
+
+    public void setSystemMetrics(SystemMetrics systemMetrics) {
+        this.systemMetrics = systemMetrics;
     }
 }

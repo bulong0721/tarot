@@ -1,0 +1,10 @@
+package com.myee.tarot.remote.dao;
+
+import com.myee.tarot.core.dao.GenericEntityDao;
+import com.myee.tarot.metrics.domain.MetricsInfo;
+
+/**
+ * Created by Chay on 2016/8/10.
+ */
+public interface MetricsInfoDao extends GenericEntityDao<Long, MetricsInfo> {
+}

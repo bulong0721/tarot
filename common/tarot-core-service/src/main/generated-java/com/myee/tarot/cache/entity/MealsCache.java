@@ -20,6 +20,8 @@ public class MealsCache implements Serializable {
 
     private Map<String,String> openIdInfo; //存放微信Id 对应的信息
 
+    private Map<String , Object> deviceUsedMonitor; //存放设备ID  对应的远程监控信息
+
     public Map<String, String> getOpenIdInfo() {
         return openIdInfo;
     }
@@ -42,5 +44,13 @@ public class MealsCache implements Serializable {
 
     public void setWxWaitTokenCache(Map<String, List<WxWaitTokenView>> wxWaitTokenCache) {
         this.wxWaitTokenCache = wxWaitTokenCache;
+    }
+
+    public Map<String, Object> getDeviceUsedMonitor() {
+        return deviceUsedMonitor;
+    }
+
+    public void setDeviceUsedMonitor(Map<String, Object> deviceUsedMonitor) {
+        this.deviceUsedMonitor = deviceUsedMonitor;
     }
 }

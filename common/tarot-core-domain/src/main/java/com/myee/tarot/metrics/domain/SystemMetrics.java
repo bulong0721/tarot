@@ -36,31 +36,6 @@ public class SystemMetrics extends GenericEntity<Long, SystemMetrics> {
     @Column(name = "CREATED")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
-//    @Column(name = "PRODUCT_GLOBAL_IP", length=30)
-//    private String productGlobalIP;
-//    @Column(name = "PRODUCT_LOCAL_IP", length=30)
-//    private String productLocalIP;
-//    @Column(name = "CHARGING",columnDefinition = "TINYINT")
-//    private int charging;
-//    @Column(name = "RAM_USED", length=30)
-//    private String ramUsed;
-//    @Column(name = "ROM_USED", length=30)
-//    private String romUsed;
-//    @Column(name = "VOLUME", length=30)
-//    private String volume;
-//    @Column(name = "WIFI_STATUS", length=30)
-//    private String wifiStatus;
-//    @Column(name = "BLUETOOTH_STATE",columnDefinition = "TINYINT")
-//    private int bluetoothState;
-//    @Column(name = "SSID", length=100)
-//    private String SSID;//网络SSID
-//    @Column(name = "PRODUCT_POWER", length=30)
-//    private String productPower;
-//    @Column(name = "COMMENT", length=255)
-//    private String comment;//备注
-//    @Column(name = "CPU_USED", length=30)
-//    private String cpuUsed;
-
 
     @Override
     public Long getId() {
