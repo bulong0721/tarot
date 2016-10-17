@@ -28,7 +28,9 @@ public class AppInfo extends GenericEntity<Long, AppInfo> {
     @Column(name = "VERSION_CODE", length=100)
     private Long versionCode;
     @Column(name = "VERSION_NAME", length=100)
-    private String versionName;
+    private String versionName;//"应用名称com.taobao.ddd"
+    @Column(name = "NODE",length=100)
+    private String node; //节点类型，\monitor\summary\appinfo\,\monitor\metrics\appinfo\
     @Column(name = "INSTALL_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date installDate;
