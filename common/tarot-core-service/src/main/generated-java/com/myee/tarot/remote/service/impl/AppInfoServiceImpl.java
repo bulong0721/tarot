@@ -1,7 +1,7 @@
 package com.myee.tarot.remote.service.impl;
 
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
-import com.myee.tarot.metrics.domain.AppInfo;
+import com.myee.tarot.metric.domain.AppInfo;
 import com.myee.tarot.remote.dao.AppInfoDao;
 import com.myee.tarot.remote.service.AppInfoService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,9 +1,7 @@
 package com.myee.tarot.remote.dao;
 
 import com.myee.tarot.core.dao.GenericEntityDao;
-import com.myee.tarot.metrics.domain.SystemMetrics;
-
-import java.util.List;
+import com.myee.tarot.metric.domain.SystemMetrics;
 
 /**
  * Created by Chay on 2016/8/10.

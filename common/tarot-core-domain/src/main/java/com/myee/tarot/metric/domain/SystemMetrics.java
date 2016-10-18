@@ -1,4 +1,4 @@
-package com.myee.tarot.metrics.domain;
+package com.myee.tarot.metric.domain;
 
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.core.GenericEntity;
@@ -29,10 +29,10 @@ public class SystemMetrics extends GenericEntity<Long, SystemMetrics> {
     private Date logTime;
     @OneToMany(targetEntity = AppInfo.class, fetch = FetchType.LAZY)
     private List<AppInfo> appList;
-    @OneToMany(targetEntity = MetricsInfo.class, fetch = FetchType.LAZY)
-    private List<MetricsInfo> metricsInfoList;
+    @OneToMany(targetEntity = MetricInfo.class, fetch = FetchType.LAZY)
+    private List<MetricInfo> metricInfoList;
     @Column(name = "NODE",length=100)
-    private String node; //节点类型，用于表明当前类在节点关系中的层级，\monitor\metrics\,\monitor\summary\
+    private String node; //节点类型，用于表明当前类在节点关系中的层级，\monitor\metric\,\monitor\summary\
     @Column(name = "CREATED")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
@@ -71,12 +71,12 @@ public class SystemMetrics extends GenericEntity<Long, SystemMetrics> {
         this.appList = appList;
     }
 
-    public List<MetricsInfo> getMetricsInfoList() {
-        return metricsInfoList;
+    public List<MetricInfo> getMetricInfoList() {
+        return metricInfoList;
     }
 
-    public void setMetricsInfoList(List<MetricsInfo> metricsInfoList) {
-        this.metricsInfoList = metricsInfoList;
+    public void setMetricInfoList(List<MetricInfo> metricInfoList) {
+        this.metricInfoList = metricInfoList;
     }
 
     public String getNode() {

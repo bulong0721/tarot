@@ -1,7 +1,7 @@
 package com.myee.tarot.remote.dao;
 
 import com.myee.tarot.core.dao.GenericEntityDao;
-import com.myee.tarot.metrics.domain.AppInfo;
+import com.myee.tarot.metric.domain.AppInfo;
 
 /**
  * Created by Chay on 2016/8/10.

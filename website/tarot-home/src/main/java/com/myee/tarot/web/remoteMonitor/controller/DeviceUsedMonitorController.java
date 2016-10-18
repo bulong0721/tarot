@@ -3,9 +3,9 @@ package com.myee.tarot.web.remoteMonitor.controller;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
-import com.myee.tarot.metrics.domain.AppInfo;
-import com.myee.tarot.metrics.domain.MetricsInfo;
-import com.myee.tarot.metrics.domain.SystemMetrics;
+import com.myee.tarot.metric.domain.AppInfo;
+import com.myee.tarot.metric.domain.MetricInfo;
+import com.myee.tarot.metric.domain.SystemMetrics;
 import com.myee.tarot.remote.service.SystemMetricsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,26 +98,26 @@ public class DeviceUsedMonitorController {
 
         //deviceUsed
         Map deviceUsedM = new HashMap();
-        deviceUsedM.put("id",systemMetrics.getDeviceUsed().getId());
-        deviceUsedM.put("name",systemMetrics.getDeviceUsed().getName());
-        deviceUsedM.put("boardNo",systemMetrics.getDeviceUsed().getBoardNo());
-        deviceUsedM.put("merchantName",systemMetrics.getDeviceUsed().getStore().getName());
+        deviceUsedM.put("id", systemMetrics.getDeviceUsed().getId());
+        deviceUsedM.put("name", systemMetrics.getDeviceUsed().getName());
+        deviceUsedM.put("boardNo", systemMetrics.getDeviceUsed().getBoardNo());
+        deviceUsedM.put("merchantName", systemMetrics.getDeviceUsed().getStore().getName());
 
         entry.put("deviceUsed",deviceUsedM);
-        entry.put("logTime",systemMetrics.getLogTime());
+        entry.put("logTime", systemMetrics.getLogTime());
 
         //metricsInfoList
         List<Map> metricsInfoList = null;
-        if(systemMetrics.getMetricsInfoList() != null ){
+        if(systemMetrics.getMetricInfoList() != null ){
             metricsInfoList = new ArrayList<Map>();
-            for(MetricsInfo metricsInfo : systemMetrics.getMetricsInfoList()){
+            for(MetricInfo metricInfo : systemMetrics.getMetricInfoList()){
                 Map metricsInfoM = new HashMap();
                 Map temp = new HashMap();
-                temp.put("name",metricsInfo.getMetricsDetail().getName());//指标显示名称
-                temp.put("unit",metricsInfo.getMetricsDetail().getUnit());//指标计量单位
-                temp.put("description",metricsInfo.getMetricsDetail().getDescription());
-                temp.put("value", metricsInfo.getValue());
-                metricsInfoM.put(metricsInfo.getMetricsDetail().getKey(), temp);
+                temp.put("name", metricInfo.getMetricDetail().getName());//指标显示名称
+                temp.put("unit", metricInfo.getMetricDetail().getUnit());//指标计量单位
+                temp.put("description", metricInfo.getMetricDetail().getDescription());
+                temp.put("value", metricInfo.getValue());
+                metricsInfoM.put(metricInfo.getMetricDetail().getKey(), temp);
                 metricsInfoList.add(metricsInfoM);
             }
         }

@@ -1,7 +1,7 @@
 package com.myee.tarot.remote.dao.impl;
 
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
-import com.myee.tarot.metrics.domain.AppInfo;
+import com.myee.tarot.metric.domain.AppInfo;
 import com.myee.tarot.remote.dao.AppInfoDao;
 import org.springframework.stereotype.Repository;
 

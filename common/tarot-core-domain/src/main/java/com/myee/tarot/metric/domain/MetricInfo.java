@@ -1,4 +1,4 @@
-package com.myee.tarot.metrics.domain;
+package com.myee.tarot.metric.domain;
 
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.core.GenericEntity;
@@ -14,7 +14,7 @@ import java.util.Date;
 @Entity
 @Table(name = "M_MATRICS_INFO")
 @DynamicUpdate //hibernate部分更新
-public class MetricsInfo extends GenericEntity<Long, MetricsInfo> {
+public class MetricInfo extends GenericEntity<Long, MetricInfo> {
 
     @Id
     @Column(name = "METRICSINFO_ID", unique = true, nullable = false)
@@ -26,11 +26,11 @@ public class MetricsInfo extends GenericEntity<Long, MetricsInfo> {
     @ManyToOne(targetEntity = DeviceUsed.class, optional = false)
     @JoinColumn(name = "BOARD_NO")
     private DeviceUsed deviceUsed;
-    @ManyToOne(targetEntity = MetricsDetail.class, optional = false)
+    @ManyToOne(targetEntity = MetricDetail.class, optional = false)
     @JoinColumn(name = "KEY")
-    private MetricsDetail metricsDetail; //"ramTotal" ,"romTotal"
+    private MetricDetail metricDetail; //"ramTotal" ,"romTotal"
     @Column(name = "NODE",length=100)
-    private String node; //节点类型，用于表明当前类在节点关系中的层级，\monitor\summary\metricsinfo\,\monitor\metrics\metricsinfo\
+    private String node; //节点类型，用于表明当前类在节点关系中的层级，\monitor\summary\metricsinfo\,\monitor\metric\metricsinfo\
     @Column(name = "VALUE", length=100)
     private String value;
     @Column(name = "DESCRIPTION",length=100)
@@ -70,12 +70,12 @@ public class MetricsInfo extends GenericEntity<Long, MetricsInfo> {
         this.deviceUsed = deviceUsed;
     }
 
-    public MetricsDetail getMetricsDetail() {
-        return metricsDetail;
+    public MetricDetail getMetricDetail() {
+        return metricDetail;
     }
 
-    public void setMetricsDetail(MetricsDetail metricsDetail) {
-        this.metricsDetail = metricsDetail;
+    public void setMetricDetail(MetricDetail metricDetail) {
+        this.metricDetail = metricDetail;
     }
 
     public String getNode() {

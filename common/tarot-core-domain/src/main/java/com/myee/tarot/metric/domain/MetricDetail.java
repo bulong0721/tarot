@@ -1,11 +1,9 @@
-package com.myee.tarot.metrics.domain;
+package com.myee.tarot.metric.domain;
 
-import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.core.GenericEntity;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.util.Date;
 
 /**
  * Created by Chay on 2016/10/13.
@@ -14,7 +12,7 @@ import java.util.Date;
 @Entity
 @Table(name = "M_MATRICS_DETAIL")
 @DynamicUpdate //hibernate部分更新
-public class MetricsDetail extends GenericEntity<Long, MetricsDetail> {
+public class MetricDetail extends GenericEntity<Long, MetricDetail> {
 
     @Id
     @Column(name = "METRICSDETAIL_ID", unique = true, nullable = false)

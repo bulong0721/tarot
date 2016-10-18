@@ -1,14 +1,12 @@
 package com.myee.tarot.remote.dao.impl;
 
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
-import com.myee.tarot.metrics.domain.QSystemMetrics;
-import com.myee.tarot.metrics.domain.SystemMetrics;
+import com.myee.tarot.metric.domain.QSystemMetrics;
+import com.myee.tarot.metric.domain.SystemMetrics;
 import com.myee.tarot.remote.dao.SystemMetricsDao;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 /**
  * Created by Chay on 2016/8/10.

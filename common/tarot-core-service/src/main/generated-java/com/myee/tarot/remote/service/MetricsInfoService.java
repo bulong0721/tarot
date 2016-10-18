@@ -1,10 +1,10 @@
 package com.myee.tarot.remote.service;
 
 import com.myee.tarot.core.service.GenericEntityService;
-import com.myee.tarot.metrics.domain.MetricsInfo;
+import com.myee.tarot.metric.domain.MetricInfo;
 
 /**
  * Created by Chay on 2016/8/10.
  */
-public interface MetricsInfoService extends GenericEntityService<Long, MetricsInfo> {
+public interface MetricsInfoService extends GenericEntityService<Long, MetricInfo> {
 }

@@ -1,10 +1,8 @@
-package com.myee.tarot.metrics.domain;
+package com.myee.tarot.metric.domain;
 
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.core.GenericEntity;
-import com.myee.tarot.merchant.domain.MerchantStore;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -33,7 +31,7 @@ public class AppInfo extends GenericEntity<Long, AppInfo> {
     @Column(name = "VERSION_NAME", length=100)
     private String versionName;//"应用名称com.taobao.ddd"
     @Column(name = "NODE",length=100)
-    private String node; //节点类型，用于表明当前类在节点关系中的层级，\monitor\summary\appinfo\,\monitor\metrics\appinfo\
+    private String node; //节点类型，用于表明当前类在节点关系中的层级，\monitor\summary\appinfo\,\monitor\metric\appinfo\
     @Column(name = "INSTALL_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date installDate;

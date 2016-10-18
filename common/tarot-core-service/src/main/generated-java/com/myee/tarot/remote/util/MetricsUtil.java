@@ -2,12 +2,13 @@ package com.myee.tarot.remote.util;
 
 import com.myee.djinn.dto.metrics.AppInfo;
 import com.myee.djinn.dto.metrics.MetricsInfo;
-import com.myee.djinn.dto.metrics.SystemMetrics;
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catalog.service.DeviceUsedService;
 import com.myee.tarot.core.util.DateTimeUtils;
 import com.myee.tarot.core.util.StringUtil;
-import com.myee.tarot.metrics.domain.MetricsDetail;
+import com.myee.tarot.metric.domain.MetricInfo;
+import com.myee.tarot.metric.domain.MetricDetail;
+import com.myee.tarot.metric.domain.SystemMetrics;
 import com.myee.tarot.remote.service.AppInfoService;
 import com.myee.tarot.remote.service.MetricsDetailService;
 import com.myee.tarot.remote.service.MetricsInfoService;
@@ -33,7 +34,7 @@ public class MetricsUtil {
      * @param systemMetricsService
      * @return
      */
-    public static boolean updateSystemMetrics(List<SystemMetrics> list,
+    public static boolean updateSystemMetrics(List<com.myee.djinn.dto.metrics.SystemMetrics> list,
                                               DeviceUsedService deviceUsedService,
                                               AppInfoService appInfoService,
                                               MetricsInfoService metricsInfoService,
@@ -44,7 +45,7 @@ public class MetricsUtil {
                 return false;
             }
             Date now = new Date();
-            for (SystemMetrics systemMetrics : list) {
+            for (com.myee.djinn.dto.metrics.SystemMetrics systemMetrics : list) {
                 if (systemMetrics.getBoardNo() == null || StringUtil.isBlank(systemMetrics.getBoardNo())) {
                     continue;
                 }
@@ -52,7 +53,7 @@ public class MetricsUtil {
                 if (deviceUsed == null) {
                     continue;
                 }
-                com.myee.tarot.metrics.domain.SystemMetrics systemMetrics1 = new com.myee.tarot.metrics.domain.SystemMetrics();
+                SystemMetrics systemMetrics1 = new SystemMetrics();
                 systemMetrics1.setDeviceUsed(deviceUsed);
                 systemMetrics1.setCreated(now);
 
@@ -62,7 +63,7 @@ public class MetricsUtil {
                 systemMetrics1 = systemMetricsService.update(systemMetrics1);
 
                 systemMetrics1.setAppList(transformAppInfo(systemMetrics1, appInfoService, systemMetrics, deviceUsed, now));
-                systemMetrics1.setMetricsInfoList(transformMetricsInfo(systemMetrics1, metricsInfoService,metricsDetailService, systemMetrics, deviceUsed, now));
+                systemMetrics1.setMetricInfoList(transformMetricsInfo(systemMetrics1, metricsInfoService, metricsDetailService, systemMetrics, deviceUsed, now));
 
 
             }
@@ -83,29 +84,29 @@ public class MetricsUtil {
      * @param deviceUsed
      * @param now    @return
      */
-    private static List<com.myee.tarot.metrics.domain.MetricsInfo> transformMetricsInfo(com.myee.tarot.metrics.domain.SystemMetrics systemMetricsDB,
-                                                                                        MetricsInfoService metricsInfoService, MetricsDetailService metricsDetailService, SystemMetrics systemMetrics, DeviceUsed deviceUsed, Date now) {
+    private static List<MetricInfo> transformMetricsInfo(SystemMetrics systemMetricsDB,
+                                                                                        MetricsInfoService metricsInfoService, MetricsDetailService metricsDetailService, com.myee.djinn.dto.metrics.SystemMetrics systemMetrics, DeviceUsed deviceUsed, Date now) {
         List<MetricsInfo> metricsInfoList = systemMetrics.getMetricsInfoList();
         if (metricsInfoList == null || metricsInfoList.size() == 0) {
             return null;
         }
-        List<com.myee.tarot.metrics.domain.MetricsInfo> result = new ArrayList<com.myee.tarot.metrics.domain.MetricsInfo>();
+        List<MetricInfo> result = new ArrayList<MetricInfo>();
         for (MetricsInfo metricsInfo : metricsInfoList) {
-            com.myee.tarot.metrics.domain.MetricsInfo metricsInfo1 = new com.myee.tarot.metrics.domain.MetricsInfo();
-            MetricsDetail metricsDetail = metricsDetailService.findByKey(metricsInfo.getName());
-            if(metricsDetail == null ){
+            MetricInfo metricInfo1 = new MetricInfo();
+            MetricDetail metricDetail = metricsDetailService.findByKey(metricsInfo.getName());
+            if(metricDetail == null ){
                 continue;
             }
-            metricsInfo1.setMetricsDetail(metricsDetail);
-            metricsInfo1.setCreated(now);
-            metricsInfo1.setDeviceUsed(deviceUsed);
-            metricsInfo1.setDescription(metricsInfo.getDescription());
-            metricsInfo1.setLogTime(DateTimeUtils.toMillis(systemMetrics.getLogTime()));
-            metricsInfo1.setNode(metricsInfo.getNode());
-            metricsInfo1.setSystemMetrics(systemMetricsDB);
-            metricsInfo1.setValue(metricsInfo.getValue());
-            metricsInfo1 = metricsInfoService.update(metricsInfo1);
-            result.add(metricsInfo1);
+            metricInfo1.setMetricDetail(metricDetail);
+            metricInfo1.setCreated(now);
+            metricInfo1.setDeviceUsed(deviceUsed);
+            metricInfo1.setDescription(metricsInfo.getDescription());
+            metricInfo1.setLogTime(DateTimeUtils.toMillis(systemMetrics.getLogTime()));
+            metricInfo1.setNode(metricsInfo.getNode());
+            metricInfo1.setSystemMetrics(systemMetricsDB);
+            metricInfo1.setValue(metricsInfo.getValue());
+            metricInfo1 = metricsInfoService.update(metricInfo1);
+            result.add(metricInfo1);
         }
         return result;
     }
@@ -120,14 +121,14 @@ public class MetricsUtil {
      * @param now
      * @return
      */
-    private static List<com.myee.tarot.metrics.domain.AppInfo> transformAppInfo(com.myee.tarot.metrics.domain.SystemMetrics systemMetricsDB, AppInfoService appInfoService, SystemMetrics systemMetrics, DeviceUsed deviceUsed, Date now) {
+    private static List<com.myee.tarot.metric.domain.AppInfo> transformAppInfo(SystemMetrics systemMetricsDB, AppInfoService appInfoService, com.myee.djinn.dto.metrics.SystemMetrics systemMetrics, DeviceUsed deviceUsed, Date now) {
         List<AppInfo> appLists = systemMetrics.getAppLists();
         if (appLists == null || appLists.size() == 0) {
             return null;
         }
-        List<com.myee.tarot.metrics.domain.AppInfo> result = new ArrayList<com.myee.tarot.metrics.domain.AppInfo>();
+        List<com.myee.tarot.metric.domain.AppInfo> result = new ArrayList<com.myee.tarot.metric.domain.AppInfo>();
         for (AppInfo appInfo : appLists) {
-            com.myee.tarot.metrics.domain.AppInfo appInfo1 = new com.myee.tarot.metrics.domain.AppInfo();
+            com.myee.tarot.metric.domain.AppInfo appInfo1 = new com.myee.tarot.metric.domain.AppInfo();
             appInfo1.setCreated(now);
             appInfo1.setDeviceUsed(deviceUsed);
             appInfo1.setInstallDate(DateTimeUtils.toMillis(appInfo.getInstallDate()));

@@ -12,8 +12,6 @@ import com.myee.tarot.core.service.TransactionalAspectAware;
 import com.myee.tarot.datacenter.domain.SelfCheckLog;
 import com.myee.tarot.datacenter.domain.SelfCheckLogVO;
 import com.myee.tarot.datacenter.service.SelfCheckLogService;
-import com.myee.tarot.metrics.domain.AppInfo;
-import com.myee.tarot.metrics.domain.MetricsInfo;
 import com.myee.tarot.remote.service.AppInfoService;
 import com.myee.tarot.remote.service.MetricsDetailService;
 import com.myee.tarot.remote.service.MetricsInfoService;
