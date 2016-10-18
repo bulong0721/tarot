@@ -14,7 +14,7 @@ import java.util.Date;
  */
 
 @Entity
-@Table(name = "M_APPINFO")
+@Table(name = "M_APP_INFO")
 @DynamicUpdate //hibernate部分更新
 public class AppInfo extends GenericEntity<Long, AppInfo> {
 
@@ -38,9 +38,9 @@ public class AppInfo extends GenericEntity<Long, AppInfo> {
     @Temporal(TemporalType.TIMESTAMP)
     private Date installDate;
     @Column(name = "STATE",columnDefinition = "TINYINT")
-    private int state;
+    private int state;//状态，0已安装，1正在运行
     @Column(name = "TYPE",columnDefinition = "TINYINT")
-    private int type;
+    private int type; //1:服务  2：进程
     @Column(name = "LOG_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date logTime;

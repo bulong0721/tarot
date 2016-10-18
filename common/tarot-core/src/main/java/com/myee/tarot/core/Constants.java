@@ -207,4 +207,7 @@ public class Constants {
 	public static final int WEIXIN_PRIZEDRAW = 1;  //抽奖
 	public static final int WEIXIN_LINEPROCESS= 2;   //排队进展
 
+	public static final int APPINFO_TYPE_SERVICE = 1;  //服务
+	public static final int APPINFO_TYPE_APP= 2;   //进程
+
 }

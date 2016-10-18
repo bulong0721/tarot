@@ -12,7 +12,7 @@ import java.util.Date;
  */
 
 @Entity
-@Table(name = "M_MATRICSFO")
+@Table(name = "M_MATRICS_INFO")
 @DynamicUpdate //hibernate部分更新
 public class MetricsInfo extends GenericEntity<Long, MetricsInfo> {
 
@@ -26,8 +26,9 @@ public class MetricsInfo extends GenericEntity<Long, MetricsInfo> {
     @ManyToOne(targetEntity = DeviceUsed.class, optional = false)
     @JoinColumn(name = "BOARD_NO")
     private DeviceUsed deviceUsed;
-    @Column(name = "NAME", length=100)
-    private String name; //"ramTotal" ,"romTotal"
+    @ManyToOne(targetEntity = MetricsDetail.class, optional = false)
+    @JoinColumn(name = "KEY")
+    private MetricsDetail metricsDetail; //"ramTotal" ,"romTotal"
     @Column(name = "NODE",length=100)
     private String node; //节点类型，用于表明当前类在节点关系中的层级，\monitor\summary\metricsinfo\,\monitor\metrics\metricsinfo\
     @Column(name = "VALUE", length=100)
@@ -40,6 +41,8 @@ public class MetricsInfo extends GenericEntity<Long, MetricsInfo> {
     @Column(name = "CREATED")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;//冗余数据，用于单项查询使用
+    @Transient
+    private int state;//0正常，1警告，2报警
 
     @Override
     public Long getId() {
@@ -67,12 +70,12 @@ public class MetricsInfo extends GenericEntity<Long, MetricsInfo> {
         this.deviceUsed = deviceUsed;
     }
 
-    public String getName() {
-        return name;
+    public MetricsDetail getMetricsDetail() {
+        return metricsDetail;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMetricsDetail(MetricsDetail metricsDetail) {
+        this.metricsDetail = metricsDetail;
     }
 
     public String getNode() {
@@ -113,5 +116,13 @@ public class MetricsInfo extends GenericEntity<Long, MetricsInfo> {
 
     public void setCreated(Date created) {
         this.created = created;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
     }
 }
