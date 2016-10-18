@@ -6,5 +6,5 @@ import com.myee.tarot.metric.domain.MetricInfo;
 /**
  * Created by Chay on 2016/8/10.
  */
-public interface MetricsInfoDao extends GenericEntityDao<Long, MetricInfo> {
+public interface MetricInfoDao extends GenericEntityDao<Long, MetricInfo> {
 }

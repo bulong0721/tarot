@@ -13,8 +13,8 @@ import com.myee.tarot.datacenter.domain.SelfCheckLog;
 import com.myee.tarot.datacenter.domain.SelfCheckLogVO;
 import com.myee.tarot.datacenter.service.SelfCheckLogService;
 import com.myee.tarot.remote.service.AppInfoService;
-import com.myee.tarot.remote.service.MetricsDetailService;
-import com.myee.tarot.remote.service.MetricsInfoService;
+import com.myee.tarot.remote.service.MetricDetailService;
+import com.myee.tarot.remote.service.MetricInfoService;
 import com.myee.tarot.remote.service.SystemMetricsService;
 import com.myee.tarot.remote.util.MetricsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +35,9 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
     @Autowired
     private AppInfoService appInfoService;
     @Autowired
-    private MetricsInfoService metricsInfoService;
+    private MetricInfoService metricInfoService;
     @Autowired
-    private MetricsDetailService metricsDetailService;
+    private MetricDetailService metricDetailService;
     @Autowired
     private DeviceUsedService deviceUsedService;
 
@@ -72,8 +72,8 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
         if (list == null) {
             return false;
         }
-
-        return MetricsUtil.updateSystemMetrics(list, deviceUsedService, appInfoService, metricsInfoService,metricsDetailService ,systemMetricsService);
+        List<SystemMetrics> list1 = JSON.parseArray(JSON.toJSONString(list), SystemMetrics.class);
+        return MetricsUtil.updateSystemMetrics(list1, deviceUsedService, appInfoService, metricInfoService, metricDetailService,systemMetricsService);
     }
 
 }

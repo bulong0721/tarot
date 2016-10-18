@@ -6,6 +6,6 @@ import com.myee.tarot.metric.domain.MetricDetail;
 /**
  * Created by Chay on 2016/8/10.
  */
-public interface MetricsDetailService extends GenericEntityService<Long, MetricDetail> {
+public interface MetricDetailService extends GenericEntityService<Long, MetricDetail> {
     MetricDetail findByKey(String name);
 }
