@@ -470,7 +470,7 @@ function cfromlyService(formlyConfig, $window,$q, toaster, $filter,$timeout,form
             //上传事件及回调
             el.on("change", function (changeEvent) {
                 var file = changeEvent.target.files[0], name = file.name.replace(/.+\./, ""),to = scope.to,ajaxAll = [];
-                if(file && file.size > 0 || file.size <= 100000000){
+                if(file && file.size > 0 && file.size <= 100000000){
                     //初始化需要上传的资源
                     var fd = new FormData();
                     fd.append('file', file);
@@ -546,6 +546,7 @@ function cfromlyService(formlyConfig, $window,$q, toaster, $filter,$timeout,form
                 }else{
                     scope.fc.$setViewValue(undefined);
                     $timeout(function () {toaster.error({body: "不能上传空文件或文件大小限制(100M)！"})}, 0);
+                    angular.element('#file')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
                 }
 
             });
