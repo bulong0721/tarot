@@ -8,6 +8,8 @@ import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Created by Chay on 2016/8/10.
  */
@@ -21,5 +23,14 @@ public class MetricDetailDaoImpl extends GenericEntityDaoImpl<Long, MetricDetail
             query.where(qMetricDetail.key.eq(name));
         }
         return query.fetchFirst();
+    }
+
+    public List<String> listKey(){
+        QMetricDetail qMetricDetail = QMetricDetail.metricDetail;
+        JPQLQuery<String> query = new JPAQuery(getEntityManager());
+        query.select(qMetricDetail.name);
+        query.from(qMetricDetail);
+
+        return query.fetch();
     }
 }

@@ -32,7 +32,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.myee.tarot" level="DEBUG"/>
+    <logger name="com.myee.tarot" level="Info"/>
     <logger name="org.springframework" level="DEBUG"/>
     <logger name="org.hibernate" level="DEBUG"/>
 

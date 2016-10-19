@@ -5,6 +5,7 @@ import com.myee.tarot.core.GenericEntity;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,10 +28,10 @@ public class SystemMetrics extends GenericEntity<Long, SystemMetrics> {
     @Column(name = "LOG_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date logTime;
-    @OneToMany(targetEntity = AppInfo.class, fetch = FetchType.LAZY)
-    private List<AppInfo> appList;
-    @OneToMany(targetEntity = MetricInfo.class, fetch = FetchType.LAZY)
-    private List<MetricInfo> metricInfoList;
+    @OneToMany(mappedBy = "systemMetrics",targetEntity = AppInfo.class, fetch = FetchType.LAZY)
+    private List<AppInfo> appList  = new ArrayList<AppInfo>();
+    @OneToMany(mappedBy = "systemMetrics",targetEntity = MetricInfo.class, fetch = FetchType.LAZY)
+    private List<MetricInfo> metricInfoList = new ArrayList<MetricInfo>();
     @Column(name = "NODE",length=100)
     private String node; //节点类型，用于表明当前类在节点关系中的层级，\monitor\metric\,\monitor\summary\
     @Column(name = "CREATED")

@@ -8,6 +8,9 @@ import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
+import java.util.List;
+
 /**
  * Created by Chay on 2016/8/10.
  */
@@ -22,6 +25,22 @@ public class SystemMetricsDaoImpl extends GenericEntityDaoImpl<Long, SystemMetri
             query.where(qSystemMetrics.deviceUsed.id.eq(deviceUsedId))
                 .orderBy(qSystemMetrics.logTime.desc());
         }
-        return query.fetchOne();
+        return query.fetchFirst();
+    }
+
+    public List<SystemMetrics> listByDUIdPeriodKeyList(Long deviceUsedId, Long period, List<String> metricsKeyList){
+        QSystemMetrics qSystemMetrics = QSystemMetrics.systemMetrics;
+        JPQLQuery<SystemMetrics> query = new JPAQuery(getEntityManager());
+        query.from(qSystemMetrics);
+        if (deviceUsedId != null) {
+            query.where(qSystemMetrics.deviceUsed.id.eq(deviceUsedId));
+        }
+        if(period != null){
+            Long to = System.currentTimeMillis();
+            Long from = to - period;
+            query.where(qSystemMetrics.logTime.between(new Date(from),new Date(to)));
+        }
+        query.orderBy(qSystemMetrics.logTime.desc());
+        return query.fetch();
     }
 }

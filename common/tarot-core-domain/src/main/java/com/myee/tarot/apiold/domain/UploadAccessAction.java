@@ -6,9 +6,11 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.*;
 
 @Entity
-@javax.persistence.Table(name = "ca_smp_upload_action")//点点笔点击行为，支持多级级联
+@javax.persistence.Table(name = "CA_SMP_UPLOAD_ACTION")//点点笔点击行为，支持多级级联
 public class UploadAccessAction extends GenericEntity<Long, UploadAccessAction> {
 	@Id
+	@Column(name = "ID", unique = true, nullable = false)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
 	@NotEmpty

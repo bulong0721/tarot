@@ -7,6 +7,8 @@ import com.myee.tarot.remote.service.SystemMetricsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by Chay on 2016/8/10.
  */
@@ -24,5 +26,10 @@ public class SystemMetricsServiceImpl extends GenericEntityServiceImpl<Long, Sys
     @Override
     public SystemMetrics getLatestByDUId(Long deviceUsedId) {
         return systemMetricsDao.getLatestByDUId(deviceUsedId);
+    }
+
+    @Override
+    public List<SystemMetrics> listByDUIdPeriodKeyList(Long deviceUsedId, Long period, List<String> metricsKeyList){
+        return systemMetricsDao.listByDUIdPeriodKeyList( deviceUsedId,  period,  metricsKeyList);
     }
 }

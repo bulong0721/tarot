@@ -7,6 +7,8 @@ import com.myee.tarot.remote.service.MetricDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by Chay on 2016/8/10.
  */
@@ -24,5 +26,10 @@ public class MetricDetailServiceImpl extends GenericEntityServiceImpl<Long, Metr
     @Override
     public MetricDetail findByKey(String name){
         return metricDetailDao.findByKey(name);
+    }
+
+    @Override
+    public List<String> listKey(){
+        return metricDetailDao.listKey();
     }
 }

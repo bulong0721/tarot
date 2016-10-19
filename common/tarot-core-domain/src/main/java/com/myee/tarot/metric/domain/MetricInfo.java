@@ -12,12 +12,12 @@ import java.util.Date;
  */
 
 @Entity
-@Table(name = "M_MATRICS_INFO")
+@Table(name = "M_MATRIC_INFO")
 @DynamicUpdate //hibernate部分更新
 public class MetricInfo extends GenericEntity<Long, MetricInfo> {
 
     @Id
-    @Column(name = "METRICSINFO_ID", unique = true, nullable = false)
+    @Column(name = "METRIC_INFO_ID", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @ManyToOne(targetEntity = SystemMetrics.class, optional = false)
@@ -27,7 +27,7 @@ public class MetricInfo extends GenericEntity<Long, MetricInfo> {
     @JoinColumn(name = "BOARD_NO")
     private DeviceUsed deviceUsed;
     @ManyToOne(targetEntity = MetricDetail.class, optional = false)
-    @JoinColumn(name = "KEY")
+    @JoinColumn(name = "KEY_NAME")
     private MetricDetail metricDetail; //"ramTotal" ,"romTotal"
     @Column(name = "NODE",length=100)
     private String node; //节点类型，用于表明当前类在节点关系中的层级，\monitor\summary\metricsinfo\,\monitor\metric\metricsinfo\

@@ -2,6 +2,7 @@ package com.myee.tarot.web.remoteMonitor.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.myee.tarot.catalog.domain.DeviceUsed;
+import com.myee.tarot.catalog.service.DeviceUsedService;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
@@ -37,6 +38,8 @@ public class DeviceUsedMonitorController {
     private SystemMetricsService systemMetricsService;
     @Autowired
     private MetricDetailService metricDetailService;
+    @Autowired
+    private DeviceUsedService deviceUsedService;
 
     @RequestMapping(value = {"admin/remoteMonitor/deviceUsed/summary"}, method = RequestMethod.GET)
     @ResponseBody
@@ -62,7 +65,7 @@ public class DeviceUsedMonitorController {
                 metricInfoList = new ArrayList<Map>();
                 for(MetricInfo metricInfo : systemMetrics.getMetricInfoList()){
                     Map temp = new HashMap();
-                    temp.put("key", metricInfo.getMetricDetail().getKey());//指标键名
+                    temp.put("key", metricInfo.getMetricDetail().getKeyName());//指标键名
                     temp.put("name", metricInfo.getMetricDetail().getName());//指标显示名称
                     temp.put("unit", metricInfo.getMetricDetail().getUnit());//指标计量单位
                     temp.put("description", metricInfo.getMetricDetail().getDescription());
@@ -96,10 +99,7 @@ public class DeviceUsedMonitorController {
                                               @RequestParam(value = "metricsKeyString") String metricsKeyString,
                                              HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
-        //没有要展示的指标详细列表，则直接返回空
-        if(metricsKeyString == null || StringUtil.isBlank(metricsKeyString)){
-            return AjaxResponse.success();
-        }
+
         try {
             if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
                 return AjaxResponse.failed(-1,"请先切换门店");
@@ -107,28 +107,62 @@ public class DeviceUsedMonitorController {
             if(deviceUsedId == null || StringUtil.isBlank(deviceUsedId+"")){
                 return AjaxResponse.failed(-1,"参数错误");
             }
+            DeviceUsed deviceUsed = deviceUsedService.findById(deviceUsedId);
+            if(deviceUsed == null){
+                return AjaxResponse.failed(-1,"设备不存在");
+            }
 
             SystemMetrics systemMetrics = systemMetricsService.getLatestByDUId(deviceUsedId);
+            if(systemMetrics == null){
+                return AjaxResponse.success();
+            }
             Map entry = commonMetricsToMap(systemMetrics);
 
             //指标概览summary里面要用的实时指标值
+            List<SystemMetrics> systemSummaryList = systemMetricsService.listByDUIdPeriodKeyList(deviceUsedId, period, Constants.SUMMARY_KEY_LIST);
 
-            //metricInfoList指标详细列表
+            //metricInfoList指标详细列表,先一次性根据period和deviceUsedId去查出来，再用for循环遍历到每个指标里
+            List<String> metricsKeyList = null;
+            //没有要展示的指标详细列表，则直接返回全部指标
+            if(metricsKeyString == null || StringUtil.isBlank(metricsKeyString)){
+                metricsKeyList = metricDetailService.listKey();
+            }
+            else {
+                metricsKeyList = JSON.parseArray(metricsKeyString, String.class);
+            }
+
+            period = decidePeriod(period);
+
             List<Map> metricInfoList = null;
-            List<String> metricsKeyList = JSON.parseArray(metricsKeyString, String.class);
+            //根据展示时间段、指标keyList和设备ID去查找数据，一次性取出所有数据
+            List<SystemMetrics> systemMetricsList = systemMetricsService.listByDUIdPeriodKeyList(deviceUsedId, period, metricsKeyList);
+            if(systemMetricsList == null || systemMetricsList.size() == 0){
+                entry.put("metricInfoList",null);
+                return resp;
+            }
+            //使用遍历去按照指标key拆分查询出来的数据
+            Map valuesByMetricsKey = sortMetricsByKey(systemMetricsList,metricsKeyList);
+            //根据要展示的指标列表去选择性展示指标
+            for(String keyForDisplay : metricsKeyList){
+                MetricDetail metricDetail = metricDetailService.findByKey(keyForDisplay);
+                if(metricDetail == null){
+                    continue;
+                }
+                Map metricEntry = null;
+                metricEntry = new HashMap();
+                metricEntry.put("key", keyForDisplay);
+                metricEntry.put("name",metricDetail.getName());
+                metricEntry.put("drawType",metricDetail.getDrawType());
+                metricEntry.put("maxValue",metricDetail.getMaxValue());
+                metricEntry.put("minValue",metricDetail.getMinValue());
+                metricEntry.put("warning",metricDetail.getWarning());
+                metricEntry.put("alert",metricDetail.getAlert());
+                metricEntry.put("unit",metricDetail.getUnit());
+                metricEntry.put("description",metricDetail.getDescription());
+                metricEntry.put("values",valuesByMetricsKey.get(keyForDisplay));
 
-            MetricDetail metricDetail = metricDetailService.findByKey(com.myee.djinn.constants.Constants.METRIC_bluetoothState);
-            Map metricEntry = new HashMap();
-            metricEntry.put("key",metricDetail.getKey());
-            metricEntry.put("name",metricDetail.getName());
-            metricEntry.put("drawType",metricDetail.getDrawType());
-            metricEntry.put("maxValue",metricDetail.getMaxValue());
-            metricEntry.put("minValue",metricDetail.getMinValue());
-            metricEntry.put("warning",metricDetail.getWarning());
-            metricEntry.put("alert",metricDetail.getAlert());
-            metricEntry.put("unit",metricDetail.getUnit());
-            metricEntry.put("description",metricDetail.getDescription());
-
+                metricInfoList.add(metricEntry);
+            }
 
             entry.put("metricInfoList",metricInfoList);
             resp.addDataEntry(entry);
@@ -137,6 +171,76 @@ public class DeviceUsedMonitorController {
             resp.setErrorString("出错");
         }
         return resp;
+    }
+
+    /**
+     * 根据需求处理指标显示周期，最小是1小时
+     * @param period
+     * @return
+     */
+    private Long decidePeriod(Long period) {
+        if(period == null || period < 3600000L) {//1小时毫秒数
+            period = 3600000L;
+        }
+        return period;
+    }
+
+    /**
+     * 使用遍历去按照指标key拆分查询出来的数据
+     * @param systemMetricsList
+     * @param metricsKeyList
+     * @return
+     */
+    private Map sortMetricsByKey(List<SystemMetrics> systemMetricsList, List<String> metricsKeyList) {
+        Map<String,ArrayList<Map>> valuesByMetricsKey = new HashMap<String,ArrayList<Map>>();
+        for(String metricsKey : metricsKeyList){
+            valuesByMetricsKey.put(metricsKey, new ArrayList<Map>());
+        }
+        for(SystemMetrics systemMetrics : systemMetricsList){
+            for(MetricInfo metricInfo : systemMetrics.getMetricInfoList()){
+                String keyTemp = metricInfo.getMetricDetail().getKeyName();
+                //如果该参数指标不在要显示的指标里面
+                if(!metricsKeyList.contains(keyTemp)){
+                    continue;
+                }
+                ArrayList<Map> tempList = valuesByMetricsKey.get(keyTemp);
+                Map tempEntry = new HashMap();
+                tempEntry.put("time",metricInfo.getLogTime());
+                tempEntry.put("value",metricInfo.getValue());
+                tempEntry.put("state",calMetricInfoState(metricInfo));
+                tempList.add(tempEntry);
+                valuesByMetricsKey.put(keyTemp,tempList);
+            }
+        }
+
+        return valuesByMetricsKey;
+    }
+
+    /**
+     * 判断指标当前值超标状态，0正常，1警告，2报警
+     * @param metricInfo
+     * @return
+     */
+    private int calMetricInfoState(MetricInfo metricInfo) {
+        MetricDetail metricDetail = metricInfo.getMetricDetail();
+        if( metricDetail.getValueType() != Constants.METRIC_DETAIL_VALUE_TYPE_NUM ){
+            return Constants.METRIC_STATE_OK;
+        }
+        try {
+            double value = Double.parseDouble(metricInfo.getValue());
+            double warning = metricDetail.getWarning();
+            double alert = metricDetail.getAlert();
+            if(value >= warning && value < alert){
+                return Constants.METRIC_STATE_WARN;
+            }
+            else if(value >= alert){
+                return Constants.METRIC_STATE_ALERT;
+            }
+        } catch (Exception e) {
+            LOGGER.error("指标值不是数字："+e.getMessage());
+        }
+
+        return Constants.METRIC_STATE_OK;
     }
 
     /**

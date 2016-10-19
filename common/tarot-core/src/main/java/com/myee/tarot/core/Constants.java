@@ -1,6 +1,8 @@
 package com.myee.tarot.core;
 
+import java.util.Arrays;
 import java.util.Currency;
+import java.util.List;
 import java.util.Locale;
 
 public class Constants {
@@ -210,4 +212,24 @@ public class Constants {
 	public static final int APPINFO_TYPE_SERVICE = 1;  //服务
 	public static final int APPINFO_TYPE_APP= 2;   //进程
 
+	public static final int METRIC_STATE_OK = 0;  //指标状态正常
+	public static final int METRIC_STATE_WARN = 1;  //指标状态警告
+	public static final int METRIC_STATE_ALERT = 2;  //指标状态报警
+
+	public static final int METRIC_DETAIL_VALUE_TYPE_NUM = 0;  //数值
+	public static final int METRIC_DETAIL_VALUE_TYPE_STRING = 1;  //字符串
+
+	public static final List<String> SUMMARY_KEY_LIST = Arrays.asList(
+			com.myee.djinn.constants.Constants.METRIC_cpuUsed,
+			com.myee.djinn.constants.Constants.METRIC_productPower,
+			com.myee.djinn.constants.Constants.METRIC_bluetoothState,
+			com.myee.djinn.constants.Constants.METRIC_wifiStatus,
+			com.myee.djinn.constants.Constants.METRIC_volume,
+			com.myee.djinn.constants.Constants.METRIC_romUsed,
+			com.myee.djinn.constants.Constants.METRIC_ramUsed,
+			com.myee.djinn.constants.Constants.METRIC_charging,
+			com.myee.djinn.constants.Constants.METRIC_SSID,
+			com.myee.djinn.constants.Constants.METRIC_productLocalIP,
+			com.myee.djinn.constants.Constants.METRIC_productGlobalIP
+	);
 }
