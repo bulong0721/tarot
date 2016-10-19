@@ -33,8 +33,8 @@
     </appender>
 
     <logger name="com.myee.tarot" level="Info"/>
-    <logger name="org.springframework" level="DEBUG"/>
-    <logger name="org.hibernate" level="DEBUG"/>
+    <logger name="org.springframework" level="Info"/>
+    <logger name="org.hibernate" level="Info"/>
 
     <root level="Info">
         <appender-ref ref="console"/>

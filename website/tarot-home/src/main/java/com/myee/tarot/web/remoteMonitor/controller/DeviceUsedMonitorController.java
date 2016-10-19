@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -119,7 +120,8 @@ public class DeviceUsedMonitorController {
             Map entry = commonMetricsToMap(systemMetrics);
 
             //指标概览summary里面要用的实时指标值
-            List<SystemMetrics> systemSummaryList = systemMetricsService.listByDUIdPeriodKeyList(deviceUsedId, period, Constants.SUMMARY_KEY_LIST);
+            SystemMetrics systemMetrics4Summary = systemMetricsService.getLatestByDUId(deviceUsedId);
+            entry.putAll(systemMetrics4SummaryToMap(systemMetrics4Summary));
 
             //metricInfoList指标详细列表,先一次性根据period和deviceUsedId去查出来，再用for循环遍历到每个指标里
             List<String> metricsKeyList = null;
@@ -174,13 +176,34 @@ public class DeviceUsedMonitorController {
     }
 
     /**
+     * systemMetrics4Summary根据静态指标需要展示的列表转化成map
+     * 返回前端时数据结构如下
+     * "summaryUsed": {
+             "cpuTotal":{//关联的概要指标键名
+                 key:"cpuUsed"//详细指标键名
+                 value:30 //详细指标值
+             }
+             "productLocalIP":{//如果没有关联的概要指标键名，则使用该指标的键名
+                key: productLocalIP
+                value:127.0.0.1
+             }
+        }
+     * @param systemMetrics4Summary
+     * @return
+     */
+    private Map systemMetrics4SummaryToMap(SystemMetrics systemMetrics4Summary) {
+        Map entry = new HashMap();
+        return null;
+    }
+
+    /**
      * 根据需求处理指标显示周期，最小是1小时
      * @param period
      * @return
      */
     private Long decidePeriod(Long period) {
-        if(period == null || period < 3600000L) {//1小时毫秒数
-            period = 3600000L;
+        if(period == null || period < Constants.PERIOD_1_HOUR) {//1小时毫秒数
+            period = Constants.PERIOD_1_HOUR;
         }
         return period;
     }
@@ -227,13 +250,13 @@ public class DeviceUsedMonitorController {
             return Constants.METRIC_STATE_OK;
         }
         try {
-            double value = Double.parseDouble(metricInfo.getValue());
-            double warning = metricDetail.getWarning();
-            double alert = metricDetail.getAlert();
-            if(value >= warning && value < alert){
+            BigDecimal value = BigDecimal.valueOf(Double.parseDouble(metricInfo.getValue()));
+            BigDecimal warning = metricDetail.getWarning();
+            BigDecimal alert = metricDetail.getAlert();
+            if((value.compareTo(warning) == 1 || value.compareTo(warning) == 0) && value.compareTo(alert) == -1 ){
                 return Constants.METRIC_STATE_WARN;
             }
-            else if(value >= alert){
+            else if(value.compareTo(alert) == 1 || value.compareTo(alert) == 0){
                 return Constants.METRIC_STATE_ALERT;
             }
         } catch (Exception e) {

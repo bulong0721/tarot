@@ -136,10 +136,13 @@ public class MetricsUtil {
         List<com.myee.tarot.metric.domain.AppInfo> result = new ArrayList<com.myee.tarot.metric.domain.AppInfo>();
         for (AppInfo appInfo : appLists) {
             com.myee.tarot.metric.domain.AppInfo appInfoDB = new com.myee.tarot.metric.domain.AppInfo();
+            appInfoDB.setAppName(appInfo.getAppName());
             appInfoDB.setCreated(now);
             appInfoDB.setDeviceUsed(deviceUsed);
             appInfoDB.setInstallDate(DateTimeUtils.toMillis(appInfo.getInstallDate()));
+            appInfoDB.setLastUpdateTime(DateTimeUtils.toMillis(appInfo.getLastUpdateTime()));
             appInfoDB.setLogTime(DateTimeUtils.toMillis(systemMetrics.getLogTime()));
+            appInfoDB.setPackageName(appInfo.getPackageName());
             appInfoDB.setState(appInfo.getState());
             appInfoDB.setType(appInfo.getType());
             appInfoDB.setSystemMetrics(systemMetricsDB);

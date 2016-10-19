@@ -29,12 +29,20 @@ public class AppInfo extends GenericEntity<Long, AppInfo> {
     @Column(name = "VERSION_CODE", length=100)
     private Long versionCode;
     @Column(name = "VERSION_NAME", length=100)
-    private String versionName;//"应用名称com.taobao.ddd"
+    private String versionName;//"应用版本名称"
+    @Column(name = "APP_NAME", length=100)
+    private String appName;  //"应用名称"
+    @Column(name = "PACKAGE_NAME", length=100)
+    private String packageName;  //"包名 com.taobao.ddd"
+
     @Column(name = "NODE",length=100)
     private String node; //节点类型，用于表明当前类在节点关系中的层级，\monitor\summary\appinfo\,\monitor\metric\appinfo\
     @Column(name = "INSTALL_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date installDate;
+    @Column(name = "LAST_UPDATE_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdateTime;
     @Column(name = "STATE",columnDefinition = "TINYINT")
     private int state;//状态，0已安装，1正在运行
     @Column(name = "TYPE",columnDefinition = "TINYINT")
@@ -135,5 +143,29 @@ public class AppInfo extends GenericEntity<Long, AppInfo> {
 
     public void setSystemMetrics(SystemMetrics systemMetrics) {
         this.systemMetrics = systemMetrics;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
+    public Date getLastUpdateTime() {
+        return lastUpdateTime;
+    }
+
+    public void setLastUpdateTime(Date lastUpdateTime) {
+        this.lastUpdateTime = lastUpdateTime;
     }
 }

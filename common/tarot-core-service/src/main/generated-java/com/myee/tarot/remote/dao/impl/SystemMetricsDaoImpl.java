@@ -40,6 +40,9 @@ public class SystemMetricsDaoImpl extends GenericEntityDaoImpl<Long, SystemMetri
             Long from = to - period;
             query.where(qSystemMetrics.logTime.between(new Date(from),new Date(to)));
         }
+//        if(metricsKeyList != null && metricsKeyList.size() > 0){
+//            query.where(qSystemMetrics.metricInfoList.);
+//        }
         query.orderBy(qSystemMetrics.logTime.desc());
         return query.fetch();
     }

@@ -219,6 +219,8 @@ public class Constants {
 	public static final int METRIC_DETAIL_VALUE_TYPE_NUM = 0;  //数值
 	public static final int METRIC_DETAIL_VALUE_TYPE_STRING = 1;  //字符串
 
+	public static final long PERIOD_1_HOUR = 3600000L;  //1小时毫秒数
+
 	public static final List<String> SUMMARY_KEY_LIST = Arrays.asList(
 			com.myee.djinn.constants.Constants.METRIC_cpuUsed,
 			com.myee.djinn.constants.Constants.METRIC_productPower,
