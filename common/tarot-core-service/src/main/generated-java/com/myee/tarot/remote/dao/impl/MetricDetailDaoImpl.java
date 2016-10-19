@@ -20,7 +20,7 @@ public class MetricDetailDaoImpl extends GenericEntityDaoImpl<Long, MetricDetail
         JPQLQuery<MetricDetail> query = new JPAQuery(getEntityManager());
         query.from(qMetricDetail);
         if (name != null) {
-            query.where(qMetricDetail.key.eq(name));
+            query.where(qMetricDetail.keyName.eq(name));
         }
         return query.fetchFirst();
     }
