@@ -28,7 +28,7 @@ public class MetricDetailDaoImpl extends GenericEntityDaoImpl<Long, MetricDetail
     public List<String> listKey(){
         QMetricDetail qMetricDetail = QMetricDetail.metricDetail;
         JPQLQuery<String> query = new JPAQuery(getEntityManager());
-        query.select(qMetricDetail.name);
+        query.select(qMetricDetail.keyName);
         query.from(qMetricDetail);
 
         return query.fetch();

@@ -216,8 +216,9 @@ public class Constants {
 	public static final int METRIC_STATE_WARN = 1;  //指标状态警告
 	public static final int METRIC_STATE_ALERT = 2;  //指标状态报警
 
-	public static final int METRIC_DETAIL_VALUE_TYPE_NUM = 0;  //数值
+	public static final int METRIC_DETAIL_VALUE_TYPE_NUM = 0;  //数值不带报警
 	public static final int METRIC_DETAIL_VALUE_TYPE_STRING = 1;  //字符串
+	public static final int METRIC_DETAIL_VALUE_TYPE_NUM_ALERT = 2;  //数值带报警
 
 	public static final long PERIOD_1_HOUR = 3600000L;  //1小时毫秒数
 

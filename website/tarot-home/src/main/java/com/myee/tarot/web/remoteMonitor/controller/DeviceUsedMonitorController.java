@@ -62,7 +62,7 @@ public class DeviceUsedMonitorController {
             entry.put("logTime", systemMetrics.getLogTime());
             //metricInfoList
             List<Map> metricInfoList = null;
-            if(systemMetrics.getMetricInfoList() != null ){
+            if(systemMetrics.getMetricInfoList() != null && systemMetrics.getMetricInfoList().size() > 0){
                 metricInfoList = new ArrayList<Map>();
                 for(MetricInfo metricInfo : systemMetrics.getMetricInfoList()){
                     Map temp = new HashMap();
@@ -120,8 +120,7 @@ public class DeviceUsedMonitorController {
             Map entry = commonMetricsToMap(systemMetrics);
 
             //指标概览summary里面要用的实时指标值
-            SystemMetrics systemMetrics4Summary = systemMetricsService.getLatestByDUId(deviceUsedId);
-            entry.putAll(systemMetrics4SummaryToMap(systemMetrics4Summary));
+            entry.putAll(systemMetrics4SummaryToMap(systemMetrics));
 
             //metricInfoList指标详细列表,先一次性根据period和deviceUsedId去查出来，再用for循环遍历到每个指标里
             List<String> metricsKeyList = null;
@@ -142,6 +141,7 @@ public class DeviceUsedMonitorController {
                 entry.put("metricInfoList",null);
                 return resp;
             }
+            metricInfoList = new ArrayList<Map>();
             //使用遍历去按照指标key拆分查询出来的数据
             Map valuesByMetricsKey = sortMetricsByKey(systemMetricsList,metricsKeyList);
             //根据要展示的指标列表去选择性展示指标
@@ -150,8 +150,7 @@ public class DeviceUsedMonitorController {
                 if(metricDetail == null){
                     continue;
                 }
-                Map metricEntry = null;
-                metricEntry = new HashMap();
+                Map metricEntry = new HashMap();
                 metricEntry.put("key", keyForDisplay);
                 metricEntry.put("name",metricDetail.getName());
                 metricEntry.put("drawType",metricDetail.getDrawType());
@@ -193,7 +192,24 @@ public class DeviceUsedMonitorController {
      */
     private Map systemMetrics4SummaryToMap(SystemMetrics systemMetrics4Summary) {
         Map entry = new HashMap();
-        return null;
+        List<MetricInfo> metircInfoList = systemMetrics4Summary.getMetricInfoList();
+        if(metircInfoList == null || metircInfoList.size() == 0){
+            entry.put("summaryUsed",null);
+            return entry;
+        }
+        Map tempResult = new HashMap();
+        for(MetricInfo metricInfo : metircInfoList){
+            String keyName = metricInfo.getMetricDetail().getKeyName();
+            if(!Constants.SUMMARY_KEY_LIST.contains(keyName)){
+                continue;
+            }
+            Map temp = new HashMap();
+            temp.put("key",keyName);
+            temp.put("value",metricInfo.getValue());
+            tempResult.put(keyName,temp);
+        }
+        entry.put("summaryUsed",tempResult);
+        return entry;
     }
 
     /**
@@ -246,7 +262,8 @@ public class DeviceUsedMonitorController {
      */
     private int calMetricInfoState(MetricInfo metricInfo) {
         MetricDetail metricDetail = metricInfo.getMetricDetail();
-        if( metricDetail.getValueType() != Constants.METRIC_DETAIL_VALUE_TYPE_NUM ){
+        if( metricDetail.getValueType() != Constants.METRIC_DETAIL_VALUE_TYPE_NUM_ALERT
+                && ( StringUtil.isBlank(metricDetail.getAlertRegular()))) {
             return Constants.METRIC_STATE_OK;
         }
         try {
@@ -301,7 +318,7 @@ public class DeviceUsedMonitorController {
      */
     private List<Map> appInfoListToMap(List<AppInfo> appList){
         List<Map> appInfoList = null;
-        if(appList != null ){
+        if(appList != null && appList.size() > 0 ){
             appInfoList = new ArrayList<Map>();
             Map services = new HashMap();
             List<Map> servicesList = new ArrayList<>();
