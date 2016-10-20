@@ -156,6 +156,7 @@ public class MetricsUtil {
         for (AppInfo appInfo : appLists) {
             com.myee.tarot.metric.domain.AppInfo appInfoDB = new com.myee.tarot.metric.domain.AppInfo();
             appInfoDB.setAppName(appInfo.getAppName());
+            appInfoDB.setNode(appInfo.getNode());
             appInfoDB.setCreated(now);
             appInfoDB.setBoardNo(boardNo);
             appInfoDB.setInstallDate(DateTimeUtils.toMillis(appInfo.getInstallDate()));
