@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<mt-header title="抽奖模式设置">
+		<mt-header title="微信端抽奖设置">
 			<mt-button @click="golist" icon="back" slot="left" v-if="$route.path != '/'">返回</mt-button>
 		</mt-header>
 		<div class="page-header-main">
