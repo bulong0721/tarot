@@ -15,9 +15,7 @@ import com.myee.tarot.remote.service.SystemMetricsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by chay on 2016/10/13.
@@ -53,7 +51,8 @@ public class MetricsUtil {
                     continue;
                 }
                 SystemMetrics systemMetricsDB = new SystemMetrics();
-                systemMetricsDB.setDeviceUsed(deviceUsed);
+//                systemMetricsDB.setDeviceUsed(deviceUsed);
+                systemMetricsDB.setBoardNo(systemMetrics.getBoardNo());
                 systemMetricsDB.setCreated(now);
 
                 systemMetricsDB.setNode(systemMetrics.getNode());
@@ -94,24 +93,42 @@ public class MetricsUtil {
             return null;
         }
         List<MetricInfo> result = new ArrayList<MetricInfo>();
+        //一次查询出所有指标详细作为缓存
+        List<MetricDetail> metricDetailList = metricDetailService.list();
+        Map<String,MetricDetail> metricDetailMap = metricDetailListToMap(metricDetailList);
+        String boardNo = deviceUsed.getBoardNo();
+        Long systemMetricsId = systemMetricsDB.getId();
         for (com.myee.djinn.dto.metrics.MetricInfo metricInfo : metricInfoList) {
             MetricInfo metricInfoDB = new MetricInfo();
-            MetricDetail metricDetail = metricDetailService.findByKey(metricInfo.getName());
+            MetricDetail metricDetail = metricDetailMap.get(metricInfo.getName());
             if(metricDetail == null ){
                 continue;
             }
-            metricInfoDB.setMetricDetail(metricDetail);
+            metricInfoDB.setKeyName(metricInfo.getName());
             metricInfoDB.setCreated(now);
-            metricInfoDB.setDeviceUsed(deviceUsed);
+            metricInfoDB.setBoardNo(boardNo);
             metricInfoDB.setDescription(metricInfo.getDescription());
             metricInfoDB.setLogTime(DateTimeUtils.toMillis(systemMetrics.getLogTime()));
             metricInfoDB.setNode(metricInfo.getNode());
-            metricInfoDB.setSystemMetrics(systemMetricsDB);
+            metricInfoDB.setSystemMetricsId(systemMetricsId);
             metricInfoDB.setValue(metricInfo.getValue());
             metricInfoDB = metricInfoService.update(metricInfoDB);
             result.add(metricInfoDB);
         }
         return result;
+    }
+
+    /**
+     * 把metricDetail查询出来的list转为map，以便快速使用
+     * @param metricDetailList
+     * @return
+     */
+    public static Map<String,MetricDetail> metricDetailListToMap(List<MetricDetail> metricDetailList) {
+        Map<String,MetricDetail> entry = new HashMap<String,MetricDetail>();
+        for(MetricDetail metricDetail:metricDetailList){
+            entry.put(metricDetail.getKeyName(),metricDetail);
+        }
+        return entry;
     }
 
     /**
@@ -134,18 +151,20 @@ public class MetricsUtil {
             return null;
         }
         List<com.myee.tarot.metric.domain.AppInfo> result = new ArrayList<com.myee.tarot.metric.domain.AppInfo>();
+        String boardNo = deviceUsed.getBoardNo();
+        Long systemMetricsId = systemMetricsDB.getId();
         for (AppInfo appInfo : appLists) {
             com.myee.tarot.metric.domain.AppInfo appInfoDB = new com.myee.tarot.metric.domain.AppInfo();
             appInfoDB.setAppName(appInfo.getAppName());
             appInfoDB.setCreated(now);
-            appInfoDB.setDeviceUsed(deviceUsed);
+            appInfoDB.setBoardNo(boardNo);
             appInfoDB.setInstallDate(DateTimeUtils.toMillis(appInfo.getInstallDate()));
             appInfoDB.setLastUpdateTime(DateTimeUtils.toMillis(appInfo.getLastUpdateTime()));
             appInfoDB.setLogTime(DateTimeUtils.toMillis(systemMetrics.getLogTime()));
             appInfoDB.setPackageName(appInfo.getPackageName());
             appInfoDB.setState(appInfo.getState());
             appInfoDB.setType(appInfo.getType());
-            appInfoDB.setSystemMetrics(systemMetricsDB);
+            appInfoDB.setSystemMetricsId(systemMetricsId);
             appInfoDB.setVersionCode(appInfo.getVersionCode());
             appInfoDB.setVersionName(appInfo.getVersionName());
             appInfoDB = appInfoService.update(appInfoDB);

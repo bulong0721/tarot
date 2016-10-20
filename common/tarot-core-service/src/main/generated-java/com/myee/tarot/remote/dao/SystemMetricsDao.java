@@ -9,7 +9,7 @@ import java.util.List;
  * Created by Chay on 2016/8/10.
  */
 public interface SystemMetricsDao extends GenericEntityDao<Long, SystemMetrics> {
-    SystemMetrics getLatestByDUId(Long deviceUsedId);
+    SystemMetrics getLatestByBoardNo(String boardNo);
 
-    List<SystemMetrics> listByDUIdPeriodKeyList(Long deviceUsedId, Long period, List<String> metricsKeyList);
+    List<SystemMetrics> listByBoardNoPeriodKeyList(String boardNo, Long period, List<String> metricsKeyList);
 }

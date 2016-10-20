@@ -22,15 +22,17 @@ public class SystemMetrics extends GenericEntity<Long, SystemMetrics> {
     @Column(name = "M_SYSTEM_METRICS_ID", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @ManyToOne(targetEntity = DeviceUsed.class, optional = false)
-    @JoinColumn(name = "BOARD_NO")
-    private DeviceUsed deviceUsed;
+//    @ManyToOne(targetEntity = DeviceUsed.class, optional = false)
+//    @JoinColumn(name = "BOARD_NO")
+//    private DeviceUsed deviceUsed;
+    @Column(name = "BOARD_NO",length=100)
+    private String boardNo;
     @Column(name = "LOG_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date logTime;
-    @OneToMany(mappedBy = "systemMetrics",targetEntity = AppInfo.class, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "systemMetricsId",targetEntity = AppInfo.class, fetch = FetchType.EAGER)
     private List<AppInfo> appList  = new ArrayList<AppInfo>();
-    @OneToMany(mappedBy = "systemMetrics",targetEntity = MetricInfo.class, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "systemMetricsId",targetEntity = MetricInfo.class, fetch = FetchType.EAGER)
     private List<MetricInfo> metricInfoList = new ArrayList<MetricInfo>();
     @Column(name = "NODE",length=100)
     private String node; //节点类型，用于表明当前类在节点关系中的层级，\monitor\metric\,\monitor\summary\
@@ -48,12 +50,12 @@ public class SystemMetrics extends GenericEntity<Long, SystemMetrics> {
         this.id = id;
     }
 
-    public DeviceUsed getDeviceUsed() {
-        return deviceUsed;
+    public String getBoardNo() {
+        return boardNo;
     }
 
-    public void setDeviceUsed(DeviceUsed deviceUsed) {
-        this.deviceUsed = deviceUsed;
+    public void setBoardNo(String boardNo) {
+        this.boardNo = boardNo;
     }
 
     public Date getLogTime() {
