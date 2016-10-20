@@ -23,14 +23,14 @@ public class AppInfo extends GenericEntity<Long, AppInfo> {
 //    @ManyToOne(targetEntity = SystemMetrics.class, optional = false)
 //    @JoinColumn(name = "M_SYSTEM_METRICS_ID")
 //    private SystemMetrics systemMetrics;
-    @Column(name = "M_SYSTEM_METRICS_ID", length=100)
+    @Column(name = "M_SYSTEM_METRICS_ID")
     private Long systemMetricsId;
 //    @ManyToOne(targetEntity = DeviceUsed.class, optional = false)
 //    @JoinColumn(name = "BOARD_NO")
 //    private DeviceUsed deviceUsed;
     @Column(name = "BOARD_NO",length=100)
     private String boardNo;
-    @Column(name = "VERSION_CODE", length=100)
+    @Column(name = "VERSION_CODE")
     private Long versionCode;
     @Column(name = "VERSION_NAME", length=100)
     private String versionName;//"应用版本名称"
@@ -38,7 +38,10 @@ public class AppInfo extends GenericEntity<Long, AppInfo> {
     private String appName;  //"应用名称"
     @Column(name = "PACKAGE_NAME", length=100)
     private String packageName;  //"包名 com.taobao.ddd"
-
+    @Column(name = "PROCESS_NAME", length=100)
+    private String processName;  //"进程名称"
+    @Column(name = "PID")
+    private Long pid;//进程ID，用于控制
     @Column(name = "NODE",length=100)
     private String node; //节点类型，用于表明当前类在节点关系中的层级，\monitor\summary\appinfo\,\monitor\metric\appinfo\
     @Column(name = "INSTALL_DATE")
@@ -50,7 +53,7 @@ public class AppInfo extends GenericEntity<Long, AppInfo> {
     @Column(name = "STATE",columnDefinition = "TINYINT")
     private int state;//状态，0已安装，1正在运行
     @Column(name = "TYPE",columnDefinition = "TINYINT")
-    private int type; //1:服务  2：进程
+    private int type; //1:服务  2：进程 3：应用
     @Column(name = "LOG_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date logTime;
@@ -171,5 +174,21 @@ public class AppInfo extends GenericEntity<Long, AppInfo> {
 
     public void setLastUpdateTime(Date lastUpdateTime) {
         this.lastUpdateTime = lastUpdateTime;
+    }
+
+    public Long getPid() {
+        return pid;
+    }
+
+    public void setPid(Long pid) {
+        this.pid = pid;
+    }
+
+    public String getProcessName() {
+        return processName;
+    }
+
+    public void setProcessName(String processName) {
+        this.processName = processName;
     }
 }

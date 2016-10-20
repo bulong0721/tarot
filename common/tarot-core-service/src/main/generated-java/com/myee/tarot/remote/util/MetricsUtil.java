@@ -174,4 +174,20 @@ public class MetricsUtil {
         return result;
     }
 
+    /**
+     * 把appInfo查询出来的list转为map<包名,AppInfo>，以便快速使用
+     * @param appList
+     * @param appInfoType
+     * @return
+     */
+    public static Map<String, com.myee.tarot.metric.domain.AppInfo> appInfoListToMap(List<com.myee.tarot.metric.domain.AppInfo> appList, int appInfoType) {
+        Map<String,com.myee.tarot.metric.domain.AppInfo> entry = new HashMap<String,com.myee.tarot.metric.domain.AppInfo>();
+        for(com.myee.tarot.metric.domain.AppInfo appInfo:appList){
+            if(appInfo.getType() != appInfoType){
+                continue;
+            }
+            entry.put(appInfo.getPackageName(),appInfo);
+        }
+        return entry;
+    }
 }

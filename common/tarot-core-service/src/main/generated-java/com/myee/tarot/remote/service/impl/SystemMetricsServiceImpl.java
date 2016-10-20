@@ -24,12 +24,12 @@ public class SystemMetricsServiceImpl extends GenericEntityServiceImpl<Long, Sys
     }
 
     @Override
-    public SystemMetrics getLatestByBoardNo(String boardNo) {
-        return systemMetricsDao.getLatestByBoardNo(boardNo);
+    public SystemMetrics getLatestByBoardNo(String boardNo, String nodeName) {
+        return systemMetricsDao.getLatestByBoardNo(boardNo,nodeName);
     }
 
     @Override
-    public List<SystemMetrics> listByBoardNoPeriodKeyList(String boardNo, Long period, List<String> metricsKeyList){
-        return systemMetricsDao.listByBoardNoPeriodKeyList(boardNo, period, metricsKeyList);
+    public List<SystemMetrics> listByBoardNoPeriodKeyList(String boardNo, Long period, List<String> metricsKeyList, String nodeName){
+        return systemMetricsDao.listByBoardNoPeriodKeyList(boardNo, period, metricsKeyList,nodeName);
     }
 }

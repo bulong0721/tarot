@@ -24,10 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Chay on 2016/6/3.
@@ -62,8 +59,8 @@ public class DeviceUsedMonitorController {
 
             //从缓存中查询数据，如果缓存无数据，则从数据库查数据，并将结果存入缓存
             //因为redis是key-value存储，没办法实现数据库式的查询操作。
-            SystemMetrics systemMetrics = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo());
-            Map entry = commonMetricsToMap(systemMetrics,deviceUsed);
+            SystemMetrics systemMetrics = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_SUMMARY);
+            Map entry = commonMetricsToMap(systemMetrics,deviceUsed, null);
             entry.put("logTime", systemMetrics.getLogTime());
             //metricInfoList
             List<Map> metricInfoList = null;
@@ -123,11 +120,17 @@ public class DeviceUsedMonitorController {
                 return AjaxResponse.failed(-1,"设备不存在");
             }
 
-            SystemMetrics systemMetrics = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo());
+            //获取最新的一条动态指标
+            SystemMetrics systemMetrics = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(),com.myee.djinn.constants.Constants.PATH_METRICS);
             if(systemMetrics == null){
                 return AjaxResponse.success();
             }
-            Map entry = commonMetricsToMap(systemMetrics,deviceUsed);
+            //获取最新的一条静态指标，为了取出已安装的应用列表
+            SystemMetrics systemMetricsSummary = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_SUMMARY);
+            //把已安装的应用列表缓存到Map中
+            Map<String,AppInfo> appInfoMap = MetricsUtil.appInfoListToMap(systemMetricsSummary.getAppList(), Constants.APPINFO_TYPE_APP);
+
+            Map entry = commonMetricsToMap(systemMetrics,deviceUsed,appInfoMap);
 
             //指标概览summary里面要用的实时指标值
             entry.putAll(systemMetrics4SummaryToMap(systemMetrics));
@@ -147,7 +150,7 @@ public class DeviceUsedMonitorController {
 
             List<Map> metricInfoList = null;
             //根据展示时间段、指标keyList和设备ID去查找数据，一次性取出所有数据
-            List<SystemMetrics> systemMetricsList = systemMetricsService.listByBoardNoPeriodKeyList(deviceUsed.getBoardNo(), period, metricsKeyList);
+            List<SystemMetrics> systemMetricsList = systemMetricsService.listByBoardNoPeriodKeyList(deviceUsed.getBoardNo(), period, metricsKeyList,com.myee.djinn.constants.Constants.PATH_METRICS);
             if(systemMetricsList == null || systemMetricsList.size() == 0){
                 entry.put("metricInfoList",null);
                 return resp;
@@ -216,7 +219,7 @@ public class DeviceUsedMonitorController {
         Map entry = new HashMap();
         List<MetricInfo> metircInfoList = systemMetrics4Summary.getMetricInfoList();
         if(metircInfoList == null || metircInfoList.size() == 0){
-            entry.put("summaryUsed",null);
+            entry.put("summaryUsed","");
             return entry;
         }
         Map tempResult = new HashMap();
@@ -309,19 +312,22 @@ public class DeviceUsedMonitorController {
 
     /**
      * summary和详细指标返回前端的其他部分数据结构一样，只有metricInfoList不一样。所以用该函数把公共部分处理成map。
+     *
+     * appInfoList 在summary中表示已安装的应用列表，在metrics中表示正在运行的服务/进程列表
      * @param systemMetrics
+     * @param installedApp
      * @return
      */
-    private Map<String, Object> commonMetricsToMap(SystemMetrics systemMetrics,DeviceUsed deviceUsed) {
+    private Map<String, Object> commonMetricsToMap(SystemMetrics systemMetrics, DeviceUsed deviceUsed, Map<String, AppInfo> installedApp) {
         Map entry = new HashMap();
         //deviceUsed
         entry.put("deviceUsed",deviceUsedToMap(deviceUsed));
         //appInfoList
-        if(systemMetrics == null ){
+        if(systemMetrics == null || systemMetrics.getAppList() == null){
             entry.put("appInfoList","");
         }
         else {
-            entry.put("appInfoList", appInfoListToMap(systemMetrics.getAppList()));
+            entry.put("appInfoList", appInfoListToMap(systemMetrics.getAppList(),installedApp));
         }
         return entry;
     }
@@ -343,37 +349,75 @@ public class DeviceUsedMonitorController {
     /**
      * 把AppInfoList转化成返回前端的Map格式
      * @param appList
+     * @param installedApp
      * @return
      */
-    private List<Map> appInfoListToMap(List<AppInfo> appList){
-        List<Map> appInfoList = null;
+    private List<Map> appInfoListToMap(List<AppInfo> appList, Map<String, AppInfo> installedApp){
+        List<Map> appInfoList = Collections.EMPTY_LIST;
         if(appList != null && appList.size() > 0 ){
             appInfoList = new ArrayList<Map>();
-            Map services = new HashMap();
+            Map result = new HashMap();
             List<Map> servicesList = new ArrayList<>();
 
-            Map apps = new HashMap();
             List<Map> appsList = new ArrayList<>();
+
+            List<Map> processesList = new ArrayList<>();
             for(AppInfo appInfo : appList){
+                //服务和进程的应用名称为空，只能通过包名去已安装的应用列表中查询对应的应用名称
+                String appName = getAppName4Service(installedApp, appInfo);
+
                 if(appInfo.getType() == Constants.APPINFO_TYPE_SERVICE){
                     Map serviceTemp = new HashMap();
                     serviceTemp.put("versionCode",appInfo.getVersionCode());
                     serviceTemp.put("versionName",appInfo.getVersionName());
+                    serviceTemp.put("packageName",appInfo.getPackageName());
+                    serviceTemp.put("appName",appName);
                     servicesList.add(serviceTemp);
                 }
                 else if(appInfo.getType() == Constants.APPINFO_TYPE_APP){
                     Map appTemp = new HashMap();
                     appTemp.put("versionCode",appInfo.getVersionCode());
                     appTemp.put("versionName",appInfo.getVersionName());
+                    appTemp.put("appName",appName);
+                    appTemp.put("packageName",appInfo.getPackageName());
+                    appTemp.put("installDate",appInfo.getInstallDate());
+                    appTemp.put("lastUpdateDate",appInfo.getLastUpdateTime());
                     appsList.add(appTemp);
                 }
+                if(appInfo.getType() == Constants.APPINFO_TYPE_PROCESS){
+                    Map processTemp = new HashMap();
+                    processTemp.put("versionCode",appInfo.getVersionCode());
+                    processTemp.put("versionName",appInfo.getVersionName());
+                    processTemp.put("packageName",appInfo.getPackageName());
+                    processTemp.put("appName",appName);
+                    processTemp.put("processName",appInfo.getProcessName());
+                    processTemp.put("pid",appInfo.getPid());
+                    processesList.add(processTemp);
+                }
             }
-            services.put("services",servicesList);
-            apps.put("apps",appsList);
-            appInfoList.add(services);
-            appInfoList.add(apps);
+            result.put("services",servicesList);
+            result.put("apps",appsList);
+            result.put("processes", processesList);
+            appInfoList.add(result);
         }
         return appInfoList;
+    }
+
+    /**
+     * 服务和进程的应用名称为空，只能通过包名去已安装的应用列表中查询对应的应用名称
+     * @param installedApp
+     * @param appInfo
+     * @return
+     */
+    private String getAppName4Service(Map<String, AppInfo> installedApp, AppInfo appInfo) {
+        String appName = appInfo.getAppName();
+        if(appName == null || StringUtil.isBlank(appName)){
+            AppInfo appInfo1 = installedApp.get(appInfo.getPackageName());
+            if(appInfo1 != null){
+                appName = appInfo1.getAppName();
+            }
+        }
+        return appName;
     }
 
 }

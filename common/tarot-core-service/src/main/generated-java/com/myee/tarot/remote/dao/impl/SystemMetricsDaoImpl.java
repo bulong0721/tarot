@@ -17,10 +17,13 @@ import java.util.List;
 @Repository
 public class SystemMetricsDaoImpl extends GenericEntityDaoImpl<Long, SystemMetrics> implements SystemMetricsDao {
 
-    public SystemMetrics getLatestByBoardNo(String boardNo){
+    public SystemMetrics getLatestByBoardNo(String boardNo, String nodeName){
         QSystemMetrics qSystemMetrics = QSystemMetrics.systemMetrics;
         JPQLQuery<SystemMetrics> query = new JPAQuery(getEntityManager());
         query.from(qSystemMetrics);
+        if(nodeName != null){
+            query.where(qSystemMetrics.node.eq(nodeName));
+        }
         if (boardNo != null) {
             query.where(qSystemMetrics.boardNo.eq(boardNo))
                 .orderBy(qSystemMetrics.logTime.desc());
@@ -28,12 +31,15 @@ public class SystemMetricsDaoImpl extends GenericEntityDaoImpl<Long, SystemMetri
         return query.fetchFirst();
     }
 
-    public List<SystemMetrics> listByBoardNoPeriodKeyList(String boardNo, Long period, List<String> metricsKeyList){
+    public List<SystemMetrics> listByBoardNoPeriodKeyList(String boardNo, Long period, List<String> metricsKeyList, String nodeName){
         QSystemMetrics qSystemMetrics = QSystemMetrics.systemMetrics;
         JPQLQuery<SystemMetrics> query = new JPAQuery(getEntityManager());
         query.from(qSystemMetrics);
         if (boardNo != null) {
             query.where(qSystemMetrics.boardNo.eq(boardNo));
+        }
+        if(nodeName != null) {
+            query.where(qSystemMetrics.node.eq(nodeName));
         }
         if(period != null){
             Long to = System.currentTimeMillis();
