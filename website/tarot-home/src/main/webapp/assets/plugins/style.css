@@ -10446,3 +10446,15 @@ table tr:hover,table>tbody>tr:nth-of-type(odd):hover {background-color: #f6fefc;
     width:500px;
     height:350px;
 }
+
+/*metrics*/
+.metrics .ibox {border:#e7eaec 1px solid; border-top:none }
+.metrics .ibox-content {padding: 10px; display: inline-block; width: 100%;}
+.metrics .ibox-content .col-sm-3 {padding: 5px;}
+.metrics .mmain {border: 1px solid #ddd;padding: 5px; box-sizing: border-box;height: 180px;}
+.metrics .mtitle {}
+.metrics .mcontent {}
+.metrics .metricInfoList ,.metrics .metricInfoList li {list-style: none;padding: 0;margin: 0;}
+.metrics .metricInfoList li {margin: 5px 0;}
+.metrics .metricInfoList span {margin-right: 5px;}
+.metrics .metricInfoList .l {width: 170px; text-align: right; display: inline-block;}

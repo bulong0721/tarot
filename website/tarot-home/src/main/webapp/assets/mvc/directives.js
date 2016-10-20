@@ -339,6 +339,48 @@ function iboxToolsFullScreen($timeout) {
     };
 }
 
+/*
+ * 远程监控
+ * */
+function metrics($ocLazyLoad,metrics){
+    return {
+        restrict: 'E',
+        template: '<div class="chart"></div>',
+        replace: true,
+        scope: {
+            "options": "="
+        },
+        link: function (scope, element,attrs) {
+            $ocLazyLoad.load('http://echarts.baidu.com/dist/echarts.common.min.js').then(function(){
+                //设置饼图高度
+                element[0].style.height = attrs.height + "px";
+                element[0].style.width = attrs.width + "px";
+
+                // 基于准备好的dom，初始化echarts图表
+                var myChart = echarts.init(element[0]),options;
+                //
+                switch(scope.options.drawType) {
+                    case '0':
+                        options = metrics.str(scope.options);
+                        break;
+                    case '1':
+                        options = metrics.pie(scope.options);
+                        break;
+                    case '2':
+                        options = metrics.bar(scope.options);
+                        break;
+                    case '3':
+                        options = metrics.area(scope.options);
+                        break;
+                }
+                if(options){
+                    myChart.setOption(options);
+                }
+            });
+        }
+    };
+}
+
 /**
  *
  * Pass all functions into module
@@ -355,4 +397,5 @@ angular
     .directive("alerts", alerts)
     .directive("cDatepicker", cDatepicker)
     .directive("cVideo", cVideo)
+    .directive('metrics', metrics)
     .directive('iboxToolsFullScreen', iboxToolsFullScreen);
