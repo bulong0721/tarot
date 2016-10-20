@@ -687,6 +687,140 @@ function cResource(){
     }
 }
 
+/*metrics*/
+function metrics(){
+    return {
+        pie:function(opt){
+            var datas = [],val = opt.values;
+            for(var i= 0,l=val.length;i<l;i++){
+                datas.push({value:val[i].value, name:val[i].value.time})
+            }
+            return {
+                title : {
+                    text: opt.name,
+                    textStyle:{color:'#676a6c', fontWeight:'normal', fontSize:'13'}
+                },
+                tooltip : {trigger: 'item', formatter: "{d}"+opt.unit},
+                toolbox: {
+                    show: true,
+                    feature: {
+                        dataView: {show: true, readOnly: false},
+                        restore: {show: true},
+                        saveAsImage: {show: true}
+                    }
+                },
+                series: [
+                    {
+                        name: opt.name,
+                        type: 'pie',
+                        radius: [0, '75%'],
+                        label: {normal: {show: false,position: 'center'}},
+                        lableLine: {normal: {show: false}, emphasis: {show: true}},
+                        data:datas
+                    }
+                ]
+            }
+        },
+        bar:function(opt){
+            var datas = [],val = opt.values;
+            for(var i= 0,l=val.length;i<l;i++){
+                datas.push({value:val[i].value, name:val[i].value.time})
+            }
+            return {
+                title : {
+                    text: opt.name,
+                    textStyle:{color:'#676a6c', fontWeight:'normal', fontSize:'13'}
+                },
+                color: ['#3398DB'],
+                tooltip: {trigger: 'axis'},
+                grid: {left: '0%', right: '10%', bottom: '0%', containLabel: true},
+                xAxis : [{type : 'category', data : [''], axisTick: {alignWithLabel: true, show:false, lineStyle:{color:'#ccc'}}}],
+                yAxis : [{type : 'value',max:parseFloat(opt.maxValue),name: opt.unit, axisTick:{show:false, lineStyle:{color:'#333'}}}],
+                series : [
+                    {
+                        name:opt.name, type:'bar', barWidth: '60%', data:datas,
+                        markLine: {
+                            silent: true,
+                            data: [
+                                {yAxis: parseFloat(opt.warning), symbolSize:0, lineStyle:{normal:{color:'#ff8e00'}}},
+                                {yAxis: parseFloat(opt.alert), lineStyle:{normal:{color:'#ff0000'}}}
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        area:function(opt){
+            var datas = [],val = opt.values;
+            for(var i= 0,l=val.length;i<l;i++){
+                datas.push({value:val[i].value, name:val[i].value.time})
+            }
+
+            return {
+                title : {
+                    text: opt.name,
+                    textStyle:{color:'#676a6c', fontWeight:'normal', fontSize:'13'}
+                },
+                color: ['#3398DB'],
+                tooltip : {trigger: 'axis'},
+                grid: {left: '0%', right: '10%', bottom: '0%', containLabel: true},
+                xAxis : [{type : 'category', data : [''], axisTick: {alignWithLabel: true, show:false, lineStyle:{color:'#ccc'}}}],
+                yAxis : [{type : 'value',max:parseFloat(opt.maxValue),name: opt.unit, axisTick:{show:false, lineStyle:{color:'#333'}}}],
+                series : [
+                    {
+                        name:opt.name,
+                        type:'line',
+                        data:datas,
+                        markLine: {
+                            silent: true,
+                            data: [
+                                {yAxis: parseFloat(opt.warning), symbolSize:0, lineStyle:{normal:{color:'#ff8e00'}}},
+                                {yAxis: parseFloat(opt.alert), lineStyle:{normal:{color:'#ff0000'}}}
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        str:function(opt){
+            var color = '#3398DB',val = opt.values.length>0?opt.values[0].value:0,size = 50;
+            //判断字体颜色
+            if(parseFloat(opt.warning) && val >= parseFloat(opt.warning)){
+                color = '#ff8e00';
+            }else if(parseFloat(opt.alert) && val >= parseFloat(opt.alert)){
+                color = '#ff0000';
+            }
+            //判断字体大小
+            if(opt.name.length>5){
+                size = 30;
+            }else if(opt.name.length>10){
+                size = 20;
+            }else if(opt.name.length>20){
+                size = 14;
+            }
+            return {
+                title : {
+                    text: opt.name,
+                    textStyle:{color:'#676a6c', fontWeight:'normal', fontSize:'13'}
+                },
+                tooltip : {trigger: 'axis'},
+                color: ['#fff'],
+                series: [
+                    {
+                        name:opt.name,
+                        type:'pie',
+                        radius: ['70%', '70%'],
+                        hoverAnimation:false,
+                        label: {normal: {position: 'center', textStyle:{color:color, fontSize:size}}},
+                        labelLine: {normal: {show: false}},
+                        data:[{value:val, name:val+opt.unit}]
+                    }
+                ]
+            }
+        }
+    }
+}
+
 angular
     .module('myee')
     .service('Constants', constServiceCtor)
@@ -695,3 +829,4 @@ angular
     .factory('uploads', uploads)
     .factory('cAlerts', cAlerts)
     .factory('cResource', cResource)
+    .factory('metrics', metrics)
