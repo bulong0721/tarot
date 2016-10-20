@@ -20,15 +20,23 @@ public class MetricInfo extends GenericEntity<Long, MetricInfo> {
     @Column(name = "METRIC_INFO_ID", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @ManyToOne(targetEntity = SystemMetrics.class, optional = false)
-    @JoinColumn(name = "M_SYSTEM_METRICS_ID")
-    private SystemMetrics systemMetrics;
-    @ManyToOne(targetEntity = DeviceUsed.class, optional = false)
-    @JoinColumn(name = "BOARD_NO")
-    private DeviceUsed deviceUsed;
-    @ManyToOne(targetEntity = MetricDetail.class, optional = false)
-    @JoinColumn(name = "KEY_NAME")
-    private MetricDetail metricDetail; //"ramTotal" ,"romTotal"
+//    @ManyToOne(targetEntity = SystemMetrics.class, optional = false)
+//    @JoinColumn(name = "M_SYSTEM_METRICS_ID")
+//    private SystemMetrics systemMetrics;
+    @Column(name = "M_SYSTEM_METRICS_ID", length=100)
+    private Long systemMetricsId;
+//    @ManyToOne(targetEntity = DeviceUsed.class, optional = false)
+//    @JoinColumn(name = "BOARD_NO")
+//    private DeviceUsed deviceUsed;
+    @Column(name = "BOARD_NO",length=100)
+    private String boardNo;
+
+//    @ManyToOne(targetEntity = MetricDetail.class, optional = false)
+//    @JoinColumn(name = "KEY_NAME")
+//    private MetricDetail metricDetail; //"ramTotal" ,"romTotal"
+
+    @Column(name = "KEY_NAME",length=100)
+    private String keyName;
     @Column(name = "NODE",length=100)
     private String node; //节点类型，用于表明当前类在节点关系中的层级，\monitor\summary\metricsinfo\,\monitor\metric\metricsinfo\
     @Column(name = "VALUE", length=100)
@@ -54,28 +62,28 @@ public class MetricInfo extends GenericEntity<Long, MetricInfo> {
         this.id = id;
     }
 
-    public SystemMetrics getSystemMetrics() {
-        return systemMetrics;
+    public Long getSystemMetricsId() {
+        return systemMetricsId;
     }
 
-    public void setSystemMetrics(SystemMetrics systemMetrics) {
-        this.systemMetrics = systemMetrics;
+    public void setSystemMetricsId(Long systemMetricsId) {
+        this.systemMetricsId = systemMetricsId;
     }
 
-    public DeviceUsed getDeviceUsed() {
-        return deviceUsed;
+    public String getBoardNo() {
+        return boardNo;
     }
 
-    public void setDeviceUsed(DeviceUsed deviceUsed) {
-        this.deviceUsed = deviceUsed;
+    public void setBoardNo(String boardNo) {
+        this.boardNo = boardNo;
     }
 
-    public MetricDetail getMetricDetail() {
-        return metricDetail;
+    public String getKeyName() {
+        return keyName;
     }
 
-    public void setMetricDetail(MetricDetail metricDetail) {
-        this.metricDetail = metricDetail;
+    public void setKeyName(String keyName) {
+        this.keyName = keyName;
     }
 
     public String getNode() {

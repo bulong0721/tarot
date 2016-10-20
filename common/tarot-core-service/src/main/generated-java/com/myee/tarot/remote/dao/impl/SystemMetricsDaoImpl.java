@@ -17,23 +17,23 @@ import java.util.List;
 @Repository
 public class SystemMetricsDaoImpl extends GenericEntityDaoImpl<Long, SystemMetrics> implements SystemMetricsDao {
 
-    public SystemMetrics getLatestByDUId(Long deviceUsedId){
+    public SystemMetrics getLatestByBoardNo(String boardNo){
         QSystemMetrics qSystemMetrics = QSystemMetrics.systemMetrics;
         JPQLQuery<SystemMetrics> query = new JPAQuery(getEntityManager());
         query.from(qSystemMetrics);
-        if (deviceUsedId != null) {
-            query.where(qSystemMetrics.deviceUsed.id.eq(deviceUsedId))
+        if (boardNo != null) {
+            query.where(qSystemMetrics.boardNo.eq(boardNo))
                 .orderBy(qSystemMetrics.logTime.desc());
         }
         return query.fetchFirst();
     }
 
-    public List<SystemMetrics> listByDUIdPeriodKeyList(Long deviceUsedId, Long period, List<String> metricsKeyList){
+    public List<SystemMetrics> listByBoardNoPeriodKeyList(String boardNo, Long period, List<String> metricsKeyList){
         QSystemMetrics qSystemMetrics = QSystemMetrics.systemMetrics;
         JPQLQuery<SystemMetrics> query = new JPAQuery(getEntityManager());
         query.from(qSystemMetrics);
-        if (deviceUsedId != null) {
-            query.where(qSystemMetrics.deviceUsed.id.eq(deviceUsedId));
+        if (boardNo != null) {
+            query.where(qSystemMetrics.boardNo.eq(boardNo));
         }
         if(period != null){
             Long to = System.currentTimeMillis();

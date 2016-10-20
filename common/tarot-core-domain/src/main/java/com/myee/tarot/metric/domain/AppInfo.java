@@ -20,12 +20,16 @@ public class AppInfo extends GenericEntity<Long, AppInfo> {
     @Column(name = "APPINFO_ID", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @ManyToOne(targetEntity = SystemMetrics.class, optional = false)
-    @JoinColumn(name = "M_SYSTEM_METRICS_ID")
-    private SystemMetrics systemMetrics;
-    @ManyToOne(targetEntity = DeviceUsed.class, optional = false)
-    @JoinColumn(name = "BOARD_NO")
-    private DeviceUsed deviceUsed;
+//    @ManyToOne(targetEntity = SystemMetrics.class, optional = false)
+//    @JoinColumn(name = "M_SYSTEM_METRICS_ID")
+//    private SystemMetrics systemMetrics;
+    @Column(name = "M_SYSTEM_METRICS_ID", length=100)
+    private Long systemMetricsId;
+//    @ManyToOne(targetEntity = DeviceUsed.class, optional = false)
+//    @JoinColumn(name = "BOARD_NO")
+//    private DeviceUsed deviceUsed;
+    @Column(name = "BOARD_NO",length=100)
+    private String boardNo;
     @Column(name = "VERSION_CODE", length=100)
     private Long versionCode;
     @Column(name = "VERSION_NAME", length=100)
@@ -63,14 +67,6 @@ public class AppInfo extends GenericEntity<Long, AppInfo> {
     @Override
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public DeviceUsed getDeviceUsed() {
-        return deviceUsed;
-    }
-
-    public void setDeviceUsed(DeviceUsed deviceUsed) {
-        this.deviceUsed = deviceUsed;
     }
 
     public Long getVersionCode() {
@@ -137,12 +133,20 @@ public class AppInfo extends GenericEntity<Long, AppInfo> {
         this.logTime = logTime;
     }
 
-    public SystemMetrics getSystemMetrics() {
-        return systemMetrics;
+    public Long getSystemMetricsId() {
+        return systemMetricsId;
     }
 
-    public void setSystemMetrics(SystemMetrics systemMetrics) {
-        this.systemMetrics = systemMetrics;
+    public void setSystemMetricsId(Long systemMetricsId) {
+        this.systemMetricsId = systemMetricsId;
+    }
+
+    public String getBoardNo() {
+        return boardNo;
+    }
+
+    public void setBoardNo(String boardNo) {
+        this.boardNo = boardNo;
     }
 
     public String getAppName() {
