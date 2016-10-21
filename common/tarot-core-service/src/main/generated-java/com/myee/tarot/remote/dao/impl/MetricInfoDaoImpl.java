@@ -30,7 +30,7 @@ public class MetricInfoDaoImpl extends GenericEntityDaoImpl<Long, MetricInfo> im
         return query.fetch();
     }
 
-    public List<MetricInfo> listByBoardNoPeriod(String boardNo, Long now, Long period, String nodeName) {
+    public List<MetricInfo> listByBoardNoPeriod(String boardNo, Long now, Long period, String nodeName, List<String> metricsKeyList) {
         QMetricInfo qMetricInfo = QMetricInfo.metricInfo;
         JPAQuery<MetricInfo> query = new JPAQuery<>(getEntityManager());
         query.from(qMetricInfo);
@@ -43,6 +43,9 @@ public class MetricInfoDaoImpl extends GenericEntityDaoImpl<Long, MetricInfo> im
         if(period != null){
             Long from = now - period;
             query.where(qMetricInfo.logTime.between(new Date(from),new Date(now)));
+        }
+        if(metricsKeyList != null){
+            query.where(qMetricInfo.keyName.in(metricsKeyList));
         }
         query.orderBy(qMetricInfo.logTime.desc());
         return query.fetch();

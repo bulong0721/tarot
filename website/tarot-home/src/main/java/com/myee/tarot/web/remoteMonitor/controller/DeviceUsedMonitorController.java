@@ -139,7 +139,6 @@ public class DeviceUsedMonitorController {
                 return AjaxResponse.failed(-1, "无可用指标数据");
             }
             systemMetrics.setAppList(appInfoService.listBySystemMetricsId(systemMetrics.getId()));
-            systemMetrics.setMetricInfoList(metricInfoService.listBySystemMetricsId(systemMetrics.getId(), Constants.METRICS_KEY_LIST));
 
             //获取最新的一条静态指标，为了取出已安装的应用列表
             SystemMetrics systemMetricsSummary = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_SUMMARY);
@@ -150,6 +149,7 @@ public class DeviceUsedMonitorController {
             //把已安装的应用列表缓存到Map中
             Map<String, AppInfo> installedAppMap = MetricsUtil.appInfoListToMap(installedAppInfoList, Constants.APPINFO_TYPE_APP);
 
+            //先把deviceUsed，正在运行的服务、进程写入map
             Map entry = commonMetricsToMap(systemMetrics, deviceUsed, installedAppMap);
 
             //指标概览summary里面要用的实时指标值
@@ -159,7 +159,9 @@ public class DeviceUsedMonitorController {
             //没有要展示的指标详细列表，则直接返回全部动态指标
             List<String> metricsKeyList = null;
             if (metricsKeyString == null || StringUtil.isBlank(metricsKeyString)) {
-                metricsKeyList = Constants.METRICS_KEY_LIST;
+                metricsKeyList = new ArrayList<>();
+                metricsKeyList.addAll(Constants.METRICS_NEED_TIME_KEY_LIST);
+                metricsKeyList.addAll(Constants.METRICS_NO_TIME_KEY_LIST);
             } else {
                 metricsKeyList = JSON.parseArray(metricsKeyString, String.class);
             }
@@ -168,44 +170,63 @@ public class DeviceUsedMonitorController {
             period = decidePeriod(period);
 
             List<Map> metricInfoList = null;
-            //根据展示时间段、指标keyList和设备ID去查找数据，一次性取出所有数据
+            //根据展示时间段、指标keyList和设备ID去查找数据，一次性取出所有需要展示值随时间变化的数据
             Long now = System.currentTimeMillis();
-//            List<SystemMetrics> systemMetricsListDB = systemMetricsService.listByBoardNoPeriod(deviceUsed.getBoardNo(), now, period, com.myee.djinn.constants.Constants.PATH_METRICS);
-            List<MetricInfo> metricInfoListDB = metricInfoService.listByBoardNoPeriod(deviceUsed.getBoardNo(), now, period, com.myee.djinn.constants.Constants.PATH_METRICS_METRICSINFO);
-            //把metricInfoListDB转成以systemMetricsId为主键的Map
-//            Map<Long,List<MetricInfo>> metricInfoMapDB = MetricsUtil.metricDetailListToSystemMetricsIdMap(metricInfoListDB);
-
-//            if (systemMetricsListDB == null || systemMetricsListDB.size() == 0) {
+            List<MetricInfo> metricInfoListDB = metricInfoService.listByBoardNoPeriod(deviceUsed.getBoardNo(), now, period, com.myee.djinn.constants.Constants.PATH_METRICS_METRICSINFO, Constants.METRICS_NEED_TIME_KEY_LIST);
+            List<MetricInfo> metricInfoNoTimeListDB = metricInfoService.listBySystemMetricsId(systemMetrics.getId(),Constants.METRICS_NO_TIME_KEY_LIST);
+            if(metricInfoNoTimeListDB != null && metricInfoNoTimeListDB.size() > 0){
+                metricInfoListDB.addAll(metricInfoNoTimeListDB);
+            }
             if (metricInfoListDB == null || metricInfoListDB.size() == 0) {
                 entry.put("metricInfoList", "");
                 return resp;
             }
+
             metricInfoList = new ArrayList<Map>();
             //一次查询出所有指标详细作为缓存
             List<MetricDetail> metricDetailList = metricDetailService.list();
             Map<String, MetricDetail> metricDetailMap = MetricsUtil.metricDetailListToKeyNameMap(metricDetailList);
             //使用遍历去按照指标key拆分查询出来的数据
-//            Map valuesByMetricsKey = sortMetricsByKey(systemMetricsListDB, metricsKeyList, metricDetailMap);
             Map valuesByMetricsKey = sortMetricsByKey(metricInfoListDB, metricsKeyList, metricDetailMap);
             //根据要展示的指标列表去选择性展示指标
+
             for (String keyForDisplay : metricsKeyList) {
                 MetricDetail metricDetail = metricDetailMap.get(keyForDisplay);
-                if (metricDetail == null || !Constants.METRICS_KEY_LIST.contains(keyForDisplay)) {
+                if (metricDetail == null
+                        || !(Constants.METRICS_NEED_TIME_KEY_LIST.contains(keyForDisplay) || Constants.METRICS_NO_TIME_KEY_LIST.contains(keyForDisplay))) {
                     continue;
                 }
                 Map metricEntry = new HashMap();
-                metricEntry.put("key", keyForDisplay);
-                metricEntry.put("name", valueToString(metricDetail.getName()));
-                metricEntry.put("drawType", valueToString(metricDetail.getDrawType()));
-                metricEntry.put("maxValue", valueToString(metricDetail.getMaxValue()));
-                metricEntry.put("minValue", valueToString(metricDetail.getMinValue()));
-                metricEntry.put("warning", valueToString(metricDetail.getWarning()));
-                metricEntry.put("alert", valueToString(metricDetail.getAlert()));
-                metricEntry.put("unit", valueToString(metricDetail.getUnit()));
-                metricEntry.put("description", valueToString(metricDetail.getDescription()));
-                metricEntry.put("values", valuesByMetricsKey.get(keyForDisplay));
+                //展示随时间变化的指标
+//                if(Constants.METRICS_NEED_TIME_KEY_LIST.contains(keyForDisplay)) {
+                    metricEntry.put("key", keyForDisplay);
+                    metricEntry.put("name", valueToString(metricDetail.getName()));
+                    metricEntry.put("drawType", valueToString(metricDetail.getDrawType()));
+                    metricEntry.put("maxValue", valueToString(metricDetail.getMaxValue()));
+                    metricEntry.put("minValue", valueToString(metricDetail.getMinValue()));
+                    metricEntry.put("warning", valueToString(metricDetail.getWarning()));
+                    metricEntry.put("alert", valueToString(metricDetail.getAlert()));
+                    metricEntry.put("unit", valueToString(metricDetail.getUnit()));
+                    metricEntry.put("description", valueToString(metricDetail.getDescription()));
+                    metricEntry.put("values", valuesByMetricsKey.get(keyForDisplay));
 
+//                }
+//                //展示只需要显示最新值的指标
+//                else if(Constants.METRICS_NO_TIME_KEY_LIST.contains(keyForDisplay)){
+//                    metricEntry.put("key", keyForDisplay);
+//                    metricEntry.put("name", valueToString(metricDetail.getName()));
+//                    metricEntry.put("drawType", valueToString(metricDetail.getDrawType()));
+//                    metricEntry.put("maxValue", valueToString(metricDetail.getMaxValue()));
+//                    metricEntry.put("minValue", valueToString(metricDetail.getMinValue()));
+//                    metricEntry.put("warning", valueToString(metricDetail.getWarning()));
+//                    metricEntry.put("alert", valueToString(metricDetail.getAlert()));
+//                    metricEntry.put("unit", valueToString(metricDetail.getUnit()));
+//                    metricEntry.put("description", valueToString(metricDetail.getDescription()));
+//                    metricEntry.put("values", valuesByMetricsKey.get(keyForDisplay));
+//                }
                 metricInfoList.add(metricEntry);
+
+
             }
 
             entry.put("metricInfoList", metricInfoList);

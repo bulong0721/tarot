@@ -11,5 +11,5 @@ import java.util.List;
 public interface MetricInfoDao extends GenericEntityDao<Long, MetricInfo> {
     List<MetricInfo> listBySystemMetricsId(Long systemMetricsId, List<String> metricsKeyListToSearch);
 
-    List<MetricInfo> listByBoardNoPeriod(String boardNo, Long now, Long period, String nodeName);
+    List<MetricInfo> listByBoardNoPeriod(String boardNo, Long now, Long period, String nodeName, List<String> metricsKeyList);
 }

@@ -237,18 +237,21 @@ public class Constants {
 			com.myee.djinn.constants.Constants.SUMMARY_productGlobalIP
 	);
 
-	public static final List<String> METRICS_KEY_LIST = Arrays.asList(
-			com.myee.djinn.constants.Constants.METRIC_bluetoothState,
-			com.myee.djinn.constants.Constants.METRIC_charging,
+	public static final List<String> METRICS_NEED_TIME_KEY_LIST = Arrays.asList(
 			com.myee.djinn.constants.Constants.METRIC_cpuUsed,
-			com.myee.djinn.constants.Constants.METRIC_productLocalIP,
 			com.myee.djinn.constants.Constants.METRIC_productPower,
 			com.myee.djinn.constants.Constants.METRIC_romUsed,
 			com.myee.djinn.constants.Constants.METRIC_ramUsed,
-			com.myee.djinn.constants.Constants.METRIC_SSID,
 			com.myee.djinn.constants.Constants.METRIC_volume,
-			com.myee.djinn.constants.Constants.METRIC_wifiStatus,
 			com.myee.djinn.constants.Constants.METRIC_wifiRssi
+	);
+
+	public static final List<String> METRICS_NO_TIME_KEY_LIST = Arrays.asList(
+			com.myee.djinn.constants.Constants.METRIC_bluetoothState,
+			com.myee.djinn.constants.Constants.METRIC_charging,
+			com.myee.djinn.constants.Constants.METRIC_productLocalIP,
+			com.myee.djinn.constants.Constants.METRIC_SSID,
+			com.myee.djinn.constants.Constants.METRIC_wifiStatus
 	);
 
 	public static final List<String> SUMMARY_KEY_LIST = Arrays.asList(

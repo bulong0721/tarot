@@ -27,7 +27,7 @@ public class MetricInfoServiceImpl extends GenericEntityServiceImpl<Long, Metric
         return metricInfoDao.listBySystemMetricsId(systemMetricsId, metricsKeyListToSearch);
     }
 
-    public List<MetricInfo> listByBoardNoPeriod(String boardNo, Long now, Long period, String nodeName) {
-        return metricInfoDao.listByBoardNoPeriod( boardNo,  now,  period,  nodeName);
+    public List<MetricInfo> listByBoardNoPeriod(String boardNo, Long now, Long period, String nodeName, List<String> metricsKeyList) {
+        return metricInfoDao.listByBoardNoPeriod( boardNo,  now,  period,  nodeName,metricsKeyList);
     }
 }

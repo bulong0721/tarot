@@ -201,17 +201,4 @@ public class MetricsUtil {
         }
         return entry;
     }
-
-//    /**
-//     * 把metricDetail查询出来的list转为map，以便快速使用。键名是SystemMetricsId
-//     * @param metricInfoListDB
-//     * @return
-//     */
-//    public static Map<Long, List<MetricInfo>> metricDetailListToSystemMetricsIdMap(List<MetricInfo> metricInfoListDB) {
-//        Map<Long,List<MetricInfo>> entry = new HashMap<Long,List<MetricInfo>>();
-//        for(MetricInfo metricInfo:metricInfoListDB){
-//            entry.put(metricInfo.getSystemMetricsId(),metricInfo);
-//        }
-//        return entry;
-//    }
 }
