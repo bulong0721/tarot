@@ -28,8 +28,13 @@ public class MetricDetail extends GenericEntity<Long, MetricDetail> {
     private String relateKeyName;
     @Column(name = "NAME", length=100)
     private String name; //指标显示名称
+    /**
+     * 画图类型，0:数值，1:饼图，2:直方图,3:折线图.
+     * 可画多种图的，以逗号分隔，第一个作为默认
+     * 比如： 3,2,0,1
+     */
     @Column(name = "DRAW_TYPE",columnDefinition = "TINYINT")
-    private int drawType;//画图类型，0:数值，1:饼图，2:直方图,3:折线图
+    private int drawType;
     @Column(name = "FREQ_TIME", length=100)
     private String freqTime;//采集间隔时间
     @Column(name = "MAX_VALUE", precision = 20,scale = 2)

@@ -11,5 +11,7 @@ import java.util.List;
 public interface SystemMetricsService extends GenericEntityService<Long, SystemMetrics> {
     SystemMetrics getLatestByBoardNo(String boardNo, String nodeName);
 
-    List<SystemMetrics> listByBoardNoPeriodKeyList(String boardNo, Long period, List<String> metricsKeyList, String nodeName);
+    List<SystemMetrics> listByBoardNoPeriod(String boardNo, Long now, Long period, String nodeName);
+
+    SystemMetrics getByBoardNoLogTimeNod(String boardNo, long logTime, String node);
 }

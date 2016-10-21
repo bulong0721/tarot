@@ -25,13 +25,29 @@ public class SystemMetricsDaoImpl extends GenericEntityDaoImpl<Long, SystemMetri
             query.where(qSystemMetrics.node.eq(nodeName));
         }
         if (boardNo != null) {
-            query.where(qSystemMetrics.boardNo.eq(boardNo))
-                .orderBy(qSystemMetrics.logTime.desc());
+            query.where(qSystemMetrics.boardNo.eq(boardNo));
         }
+        query.orderBy(qSystemMetrics.logTime.desc());
         return query.fetchFirst();
     }
 
-    public List<SystemMetrics> listByBoardNoPeriodKeyList(String boardNo, Long period, List<String> metricsKeyList, String nodeName){
+    public SystemMetrics getByBoardNoLogTimeNod(String boardNo, long logTime, String nodeName){
+        QSystemMetrics qSystemMetrics = QSystemMetrics.systemMetrics;
+        JPQLQuery<SystemMetrics> query = new JPAQuery(getEntityManager());
+        query.from(qSystemMetrics);
+        query.where(qSystemMetrics.logTime.eq(new Date(logTime)));
+
+        if(nodeName != null){
+            query.where(qSystemMetrics.node.eq(nodeName));
+        }
+        if (boardNo != null) {
+            query.where(qSystemMetrics.boardNo.eq(boardNo));
+        }
+        query.orderBy(qSystemMetrics.logTime.desc());
+        return query.fetchFirst();
+    }
+
+    public List<SystemMetrics> listByBoardNoPeriod(String boardNo, Long now, Long period, String nodeName){
         QSystemMetrics qSystemMetrics = QSystemMetrics.systemMetrics;
         JPQLQuery<SystemMetrics> query = new JPAQuery(getEntityManager());
         query.from(qSystemMetrics);
@@ -42,13 +58,9 @@ public class SystemMetricsDaoImpl extends GenericEntityDaoImpl<Long, SystemMetri
             query.where(qSystemMetrics.node.eq(nodeName));
         }
         if(period != null){
-            Long to = System.currentTimeMillis();
-            Long from = to - period;
-            query.where(qSystemMetrics.logTime.between(new Date(from),new Date(to)));
+            Long from = now - period;
+            query.where(qSystemMetrics.logTime.between(new Date(from),new Date(now)));
         }
-//        if(metricsKeyList != null && metricsKeyList.size() > 0){
-//            query.where(qSystemMetrics.metricInfoList.);
-//        }
         query.orderBy(qSystemMetrics.logTime.desc());
         return query.fetch();
     }

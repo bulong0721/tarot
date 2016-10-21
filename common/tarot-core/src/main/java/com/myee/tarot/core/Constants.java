@@ -223,7 +223,7 @@ public class Constants {
 
 	public static final long PERIOD_1_HOUR = 3600000L;  //1小时毫秒数
 
-	public static final List<String> SUMMARY_KEY_LIST = Arrays.asList(
+	public static final List<String> METRICS_4_SUMMARY_KEY_LIST = Arrays.asList(//给总览指标用的动态指标，比如cpuUsed/cpuTotal
 			com.myee.djinn.constants.Constants.METRIC_cpuUsed,
 			com.myee.djinn.constants.Constants.METRIC_productPower,
 			com.myee.djinn.constants.Constants.METRIC_bluetoothState,
@@ -235,5 +235,39 @@ public class Constants {
 			com.myee.djinn.constants.Constants.METRIC_SSID,
 			com.myee.djinn.constants.Constants.METRIC_productLocalIP,
 			com.myee.djinn.constants.Constants.SUMMARY_productGlobalIP
+	);
+
+	public static final List<String> METRICS_KEY_LIST = Arrays.asList(
+			com.myee.djinn.constants.Constants.METRIC_bluetoothState,
+			com.myee.djinn.constants.Constants.METRIC_charging,
+			com.myee.djinn.constants.Constants.METRIC_cpuUsed,
+			com.myee.djinn.constants.Constants.METRIC_productLocalIP,
+			com.myee.djinn.constants.Constants.METRIC_productPower,
+			com.myee.djinn.constants.Constants.METRIC_romUsed,
+			com.myee.djinn.constants.Constants.METRIC_ramUsed,
+			com.myee.djinn.constants.Constants.METRIC_SSID,
+			com.myee.djinn.constants.Constants.METRIC_volume,
+			com.myee.djinn.constants.Constants.METRIC_wifiStatus,
+			com.myee.djinn.constants.Constants.METRIC_wifiRssi
+	);
+
+	public static final List<String> SUMMARY_KEY_LIST = Arrays.asList(
+			com.myee.djinn.constants.Constants.SUMMARY_brand,
+			com.myee.djinn.constants.Constants.SUMMARY_computerType,
+			com.myee.djinn.constants.Constants.SUMMARY_cpuName,
+			com.myee.djinn.constants.Constants.SUMMARY_deviceMode,
+			com.myee.djinn.constants.Constants.SUMMARY_language,
+			com.myee.djinn.constants.Constants.SUMMARY_macAddress,
+			com.myee.djinn.constants.Constants.SUMMARY_manufacturer,
+			com.myee.djinn.constants.Constants.SUMMARY_maxFrequency,
+			com.myee.djinn.constants.Constants.SUMMARY_minFrequency,
+			com.myee.djinn.constants.Constants.SUMMARY_osKernelVersion,
+			com.myee.djinn.constants.Constants.SUMMARY_osUUID,
+			com.myee.djinn.constants.Constants.SUMMARY_osVersion,
+			com.myee.djinn.constants.Constants.SUMMARY_ramTotal,
+			com.myee.djinn.constants.Constants.SUMMARY_resolution,
+			com.myee.djinn.constants.Constants.SUMMARY_romTotal,
+			com.myee.djinn.constants.Constants.SUMMARY_productGlobalIP,
+			com.myee.djinn.constants.Constants.SUMMARY_serial
 	);
 }

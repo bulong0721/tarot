@@ -30,9 +30,11 @@ public class SystemMetrics extends GenericEntity<Long, SystemMetrics> {
     @Column(name = "LOG_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date logTime;
-    @OneToMany(mappedBy = "systemMetricsId",targetEntity = AppInfo.class, fetch = FetchType.EAGER)
+//    @OneToMany(mappedBy = "systemMetricsId",targetEntity = AppInfo.class, fetch = FetchType.LAZY)
+    @Transient
     private List<AppInfo> appList  = new ArrayList<AppInfo>();
-    @OneToMany(mappedBy = "systemMetricsId",targetEntity = MetricInfo.class, fetch = FetchType.EAGER)
+//    @OneToMany(mappedBy = "systemMetricsId",targetEntity = MetricInfo.class, fetch = FetchType.LAZY)
+    @Transient
     private List<MetricInfo> metricInfoList = new ArrayList<MetricInfo>();
     @Column(name = "NODE",length=100)
     private String node; //节点类型，用于表明当前类在节点关系中的层级，\monitor\metric\,\monitor\summary\

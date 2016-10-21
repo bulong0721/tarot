@@ -12,7 +12,7 @@ import java.util.Date;
  */
 
 @Entity
-@Table(name = "M_APP_INFO")
+@Table(name = "M_APP_INFO",indexes = @Index(name="NODE_NAME",columnList = "NODE",unique = false) )
 @DynamicUpdate //hibernate部分更新
 public class AppInfo extends GenericEntity<Long, AppInfo> {
 

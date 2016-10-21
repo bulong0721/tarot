@@ -50,6 +50,11 @@ public class MetricsUtil {
                 if (deviceUsed == null) {
                     continue;
                 }
+                //如果库中已有该条数据，则跳过，不重复插入
+                SystemMetrics systemMetricsOLD = systemMetricsService.getByBoardNoLogTimeNod(systemMetrics.getBoardNo(),systemMetrics.getLogTime(),systemMetrics.getNode());
+                if(systemMetricsOLD != null){
+                    continue;
+                }
                 SystemMetrics systemMetricsDB = new SystemMetrics();
 //                systemMetricsDB.setDeviceUsed(deviceUsed);
                 systemMetricsDB.setBoardNo(systemMetrics.getBoardNo());
@@ -95,7 +100,7 @@ public class MetricsUtil {
         List<MetricInfo> result = new ArrayList<MetricInfo>();
         //一次查询出所有指标详细作为缓存
         List<MetricDetail> metricDetailList = metricDetailService.list();
-        Map<String,MetricDetail> metricDetailMap = metricDetailListToMap(metricDetailList);
+        Map<String,MetricDetail> metricDetailMap = metricDetailListToKeyNameMap(metricDetailList);
         String boardNo = deviceUsed.getBoardNo();
         Long systemMetricsId = systemMetricsDB.getId();
         for (com.myee.djinn.dto.metrics.MetricInfo metricInfo : metricInfoList) {
@@ -118,18 +123,6 @@ public class MetricsUtil {
         return result;
     }
 
-    /**
-     * 把metricDetail查询出来的list转为map，以便快速使用
-     * @param metricDetailList
-     * @return
-     */
-    public static Map<String,MetricDetail> metricDetailListToMap(List<MetricDetail> metricDetailList) {
-        Map<String,MetricDetail> entry = new HashMap<String,MetricDetail>();
-        for(MetricDetail metricDetail:metricDetailList){
-            entry.put(metricDetail.getKeyName(),metricDetail);
-        }
-        return entry;
-    }
 
     /**
      * 把agent传来的AppInfo转化成我们web端使用的类
@@ -174,6 +167,21 @@ public class MetricsUtil {
         return result;
     }
 
+
+    /**
+     * 把metricDetail查询出来的list转为map，以便快速使用。键名是指标KeyName
+     * @param metricDetailList
+     * @return
+     */
+    public static Map<String,MetricDetail> metricDetailListToKeyNameMap(List<MetricDetail> metricDetailList) {
+        Map<String,MetricDetail> entry = new HashMap<String,MetricDetail>();
+        for(MetricDetail metricDetail:metricDetailList){
+            entry.put(metricDetail.getKeyName(),metricDetail);
+        }
+        return entry;
+    }
+
+
     /**
      * 把appInfo查询出来的list转为map<包名,AppInfo>，以便快速使用
      * @param appList
@@ -181,6 +189,9 @@ public class MetricsUtil {
      * @return
      */
     public static Map<String, com.myee.tarot.metric.domain.AppInfo> appInfoListToMap(List<com.myee.tarot.metric.domain.AppInfo> appList, int appInfoType) {
+        if(appList == null || appList.size() == 0){
+            return Collections.EMPTY_MAP;
+        }
         Map<String,com.myee.tarot.metric.domain.AppInfo> entry = new HashMap<String,com.myee.tarot.metric.domain.AppInfo>();
         for(com.myee.tarot.metric.domain.AppInfo appInfo:appList){
             if(appInfo.getType() != appInfoType){
@@ -190,4 +201,17 @@ public class MetricsUtil {
         }
         return entry;
     }
+
+//    /**
+//     * 把metricDetail查询出来的list转为map，以便快速使用。键名是SystemMetricsId
+//     * @param metricInfoListDB
+//     * @return
+//     */
+//    public static Map<Long, List<MetricInfo>> metricDetailListToSystemMetricsIdMap(List<MetricInfo> metricInfoListDB) {
+//        Map<Long,List<MetricInfo>> entry = new HashMap<Long,List<MetricInfo>>();
+//        for(MetricInfo metricInfo:metricInfoListDB){
+//            entry.put(metricInfo.getSystemMetricsId(),metricInfo);
+//        }
+//        return entry;
+//    }
 }

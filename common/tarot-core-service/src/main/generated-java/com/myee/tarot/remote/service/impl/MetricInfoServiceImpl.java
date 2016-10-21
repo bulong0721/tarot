@@ -7,6 +7,8 @@ import com.myee.tarot.remote.service.MetricInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by Chay on 2016/8/10.
  */
@@ -19,5 +21,13 @@ public class MetricInfoServiceImpl extends GenericEntityServiceImpl<Long, Metric
     public MetricInfoServiceImpl(MetricInfoDao metricInfoDao) {
         super(metricInfoDao);
         this.metricInfoDao = metricInfoDao;
+    }
+
+    public List<MetricInfo> listBySystemMetricsId(Long systemMetricsId, List<String> metricsKeyListToSearch) {
+        return metricInfoDao.listBySystemMetricsId(systemMetricsId, metricsKeyListToSearch);
+    }
+
+    public List<MetricInfo> listByBoardNoPeriod(String boardNo, Long now, Long period, String nodeName) {
+        return metricInfoDao.listByBoardNoPeriod( boardNo,  now,  period,  nodeName);
     }
 }
