@@ -18,8 +18,10 @@ import com.myee.tarot.remote.service.MetricInfoService;
 import com.myee.tarot.remote.service.SystemMetricsService;
 import com.myee.tarot.remote.util.MetricsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,6 +42,8 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
     private MetricDetailService metricDetailService;
     @Autowired
     private DeviceUsedService deviceUsedService;
+    @Autowired
+    private ThreadPoolTaskExecutor taskExecutor;
 
     @Override
     public int receiveLog(long orgId, UploadResourceType fileType, String logText) throws RemoteException {
@@ -68,12 +72,22 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
     }
 
     @Override
-    public boolean uploadSystemMetrics(List<SystemMetrics> list) throws RemoteException {
+    public boolean uploadSystemMetrics(final List<SystemMetrics> list) throws RemoteException {
         if (list == null) {
             return false;
         }
-        List<SystemMetrics> list1 = JSON.parseArray(JSON.toJSONString(list), SystemMetrics.class);
-        return MetricsUtil.updateSystemMetrics(list1, deviceUsedService, appInfoService, metricInfoService, metricDetailService,systemMetricsService);
+
+        //异步插入数据库
+        //用线程池代替原来的new Thread方法
+        taskExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                List<SystemMetrics> list1 = JSON.parseArray(JSON.toJSONString(list), SystemMetrics.class);
+                MetricsUtil.updateSystemMetrics(list1, deviceUsedService, appInfoService, metricInfoService, metricDetailService, systemMetricsService);
+            }
+        });
+
+        return true;
     }
 
 }
