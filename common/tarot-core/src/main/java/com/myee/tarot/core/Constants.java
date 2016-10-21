@@ -233,6 +233,6 @@ public class Constants {
 			com.myee.djinn.constants.Constants.METRIC_charging,
 			com.myee.djinn.constants.Constants.METRIC_SSID,
 			com.myee.djinn.constants.Constants.METRIC_productLocalIP,
-			com.myee.djinn.constants.Constants.METRIC_productGlobalIP
+			com.myee.djinn.constants.Constants.SUMMARY_productGlobalIP
 	);
 }
