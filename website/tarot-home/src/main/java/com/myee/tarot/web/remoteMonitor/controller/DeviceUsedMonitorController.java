@@ -153,7 +153,8 @@ public class DeviceUsedMonitorController {
             Map entry = commonMetricsToMap(systemMetrics, deviceUsed, installedAppMap);
 
             //指标概览summary里面要用的实时指标值
-            entry.putAll(systemMetrics4SummaryToMap(systemMetrics));
+            List<MetricInfo> metricInfoList4Summary = metricInfoService.listBySystemMetricsId(systemMetricsSummary.getId(),Constants.METRICS_4_SUMMARY_KEY_LIST);
+            entry.putAll(systemMetrics4SummaryToMap(metricInfoList4Summary));
 
             //metricInfoList指标详细列表,先一次性根据period和deviceUsedId去查出来，再用for循环遍历到每个指标里
             //没有要展示的指标详细列表，则直接返回全部动态指标
@@ -263,9 +264,8 @@ public class DeviceUsedMonitorController {
      * @param systemMetrics4Summary
      * @return
      */
-    private Map systemMetrics4SummaryToMap(SystemMetrics systemMetrics4Summary) {
+    private Map systemMetrics4SummaryToMap(List<MetricInfo> metircInfoList) {
         Map entry = new HashMap();
-        List<MetricInfo> metircInfoList = systemMetrics4Summary.getMetricInfoList();
         if (metircInfoList == null || metircInfoList.size() == 0) {
             entry.put("summaryUsed", "");
             return entry;
