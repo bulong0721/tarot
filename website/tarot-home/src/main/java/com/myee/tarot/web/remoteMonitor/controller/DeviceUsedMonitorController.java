@@ -109,6 +109,7 @@ public class DeviceUsedMonitorController {
      * @param deviceUsedId     设备ID
      * @param period           要查询数据的时间跨度
      * @param metricsKeyString 要显示的指标key列表
+     * @param type 0:表示是总览详细指标，查询出相关的其他服务、进程等参数；1:表示是单个指标的详细，不查询出其他服务、进程等相关参数
      * @param request
      * @return
      * @throws Exception
@@ -118,6 +119,7 @@ public class DeviceUsedMonitorController {
     public AjaxResponse listDeviceUsedMetrics(@RequestParam(value = "deviceUsedId") Long deviceUsedId,
                                               @RequestParam(value = "period") Long period,
                                               @RequestParam(value = "metricsKeyString") String metricsKeyString,
+                                              @RequestParam(value = "type") Integer type,
                                               HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
 
@@ -132,39 +134,26 @@ public class DeviceUsedMonitorController {
             if (deviceUsed == null) {
                 return AjaxResponse.failed(-1, "设备不存在");
             }
+            Map entry = new HashMap();
+            //metricInfoList指标详细列表,先一次性根据period和deviceUsedId去查出来，再用for循环遍历到每个指标里
+            //没有要展示的指标详细列表，则直接返回全部动态指标
+            List<String> metricsKeyList = null;
+            Map<String,List<String>> metricsKeyMap = new HashMap<>();
+            if (metricsKeyString == null || StringUtil.isBlank(metricsKeyString)) {
+                metricsKeyList = new ArrayList<>();
+                metricsKeyList.addAll(Constants.METRICS_NEED_TIME_KEY_LIST);
+                metricsKeyList.addAll(Constants.METRICS_NO_TIME_KEY_LIST);
+                metricsKeyMap.put(Constants.METRICS_NEED_TIME_KEY_LIST_NAME, Constants.METRICS_NEED_TIME_KEY_LIST);
+                metricsKeyMap.put(Constants.METRICS_NO_TIME_KEY_LIST_NAME,Constants.METRICS_NO_TIME_KEY_LIST);
+            } else {
+                metricsKeyList = JSON.parseArray(metricsKeyString, String.class);
+                metricsKeyMap = sortMetricsKeyByNeedTime(metricsKeyList);
+            }
 
             //获取最新的一条动态指标
             SystemMetrics systemMetrics = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_METRICS);
             if (systemMetrics == null) {
                 return AjaxResponse.failed(-1, "无可用指标数据");
-            }
-            systemMetrics.setAppList(appInfoService.listBySystemMetricsId(systemMetrics.getId()));
-
-            //获取最新的一条静态指标，为了取出已安装的应用列表
-            SystemMetrics systemMetricsSummary = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_SUMMARY);
-            List<AppInfo> installedAppInfoList = null;
-            if (systemMetricsSummary.getId() != null) {
-                installedAppInfoList = appInfoService.listBySystemMetricsId(systemMetricsSummary.getId());
-            }
-            //把已安装的应用列表缓存到Map中
-            Map<String, AppInfo> installedAppMap = MetricsUtil.appInfoListToMap(installedAppInfoList, Constants.APPINFO_TYPE_APP);
-
-            //先把deviceUsed，正在运行的服务、进程写入map
-            Map entry = commonMetricsToMap(systemMetrics, deviceUsed, installedAppMap);
-
-            //指标概览summary里面要用的实时指标值
-            List<MetricInfo> metricInfoList4Summary = metricInfoService.listBySystemMetricsId(systemMetricsSummary.getId(),Constants.METRICS_4_SUMMARY_KEY_LIST);
-            entry.putAll(systemMetrics4SummaryToMap(metricInfoList4Summary));
-
-            //metricInfoList指标详细列表,先一次性根据period和deviceUsedId去查出来，再用for循环遍历到每个指标里
-            //没有要展示的指标详细列表，则直接返回全部动态指标
-            List<String> metricsKeyList = null;
-            if (metricsKeyString == null || StringUtil.isBlank(metricsKeyString)) {
-                metricsKeyList = new ArrayList<>();
-                metricsKeyList.addAll(Constants.METRICS_NEED_TIME_KEY_LIST);
-                metricsKeyList.addAll(Constants.METRICS_NO_TIME_KEY_LIST);
-            } else {
-                metricsKeyList = JSON.parseArray(metricsKeyString, String.class);
             }
 
             //处理显示时间长度参数
@@ -173,8 +162,8 @@ public class DeviceUsedMonitorController {
             List<Map> metricInfoList = null;
             //根据展示时间段、指标keyList和设备ID去查找数据，一次性取出所有需要展示值随时间变化的数据
             Long now = System.currentTimeMillis();
-            List<MetricInfo> metricInfoListDB = metricInfoService.listByBoardNoPeriod(deviceUsed.getBoardNo(), now, period, com.myee.djinn.constants.Constants.PATH_METRICS_METRICSINFO, Constants.METRICS_NEED_TIME_KEY_LIST);
-            List<MetricInfo> metricInfoNoTimeListDB = metricInfoService.listBySystemMetricsId(systemMetrics.getId(),Constants.METRICS_NO_TIME_KEY_LIST);
+            List<MetricInfo> metricInfoListDB = metricInfoService.listByBoardNoPeriod(deviceUsed.getBoardNo(), now, period, com.myee.djinn.constants.Constants.PATH_METRICS_METRICSINFO, metricsKeyMap.get(Constants.METRICS_NEED_TIME_KEY_LIST_NAME));
+            List<MetricInfo> metricInfoNoTimeListDB = metricInfoService.listBySystemMetricsId(systemMetrics.getId(),metricsKeyMap.get(Constants.METRICS_NO_TIME_KEY_LIST_NAME));
             if(metricInfoNoTimeListDB != null && metricInfoNoTimeListDB.size() > 0){
                 metricInfoListDB.addAll(metricInfoNoTimeListDB);
             }
@@ -199,44 +188,81 @@ public class DeviceUsedMonitorController {
                 }
                 Map metricEntry = new HashMap();
                 //展示随时间变化的指标
-//                if(Constants.METRICS_NEED_TIME_KEY_LIST.contains(keyForDisplay)) {
-                    metricEntry.put("key", keyForDisplay);
-                    metricEntry.put("name", valueToString(metricDetail.getName()));
-                    metricEntry.put("drawType", valueToString(metricDetail.getDrawType()));
-                    metricEntry.put("maxValue", valueToString(metricDetail.getMaxValue()));
-                    metricEntry.put("minValue", valueToString(metricDetail.getMinValue()));
-                    metricEntry.put("warning", valueToString(metricDetail.getWarning()));
-                    metricEntry.put("alert", valueToString(metricDetail.getAlert()));
-                    metricEntry.put("unit", valueToString(metricDetail.getUnit()));
-                    metricEntry.put("description", valueToString(metricDetail.getDescription()));
-                    metricEntry.put("values", valuesByMetricsKey.get(keyForDisplay));
+                metricEntry.put("key", keyForDisplay);
+                metricEntry.put("name", valueToString(metricDetail.getName()));
+                metricEntry.put("drawType", valueToString(metricDetail.getDrawType()));
+                metricEntry.put("maxValue", valueToString(metricDetail.getMaxValue()));
+                metricEntry.put("minValue", valueToString(metricDetail.getMinValue()));
+                metricEntry.put("warning", valueToString(metricDetail.getWarning()));
+                metricEntry.put("alert", valueToString(metricDetail.getAlert()));
+                metricEntry.put("unit", valueToString(metricDetail.getUnit()));
+                metricEntry.put("description", valueToString(metricDetail.getDescription()));
+                metricEntry.put("values", valuesByMetricsKey.get(keyForDisplay));
 
-//                }
-//                //展示只需要显示最新值的指标
-//                else if(Constants.METRICS_NO_TIME_KEY_LIST.contains(keyForDisplay)){
-//                    metricEntry.put("key", keyForDisplay);
-//                    metricEntry.put("name", valueToString(metricDetail.getName()));
-//                    metricEntry.put("drawType", valueToString(metricDetail.getDrawType()));
-//                    metricEntry.put("maxValue", valueToString(metricDetail.getMaxValue()));
-//                    metricEntry.put("minValue", valueToString(metricDetail.getMinValue()));
-//                    metricEntry.put("warning", valueToString(metricDetail.getWarning()));
-//                    metricEntry.put("alert", valueToString(metricDetail.getAlert()));
-//                    metricEntry.put("unit", valueToString(metricDetail.getUnit()));
-//                    metricEntry.put("description", valueToString(metricDetail.getDescription()));
-//                    metricEntry.put("values", valuesByMetricsKey.get(keyForDisplay));
-//                }
                 metricInfoList.add(metricEntry);
+            }
+            entry.put("metricInfoList", metricInfoList);
 
-
+            //如果type是只查询单个指标数据，则返回
+            if(type == Constants.METRIC_QUERY_TYPE_SINGLE) {
+                resp.addDataEntry(entry);
+                return resp;
             }
 
-            entry.put("metricInfoList", metricInfoList);
+            //根据最新的动态指标获取当前正在运行的服务和进程
+            systemMetrics.setAppList(appInfoService.listBySystemMetricsId(systemMetrics.getId()));
+
+            //获取最新的一条静态指标，为了取出已安装的应用列表
+            SystemMetrics systemMetricsSummary = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_SUMMARY);
+            List<AppInfo> installedAppInfoList = null;
+            if (systemMetricsSummary.getId() != null) {
+                installedAppInfoList = appInfoService.listBySystemMetricsId(systemMetricsSummary.getId());
+            }
+            //把已安装的应用列表缓存到Map中
+            Map<String, AppInfo> installedAppMap = MetricsUtil.appInfoListToMap(installedAppInfoList, Constants.APPINFO_TYPE_APP);
+
+            //先把deviceUsed，正在运行的服务、进程写入map
+            entry.putAll(commonMetricsToMap(systemMetrics, deviceUsed, installedAppMap));
+
+            //指标概览summary里面要用的实时指标值
+            List<MetricInfo> metricInfoList4Summary = metricInfoService.listBySystemMetricsId(systemMetricsSummary.getId(),Constants.METRICS_4_SUMMARY_KEY_LIST);
+            entry.putAll(systemMetrics4SummaryToMap(metricInfoList4Summary));
+
+
             resp.addDataEntry(entry);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             resp.setErrorString("出错");
         }
         return resp;
+    }
+
+    /**
+     * 根据要查询的指标键名，按照是否需要随时间变化取分类，放到Map中
+     *  metricsKeyMap.put(Constants.METRICS_NEED_TIME_KEY_LIST_NAME, List);
+        metricsKeyMap.put(Constants.METRICS_NO_TIME_KEY_LIST_NAME,List);
+     * @param metricsKeyList
+     * @return
+     */
+    private Map<String, List<String>> sortMetricsKeyByNeedTime(List<String> metricsKeyList) {
+        Map<String, List<String>> metricsKeyMap = Collections.EMPTY_MAP;
+        if(metricsKeyList == null || metricsKeyList.size() == 0) {
+            return metricsKeyMap;
+        }
+        metricsKeyMap = new HashMap<String, List<String>>();
+        List<String> needTimeKeyList = new ArrayList<String>();
+        List<String> noTimeKeyList = new ArrayList<String>();
+        for (String keyName : metricsKeyList) {
+            if( Constants.METRICS_NEED_TIME_KEY_LIST.contains(keyName) ) {
+                needTimeKeyList.add(keyName);
+            }
+            else if( Constants.METRICS_NO_TIME_KEY_LIST.contains(keyName) ){
+                noTimeKeyList.add(keyName);
+            }
+        }
+        metricsKeyMap.put(Constants.METRICS_NEED_TIME_KEY_LIST_NAME,needTimeKeyList);
+        metricsKeyMap.put(Constants.METRICS_NO_TIME_KEY_LIST_NAME,noTimeKeyList);
+        return metricsKeyMap;
     }
 
 
@@ -261,7 +287,6 @@ public class DeviceUsedMonitorController {
      * }
      * }
      *
-     * @param systemMetrics4Summary
      * @return
      */
     private Map systemMetrics4SummaryToMap(List<MetricInfo> metircInfoList) {

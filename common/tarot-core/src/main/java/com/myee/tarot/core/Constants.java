@@ -221,6 +221,9 @@ public class Constants {
 	public static final int METRIC_DETAIL_VALUE_TYPE_STRING = 1;  //字符串
 	public static final int METRIC_DETAIL_VALUE_TYPE_NUM_ALERT = 2;  //数值带报警
 
+	public static final int METRIC_QUERY_TYPE_ALL = 0;  //0:表示是总览详细指标，查询出相关的其他服务、进程等参数；
+	public static final int METRIC_QUERY_TYPE_SINGLE = 1;  //1:表示是单个指标的详细，不查询出其他服务、进程等相关参数
+
 	public static final long PERIOD_1_HOUR = 3600000L;  //1小时毫秒数
 
 	public static final List<String> METRICS_4_SUMMARY_KEY_LIST = Arrays.asList(//给总览指标用的动态指标，比如cpuUsed/cpuTotal
@@ -237,6 +240,7 @@ public class Constants {
 			com.myee.djinn.constants.Constants.SUMMARY_productGlobalIP
 	);
 
+	public static final String METRICS_NEED_TIME_KEY_LIST_NAME = "metricsNeedTimeKeyList";
 	public static final List<String> METRICS_NEED_TIME_KEY_LIST = Arrays.asList(
 			com.myee.djinn.constants.Constants.METRIC_cpuUsed,
 			com.myee.djinn.constants.Constants.METRIC_productPower,
@@ -246,6 +250,7 @@ public class Constants {
 			com.myee.djinn.constants.Constants.METRIC_wifiRssi
 	);
 
+	public static final String METRICS_NO_TIME_KEY_LIST_NAME = "metricsNoTimeKeyList";
 	public static final List<String> METRICS_NO_TIME_KEY_LIST = Arrays.asList(
 			com.myee.djinn.constants.Constants.METRIC_bluetoothState,
 			com.myee.djinn.constants.Constants.METRIC_charging,
