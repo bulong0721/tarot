@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.myee.tarot.catalog.domain.*;
 import com.myee.tarot.catalog.type.ProductType;
 import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.StringUtil;
@@ -320,11 +321,16 @@ public class DeviceController {
                 String commonName = deviceUsed.getName();
                 String commonBoardNo = deviceUsed.getBoardNo();
                 for(Long i=autoStart;i < autoEnd+1;i++){
-                    DeviceUsed deviceUsedResult = new DeviceUsed();
-                    deviceUsed.setName(commonName + i);
-                    deviceUsed.setBoardNo(String.valueOf(System.currentTimeMillis())+"auto" +commonBoardNo+ i);
-                    deviceUsedResult = deviceUsedService.update(deviceUsed);
-                    updateResult.add(objectToEntry(deviceUsedResult));
+                    try {
+                        DeviceUsed deviceUsedResult ;
+                        deviceUsed.setName(commonName + "-" + i + "#");
+                        deviceUsed.setBoardNo(deviceUsed.getName());
+                        deviceUsedResult = deviceUsedService.update(deviceUsed);
+                        updateResult.add(objectToEntry(deviceUsedResult));
+                    } catch (ServiceException e) {
+                        LOGGER.error(e.getMessageCode());
+                        continue;
+                    }
                 }
             }
             else {//单个新增或修改
@@ -590,17 +596,30 @@ public class DeviceController {
                 resp.setErrorString("结束编号不能小于开始编号");
                 return resp;
             }
+            //校验主板编号
+            ProductUsed pU = productUsedService.getByCode(productUsed.getCode());
+            if (pU != null && pU.getId() != productUsed.getId()) { //编辑时排除当前设备
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("重复的设备组编号，请更换编号");
+                return resp;
+            }
             MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
 
             List<Object> updateResult = new ArrayList<Object>();
             productUsed.setStore(merchantStore1);
+
             if(autoEnd != null && autoStart !=null &&  autoEnd >= 0 && autoStart >= 0 ){//批量新增
                 String commonName = productUsed.getName();
                 for(Long i=autoStart;i < autoEnd+1;i++){
-                    ProductUsed productUsedResult = new ProductUsed();
-                    productUsed.setCode(i + "");
-                    productUsedResult = productUsedService.update(productUsed);
-                    updateResult.add(objectToEntry(productUsedResult));
+                    try {
+                        ProductUsed productUsedResult ;
+                        productUsed.setCode( productUsed.getType() +"-" + i + "#");
+                        productUsedResult = productUsedService.update(productUsed);
+                        updateResult.add(objectToEntry(productUsedResult));
+                    } catch (ServiceException e) {
+                        LOGGER.error(e.getMessageCode());
+                        continue;
+                    }
                 }
             }
             else {//单个新增或修改

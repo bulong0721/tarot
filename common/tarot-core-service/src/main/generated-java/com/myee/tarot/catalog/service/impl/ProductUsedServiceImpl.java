@@ -40,4 +40,9 @@ public class ProductUsedServiceImpl extends GenericEntityServiceImpl<Long, Produ
         return productUsedDao.listByIDs(idList);
     }
 
+    @Override
+    public ProductUsed getByCode(String code){
+        return productUsedDao.getByCode( code);
+    }
+
 }

@@ -191,9 +191,8 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
                 templateOptions: {
                     label: '设备组编号',
                     required: true,
-                    placeholder: '设备组编号,8位数字以内',
-                    pattern: '^[0-9]*$',
-                    maxlength: 8
+                    placeholder: '设备组编号,100字以内',
+                    maxlength: 100
                 },
                 hideExpression: 'model.ifBatch'
             },
@@ -278,7 +277,11 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
         if (formly.form.$valid) {
             //formly.options.updateInitialValue();//这句会报错
             var xhr = $resource(mgrData.api.update);
-            formly.model.code = formly.model.code || formly.model.startNo;//保证编号不为空，后台才能正常，虽然用不到
+            console.log(formly.model.code)
+            console.log(formly.model.startNo)
+            formly.model.code = formly.model.code | formly.model.startNo;//保证编号不为空，后台才能正常，虽然用不到
+            console.log(formly.model.code)
+            console.log(formly.model.startNo)
             xhr.save({
                 autoStart: formly.model.startNo ? formly.model.startNo : "",
                 autoEnd: formly.model.endNo ? formly.model.endNo : ""

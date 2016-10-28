@@ -64,4 +64,13 @@ public class ProductUsedDaoImpl extends GenericEntityDaoImpl<Long, ProductUsed> 
         return query.fetch();
     }
 
+    @Override
+    public ProductUsed getByCode(String code){
+        QProductUsed qProductUsed = QProductUsed.productUsed;
+        JPQLQuery<ProductUsed> query = new JPAQuery(getEntityManager());
+        query.from(qProductUsed);
+        query.where(qProductUsed.code.eq(code));
+        return query.fetchFirst();
+    }
+
 }
