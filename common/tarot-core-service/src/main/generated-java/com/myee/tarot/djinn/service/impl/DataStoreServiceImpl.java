@@ -71,10 +71,8 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
 		JSONObject object = JSON.parseObject(jsonArgs);
 		String path = object.getString("path");
 		int orgId = object.getInteger("orgId");
-		String type = object.getString("type");
 		StringBuffer sb = new StringBuffer();
-		sb.append(DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(type)
-				.append(File.separator).append(path);
+		sb.append(DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(path);
 		String filePath = sb.toString();
 		LOG.info(" File path is ==========" + filePath);
 		File file = new File(filePath);
