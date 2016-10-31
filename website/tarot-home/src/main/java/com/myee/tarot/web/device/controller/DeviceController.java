@@ -302,29 +302,42 @@ public class DeviceController {
                 resp.setErrorString("主板编号不能为空");
                 return resp;
             }
+            //校验主板编号
+            if(autoEnd != null && autoStart !=null) {//批量校验主板编号不能重复
+                //....预留看需求是否要验证
+            }
+            else {//单个校验主板编号不能重复
+                DeviceUsed dU = deviceUsedService.getByBoardNo(deviceUsed.getBoardNo());
+                if (dU != null && dU.getId() != deviceUsed.getId()) { //编辑时排除当前设备
+                    resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                    resp.setErrorString("已存在的主板编号");
+                    return resp;
+                }
+            }
+
+            //如果手机号不为空，则校验手机号
             if(deviceUsed.getPhone() != null && !ValidatorUtil.isMultiMobile(deviceUsed.getPhone())){
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "请输入正确的手机号！");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
 
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
             List<Object> updateResult = new ArrayList<Object>();
             deviceUsed.setStore(merchantStore1);
-            //校验主板编号
-            DeviceUsed dU = deviceUsedService.getByBoardNo(deviceUsed.getBoardNo());
-            if (dU != null && dU.getId() != deviceUsed.getId()) { //编辑时排除当前设备
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-                resp.setErrorString("已存在的主板编号");
-                return resp;
-            }
+
             if(autoEnd != null && autoStart !=null &&  autoEnd >= 0 && autoStart >= 0 ){//批量新增
                 String commonName = deviceUsed.getName();
                 String commonBoardNo = deviceUsed.getBoardNo();
                 for(Long i=autoStart;i < autoEnd+1;i++){
                     try {
+                        //重复主板编号的不添加
+                        DeviceUsed temp = deviceUsedService.getByBoardNo(commonBoardNo + "-" + i + "#");
+                        if(temp != null){
+                            continue;
+                        }
                         DeviceUsed deviceUsedResult ;
                         deviceUsed.setName(commonName + "-" + i + "#");
-                        deviceUsed.setBoardNo(deviceUsed.getName());
+                        deviceUsed.setBoardNo(commonBoardNo + "-" + i + "#");
                         deviceUsedResult = deviceUsedService.update(deviceUsed);
                         updateResult.add(objectToEntry(deviceUsedResult));
                     } catch (ServiceException e) {
@@ -338,7 +351,7 @@ public class DeviceController {
                 updateResult.add(objectToEntry(deviceUsed));
             }
 
-            resp = AjaxResponse.success();
+            resp = AjaxResponse.success("操作成功，批量添加将跳过重复主板编号设备");
             resp.addEntry("updateResult", updateResult);
         } catch (Exception e) {
             e.printStackTrace();
@@ -581,6 +594,34 @@ public class DeviceController {
         return resp;
     }
 
+    @RequestMapping(value = {"admin/product/used/listByStore4Select", "shop/product/used/listByStore4Select"}, method = RequestMethod.GET)
+    @ResponseBody
+    public List productUsedList(HttpServletRequest request) {
+        AjaxResponse resp = new AjaxResponse() ;
+        try {
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                resp.setErrorString("请先切换门店");
+                return null;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+
+            PageRequest pageRequest = new PageRequest();
+            pageRequest.setCount(-1);//不分页，查询所有结果
+            PageResult<ProductUsed> pageList = productUsedService.pageByStore(merchantStore1.getId(), pageRequest);
+            List<ProductUsed> productUsedList = pageList.getList();
+            for (ProductUsed productUsed : productUsedList) {
+                Map entry = new HashMap();
+                entry.put("name",productUsed.getCode());
+                entry.put("value", productUsed.getCode());
+                resp.addDataEntry(entry);
+            }
+            return resp.getRows();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @RequestMapping(value = {"admin/product/used/save", "shop/product/used/save"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveUsedProduct(@Valid @RequestBody ProductUsed productUsed,@RequestParam(value = "autoStart")Long autoStart,@RequestParam(value = "autoEnd")Long autoEnd, HttpServletRequest request) throws Exception {
@@ -597,21 +638,31 @@ public class DeviceController {
                 return resp;
             }
             //校验主板编号
-            ProductUsed pU = productUsedService.getByCode(productUsed.getCode());
-            if (pU != null && pU.getId() != productUsed.getId()) { //编辑时排除当前设备
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-                resp.setErrorString("重复的设备组编号，请更换编号");
-                return resp;
+            if(autoEnd != null && autoStart !=null) {//批量校验设备组编号不能重复
+                //预留看需求是否要验证
             }
+            else {//单个校验设备组编号不能重复
+                ProductUsed pU = productUsedService.getByCode(productUsed.getCode());
+                if (pU != null && pU.getId() != productUsed.getId()) { //编辑时排除当前设备
+                    resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                    resp.setErrorString("重复的设备组编号，请更换编号");
+                    return resp;
+                }
+            }
+
             MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
 
             List<Object> updateResult = new ArrayList<Object>();
             productUsed.setStore(merchantStore1);
 
             if(autoEnd != null && autoStart !=null &&  autoEnd >= 0 && autoStart >= 0 ){//批量新增
-                String commonName = productUsed.getName();
                 for(Long i=autoStart;i < autoEnd+1;i++){
                     try {
+                        //重复编号的不添加
+                        ProductUsed temp = productUsedService.getByCode(productUsed.getType() +"-" + i + "#");
+                        if(temp != null){
+                            continue;
+                        }
                         ProductUsed productUsedResult ;
                         productUsed.setCode( productUsed.getType() +"-" + i + "#");
                         productUsedResult = productUsedService.update(productUsed);
@@ -627,7 +678,7 @@ public class DeviceController {
                 updateResult.add(objectToEntry(productUsed));
             }
 
-            resp = AjaxResponse.success();
+            resp = AjaxResponse.success("操作成功，批量添加将跳过重复编号设备组");
             resp.addEntry("updateResult", updateResult);
         } catch (Exception e) {
             e.printStackTrace();
