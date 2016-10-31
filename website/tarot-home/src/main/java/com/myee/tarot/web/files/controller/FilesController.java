@@ -511,42 +511,4 @@ public class FilesController {
         return preSoftVersion + String.format("%03d", thisVersion + 1);
     }
 
-    /**
-     * 读取文件中的内容返回前端
-     * @param files
-     * @return
-     */
-    @RequestMapping("admin/files/readModule")
-    @ResponseBody
-    public AjaxResponse readModule(@RequestParam("file") CommonsMultipartFile[] files) {
-        AjaxResponse ajaxResponse = new AjaxResponse();
-        Map map = Maps.newHashMap();
-        String valueString = null;
-        try {
-            for (int i = 0; i < files.length; i++) {
-                String fileName = files[i].getOriginalFilename();
-                LOGGER.info("fileName---------->" + fileName);
-                if (!files[i].isEmpty()) {
-                    String type = fileName.substring(fileName.lastIndexOf(".")+1, fileName.length());
-                    if (!type.equals("json")) {
-                        return AjaxResponse.failed(-1, "请上传json文件，其他格式不支持");
-                    }
-                    BufferedReader d = new BufferedReader(new InputStreamReader(files[i].getInputStream(), "utf-8"));
-                    String temp = "";
-                    while ((valueString = d.readLine()) != null) {
-                        temp += valueString;
-                    }
-                    valueString = temp;
-                    d.close();
-                }
-            }
-            map.put("result", valueString);
-            ajaxResponse.setDataMap(map);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return ajaxResponse;
-    }
 }
