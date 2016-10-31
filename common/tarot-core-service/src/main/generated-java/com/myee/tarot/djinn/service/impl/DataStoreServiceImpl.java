@@ -65,12 +65,9 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
 	}
 
 	@Override
-	public String readTextFile(String jsonArgs) throws RemoteException {
-		LOG.info("jsonArgs= {}  DOWNLOAD_HOME={}", jsonArgs, DOWNLOAD_HOME);
+	public String readTextFile(long orgId, String path) throws RemoteException {
+		LOG.info("orgId= {}  path= {} DOWNLOAD_HOME={}", orgId, path, DOWNLOAD_HOME);
 		String fileData = "";
-		JSONObject object = JSON.parseObject(jsonArgs);
-		String path = object.getString("path");
-		int orgId = object.getInteger("orgId");
 		StringBuffer sb = new StringBuffer();
 		sb.append(DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(path);
 		String filePath = sb.toString();
@@ -82,7 +79,7 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
 		try {
 			fileData = FileUtils.readFileToString(file, "utf-8");
 		} catch (IOException e) {
-			LOG.error(" read file error ",e);
+			LOG.error(" read file error ", e);
 		}
 
 		return fileData;
