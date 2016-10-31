@@ -9,6 +9,7 @@ import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.web.ClientAjaxResult;
 import com.myee.tarot.web.apiold.util.CommonLoginParam;
 import com.myee.tarot.web.files.FileDTO;
 import com.myee.tarot.web.files.HotfixSetVo;
@@ -28,9 +29,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -448,7 +447,7 @@ public class FilesController {
      * 根据软硬件版本号
      *
      * @param version version规则: Cooky - C001      M01        A001       - RK3288_v2   -20160804
-     *                            项目名    通用版本  头部或胸部   软件版本号    硬件版本号    时间
+     *                项目名    通用版本  头部或胸部   软件版本号    硬件版本号    时间
      *                存储路径规则: 100/boardUpdate/项目名/硬件版本号/软件版本号
      *                查找文件规则:升级包都是差分升级包，由1升2,2再升3....，所以查询版本号的时候，是取当前版本号+1的升级包
      * @return
@@ -470,20 +469,20 @@ public class FilesController {
             String hardwareVersion = versionSplit[2];
 //            String time = versionSplit[3];
             File dest = FileUtils.getFile(DOWNLOAD_HOME, Constants.BOARD_UPDATE_BASEPATH, productName + "/" + hardwareVersion + "/" + softwareVersion);
-            LOGGER.info("文件保存路径:"+dest.getPath());
+            LOGGER.info("文件保存路径:" + dest.getPath());
             //只取zip结尾的文件
             FileFilter fileFilter = new FileFilter() {
                 @Override
                 public boolean accept(File file) {
-                    if(file.getName().endsWith(".zip")){
+                    if (file.getName().endsWith(".zip")) {
                         return true;
                     }
                     return false;
                 }
             };
             File[] listFile = dest.listFiles(fileFilter);
-            if(listFile == null || listFile.length != 1){
-                return AjaxResponse.failed(-1,"升级文件未准备好");
+            if (listFile == null || listFile.length != 1) {
+                return AjaxResponse.failed(-1, "升级文件未准备好");
             }
             String downloadUrl = DOWNLOAD_HTTP + Constants.BOARD_UPDATE_BASEPATH + productName + "/" + hardwareVersion + "/" + softwareVersion + "/" + listFile[0].getName();
             resp.addEntry("downloadPath", downloadUrl);
@@ -502,13 +501,52 @@ public class FilesController {
      * @param softVersion
      * @return
      */
-    private String calSoftwareVersionNext(String softVersion) throws Exception{
+    private String calSoftwareVersionNext(String softVersion) throws Exception {
         int length = softVersion.length();
         //版本号前缀
         String preSoftVersion = softVersion.substring(0, length - 3);
         //当前软件版本号的数字
         int thisVersion = Integer.parseInt(softVersion.substring(length - 3));
 //        LOGGER.info("格式化字符串输出:"+String.format("%03d",thisVersion + 1 ));
-        return preSoftVersion + String.format("%03d",thisVersion + 1 );
+        return preSoftVersion + String.format("%03d", thisVersion + 1);
+    }
+
+    /**
+     * 读取文件中的内容返回前端
+     * @param files
+     * @return
+     */
+    @RequestMapping("admin/files/readModule")
+    @ResponseBody
+    public AjaxResponse readModule(@RequestParam("file") CommonsMultipartFile[] files) {
+        AjaxResponse ajaxResponse = new AjaxResponse();
+        Map map = Maps.newHashMap();
+        String valueString = null;
+        try {
+            for (int i = 0; i < files.length; i++) {
+                String fileName = files[i].getOriginalFilename();
+                LOGGER.info("fileName---------->" + fileName);
+                if (!files[i].isEmpty()) {
+                    String type = fileName.substring(fileName.lastIndexOf(".")+1, fileName.length());
+                    if (!type.equals("json")) {
+                        return AjaxResponse.failed(-1, "请上传json文件，其他格式不支持");
+                    }
+                    BufferedReader d = new BufferedReader(new InputStreamReader(files[i].getInputStream(), "utf-8"));
+                    String temp = "";
+                    while ((valueString = d.readLine()) != null) {
+                        temp += valueString;
+                    }
+                    valueString = temp;
+                    d.close();
+                }
+            }
+            map.put("result", valueString);
+            ajaxResponse.setDataMap(map);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ajaxResponse;
     }
 }
