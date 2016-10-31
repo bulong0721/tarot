@@ -481,4 +481,36 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
             }
         });
     }
+
+    /**  读取Json文件内容 **/
+    $scope.readJsonFile = function (input) {
+        //支持chrome IE10
+        if (window.FileReader) {
+            var file = input.files[0];
+            filename = file.name.split(".")[0];
+            var reader = new FileReader();
+            reader.onload = function() {
+                return this.result;
+            }
+            reader.readAsText(file);
+        }
+        //支持IE 7 8 9 10
+        else if (typeof window.ActiveXObject != 'undefined'){
+            var xmlDoc;
+            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = false;
+            xmlDoc.load(input.value);
+            return xmlDoc.xml;
+        }
+        //支持FF
+        else if (document.implementation && document.implementation.createDocument) {
+            var xmlDoc;
+            xmlDoc = document.implementation.createDocument("", "", null);
+            xmlDoc.async = false;
+            xmlDoc.load(input.value);
+            return xmlDoc.xml;
+        } else {
+            return 'error';
+        }
+    }
 }
