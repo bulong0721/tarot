@@ -56,6 +56,11 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
     }
 
     @Override
+    public String readTextFile(String s) throws RemoteException {
+        return null;
+    }
+
+    @Override
     public boolean uploadData(DataUploadInfoDTO dataUploadInfoDTO) throws RemoteException {
         if (dataUploadInfoDTO != null && "selfCheckLog".equals(dataUploadInfoDTO.getType().getValue())) {
             SelfCheckLogVO selfCheckLogVO = JSON.parseObject(dataUploadInfoDTO.getData(), SelfCheckLogVO.class);
