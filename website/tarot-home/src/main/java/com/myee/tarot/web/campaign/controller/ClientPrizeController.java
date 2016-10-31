@@ -512,7 +512,7 @@ public class ClientPrizeController extends BaseController {
                             ticket.setStatus(Constants.CLIENT_PRIZE_TICKET_NO);
                             clientPrizeTicketService.update(ticket);
                         }
-                        content = "恭喜您获得格瓦拉" + priceGetInfo.getPrizeName() + "2张,兑换码为" + tickets.get(0).getTicketCode()+","+ tickets.get(1).getTicketCode()+ ",有效期至"+ DateTimeUtils.getDateString(tickets.get(1).getEndDate(),DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT) + ",兑换方法：http://www.gewara.com/activity/11905601";
+                        content = "恭喜您获得格瓦拉" + priceGetInfo.getPrizeName() + "2张,兑换码为" + tickets.get(0).getTicketCode()+","+ tickets.get(1).getTicketCode()+ ",有效期至"+ DateTimeUtils.getDateString(tickets.get(1).getEndDate(),DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT) + ",购票流程：Step1：登陆格瓦拉生活网（www.gewara.com），手机登陆APP；Step2：选择需要预定的影片:非常父子档、影院及场次，点击“订票”按钮；Step3：进入选座页面，根据影厅实际座位图自由选座，输入观影人手机号码，点击“立即购买”；Step4：进入兑换/支付页面，输入兑换券的密码，点击“使用”，将会自动抵用单张影票的价格。多张兑换券可同时使用；Step5：兑换成功，收到取票短信，凭取票短信中的取票密码至影院格瓦拉取票机自助取票；Step6：观影";
                     } else {
                         return ClientAjaxResult.failed("你手慢了，电影票已被领取完");
                     }

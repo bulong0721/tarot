@@ -27,7 +27,7 @@ public class SendRecord extends GenericEntity<Long, SendRecord> {
 	@Column(name = "TEMPLATENUM",length = 20)
 	private String templateNum;
 
-	@Column(name = "DESCRIPTION",length = 255)
+	@Column(name = "DESCRIPTION",length = 500)
 	private String description;
 
 	@Column(name = "PARTNER")
