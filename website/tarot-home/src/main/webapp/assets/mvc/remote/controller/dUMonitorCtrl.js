@@ -23,7 +23,7 @@ function dUMonitorMgrCtrl($scope,$resource) {
     });
 
     //Metrics
-    $resource('../admin/remoteMonitor/deviceUsed/metrics?deviceUsedId=1&period=&metricsKeyString=').get({}, function (resp) {
+    $resource('../admin/remoteMonitor/deviceUsed/metrics?deviceUsedId=1&period=360000000&metricsKeyString=["cpuUsed","romUsed"]&type=1').get({}, function (resp) {
         var r = resp.rows[0];
         $scope.metric = {
             deviceUsed:r.deviceUsed,

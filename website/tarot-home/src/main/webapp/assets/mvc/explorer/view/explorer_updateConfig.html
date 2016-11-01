@@ -1,0 +1,91 @@
+<div>
+    <uib-tabset>
+        <uib-tab>
+            <uib-tab-heading>
+                <i class="fa fa-info"></i>升级配置
+            </uib-tab-heading>
+            <div class="panel-body">
+                <form name="formData.form" novalidate>
+                    <formly-form model="formDataUpdateConfig.model" fields="formDataUpdateConfig.fields" form="formDataUpdateConfig.form" options="formDataUpdateConfig.options">
+                        <div class="panel-body">
+                            <table id="details" width="45%" class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th width="15%" class="center">模块名</th>
+                                    <th width="15%" class="center">版本号</th>
+                                    <th width="15%" class="center">强制升级</th>
+                                    <th width="15%" class="center">md5</th>
+                                    <th width="15%" class="center">下载地址</th>
+                                    <th class="center">上传升级包</th>
+                                    <th class="center"><a ng-click="insertAttr(formDataUpdateConfig.model)" tooltip-placement="top" uib-tooltip="{{lang_zh.add}}"><i class="btn-icon fa fa-plus"></i></a></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td colspan="9" class="center" ng-if="formDataUpdateConfig.model.attributes.length<=0">没有查找到数据</td>
+                                </tr>
+                                <tr ng-repeat="attr in formDataUpdateConfig.model.attributes" ng-switch="attr.editing" ng-if="attr.show">
+                                    <td>
+                                        <span ng-switch-default>{{::attr.name}}</span>
+                                        <div class="controls" ng-switch-when="true">
+                                            <input type="text" name="attrName" ng-model="attr.name" placeholder="模块名" class="editable-input form-control input-sm" required/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span ng-switch-default>{{::attr.version}}</span>
+                                        <div class="controls" ng-switch-when="true">
+                                            <input type="text" name="attrVersion" ng-model="attr.version" placeholder="版本号" class="editable-input form-control input-sm" required/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span ng-switch-default>{{::attr.force_update}}</span>
+                                        <div class="controls" ng-switch-when="true">
+                                            <input type="text" name="attrForce_update" ng-model="attr.force_update" placeholder="Y或N" class="editable-input form-control input-sm" onkeyup="value=this.value.replace(/[^YN]+/g,'')" maxlength="1" required/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span ng-switch-default>{{::attr.md5}}</span>
+                                        <div class="controls" ng-switch-when="true">
+                                            <input type="text" name="attrMd5" disabled="disabled" ng-model="attr.md5" placeholder="自动生成" class="editable-input form-control input-sm" />
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span ng-switch-default>{{::attr.web}}</span>
+                                        <div class="controls" ng-switch-when="true">
+                                            <input type="text" name="attrWeb" disabled="disabled" ng-model="attr.web" placeholder="自动生成" class="editable-input form-control input-sm" />
+                                        </div>
+                                    </td>
+                                    <td class="center">
+                                        <span ng-switch-default>
+                                            <i ng-if="attr.uploadState" class="btn-icon fa fa-check"></i>
+                                            <i ng-if="!attr.uploadState" class="btn-icon fa fa-close"></i>
+                                        </span>
+                                        <div class="controls" ng-switch-when="true">
+                                            <span class="btn btn-sm btn-success upMenuBut">
+                                                <i class="fa fa-upload bigger-120"></i><span>选择升级包</span>
+                                                <input ng-model="attr.file" type="file" data-attr="{{attr}}" data-index="{{$index}}" onchange="angular.element(this).scope().checkUpdate(this, JSON.parse(this.getAttribute('data-attr')),this.getAttribute('data-index'))"/>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="center">
+                                        <a ng-switch-default ng-click="attr.editing=true" tooltip-placement="top" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
+                                        <a ng-switch-when="true" ng-click="updateAttr(formDataUpdateConfig.model, attr,$index)" tooltip-placement="top" uib-tooltip="{{lang_zh.update}}"><i class="btn-icon fa fa-check"></i></a>
+                                        <span class="divider"></span>
+                                        <a ng-switch-default ng-click="deleteAttr(formDataUpdateConfig.model, attr)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
+                                        <a ng-switch-when="true" ng-click="cancelAttr(formDataUpdateConfig.model,attr)" tooltip-placement="top" uib-tooltip="{{lang_zh.cancel}}"><i class="btn-icon fa fa-close"></i></a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="text-center col-xs-8">
+                            <button class="btn btn-primary" ng-click="configSubmit()"><i class="fa fa-sm fa-check"></i>&nbsp;确定</button>
+                            <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
+                        </div>
+                    </formly-form>
+                </form>
+            </div>
+        </uib-tab>
+    </uib-tabset>
+</div>

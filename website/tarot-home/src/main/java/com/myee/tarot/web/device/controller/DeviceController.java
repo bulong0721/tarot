@@ -351,7 +351,7 @@ public class DeviceController {
                 updateResult.add(objectToEntry(deviceUsed));
             }
 
-            resp = AjaxResponse.success("操作成功，批量添加将跳过重复主板编号设备");
+            resp = AjaxResponse.success("批量添加将跳过重复主板编号设备");
             resp.addEntry("updateResult", updateResult);
         } catch (Exception e) {
             e.printStackTrace();
@@ -612,7 +612,7 @@ public class DeviceController {
             for (ProductUsed productUsed : productUsedList) {
                 Map entry = new HashMap();
                 entry.put("name",productUsed.getCode());
-                entry.put("value", productUsed.getCode());
+                entry.put("value", productUsed.getCode().replaceAll("#",""));
                 resp.addDataEntry(entry);
             }
             return resp.getRows();
@@ -678,7 +678,7 @@ public class DeviceController {
                 updateResult.add(objectToEntry(productUsed));
             }
 
-            resp = AjaxResponse.success("操作成功，批量添加将跳过重复编号设备组");
+            resp = AjaxResponse.success("批量添加将跳过重复编号设备组");
             resp.addEntry("updateResult", updateResult);
         } catch (Exception e) {
             e.printStackTrace();

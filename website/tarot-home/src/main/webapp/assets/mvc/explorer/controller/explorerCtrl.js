@@ -4,10 +4,10 @@ angular.module('myee', [])
 /**
  * explorerCtrl - controller
  */
-explorerCtrl.$inject = ['$scope', '$resource', '$filter', 'cfromly', 'Constants', 'cAlerts', 'toaster','$rootScope'];
-function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, toaster,$rootScope) {
+explorerCtrl.$inject = ['$scope', '$resource', '$filter', 'cfromly', 'Constants', 'cAlerts', 'toaster', '$rootScope', '$timeout'];
+function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, toaster, $rootScope, $timeout) {
     var lang = $rootScope.lang_zh;
-    var iDatatable = 0, iPush = 2, iEditor = 1;
+    var iDatatable = 0, iPush = 2, iEditor = 1, iConfig = 3;
     $scope.activeTab = iDatatable;
     var nodeTypes = [{name: '目录', value: 0}, {name: '文件', value: 1}];
     $scope.treeControl = {};
@@ -62,17 +62,17 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
         {
             displayName: '操作',
             columnWidth: '150',
-            cellTemplate: '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-plus" tooltip-placement="top" uib-tooltip="'+ lang.addResource +'" ng-click="cellTemplateScope.add(row.branch)"></i></a>' +
-            '<a><i ng-if="row.branch.type == 1" class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="'+ lang.noAddFile +'"></i></a>' +
+            cellTemplate: '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-plus" tooltip-placement="top" uib-tooltip="' + lang.addResource + '" ng-click="cellTemplateScope.add(row.branch)"></i></a>' +
+            '<a><i ng-if="row.branch.type == 1" class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="' + lang.noAddFile + '"></i></a>' +
             '<span class="divider"></span>' +
-            '<a><i ng-if="row.branch.type == 1" class="btn-icon fa fa-pencil" tooltip-placement="top" uib-tooltip="'+ lang.edit +'" ng-click="cellTemplateScope.edit(row.branch)"></i></a>' +
-            '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="'+ lang.noEditFolder +'"></i></a>' +
+            '<a><i ng-if="row.branch.type == 1" class="btn-icon fa fa-pencil" tooltip-placement="top" uib-tooltip="' + lang.edit + '" ng-click="cellTemplateScope.edit(row.branch)"></i></a>' +
+            '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="' + lang.noEditFolder + '"></i></a>' +
             '<span class="divider"></span>' +
-            '<a><i ng-if="row.branch.salt == row.branch.storeId && row.branch.path != \'/\'" class="btn-icon fa fa-trash-o" tooltip-placement="top" uib-tooltip="'+ lang.delete +'" ng-click="cellTemplateScope.delete(row.branch)"></i></a>' +
-            '<a><i ng-if="row.branch.salt != row.branch.storeId || row.branch.path == \'/\'" class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="'+ lang.noAuthDelete +'"></i></a>' +
+            '<a><i ng-if="row.branch.salt == row.branch.storeId && row.branch.path != \'/\'" class="btn-icon fa fa-trash-o" tooltip-placement="top" uib-tooltip="' + lang.delete + '" ng-click="cellTemplateScope.delete(row.branch)"></i></a>' +
+            '<a><i ng-if="row.branch.salt != row.branch.storeId || row.branch.path == \'/\'" class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="' + lang.noAuthDelete + '"></i></a>' +
             '<span class="divider"></span>' +
-            '<a ng-if="row.branch.type == 1" ng-href="{{row.branch.url}}" tooltip-placement="top" uib-tooltip="'+ lang.download +'" download><i class="btn-icon fa fa-download" ></i></a>' +
-            '<a ng-if="row.branch.type == 0"><i class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="'+ lang.noDownloadFolder +'"></i></a>',
+            '<a ng-if="row.branch.type == 1" ng-href="{{row.branch.url}}" tooltip-placement="top" uib-tooltip="' + lang.download + '" download><i class="btn-icon fa fa-download" ></i></a>' +
+            '<a ng-if="row.branch.type == 0"><i class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="' + lang.noDownloadFolder + '"></i></a>',
             cellTemplateScope: {
                 add: function (data) {
                     $scope.handleSelect(data);
@@ -118,7 +118,6 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
             );
         }
     };
-
 
 
     //点击推送按钮时调用
@@ -386,15 +385,18 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
         var parentNode = $scope.treeControl.get_parent_branch(data);
         cAlerts.confirm('确定删除?', function () {
             //点击确定回调
-            $resource(mgrDataPusher.api.delete).save({salt: data.salt, path: data.path}, {}).$promise.then(function success(resp) {
-                if (resp != null && resp.status == 0) {
-                    $scope.deleteDom(parentNode.children, data.uid);
-                    toaster.success({body: "删除成功"});
-                    $scope.goDataTable();
-                } else {
-                    toaster.error({body: resp.statusMessage});
-                }
-            });
+            $resource(mgrDataPusher.api.delete).save({
+                salt: data.salt,
+                path: data.path
+            }, {}).$promise.then(function success(resp) {
+                    if (resp != null && resp.status == 0) {
+                        $scope.deleteDom(parentNode.children, data.uid);
+                        toaster.success({body: "删除成功"});
+                        $scope.goDataTable();
+                    } else {
+                        toaster.error({body: resp.statusMessage});
+                    }
+                });
         });
     };
 
@@ -489,13 +491,13 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
             var file = input.files[0];
             filename = file.name.split(".")[0];
             var reader = new FileReader();
-            reader.onload = function() {
+            reader.onload = function () {
                 return this.result;
             }
             reader.readAsText(file);
         }
         //支持IE 7 8 9 10
-        else if (typeof window.ActiveXObject != 'undefined'){
+        else if (typeof window.ActiveXObject != 'undefined') {
             var xmlDoc;
             xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
             xmlDoc.async = false;
@@ -513,4 +515,179 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
             return 'error';
         }
     }
+
+    //升级配置--------------------------------------------------------------
+    $scope.goUpdateConfig = function () {
+        $scope.activeTab = iConfig;
+        $scope.formDataUpdateConfig.model.attributes = [];
+        $scope.submitResult = [];
+    };
+    var mgrUpdateConfigData = {
+        fields: [
+            {
+                key: 'code',
+                type: 'c_select',
+                className: 'c_select',
+                templateOptions: {
+                    label: '要升级的设备组',
+                    required: true,
+                    options: getProductUsedList()
+                }
+            }
+        ],
+        api: {
+            upload: './files/create',
+        }
+    };
+
+    //查询推送设备组下拉框内容
+    function getProductUsedList() {
+        return $resource('./product/used/listByStore4Select').query();
+    }
+
+    //formly配置项config
+    $scope.formDataUpdateConfig = {
+        fields: mgrUpdateConfigData.fields
+    };
+
+    //formly提交config
+    $scope.configSubmit = function () {
+        var code = $scope.formDataUpdateConfig.model.code;
+        if (!code || code == '') {
+            toaster.error({body: "请先选择要升级的设备组!"});
+            return;
+        }
+
+        angular.forEach($scope.formDataUpdateConfig.model.attributes, function (indexData, index, array) {
+            //indexData等价于array[index]
+            if (indexData.show) {//只把没假删除的结果写入最终数据
+                $scope.submitResult.push({
+                    name: indexData.name,
+                    version: indexData.version,
+                    force_update: indexData.force_update,
+                    md5: indexData.md5,
+                    web: indexData.web
+                });
+            }
+        });
+        console.log($scope.submitResult);
+
+        //存储追中结果到文件 {"salt":100,"path":"catch","ifEditor":true,"type":1,"name":"test.txt","content":"tetst"}
+        $resource(mgrData.api.create).save({
+            entityText: JSON.stringify({
+                "salt": "/",
+                "path": "version/moduleUpdate/" + code,
+                "ifEditor": true,
+                "type": 1,
+                "name": "moduleUpdateConfig.txt",
+                "content": $scope.submitResult
+            })
+        }, {}).$promise.then(function (res) {
+            console.log(res)
+
+            $scope.goDataTable();
+            toaster.success({body: "保存配置文件成功!"});
+        });
+    };
+
+    $scope.cancelAttr = function (product, attr) {
+        //var index = product.attributes.indexOf(attr);
+        //product.attributes.splice(index, 1);
+        attr.editing = false;
+    };
+
+    $scope.deleteAttr = function (model, attr) {
+        cAlerts.confirm('确定删除?', function () {
+            //点击确定回调
+            toaster.success({body: "操作成功!"});
+            var index = model.attributes.indexOf(attr);
+            //model.attributes.splice(index, 1);
+            //为了文件假删除一行
+            model.attributes[index].show = false;
+            $scope.fileList[index] = {};
+        }, function () {
+            //点击取消回调
+        });
+
+    };
+
+    $scope.updateAttr = function (model, thisRow, index) {
+        var _file = $scope.fileList[index];
+        if (!_file || thisRow.name == "" || thisRow.version == "" || thisRow.force_update == "") {
+            $timeout(function () {
+                toaster.error({body: "请填写完整信息，请选择升级包文件!"})
+            }, 0);
+            return;
+        }
+        if (thisRow.name != $filter('getFileName')(_file.name, FILE_NAME_NO_EXTERN)) {
+            $timeout(function () {
+                toaster.error({body: "上传的文件名与模块名不匹配!"})
+            }, 0);
+            return;
+        }
+
+        var fd = new FormData();
+        fd.append('file', _file);
+        $resource(mgrUpdateConfigData.api.upload).save({
+            'type': 'file',
+            path: 'version/moduleUpdate/' + $scope.formDataUpdateConfig.model.code
+        }, fd).$promise.then(function (res) {
+                if (0 != res.status) {
+                    $timeout(function () {
+                        toaster.error({body: _file.name + "上传失败!"})
+                    }, 0);
+                    $scope.formDataUpdateConfig.model.attributes[index].uploadState = false;
+                    return;
+                } else {
+                    $timeout(function () {
+                        toaster.success({body: _file.name + "上传成功!"})
+                    }, 0);
+                    $scope.formDataUpdateConfig.model.attributes[index].md5 = res.dataMap.tree.md5;
+                    $scope.formDataUpdateConfig.model.attributes[index].web = baseUrl.pushUrl + res.dataMap.tree.downloadPath;
+                    $scope.formDataUpdateConfig.model.attributes[index].uploadState = true;
+                    thisRow.editing = false;
+                }
+            });
+
+    };
+
+    $scope.insertAttr = function (model) {
+        if (!model.attributes) {
+            model.attributes = [];
+        }
+        model.attributes.push({
+            name: '',
+            version: '',
+            force_update: '',
+            md5: '',
+            web: '',
+            uploadState: false,
+            show: true,
+            editing: true
+        });
+    };
+
+    var FILE_NAME_NO_EXTERN = 4;
+    $scope.fileList = [];//存放上传的文件列表
+    $scope.checkUpdate = function (file, thisRow, index) {
+        var code = $scope.formDataUpdateConfig.model.code,//设备组编号
+            moduleName = thisRow.name,
+            _file = file.files[0];
+
+        if (!code || code == '') {
+            $timeout(function () {
+                toaster.error({body: "请先选择要升级的设备组!"})
+            }, 0);
+            return;
+        }
+
+        if (moduleName != $filter('getFileName')(_file.name, FILE_NAME_NO_EXTERN)) {
+            $timeout(function () {
+                toaster.error({body: "上传的文件名与模块名不匹配!"})
+            }, 0);
+            return;
+        }
+        $scope.fileList[index] = _file;
+    }
+
 }

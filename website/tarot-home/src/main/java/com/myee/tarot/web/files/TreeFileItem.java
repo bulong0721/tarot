@@ -25,6 +25,8 @@ public class TreeFileItem {
 
     private String downloadPath;
 
+    private String md5;
+
     public TreeFileItem() {
     }
 
@@ -102,5 +104,13 @@ public class TreeFileItem {
 
     public void setDownloadPath(String downloadPath) {
         this.downloadPath = downloadPath;
+    }
+
+    public String getMd5() {
+        return md5;
+    }
+
+    public void setMd5(String md5) {
+        this.md5 = md5;
     }
 }

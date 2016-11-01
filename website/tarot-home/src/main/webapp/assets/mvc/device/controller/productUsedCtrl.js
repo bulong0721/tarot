@@ -277,11 +277,7 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
         if (formly.form.$valid) {
             //formly.options.updateInitialValue();//这句会报错
             var xhr = $resource(mgrData.api.update);
-            console.log(formly.model.code)
-            console.log(formly.model.startNo)
-            formly.model.code = formly.model.code | formly.model.startNo;//保证编号不为空，后台才能正常，虽然用不到
-            console.log(formly.model.code)
-            console.log(formly.model.startNo)
+            formly.model.code = formly.model.code?formly.model.code:(formly.model.code | formly.model.startNo);//保证编号不为空，后台才能正常，虽然用不到
             xhr.save({
                 autoStart: formly.model.startNo ? formly.model.startNo : "",
                 autoEnd: formly.model.endNo ? formly.model.endNo : ""
@@ -300,7 +296,7 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
                         }
                     })
 
-                    $scope.toasterManage($scope.toastOperationSucc);
+                    $scope.toasterManage($scope.toastOperationSucc,response);
                     $scope.goDataTable();
                 }, function saveFailed(response) {
                     $scope.toasterManage($scope.toastError, response);

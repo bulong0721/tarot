@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.myee.djinn.rpc.util.CryptoUtil;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.StringUtil;
@@ -11,6 +12,7 @@ import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.web.ClientAjaxResult;
 import com.myee.tarot.web.apiold.util.CommonLoginParam;
+import com.myee.tarot.web.apiold.util.FileValidCreateUtil;
 import com.myee.tarot.web.files.FileDTO;
 import com.myee.tarot.web.files.HotfixSetVo;
 import com.myee.tarot.web.files.HotfixVo;
@@ -302,6 +304,7 @@ public class FilesController {
                 jt.setLastModify(new Date(dest.lastModified()));
                 jt.setDetailType(FilenameUtils.getExtension(fileName));
                 jt.setDownloadPath(storeIdStr + "/" + path + "/" + file.getFileItem().getName());//返回相对路径
+                jt.setMd5(FileValidCreateUtil.fileMD5(dest.getPath()));
                 resp.addEntry("tree", jt);
             }
             //20160708文本编辑放到另一个接口，以后再做

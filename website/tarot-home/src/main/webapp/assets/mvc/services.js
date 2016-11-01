@@ -102,8 +102,9 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster) {
 
     vm.initAttrNgMgr = function(mgrData,scope){
         scope.cancelAttr = function (product, attr) {
-            var index = product.attributes.indexOf(attr);
-            product.attributes.splice(index, 1);
+            //var index = product.attributes.indexOf(attr);
+            //product.attributes.splice(index, 1);
+            attr.editing = false;
         };
 
         scope.deleteAttr = function (product, attr) {
@@ -167,24 +168,25 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster) {
 
         //弹提示
         scope.toasterManage = function (type, response) {
+            var respMessage = response ? response.statusMessage : "" ;
             switch (type) {
                 case scope.toastError://错误
-                    toaster.error({body: "出错啦！" + response.statusMessage});
+                    toaster.error({body: "出错啦!" + respMessage});
                     break;
                 case scope.toastOperationSucc://操作成功
-                    toaster.success({body: "操作成功"});
+                    toaster.success({body: "操作成功!"+ respMessage});
                     break;
                 case scope.toastDeleteSucc://删除成功
-                    toaster.success({body: "删除成功"});
+                    toaster.success({body: "删除成功!"+ respMessage});
                     break;
                 case scope.toastSearchSucc://查询成功
-                    toaster.success({body: "查询成功"});
+                    toaster.success({body: "查询成功!"+ respMessage});
                     break;
                 case scope.toastUploadSucc://查询成功
-                    toaster.success({body: "上传成功"});
+                    toaster.success({body: "上传成功!"+ respMessage});
                     break;
                 default :
-                    toaster.error({body: response.statusMessage});
+                    toaster.error({body: respMessage});
             }
 
         }

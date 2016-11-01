@@ -293,7 +293,7 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
                         }
                     })
 
-                    $scope.toasterManage($scope.toastOperationSucc);
+                    $scope.toasterManage($scope.toastOperationSucc, response);
                     $scope.goDataTable();
                 }, function saveFailed(response) {
                     $scope.toasterManage($scope.toastError, response);

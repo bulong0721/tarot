@@ -4,6 +4,7 @@ angular
     .filter('dateFormatter', dateFormatter)
     .filter('inputType',inputType)
     .filter('myeeUrlImg',myeeUrlImg)
+    .filter('getFileName',getFileName)
 
 //计算文件大小的单位
 function sizeFormatter() {
@@ -65,5 +66,62 @@ function inputType(){
 function myeeUrlImg(baseConstant){
     return function (val){
         return val?baseUrl.pushUrl+val:baseConstant.myeeDefaultUrlImg;
+    }
+}
+
+/**
+ * 取文件名
+ * @param filepath 文件路径path，带文件名
+ * @param type 类型：1:反转字符串;2:取文件名带后缀;3:取文件扩展名;4:取文件名不带后缀;
+ * @returns {Function}
+ */
+function getFileName(){
+    //字符串逆转
+    function strTurn(str) {
+        if (str != "") {
+            var str1 = "";
+            for (var i = str.length - 1; i >= 0; i--) {
+                str1 += str.charAt(i);
+            }
+            return (str1);
+        }
+    };
+
+    //取文件名不带后缀
+    function getFileNameNoExt(filepath) {
+        var pos = strTurn(getFileExt(filepath));
+        var file = strTurn(filepath);
+        var pos1 = strTurn( file.replace(pos, ""));
+        var pos2 = getFileFullName(pos1);
+        return pos2;
+    }
+
+    //取文件全名名称,取文件名带后缀
+    function getFileFullName(filepath) {
+        if (filepath != "") {
+            var names = filepath.split("\\");
+            return names[names.length - 1];
+        }
+    }
+
+    //取文件后缀名
+    function getFileExt(filepath) {
+        if (filepath != "") {
+            var pos = "." + filepath.replace(/.+\./, "");
+            return pos;
+        }
+    }
+
+    return function (filepath,type){
+        switch (type){
+            case 1:
+                return strTurn(filepath);
+            case 2:
+                return getFileFullName(filepath);
+            case 3:
+                return getFileExt(filepath);
+            case 4:
+                return getFileNameNoExt(filepath);
+        }
     }
 }
