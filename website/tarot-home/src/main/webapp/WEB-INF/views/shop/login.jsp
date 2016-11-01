@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>木爷终端管理系统 | 用户登录</title>
     <link href="assets/plugins/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <!-- Font awesome -->
+    <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="assets/plugins/style.css" rel="stylesheet">
 </head>
 <body class="gray-bg loginBg">
