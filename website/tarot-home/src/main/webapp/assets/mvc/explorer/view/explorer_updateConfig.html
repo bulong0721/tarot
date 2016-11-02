@@ -4,20 +4,24 @@
             <uib-tab-heading>
                 <i class="fa fa-info"></i>升级配置
             </uib-tab-heading>
-            <div class="panel-body">
-                <form name="formData.form" novalidate>
+            <div class="panel-body formly">
+                <form name="formData.form" class="formly-field" novalidate>
                     <formly-form model="formDataUpdateConfig.model" fields="formDataUpdateConfig.fields" form="formDataUpdateConfig.form" options="formDataUpdateConfig.options">
-                        <div class="panel-body">
+                        <label class="col-sm-2 control-label ">
+                            配置详细
+                        </label>
+                        <div class="panel-body col-sm-8">
                             <table id="details" width="45%" class="table table-bordered">
                                 <thead>
                                 <tr>
-                                    <th width="15%" class="center">模块名</th>
-                                    <th width="15%" class="center">版本号</th>
-                                    <th width="15%" class="center">强制升级</th>
-                                    <th width="15%" class="center">md5</th>
-                                    <th width="15%" class="center">下载地址</th>
-                                    <th class="center">上传升级包</th>
-                                    <th class="center"><a ng-click="insertAttr(formDataUpdateConfig.model)" tooltip-placement="top" uib-tooltip="{{lang_zh.add}}"><i class="btn-icon fa fa-plus"></i></a></th>
+                                    <th width="150px" class="center">名称</th>
+                                    <th width="150px" class="center">版本号</th>
+                                    <th width="80px" class="center">强制升级</th>
+                                    <th width="10%" class="center">类型</th>
+                                    <th width="50px" class="center">md5</th>
+                                    <th class="center">下载地址</th>
+                                    <th width="15%" class="center">上传升级包</th>
+                                    <th width="80px" class="center"><a ng-click="insertAttr(formDataUpdateConfig.model)" tooltip-placement="top" uib-tooltip="{{lang_zh.add}}"><i class="btn-icon fa fa-plus"></i></a></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -28,7 +32,7 @@
                                     <td>
                                         <span ng-switch-default>{{::attr.name}}</span>
                                         <div class="controls" ng-switch-when="true">
-                                            <input type="text" name="attrName" ng-model="attr.name" placeholder="模块名" class="editable-input form-control input-sm" required/>
+                                            <input type="text" name="attrName" ng-model="attr.name" value="{{attr.name}}" placeholder="名称" class="editable-input form-control input-sm" required/>
                                         </div>
                                     </td>
                                     <td>
@@ -44,15 +48,28 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span ng-switch-default>{{::attr.md5}}</span>
+                                        <span ng-switch-default>{{::attr.type}}</span>
                                         <div class="controls" ng-switch-when="true">
-                                            <input type="text" name="attrMd5" disabled="disabled" ng-model="attr.md5" placeholder="自动生成" class="editable-input form-control input-sm" />
+                                            <select ng-model="attr.type">
+                                                <option value="module">模块</option>
+                                                <option value="apk">应用</option>
+                                            </select>
                                         </div>
                                     </td>
                                     <td>
-                                        <span ng-switch-default>{{::attr.web}}</span>
-                                        <div class="controls" ng-switch-when="true">
-                                            <input type="text" name="attrWeb" disabled="disabled" ng-model="attr.web" placeholder="自动生成" class="editable-input form-control input-sm" />
+                                        <copy-to-clip content="attr.md5"></copy-to-clip>
+                                        <div class="controls cropLongString" ng-switch-when="true">
+                                            <span>
+                                                {{attr.md5?"":"自动生成" }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <copy-to-clip content="attr.web"></copy-to-clip>
+                                        <div class="controls cropLongString" ng-switch-when="true">
+                                            <span>
+                                                {{attr.web?"":"自动生成"}}
+                                            </span>
                                         </div>
                                     </td>
                                     <td class="center">
@@ -81,7 +98,7 @@
 
                         <div class="text-center col-xs-8">
                             <button class="btn btn-primary" ng-click="configSubmit()"><i class="fa fa-sm fa-check"></i>&nbsp;确定</button>
-                            <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
+                            <button class="btn m-l" ng-click="configGoDataTable()"><i class="fa fa-undo"></i>返回</button>
                         </div>
                     </formly-form>
                 </form>

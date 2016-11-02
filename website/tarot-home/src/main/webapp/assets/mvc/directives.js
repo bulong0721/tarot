@@ -381,6 +381,26 @@ function metrics($ocLazyLoad,metrics){
     };
 }
 
+//复制到剪切板
+function copyToClip(toaster){
+    return {
+        restrict: 'E',
+        template: '<div class="copyToClip cropLongString" ng-click="copy()" tooltip-placement="top" uib-tooltip="点击复制"><input value="{{content}}" /><span>{{content}}</span></div>',
+        replace: true,
+        scope: {
+            "content": "="
+        },
+        link: function (scope,element,attrs) {
+
+            scope.copy = function(){
+                element[0].children[0].select();
+                document.execCommand("Copy");
+                toaster.success({ body:"复制成功"});
+            }
+        }
+    };
+}
+
 /**
  *
  * Pass all functions into module
@@ -398,4 +418,5 @@ angular
     .directive("cDatepicker", cDatepicker)
     .directive("cVideo", cVideo)
     .directive('metrics', metrics)
+    .directive('copyToClip', copyToClip)
     .directive('iboxToolsFullScreen', iboxToolsFullScreen);

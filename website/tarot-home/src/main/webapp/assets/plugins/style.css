@@ -10447,6 +10447,13 @@ table tr:hover,table>tbody>tr:nth-of-type(odd):hover {background-color: #f6fefc;
     height:350px;
 }
 
+.cropLongString {
+    width:80px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
 /*metrics*/
 .metrics .ibox {border:#e7eaec 1px solid; border-top:none }
 .metrics .ibox-content {padding: 10px; display: inline-block; width: 100%;}
@@ -10458,3 +10465,7 @@ table tr:hover,table>tbody>tr:nth-of-type(odd):hover {background-color: #f6fefc;
 .metrics .metricInfoList li {margin: 5px 0;}
 .metrics .metricInfoList span {margin-right: 5px;}
 .metrics .metricInfoList .l {width: 170px; text-align: right; display: inline-block;}
+
+/**/
+.copyToClip {position: relative;width: 80px;cursor:pointer;}
+.copyToClip input {position: absolute;opacity:0;width:1px;border:none;}
