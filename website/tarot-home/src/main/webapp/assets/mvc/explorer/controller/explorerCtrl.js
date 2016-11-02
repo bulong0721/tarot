@@ -15,8 +15,18 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
     $scope.expandField = {field: 'name'};
     $scope.treeColumns = [
         {
+            displayName: '所属门店',
+            columnWidth: '10%',
+            cellTemplate: '<span>{{cellTemplateScope.text(row.branch)}}</span>',
+            cellTemplateScope: {
+                text: function (data) {
+                   return data.saltName;
+                }
+            }
+        },
+        {
             displayName: '修改时间',
-            columnWidth: '15%',
+            columnWidth: '10%',
             cellTemplate: '<span>{{cellTemplateScope.format(row.branch)}}</span>',
             cellTemplateScope: {
                 format: function (data) {

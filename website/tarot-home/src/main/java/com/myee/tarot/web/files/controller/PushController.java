@@ -16,6 +16,7 @@ import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.resource.domain.Notification;
 import com.myee.tarot.resource.service.NotificationService;
 import com.myee.tarot.web.files.FileType;
@@ -58,6 +59,9 @@ public class PushController {
 
     @Autowired
     private NotificationService notificationService;
+
+	@Autowired
+	private MerchantStoreService merchantStoreService;
 
     @RequestMapping(value = "admin/file/search", method = RequestMethod.POST)
     @ResponseBody
@@ -121,7 +125,11 @@ public class PushController {
                 desFile.createNewFile();
                 FileUtils.writeStringToFile(desFile, vo.getContent(),"utf-8");
             }
-            listFiles(dest, resMap, store.getId(), store.getId());
+			String shareDir = dest.getAbsolutePath().replace(store.getId()+"","100");
+			listFiles(new File(shareDir), resMap, 100L, store.getId()); //列出100下的文件
+			if (100L != store.getId()) {
+				listFiles(dest, resMap, store.getId(), store.getId());
+			}
         } catch (IOException e) {
             LOGGER.error("create file error", e);
         }
@@ -208,9 +216,11 @@ public class PushController {
         if (!parentFile.exists() || !parentFile.isDirectory() || null == parentFile.listFiles()) {
             return;
         }
+		MerchantStore merchantStore = merchantStoreService.findById(orgID);
         String prefix = FilenameUtils.concat(DOWNLOAD_HOME, Long.toString(orgID));
         for (File file : parentFile.listFiles()) {
             FileItem fileItem = FileItem.toResourceModel(file, orgID, storeId);
+			fileItem.setSaltName(merchantStore.getName());
             fileItem.setPath((trimStart(fileItem.getPath(), prefix)).replace(Constants.BACKSLASH, Constants.SLASH));
             fileItem.setUrl(DOWNLOAD_HTTP + orgID + Constants.SLASH + fileItem.getPath().replace(Constants.BACKSLASH, Constants.SLASH));
             resMap.put(file.getName(), fileItem);

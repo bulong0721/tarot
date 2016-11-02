@@ -472,7 +472,7 @@ function cfromlyService(formlyConfig, $window,$q, toaster, $filter,$timeout,form
             //上传事件及回调
             el.on("change", function (changeEvent) {
                 var file = changeEvent.target.files[0], name = file.name.replace(/.+\./, ""),to = scope.to,ajaxAll = [];
-                if(file && file.size > 0 && file.size <= 100000000){
+                if(file && file.size > 0 && file.size <= 100*1024*1024){
                     //初始化需要上传的资源
                     var fd = new FormData();
                     fd.append('file', file);

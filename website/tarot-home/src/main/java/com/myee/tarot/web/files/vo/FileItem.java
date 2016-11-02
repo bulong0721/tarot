@@ -12,6 +12,7 @@ public class FileItem implements Serializable{
     private String name;
     private String path;
     private Long salt;
+	private String saltName;
     private String url;
     private Long storeId;
     private String content;
@@ -42,7 +43,15 @@ public class FileItem implements Serializable{
         this.salt = salt;
     }
 
-    public String getUrl() {
+	public String getSaltName() {
+		return saltName;
+	}
+
+	public void setSaltName(String saltName) {
+		this.saltName = saltName;
+	}
+
+	public String getUrl() {
         return url;
     }
 
