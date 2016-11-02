@@ -119,7 +119,7 @@ public class PushController {
                     desDir.mkdirs();
                 File desFile = new File(desDir + File.separator + name);
                 desFile.createNewFile();
-                FileUtils.writeStringToFile(desFile, vo.getContent());
+                FileUtils.writeStringToFile(desFile, vo.getContent(),"utf-8");
             }
             listFiles(dest, resMap, store.getId(), store.getId());
         } catch (IOException e) {
