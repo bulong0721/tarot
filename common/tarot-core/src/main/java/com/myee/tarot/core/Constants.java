@@ -97,6 +97,7 @@ public class Constants {
 
 	public final static int CLIENT_PRICE_PHONE_OBJECT = 0; //实物
 	public final static int CLIENT_PRICE_PHONE_CINEMA = 1; //电影票
+	public final static int CLIENT_PRICE_PHONE_CMB_CREDIT_CARD = 2;//招商银行信用卡
 
 	public final static String REQUEST_INFO_SESSION = "sessionName";
 	public final static String REQUEST_INFO_USERTYPE = "userType";

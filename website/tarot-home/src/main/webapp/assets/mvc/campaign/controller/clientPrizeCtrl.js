@@ -37,7 +37,7 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
                 templateOptions: {
                     required: true,
                     label: '手机奖券类型',
-                    options:  [{name:"实物",value: 0},{name:"电影券",value: 1}]
+                    options:  [{name:"实物",value: 0},{name:"电影券",value: 1},{name:"招行信用卡",value: 2}]
                 },
                 hideExpression: function ($viewValue, $modelValue, scope) {
                     if (scope.model.type == '0') {
