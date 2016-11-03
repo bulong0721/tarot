@@ -398,7 +398,7 @@ public class DeviceController {
             }
             DeviceUsed deviceUsed1 = deviceUsedService.findById(deviceUsed.getId());
 
-            if(deviceUsed1.getProductUsed() != null){
+            if(deviceUsed1.getProductUsed() != null && deviceUsed1.getProductUsed().size() > 0){
                 return AjaxResponse.failed(-1,"已有关联设备组，无法删除！请取消关联后重试。");
             }
 
@@ -725,7 +725,7 @@ public class DeviceController {
             }
 
             ProductUsed productUsed1 = productUsedService.findById(productUsed.getId());
-            if(productUsed1.getDeviceUsed() != null){
+            if(productUsed1.getDeviceUsed() != null && productUsed1.getDeviceUsed().size() > 0){
                 return AjaxResponse.failed(-1,"已有关联设备，无法删除！请取消关联后重试。");
             }
 
