@@ -10107,6 +10107,7 @@ th.center, td.center {
 
 /*/!*====================================new style====================================*!/*/
 address {margin: 0}
+canvas {cursor: pointer}
 ::-webkit-scrollbar-track{background-color:#F5F5F5}::-webkit-scrollbar{width:6px;background-color:#F5F5F5}::-webkit-scrollbar-thumb{background-color:#999}
 /*nav top logo*/
 .profile-element {color: #fff; display: inline-block; text-align: center;}
@@ -10460,12 +10461,27 @@ table tr:hover,table>tbody>tr:nth-of-type(odd):hover {background-color: #f6fefc;
 .metrics .ibox-content .col-sm-3 {padding: 5px;}
 .metrics .mmain {border: 1px solid #ddd;padding: 5px; box-sizing: border-box;height: 180px;}
 .metrics .mtitle {}
-.metrics .mcontent {}
+.metrics .mcontent {position: relative;cursor: pointer}
+.metrics .mcontent span {position: absolute; font-size: 24px;display: none;top:0; right: 0;z-index: 10;}
+.metrics .mcontent:hover span{display: block}
+.metrics .mcontent .ir {top:-7px;}
+.metrics .mcontent .il {font-size: 25px;left: -12px;right: inherit;top: -12px}
 .metrics .metricInfoList ,.metrics .metricInfoList li {list-style: none;padding: 0;margin: 0;}
 .metrics .metricInfoList li {margin: 5px 0;}
 .metrics .metricInfoList span {margin-right: 5px;}
-.metrics .metricInfoList .l {width: 170px; text-align: right; display: inline-block;}
+.metrics .metricInfoList .l {width: 130px; text-align: right; display: inline-block;}
 
+.metrics select {display: inline;  width: auto; text-align: right}
+.metricInfoListApp {height: 500px; overflow-y: auto;  border: #eee 1px solid;  padding: 0;list-style: none;margin: 0;}
+.metricInfoListApp table{width: 100%;}
+.metricInfoListApp thead {border-bottom: #ccc 1px solid;}
+.metricInfoListApp th,.metricInfoListApp td {padding: 8px 5px}
+.metricInfoListApp tbody tr:nth-child(even){background: #f9f9f9;}
+.metricInfoListApp span {margin: 0 2px;}
+.metricInfoListApp.bn {border: none}
+@media (min-width: 992px){
+    .modal-lg {width: 80%;}
+}
 /**/
 .copyToClip {position: relative;width: 80px;cursor:pointer;}
 .copyToClip input {position: absolute;opacity:0;width:1px;border:none;}

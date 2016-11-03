@@ -610,10 +610,10 @@ function cfromlyService(formlyConfig, $window,$q, toaster, $filter,$timeout,form
 
 function cAlerts($uibModal) {
     return {
-        confirm: function (titile, ok, cancel) {
+        confirm: function (title, ok, cancel) {
             $uibModal.open({
                 animation: false,
-                template: '<alerts data-title="' + titile + '"></alerts>',
+                template: '<alerts data-title="' + title + '"></alerts>',
                 controller: function ($scope, $uibModalInstance) {
                     $scope.ok = function () {
                         $uibModalInstance.close();
@@ -690,13 +690,43 @@ function cResource(){
 }
 
 /*metrics*/
-function metrics(){
+function metrics($filter){
+    //时间戳分段
+    function _time(time){
+        switch(time) {
+            case '3600000'://1h
+                return 'mm';
+                break;
+            case '7200000'://2h
+                return 'mm';
+                break;
+            case '14400000'://4h
+                return 'mm';
+                break;
+            case '43200000'://12h
+                return 'HH:mm:ss';
+                break;
+            case '86400000'://24h
+                return 'HH:mm:ss';
+                break;
+            case '604800000'://1w
+                return 'yyyy-MM-dd';
+                break;
+            case '2592000000'://1m
+                return 'yyyy-MM-dd';
+                break;
+            case '31536000000'://1y
+                return 'yyyy-MM';
+                break;
+            default:
+                return 1;
+                break;
+        }
+    }
+
     return {
-        pie:function(opt){
-            var datas = [],val = opt.values;
-            for(var i= 0,l=val.length;i<l;i++){
-                datas.push({value:val[i].value, name:val[i].value.time})
-            }
+        pie:function(opt,type,period){
+            //var datas = periods(opt,type,period);
             return {
                 title : {
                     text: opt.name,
@@ -718,16 +748,15 @@ function metrics(){
                         radius: [0, '75%'],
                         label: {normal: {show: false,position: 'center'}},
                         lableLine: {normal: {show: false}, emphasis: {show: true}},
-                        data:datas
+                        data: opt.values.map(function (item) {
+                            return item.value;
+                        })
                     }
                 ]
             }
         },
-        bar:function(opt){
-            var datas = [],val = opt.values;
-            for(var i= 0,l=val.length;i<l;i++){
-                datas.push({value:val[i].value, name:val[i].value.time})
-            }
+        bar:function(opt,type,period){
+            //var datas = periods(opt,type,period);
             return {
                 title : {
                     text: opt.name,
@@ -736,11 +765,14 @@ function metrics(){
                 color: ['#3398DB'],
                 tooltip: {trigger: 'axis'},
                 grid: {left: '0%', right: '10%', bottom: '0%', containLabel: true},
-                xAxis : [{type : 'category', data : [''], axisTick: {alignWithLabel: true, show:false, lineStyle:{color:'#ccc'}}}],
+                xAxis : [{type : 'category',data: type?opt.values.map(function (item) {return $filter('date')(item.time, _time(period))}):[], axisTick: {alignWithLabel: true, show:false, lineStyle:{color:'#ccc'}}}],
                 yAxis : [{type : 'value',max:parseFloat(opt.maxValue),name: opt.unit, axisTick:{show:false, lineStyle:{color:'#333'}}}],
                 series : [
                     {
-                        name:opt.name, type:'bar', barWidth: '60%', data:datas,
+                        name:opt.name, type:'bar', barWidth: '60%',
+                        data: opt.values.map(function (item) {
+                            return item.value;
+                        }),
                         markLine: {
                             silent: true,
                             data: [
@@ -752,12 +784,9 @@ function metrics(){
                 ]
             }
         },
-        area:function(opt){
-            var datas = [],val = opt.values;
-            for(var i= 0,l=val.length;i<l;i++){
-                datas.push({value:val[i].value, name:val[i].value.time})
-            }
-
+        area:function(opt,type,period){
+            //var datas = periods(opt,type,period);
+            var gridRight = type?'5%':'10%'
             return {
                 title : {
                     text: opt.name,
@@ -765,14 +794,20 @@ function metrics(){
                 },
                 color: ['#3398DB'],
                 tooltip : {trigger: 'axis'},
-                grid: {left: '0%', right: '10%', bottom: '0%', containLabel: true},
-                xAxis : [{type : 'category', data : [''], axisTick: {alignWithLabel: true, show:false, lineStyle:{color:'#ccc'}}}],
+                grid: {left: '0%', right: gridRight, bottom: '0%', containLabel: true},
+                xAxis : [{
+                    type : 'category',
+                    data: type?opt.values.map(function (item) {return $filter('date')(item.time, _time(period))}):[],
+                    axisTick: {alignWithLabel: true, show:false, lineStyle:{color:'#ccc'}}
+                }],
                 yAxis : [{type : 'value',max:parseFloat(opt.maxValue),name: opt.unit, axisTick:{show:false, lineStyle:{color:'#333'}}}],
                 series : [
                     {
                         name:opt.name,
                         type:'line',
-                        data:datas,
+                        data: opt.values.map(function (item) {
+                            return item.value;
+                        }),
                         markLine: {
                             silent: true,
                             data: [
@@ -784,7 +819,7 @@ function metrics(){
                 ]
             }
         },
-        str:function(opt){
+        str:function(opt,type){
             var color = '#3398DB',val = opt.values.length>0?opt.values[0].value:0,size = 50;
             //判断字体颜色
             if(parseFloat(opt.warning) && val >= parseFloat(opt.warning)){
@@ -800,6 +835,7 @@ function metrics(){
             }else if(opt.name.length>20){
                 size = 14;
             }
+
             return {
                 title : {
                     text: opt.name,

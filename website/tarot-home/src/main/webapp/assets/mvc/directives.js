@@ -342,41 +342,50 @@ function iboxToolsFullScreen($timeout) {
 /*
  * 远程监控
  * */
-function metrics($ocLazyLoad,metrics){
+function metrics($ocLazyLoad,metrics,$timeout){
     return {
         restrict: 'E',
         template: '<div class="chart"></div>',
         replace: true,
         scope: {
-            "options": "="
+            "options": "=",
+            "type": "=",
+            "period":"="
         },
         link: function (scope, element,attrs) {
             $ocLazyLoad.load('http://echarts.baidu.com/dist/echarts.common.min.js').then(function(){
                 //设置饼图高度
                 element[0].style.height = attrs.height + "px";
                 element[0].style.width = attrs.width + "px";
-
+                //监听
+                scope.$watch('options', function(n,o) {
+                    if(n){
+                        setChart(n,scope.type,scope.period);
+                    }
+                });
+            });
+            function setChart(n,t,p){
                 // 基于准备好的dom，初始化echarts图表
                 var myChart = echarts.init(element[0]),options;
-                //
-                switch(scope.options.drawType) {
+                //判断画图类型
+                switch(n.drawType) {
                     case '0':
-                        options = metrics.str(scope.options);
+                        options = metrics.str(n,t,p);
                         break;
                     case '1':
-                        options = metrics.pie(scope.options);
+                        options = metrics.pie(n,t,p);
                         break;
                     case '2':
-                        options = metrics.bar(scope.options);
+                        options = metrics.bar(n,t,p);
                         break;
                     case '3':
-                        options = metrics.area(scope.options);
+                        options = metrics.area(n,t,p);
                         break;
                 }
                 if(options){
                     myChart.setOption(options);
                 }
-            });
+            }
         }
     };
 }
