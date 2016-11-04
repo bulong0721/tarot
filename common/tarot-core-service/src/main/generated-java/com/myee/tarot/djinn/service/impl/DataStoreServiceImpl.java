@@ -67,6 +67,7 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
 	@Override
 	public String readTextFile(long orgId, String path) throws RemoteException {
 		LOG.info("orgId= {}  path= {} DOWNLOAD_HOME={}", orgId, path, DOWNLOAD_HOME);
+		path = path.replaceAll("#","");
 		String fileData = "";
 		StringBuffer sb = new StringBuffer();
 		sb.append(DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(path);
