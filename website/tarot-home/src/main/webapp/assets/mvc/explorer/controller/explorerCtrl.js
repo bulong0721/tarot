@@ -16,7 +16,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
     $scope.treeColumns = [
         {
             displayName: '所属门店',
-            columnWidth: '10%',
+            columnWidth: '15%',
             cellTemplate: '<span>{{cellTemplateScope.text(row.branch)}}</span>',
             cellTemplateScope: {
                 text: function (data) {
@@ -309,7 +309,12 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
                 name: '',
                 templateOptions: {required: false, type: 'file', label: '上传文件'},
                 hideExpression: function ($viewValue, $modelValue, scope) {
-                    return scope.model.type == 0 ? true : false;//true新增文件夹时隐藏文件内容输入框 false新增时显示批量修改
+                    if(scope.model.type == 0  ){  //新增文件夹
+                        return true
+                    }else{
+                        return scope.model.ifEditor
+                    }
+                    //return scope.model.type == 0 ? true : false;//true新增文件夹时隐藏文件内容输入框 false新增时显示批量修改
                 },
                 //expressionProperties: {
                 //    'templateOptions.disabled': 'model.ifEditor', // disabled when ifEditor is true
@@ -348,7 +353,11 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
                     maxlen: 2000
                 },
                 hideExpression: function ($viewValue, $modelValue, scope) {
-                    return scope.model.type == 0 ? true : false;//true新增文件夹时隐藏文件内容输入框 false新增时显示批量修改
+                    if(scope.model.type == 0  ){  //新增文件夹
+                       return true
+                    }else{
+                        return !scope.model.ifEditor
+                    }
                 },
                 expressionProperties: {
                     'templateOptions.disabled': '!model.ifEditor', // disabled when ifEditor is false
@@ -430,7 +439,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
             if (!addFile) {
                 addFile = new FormData();
             }
-            if ($scope.formData.model.type == 0) {
+            if ($scope.formData.model.type == 0) { //新增文件夹
                 var parentPath = $scope.current.path == '/' ? "" : $scope.current.path;
                 $scope.current.children.push({
                     name: $scope.formData.model.name,
@@ -444,9 +453,17 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
                     type: 0
                 });
                 $scope.goDataTable();
-            } else {
-                var addFile = $scope.formData_addFile || {};
-                $resource(mgrData.api.create).save({entityText: JSON.stringify($scope.formData.model)}, addFile).$promise.then(function (res) {
+            } else { //新增文件
+                var addFile = {};
+                var entityText = JSON.stringify($scope.formData.model) ;
+                if(!$scope.formData.model.ifEditor){ //文件上传
+                    addFile = $scope.formData_addFile;
+                    var object = JSON.parse(entityText);
+                    object.content="";
+                    entityText =  JSON.stringify(object) ;
+                }
+                //var addFile = $scope.formData_addFile || {};
+                $resource(mgrData.api.create).save({entityText: entityText}, addFile).$promise.then(function (res) {
                     if ($scope.formData.model.editorModel == 1 ? true : false) {
                         var fileNewName = $scope.formData.model.name;
                         $scope.current.name = fileNewName;

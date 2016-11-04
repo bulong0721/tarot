@@ -88,43 +88,35 @@ public class PushController {
         }
 
         FileItem vo = JSON.parseObject(jsonObject.toJSONString(), FileItem.class);
-        Long orgID = vo.getSalt();
 		String name = vo.getName();
 
-        boolean editorModel = false;
         Map<String, FileItem> resMap = Maps.newLinkedHashMap();
         try {
-            File dest = FileUtils.getFile(DOWNLOAD_HOME, Long.toString(orgID), vo.getPath()); //新增文件父路径
+            File dest = FileUtils.getFile(DOWNLOAD_HOME, Long.toString(store.getId()), vo.getPath()); //新增文件父路径
+			if (!dest.exists())
+				dest.mkdirs();
             String currPath = vo.getCurrPath() == null ? "" : vo.getCurrPath();
-            if (dest.exists() && dest.isFile() && !StringUtil.isNullOrEmpty(vo.getContent(), true)) {  //如果文件已经存在，则为编辑模式,
-                editorModel = true;
+            if (dest.isFile() && !StringUtil.isNullOrEmpty(vo.getContent(), true)) {  //编辑
                 //删除原文件，创建一个新的文件，将内容写入
                 String path = dest.getAbsolutePath().substring(0, dest.getAbsolutePath().lastIndexOf(File.separator));
                 dest.delete();
                 File desFile = new File(path + File.separator + name);
                 desFile.createNewFile();
-                FileUtils.writeStringToFile(desFile, vo.getContent());
-                dest = new File(path);  //用于查找文件
-            }
-            if (!editorModel && !dest.exists())   //新增文件夹和文件需要检测文件夹是否存在
-                dest.mkdirs();
-            if (!editorModel && file != null && !file.isEmpty()) {  //文件上传
-//                String fileName = file.getFileItem().getName();
-                File desDir = new File(dest + File.separator + currPath);
-                if (!desDir.exists())
-                    desDir.mkdirs();
-                File desFile = new File(desDir + File.separator + name);
-                desFile.createNewFile();
-                file.transferTo(desFile);
-            }
-            if (!editorModel && !StringUtil.isNullOrEmpty(vo.getContent(), true)) { //界面输入文件内容
-                File desDir = new File(dest + File.separator + currPath);
-                if (!desDir.exists())
-                    desDir.mkdirs();
-                File desFile = new File(desDir + File.separator + name);
-                desFile.createNewFile();
                 FileUtils.writeStringToFile(desFile, vo.getContent(),"utf-8");
-            }
+                dest = new File(path);  //用于查找文件
+            }else{  //新增
+				File desDir = new File(dest + File.separator + currPath);
+				if (!desDir.exists())
+					desDir.mkdirs();
+				File desFile = new File(desDir + File.separator + name);
+				desFile.createNewFile();
+				if ( file != null && !file.isEmpty()) {  //文件上传
+					file.transferTo(desFile);
+				}
+				if (!StringUtil.isNullOrEmpty(vo.getContent(), true)) { //界面输入文件内容
+					FileUtils.writeStringToFile(desFile, vo.getContent(),"utf-8");
+				}
+			}
 			String shareDir = dest.getAbsolutePath().replace(store.getId()+"","100");
 			listFiles(new File(shareDir), resMap, 100L, store.getId()); //列出100下的文件
 			if (100L != store.getId()) {
@@ -183,7 +175,7 @@ public class PushController {
         FileItem fileItem = JSON.parseObject(data, FileItem.class);
         MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
         Long orgID = store.getId();
-        if (orgID != fileItem.getSalt()) {
+        if (!orgID.equals(fileItem.getSalt())) {
             return AjaxResponse.failed(-1, "文件不属于该店铺，不能修改");
         }
         String fileName = fileItem.getName();
