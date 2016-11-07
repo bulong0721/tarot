@@ -104,7 +104,6 @@ public class DeviceUsedMonitorController {
         return resp;
     }
 
-
     /**
      * @param deviceUsedId     设备ID
      * @param period           要查询数据的时间跨度
@@ -229,6 +228,135 @@ public class DeviceUsedMonitorController {
             entry.putAll(systemMetrics4SummaryToMap(metricInfoList4Summary));
 
 
+            resp.addDataEntry(entry);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            resp.setErrorString("出错");
+        }
+        return resp;
+    }
+
+    /**
+     * @param deviceUsedId     设备ID
+     * @param period           要查询数据的时间跨度
+     * @param metricsKeyString 要显示的指标key列表
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = {"admin/remoteMonitor/deviceUsed/queryMetricPointsByRange"}, method = RequestMethod.GET)
+    @ResponseBody
+    public AjaxResponse listDeviceUsedMetricsPoints(@RequestParam(value = "deviceUsedId") Long deviceUsedId,
+                                              @RequestParam(value = "period") Long period,
+                                              @RequestParam(value = "type") Integer type,
+                                              @RequestParam(value = "metricsKeyString") String metricsKeyString,
+                                              HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
+
+        try {
+            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+                return AjaxResponse.failed(-1, "请先切换门店");
+            }
+            if (deviceUsedId == null || StringUtil.isBlank(deviceUsedId + "")) {
+                return AjaxResponse.failed(-1, "参数错误");
+            }
+            DeviceUsed deviceUsed = deviceUsedService.findById(deviceUsedId);
+            if (deviceUsed == null) {
+                return AjaxResponse.failed(-1, "设备不存在");
+            }
+            Map entry = new HashMap();
+            //metricInfoList指标详细列表,先一次性根据period和deviceUsedId去查出来，再用for循环遍历到每个指标里
+            //没有要展示的指标详细列表，则直接返回全部动态指标
+            List<String> metricsKeyList = null;
+            Map<String,List<String>> metricsKeyMap = new HashMap<>();
+            if (metricsKeyString == null || StringUtil.isBlank(metricsKeyString)) {
+                metricsKeyList = new ArrayList<>();
+                metricsKeyList.addAll(Constants.METRICS_NEED_TIME_KEY_LIST);
+                metricsKeyList.addAll(Constants.METRICS_NO_TIME_KEY_LIST);
+                metricsKeyMap.put(Constants.METRICS_NEED_TIME_KEY_LIST_NAME, Constants.METRICS_NEED_TIME_KEY_LIST);
+                metricsKeyMap.put(Constants.METRICS_NO_TIME_KEY_LIST_NAME,Constants.METRICS_NO_TIME_KEY_LIST);
+            } else {
+                metricsKeyList = JSON.parseArray(metricsKeyString, String.class);
+                metricsKeyMap = sortMetricsKeyByNeedTime(metricsKeyList);
+            }
+
+            //获取最新的一条动态指标
+            SystemMetrics systemMetrics = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_METRICS);
+            if (systemMetrics == null) {
+                return AjaxResponse.failed(-1, "无可用指标数据");
+            }
+
+            //处理显示时间长度参数
+            period = decidePeriod(period);
+
+            List<Map> metricInfoList = null;
+            //根据展示时间段、指标keyList和设备ID去查找数据，一次性取出所有需要展示值随时间变化的数据
+            Long now = System.currentTimeMillis();
+            List<MetricInfo> metricInfoListDB = MetricsUtil.listMetricsInfoPointsByPeriod(metricsKeyList, metricInfoService, period, deviceUsed.getBoardNo());
+            List<MetricInfo> metricInfoNoTimeListDB = metricInfoService.listBySystemMetricsId(systemMetrics.getId(),metricsKeyMap.get(Constants.METRICS_NO_TIME_KEY_LIST_NAME));
+            if(metricInfoNoTimeListDB != null && metricInfoNoTimeListDB.size() > 0){
+                metricInfoListDB.addAll(metricInfoNoTimeListDB);
+            }
+            if (metricInfoListDB == null || metricInfoListDB.size() == 0) {
+                entry.put("metricInfoList", "");
+                return resp;
+            }
+
+            metricInfoList = new ArrayList<Map>();
+            //一次查询出所有指标详细作为缓存
+            List<MetricDetail> metricDetailList = metricDetailService.list();
+            Map<String, MetricDetail> metricDetailMap = MetricsUtil.metricDetailListToKeyNameMap(metricDetailList);
+            //使用遍历去按照指标key拆分查询出来的数据
+            Map valuesByMetricsKey = sortMetricsByKey(metricInfoListDB, metricsKeyList, metricDetailMap);
+            //根据要展示的指标列表去选择性展示指标
+
+            for (String keyForDisplay : metricsKeyList) {
+                MetricDetail metricDetail = metricDetailMap.get(keyForDisplay);
+                if (metricDetail == null
+                        || !(Constants.METRICS_NEED_TIME_KEY_LIST.contains(keyForDisplay) || Constants.METRICS_NO_TIME_KEY_LIST.contains(keyForDisplay))) {
+                    continue;
+                }
+                Map metricEntry = new HashMap();
+                //展示随时间变化的指标
+                metricEntry.put("key", keyForDisplay);
+                metricEntry.put("name", valueToString(metricDetail.getName()));
+                metricEntry.put("drawType", valueToString(metricDetail.getDrawType()));
+                metricEntry.put("maxValue", valueToString(metricDetail.getMaxValue()));
+                metricEntry.put("minValue", valueToString(metricDetail.getMinValue()));
+                metricEntry.put("warning", valueToString(metricDetail.getWarning()));
+                metricEntry.put("alert", valueToString(metricDetail.getAlert()));
+                metricEntry.put("unit", valueToString(metricDetail.getUnit()));
+                metricEntry.put("description", valueToString(metricDetail.getDescription()));
+                metricEntry.put("values", valuesByMetricsKey.get(keyForDisplay));
+
+                metricInfoList.add(metricEntry);
+            }
+            entry.put("metricInfoList", metricInfoList);
+
+            //如果type是只查询单个指标数据，则返回
+            if(type == Constants.METRIC_QUERY_TYPE_SINGLE) {
+                resp.addDataEntry(entry);
+                return resp;
+            }
+
+            //根据最新的动态指标获取当前正在运行的服务和进程
+            systemMetrics.setAppList(appInfoService.listBySystemMetricsId(systemMetrics.getId()));
+
+            //获取最新的一条静态指标，为了取出已安装的应用列表
+            SystemMetrics systemMetricsSummary = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_SUMMARY);
+            List<AppInfo> installedAppInfoList = null;
+            if (systemMetricsSummary.getId() != null) {
+                installedAppInfoList = appInfoService.listBySystemMetricsId(systemMetricsSummary.getId());
+            }
+            //把已安装的应用列表缓存到Map中
+            Map<String, AppInfo> installedAppMap = MetricsUtil.appInfoListToMap(installedAppInfoList, Constants.APPINFO_TYPE_APP);
+
+            //先把deviceUsed，正在运行的服务、进程写入map
+            entry.putAll(commonMetricsToMap(systemMetrics, deviceUsed, installedAppMap));
+
+            //指标概览summary里面要用的实时指标值
+            List<MetricInfo> metricInfoList4Summary = metricInfoService.listBySystemMetricsId(systemMetricsSummary.getId(),Constants.METRICS_4_SUMMARY_KEY_LIST);
+            entry.putAll(systemMetrics4SummaryToMap(metricInfoList4Summary));
             resp.addDataEntry(entry);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());

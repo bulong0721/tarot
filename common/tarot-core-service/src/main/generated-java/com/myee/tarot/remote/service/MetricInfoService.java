@@ -12,4 +12,6 @@ public interface MetricInfoService extends GenericEntityService<Long, MetricInfo
     List<MetricInfo> listBySystemMetricsId(Long systemMetricsId, List<String> metricsKeyListToSearch);
 
     List<MetricInfo> listByBoardNoPeriod(String boardNo, Long now, Long period, String nodeName, List<String> metricsKeyList);
+
+    List<MetricInfo> listMetricsInfoPointsByPeriod(List<String> metricsKeyString, Long period, String boardNo);
 }

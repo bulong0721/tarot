@@ -281,4 +281,49 @@ public class Constants {
 			com.myee.djinn.constants.Constants.SUMMARY_productGlobalIP,
 			com.myee.djinn.constants.Constants.SUMMARY_serial
 	);
+
+	public static final List<Long> METRICS_SELECT_RANGE_LIST = Arrays.asList(
+			3600000L,7200000L,14400000L,43200000L,86400000L,604800000L,2592000000L,31536000000L
+	);
+
+	//1小时范围监控用30秒的频率
+	public static final int ONE_HOUR_POINT_COUNT = 60 * 60 / 30;
+	//1小时的间隔毫秒数
+	public static final int INTERVAL_ONE_HOUR = 30 * 1000;
+
+	//2小时范围监控用1分30秒的频率
+	public static final int TWO_HOUR_POINT_COUNT = 2 * 60 * 60 / 90;
+	//2小时的间隔毫秒数
+	public static final int INTERVAL_TWO_HOUR = 90 * 1000;
+
+	//4小时范围监控用5分钟的频率
+	public static final int FOUR_HOUR_POINT_COUNT = 4 * 60 * 60 / 300;
+	//4小时的间隔毫秒数
+	public static final int INTERVAL_FOUR_HOUR = 300 * 1000;
+
+	//12小时范围监控用5分钟的频率
+	public static final int HALF_DAY_POINT_COUNT = 12 * 60 * 60 / 300;
+	//12小时的间隔毫秒数
+	public static final int INTERVAL_HALF_DAY = 300 * 1000;
+
+	//24小时范围监控用5分钟的频率
+	public static final int ONE_DAY_POINT_COUNT = 24 * 60 * 60 / 300;
+	//24小时的间隔毫秒数
+	public static final int INTERVAL_ONE_DAY = 300 * 1000;
+
+	//1周范围监控用5分钟的频率
+	public static final int ONE_WEEK_POINT_COUNT = 7 * 24 * 60 * 60 / 3600;
+	//1周的间隔毫秒数
+	public static final int INTERVAL_ONE_WEEK = 3600 * 1000;
+
+	//1个月范围监控用5分钟的频率
+	public static final int ONE_MONTH_POINT_COUNT = 30 * 24 * 60 * 60 / 3600;
+	//1个月的间隔毫秒数
+	public static final int INTERVAL_ONE_MONTH = 3600 * 1000;
+
+	//1年范围监控用5分钟的频率
+	public static final int ONE_YEAR_POINT_COUNT = 365 * 24 * 60 * 60 / 3600 * 24;
+	//1年的间隔毫秒数
+	public static final int INTERVAL_ONE_YEAR = 3600 * 24 * 1000;
+
 }

@@ -1,24 +1,29 @@
 package com.myee.tarot.djinn.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Maps;
 import com.myee.djinn.dto.DataUploadInfoDTO;
 import com.myee.djinn.dto.UploadResourceType;
 import com.myee.djinn.dto.metrics.SystemMetrics;
 import com.myee.djinn.rpc.RemoteException;
 import com.myee.djinn.server.operations.DataStoreService;
+import com.myee.tarot.cache.entity.MetricCache;
+import com.myee.tarot.cache.uitl.RedissonUtil;
 import com.myee.tarot.catalog.service.DeviceUsedService;
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.service.TransactionalAspectAware;
 import com.myee.tarot.datacenter.domain.SelfCheckLog;
 import com.myee.tarot.datacenter.domain.SelfCheckLogVO;
 import com.myee.tarot.datacenter.service.SelfCheckLogService;
+import com.myee.tarot.metric.domain.MetricInfo;
 import com.myee.tarot.remote.service.AppInfoService;
 import com.myee.tarot.remote.service.MetricDetailService;
 import com.myee.tarot.remote.service.MetricInfoService;
 import com.myee.tarot.remote.service.SystemMetricsService;
 import com.myee.tarot.remote.util.MetricsUtil;
 import org.apache.commons.io.FileUtils;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +34,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Martin on 2016/9/6.
@@ -36,28 +42,31 @@ import java.util.List;
 @Service
 public class DataStoreServiceImpl implements DataStoreService, TransactionalAspectAware {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DataStoreServiceImpl.class);
-	@Autowired
-	private SelfCheckLogService selfCheckLogService;
-	@Autowired
-	private SystemMetricsService systemMetricsService;
-	@Autowired
-	private AppInfoService appInfoService;
-	@Autowired
-	private MetricInfoService metricInfoService;
-	@Autowired
-	private MetricDetailService metricDetailService;
-	@Autowired
-	private DeviceUsedService deviceUsedService;
-	@Autowired
-	private ThreadPoolTaskExecutor taskExecutor;
-	@Value("${cleverm.push.dirs}")
-	private String DOWNLOAD_HOME;
+    private static final Logger LOG = LoggerFactory.getLogger(DataStoreServiceImpl.class);
+    @Autowired
+    private SelfCheckLogService selfCheckLogService;
+    @Autowired
+    private SystemMetricsService systemMetricsService;
+    @Autowired
+    private AppInfoService appInfoService;
+    @Autowired
+    private MetricInfoService metricInfoService;
+    @Autowired
+    private MetricDetailService metricDetailService;
+    @Autowired
+    private DeviceUsedService deviceUsedService;
+    @Autowired
+    private ThreadPoolTaskExecutor taskExecutor;
+    @Value("${cleverm.push.dirs}")
+    private String DOWNLOAD_HOME;
 
-	@Override
-	public int receiveLog(long orgId, UploadResourceType fileType, String logText) throws RemoteException {
-		return 0;
-	}
+    @Autowired
+    private RedissonClient redissonClient;
+
+    @Override
+    public int receiveLog(long orgId, UploadResourceType fileType, String logText) throws RemoteException {
+        return 0;
+    }
 
 	@Override
 	public int receiveText(long orgId, String text) throws RemoteException {
@@ -102,23 +111,165 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
 		return false;
 	}
 
-	@Override
-	public boolean uploadSystemMetrics(final List<SystemMetrics> list) throws RemoteException {
-		if (list == null) {
-			return false;
-		}
+    @Override
+    public boolean uploadSystemMetrics(final List<SystemMetrics> list) throws RemoteException {
+        if (list == null) {
+            return false;
+        }
 
-		//异步插入数据库
-		//用线程池代替原来的new Thread方法
-		taskExecutor.submit(new Runnable() {
-			@Override
+        //异步插入数据库
+        //用线程池代替原来的new Thread方法
+        taskExecutor.submit(new Runnable() {
+            @Override
 			public void run() {
 				List<SystemMetrics> list1 = JSON.parseArray(JSON.toJSONString(list), SystemMetrics.class);
 				MetricsUtil.updateSystemMetrics(list1, deviceUsedService, appInfoService, metricInfoService, metricDetailService, systemMetricsService);
 			}
 		});
+        LOG.info("------开始执行-----");
+        //新线程跑前台展示用的数据
+        taskExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                List<SystemMetrics> list1 = JSON.parseArray(JSON.toJSONString(list), SystemMetrics.class);
+                long now = System.currentTimeMillis();
+                for (Long range : Constants.METRICS_SELECT_RANGE_LIST) {
+                    insertReportTable(now, redissonClient, range, list1);
+                }
+            }
+        });
+        LOG.info("------结束执行-----");
+        return true;
+    }
 
-		return true;
-	}
+    /**
+     * 例如，一个小时范围的数据：每5秒钟插入一次报表的数据，更新最新元素插入时间点，每次拿当前时间跟上一次更新时间比较如果大于等于5秒钟的间隔，
+     * 则插入或更新，满了之后再移出最早的元素，插入最新的元素,
+     * 查看更新时间
+     * 1个小时有多少个5秒钟
+     * @param now
+     * @param redissonClient
+     * @param type
+     * @param list
+     */
+    private void insertReportTable(long now, RedissonClient redissonClient, Long type, List<SystemMetrics> list) {
+        int pointCount = 0;
+        MetricCache metricCache = RedissonUtil.metricCache(redissonClient);
+        LOG.info("{}", metricCache);
+        try {
+            Map<String, Long> map = metricCache.getLastUpdateTimeCache();
+            if (metricCache != null && map == null) {
+                Map<String, Long> lastUpdateTimeCache = Maps.newConcurrentMap();
+                lastUpdateTimeCache.put(MetricCache.LAST_UPDATE_TIME_KEY_ONE_HOUR, 0L);
+                lastUpdateTimeCache.put(MetricCache.LAST_UPDATE_TIME_KEY_TWO_HOUR, 0L);
+                lastUpdateTimeCache.put(MetricCache.LAST_UPDATE_TIME_KEY_FOUR_HOUR, 0L);
+                lastUpdateTimeCache.put(MetricCache.LAST_UPDATE_TIME_KEY_HALF_DAY, 0L);
+                lastUpdateTimeCache.put(MetricCache.LAST_UPDATE_TIME_KEY_ONE_DAY, 0L);
+                lastUpdateTimeCache.put(MetricCache.LAST_UPDATE_TIME_KEY_ONE_WEEK, 0L);
+                lastUpdateTimeCache.put(MetricCache.LAST_UPDATE_TIME_KEY_ONE_MONTH, 0L);
+                lastUpdateTimeCache.put(MetricCache.LAST_UPDATE_TIME_KEY_ONE_YEAR, 0L);
+                metricCache.setLastUpdateTimeCache(lastUpdateTimeCache);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Map<String, Long> lastUpdateTimeCache = metricCache.getLastUpdateTimeCache();
+        if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(0))) { //一小时范围,每30秒1个点
+            pointCount = Constants.ONE_HOUR_POINT_COUNT;
+            Map<String, List<MetricInfo>> oneHourMetricInfoCache = metricCache.getOneHourMetricInfoPointsCache();
+            if (oneHourMetricInfoCache == null) {
+                oneHourMetricInfoCache = Maps.newConcurrentMap();
+                metricCache.setOneHourMetricInfoPointsCache(oneHourMetricInfoCache);
+            }
+            insertDataToRedisByRange(pointCount, list, now, lastUpdateTimeCache, oneHourMetricInfoCache, MetricCache.LAST_UPDATE_TIME_KEY_ONE_HOUR, Constants.INTERVAL_ONE_HOUR);
+        } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(1))) { //两小时范围
+            pointCount = Constants.TWO_HOUR_POINT_COUNT;
+            Map<String, List<MetricInfo>> twoHourMetricInfoCache = metricCache.getTwoHourMetricInfoPointsCache();
+            if (twoHourMetricInfoCache == null) {
+                twoHourMetricInfoCache = Maps.newConcurrentMap();
+                metricCache.setTwoHourMetricInfoPointsCache(twoHourMetricInfoCache);
+            }
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, twoHourMetricInfoCache, MetricCache.LAST_UPDATE_TIME_KEY_TWO_HOUR, Constants.INTERVAL_TWO_HOUR);
 
+        } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(2))) { //四小时范围
+            pointCount = Constants.FOUR_HOUR_POINT_COUNT;
+            Map<String, List<MetricInfo>> fourHourMetricInfoCache = metricCache.getTwoHourMetricInfoPointsCache();
+            if (fourHourMetricInfoCache == null) {
+                fourHourMetricInfoCache = Maps.newConcurrentMap();
+                metricCache.setFourHourMetricInfoPointsCache(fourHourMetricInfoCache);
+            }
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, fourHourMetricInfoCache, MetricCache.LAST_UPDATE_TIME_KEY_FOUR_HOUR, Constants.INTERVAL_FOUR_HOUR);
+
+        } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(3))) { //半天范围
+            pointCount = Constants.HALF_DAY_POINT_COUNT;
+            Map<String, List<MetricInfo>> halfDayMetricInfoCache = metricCache.getTwoHourMetricInfoPointsCache();
+            if (halfDayMetricInfoCache == null) {
+                halfDayMetricInfoCache = Maps.newConcurrentMap();
+                metricCache.setHalfDayMetricInfoPointsCache(halfDayMetricInfoCache);
+            }
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, halfDayMetricInfoCache, MetricCache.LAST_UPDATE_TIME_KEY_HALF_DAY, Constants.INTERVAL_HALF_DAY);
+
+        } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(4))) { //一天范围
+            pointCount = Constants.ONE_DAY_POINT_COUNT;
+            Map<String, List<MetricInfo>> oneDayMetricInfoCache = metricCache.getOneDayMetricInfoPointsCache();
+            if (oneDayMetricInfoCache == null) {
+                oneDayMetricInfoCache = Maps.newConcurrentMap();
+                metricCache.setOneDayMetricInfoPointsCache(oneDayMetricInfoCache);
+            }
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, oneDayMetricInfoCache, MetricCache.LAST_UPDATE_TIME_KEY_ONE_DAY, Constants.INTERVAL_ONE_DAY);
+
+        } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(5))) { //一周范围
+            pointCount = Constants.ONE_WEEK_POINT_COUNT;
+            Map<String, List<MetricInfo>> oneWeekMetricInfoCache = metricCache.getOneWeekMetricInfoPointsCache();
+            if (oneWeekMetricInfoCache == null) {
+                oneWeekMetricInfoCache = Maps.newConcurrentMap();
+                metricCache.setOneWeekMetricInfoPointsCache(oneWeekMetricInfoCache);
+            }
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, oneWeekMetricInfoCache, MetricCache.LAST_UPDATE_TIME_KEY_ONE_WEEK, Constants.INTERVAL_ONE_WEEK);
+
+        } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(6))) { //一个月范围
+            pointCount = Constants.ONE_MONTH_POINT_COUNT;
+            Map<String, List<MetricInfo>> oneMonthMetricInfoCache = metricCache.getOneMonthMetricInfoPointsCache();
+            if (oneMonthMetricInfoCache == null) {
+                oneMonthMetricInfoCache = Maps.newConcurrentMap();
+                metricCache.setOneMonthMetricInfoPointsCache(oneMonthMetricInfoCache);
+            }
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, oneMonthMetricInfoCache, MetricCache.LAST_UPDATE_TIME_KEY_ONE_MONTH, Constants.INTERVAL_ONE_MONTH);
+
+        } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(7))) { //一年范围
+            pointCount = Constants.ONE_YEAR_POINT_COUNT;
+            Map<String, List<MetricInfo>> oneYearMetricInfoCache = RedissonUtil.metricCache(redissonClient).getOneYearMetricInfoPointsCache();
+            if (oneYearMetricInfoCache == null) {
+                oneYearMetricInfoCache = Maps.newConcurrentMap();
+                metricCache.setOneYearMetricInfoPointsCache(oneYearMetricInfoCache);
+            }
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, oneYearMetricInfoCache, MetricCache.LAST_UPDATE_TIME_KEY_ONE_YEAR, Constants.INTERVAL_ONE_YEAR);
+        }
+    }
+
+    private void insertDataToRedisByRange(int pointCount,
+                                          List<SystemMetrics> list, long now, Map<String, Long> lastUpdateTimeCache,
+                                          Map<String, List<MetricInfo>> metricInfoCache, String lastUpdateTimeKey, long timeIntervalVal) {
+        if (lastUpdateTimeCache == null || metricInfoCache == null) {
+            LOG.info("程序无法执行");
+            throw new RuntimeException("缓存为空,程序无法执行");
+        } else {
+            if (lastUpdateTimeCache != null && lastUpdateTimeCache.get(lastUpdateTimeKey).equals(0L) || metricInfoCache != null && metricInfoCache.size() == 0) { //如果第一次插入就不考虑任何因素
+                MetricsUtil.insertReportDataInRedis(metricInfoCache, list, metricDetailService, deviceUsedService, pointCount);
+                lastUpdateTimeCache.put(lastUpdateTimeKey, now);
+                LOG.info("第一次插数据后的更新时间 {}", lastUpdateTimeCache.get(lastUpdateTimeKey));
+            } else {
+                long lastUpdateTime = lastUpdateTimeCache.get(lastUpdateTimeKey);
+                long timeInterval = now - lastUpdateTime;
+                if (timeInterval < 0) {
+                    LOG.error("程序异常");
+                    throw new RuntimeException("程序异常");
+                }
+                if (timeInterval >= timeIntervalVal) { //如果间隔超过10秒钟的毫秒数了，则更新Redis中数据
+                    MetricsUtil.insertReportDataInRedis(metricInfoCache, list, metricDetailService, deviceUsedService, pointCount);
+                    lastUpdateTimeCache.put(lastUpdateTimeKey, now);
+                }
+            }
+        }
+    }
 }
