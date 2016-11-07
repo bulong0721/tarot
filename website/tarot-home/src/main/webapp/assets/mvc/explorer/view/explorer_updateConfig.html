@@ -5,12 +5,26 @@
                 <i class="fa fa-info"></i>升级配置
             </uib-tab-heading>
             <div class="panel-body formly">
+
                 <form name="formData.form" class="formly-field" novalidate>
                     <formly-form model="formDataUpdateConfig.model" fields="formDataUpdateConfig.fields" form="formDataUpdateConfig.form" options="formDataUpdateConfig.options">
                         <label class="col-sm-2 control-label ">
                             配置详细
                         </label>
                         <div class="panel-body col-sm-8">
+                            <div ng-if="formDataUpdateConfig.model.code">
+                                <div class="btn btn-sm btn-success upMenuBut">
+                                    <i class="fa fa-upload bigger-120"></i><span>导入配置</span>
+                                    <input type="file" onchange="angular.element(this).scope().readFile(this)"/>
+                                </div>
+                                <a class="btn btn-sm btn-danger m-l" ng-href="{{downloadConfig('apk')}}" download><i
+                                        class="fa fa-download"></i><span class="bold">应用配置下载</span></a>
+                                <a class="btn btn-sm btn-danger m-l" ng-href="{{downloadConfig('module')}}" download><i
+                                        class="fa fa-download"></i><span class="bold">模块配置下载</span></a>
+                                <br>
+                                <br>
+                            </div>
+
                             <table id="details" width="45%" class="table table-bordered">
                                 <thead>
                                 <tr>

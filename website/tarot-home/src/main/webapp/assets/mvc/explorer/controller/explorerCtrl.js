@@ -55,17 +55,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
             cellTemplateScope: {
                 format: function (data) {
                     if (!data.size) return '-';
-                    var value = data.size;
-                    if (value > 1024 * 1024 * 1024) {
-                        return Math.ceil(value / (1024 * 1024 * 1024)) + 'G';
-                    }
-                    if (value > 1024 * 1024) {
-                        return Math.ceil(value / (1024 * 1024)) + 'M';
-                    }
-                    if (value > 1024) {
-                        return Math.ceil(value / 1024) + 'K';
-                    }
-                    return value + 'B';
+                    return $filter('sizeFormatter')(data.size)
                 }
             }
         },
@@ -511,37 +501,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
         });
     }
 
-    /**  读取Json文件内容 **/
-    $scope.readJsonFile = function (input) {
-        //支持chrome IE10
-        if (window.FileReader) {
-            var file = input.files[0];
-            filename = file.name.split(".")[0];
-            var reader = new FileReader();
-            reader.onload = function () {
-                return this.result;
-            }
-            reader.readAsText(file);
-        }
-        //支持IE 7 8 9 10
-        else if (typeof window.ActiveXObject != 'undefined') {
-            var xmlDoc;
-            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
-            xmlDoc.async = false;
-            xmlDoc.load(input.value);
-            return xmlDoc.xml;
-        }
-        //支持FF
-        else if (document.implementation && document.implementation.createDocument) {
-            var xmlDoc;
-            xmlDoc = document.implementation.createDocument("", "", null);
-            xmlDoc.async = false;
-            xmlDoc.load(input.value);
-            return xmlDoc.xml;
-        } else {
-            return 'error';
-        }
-    }
+
 
     //升级配置--------------------------------------------------------------
     $scope.goUpdateConfig = function () {
@@ -590,6 +550,8 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
         },
         constant: {
             FILE_NAME_NO_EXTERN: 4,
+            FILE_NAME_WITH_EXTERN: 2,
+            FILE_EXTERN: 3,
             BASE_PATH_MODULE: 'version/moduleUpdate/',
             FILE_NAME_MODULE: 'moduleUpdateConfig.txt',
             BASE_PATH_APK: 'version/apkUpdate/',
@@ -599,7 +561,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
         }
     };
 
-    //选择设备组的时候
+    //选择设备组的时候加载配置文件
     $scope.loadConfigFile = function (code,failMessage,data,type) {
         //console.log("code:" + code);
         //先读取模块配置并加载
@@ -650,34 +612,38 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
         fields: $scope.mgrUpdateConfigData.fields
     };
 
+    //校验是否选择了设备组
+    function checkProductUsedCodeOK(code){
+        if (!code || code == '') {
+            toaster.error({body: "请先选择要升级的设备组!"});
+            return false;
+        }
+        return true;
+    }
     //formly提交config
     $scope.configSubmit = function () {
         var code = $scope.formDataUpdateConfig.model.code;
-        if (!code || code == '') {
-            toaster.error({body: "请先选择要升级的设备组!"});
+        //校验是否选择了设备组
+        if (!checkProductUsedCodeOK(code)) {
             return;
         }
 
+        var attr = {};
         angular.forEach($scope.formDataUpdateConfig.model.attributes, function (indexData, index, array) {
             //indexData等价于array[index]
+            attr = {
+                name: indexData.name,
+                version: indexData.version,
+                force_update: indexData.force_update,
+                md5: indexData.md5,
+                web: indexData.web
+            };
             if (indexData.show) {//只把没假删除的结果写入最终数据
                 if (indexData.type == $scope.mgrUpdateConfigData.constant.TYPE_MODULE) {
-                    $scope.submitModuleResult.push({
-                        name: indexData.name,
-                        version: indexData.version,
-                        force_update: indexData.force_update,
-                        md5: indexData.md5,
-                        web: indexData.web
-                    });
+                    $scope.submitModuleResult.push(attr);
                 }
                 else if (indexData.type == $scope.mgrUpdateConfigData.constant.TYPE_APK) {
-                    $scope.submitApkResult.push({
-                        name: indexData.name,
-                        version: indexData.version,
-                        force_update: indexData.force_update,
-                        md5: indexData.md5,
-                        web: indexData.web
-                    });
+                    $scope.submitApkResult.push(attr);
                 }
 
             }
@@ -813,6 +779,91 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
 
     };
 
+    //下载配置文件函数
+    $scope.downloadConfig = function(type) {
+        //校验是否选择了设备组
+        if (!checkProductUsedCodeOK($scope.formDataUpdateConfig.model.code)) {
+            return '';
+        }
+
+        var baseUrl = $rootScope.baseUrl.pushUrl
+            + Constants.thisMerchantStore.id
+            + "/";
+        if(type == $scope.mgrUpdateConfigData.constant.TYPE_APK) {
+            return baseUrl
+                + $scope.mgrUpdateConfigData.constant.BASE_PATH_APK
+                + $scope.formDataUpdateConfig.model.code
+                + "/" + $scope.mgrUpdateConfigData.constant.FILE_NAME_APK;
+        }
+        else if(type == $scope.mgrUpdateConfigData.constant.TYPE_MODULE) {
+            return baseUrl
+                + $scope.mgrUpdateConfigData.constant.BASE_PATH_MODULE
+                + $scope.formDataUpdateConfig.model.code
+                + "/" + $scope.mgrUpdateConfigData.constant.FILE_NAME_MODULE;
+        }
+    }
+
+    //读取用户本地配置文件到表格
+    /**  读取Json文件内容 **/
+    $scope.readFile = function (input) {
+        var file_name = $filter('getFileName')(input.files[0].name, $scope.mgrUpdateConfigData.constant.FILE_NAME_WITH_EXTERN);
+        if ($scope.mgrUpdateConfigData.constant.FILE_NAME_MODULE != file_name
+            && $scope.mgrUpdateConfigData.constant.FILE_NAME_APK != file_name) {
+            $timeout(function () {
+                toaster.error({body: "请选择"+ $scope.mgrUpdateConfigData.constant.FILE_NAME_APK
+                +"或"+ $scope.mgrUpdateConfigData.constant.FILE_NAME_MODULE  +"文件!"})
+            }, 0);
+            return;
+        }
+
+        //支持chrome IE10
+        if (window.FileReader) {
+            var file = input.files[0];
+            filename = file.name.split(".")[0];
+            var reader = new FileReader();
+            reader.readAsText(file,"utf8");
+            reader.onload = function () {
+                var obj = JSON.parse(this.result);
+                var attr = [];
+                angular.forEach(obj, function (indexData, index, array) {
+                    var type;
+                    //读取模块配置文件
+                    if (file_name == $scope.mgrUpdateConfigData.constant.FILE_NAME_MODULE) {
+                        type = $scope.mgrUpdateConfigData.constant.TYPE_MODULE;
+                    }
+                    //读取APK模块配置文件
+                    else if (file_name == $scope.mgrUpdateConfigData.constant.FILE_NAME_APK) {
+                        type = $scope.mgrUpdateConfigData.constant.TYPE_APK;
+                    }
+                    //indexData等价于array[index]
+                    attr.push({
+                        name: indexData.name,
+                        version: indexData.version,
+                        force_update: indexData.force_update,
+                        md5: indexData.md5,
+                        web: indexData.web,
+                        type:type,
+                        uploadState: false,
+                        show: true,
+                        editing: false
+                    });
+                });
+                //手动渲染。。。可以研究有什么更好的
+                $scope.$apply(function() {
+                    $scope.formDataUpdateConfig.model.attributes = $scope.formDataUpdateConfig.model.attributes.concat(attr);
+                    console.log($scope.formDataUpdateConfig.model.attributes)
+                });
+            }
+        }
+        //支持IE 7 8 9
+        else if (typeof window.ActiveXObject != 'undefined') {
+            $timeout(function () {
+                toaster.error({body: "浏览器版本过低，请使用IE10以上或火狐或谷歌浏览器!"});
+            }, 0);
+            return;
+        }
+    }
+
     $scope.insertAttr = function (model) {
         if (!model.attributes) {
             model.attributes = [];
@@ -831,17 +882,16 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
     };
 
     $scope.fileList = [];//存放上传的文件列表
+    //校验要上传的升级文件文件名与模块/应用名称是否一致
     $scope.checkUpdate = function (file, thisRow, index) {
         var _file = file.files[0];
         $scope.fileList[index] = _file;
         if (thisRow.name != $filter('getFileName')(_file.name, $scope.mgrUpdateConfigData.constant.FILE_NAME_NO_EXTERN)) {
             $timeout(function () {
-                toaster.error({body: "上传的文件名与模块名不匹配!"})
+                toaster.error({body: "上传的文件名与模块或应用名不一致!"})
             }, 0);
             return;
         }
-
-
     }
 
 }

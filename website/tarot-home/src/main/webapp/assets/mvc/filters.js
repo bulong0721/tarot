@@ -9,9 +9,6 @@ angular
 //计算文件大小的单位
 function sizeFormatter() {
     return function (value) {
-        if (!row.leaf || 0 == value) {
-            return '-';
-        }
         if (value > 1024 * 1024 * 1024) {
             return Math.ceil(value / (1024 * 1024 * 1024)) + 'G';
         }
