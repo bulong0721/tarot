@@ -292,7 +292,7 @@ public class DeviceUsedMonitorController {
             List<Map> metricInfoList = null;
             //根据展示时间段、指标keyList和设备ID去查找数据，一次性取出所有需要展示值随时间变化的数据
             Long now = System.currentTimeMillis();
-            List<MetricInfo> metricInfoListDB = MetricsUtil.listMetricsInfoPointsByPeriod(metricsKeyList, metricInfoService, period, deviceUsed.getBoardNo());
+            List<MetricInfo> metricInfoListDB = MetricsUtil.listMetricsInfoPointsByPeriod(metricsKeyMap.get(Constants.METRICS_NEED_TIME_KEY_LIST_NAME), metricInfoService, period, deviceUsed.getBoardNo());
             List<MetricInfo> metricInfoNoTimeListDB = metricInfoService.listBySystemMetricsId(systemMetrics.getId(),metricsKeyMap.get(Constants.METRICS_NO_TIME_KEY_LIST_NAME));
             if(metricInfoNoTimeListDB != null && metricInfoNoTimeListDB.size() > 0){
                 metricInfoListDB.addAll(metricInfoNoTimeListDB);
@@ -359,6 +359,7 @@ public class DeviceUsedMonitorController {
             entry.putAll(systemMetrics4SummaryToMap(metricInfoList4Summary));
             resp.addDataEntry(entry);
         } catch (Exception e) {
+            e.printStackTrace();
             LOGGER.error(e.getMessage());
             resp.setErrorString("出错");
         }
