@@ -198,11 +198,12 @@ public class DeviceController {
     public AjaxPageableResponse pageDeviceUsed(Model model, HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) o;
 
             PageResult<DeviceUsed> pageResult = deviceUsedService.pageByStore(merchantStore1.getId(), pageRequest);
             List<DeviceUsed> deviceUsedList = pageResult.getList();
@@ -223,11 +224,12 @@ public class DeviceController {
     AjaxPageableResponse deviceUsedListByStoreId( HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) o;
 
             pageRequest.setCount(-1);//不分页，查询所有结果
             PageResult<DeviceUsed> pageList = deviceUsedService.pageByStore(merchantStore1.getId(), pageRequest);
@@ -249,11 +251,12 @@ public class DeviceController {
     public List deviceUsedList(HttpServletRequest request) {
         AjaxResponse resp = new AjaxResponse() ;
         try {
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp.setErrorString("请先切换门店");
                 return null;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) o;
 
             PageRequest pageRequest = new PageRequest();
             pageRequest.setCount(-1);//不分页，查询所有结果
@@ -277,7 +280,8 @@ public class DeviceController {
     public AjaxResponse saveUsedProduct(@Valid @RequestBody DeviceUsed deviceUsed,@RequestParam(value = "autoStart")Long autoStart,@RequestParam(value = "autoEnd")Long autoEnd, HttpServletRequest request) throws Exception {
         AjaxResponse resp ;
         try {
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
                 return resp;
@@ -321,7 +325,7 @@ public class DeviceController {
                 return resp;
             }
 
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) o;
             List<Object> updateResult = new ArrayList<Object>();
             deviceUsed.setStore(merchantStore1);
 
@@ -547,11 +551,12 @@ public class DeviceController {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         String currentUser = request.getRemoteUser();
         try {
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) o;
 
             PageResult<ProductUsed> pageList = productUsedService.pageByStore(merchantStore1.getId(), pageRequest);
             List<ProductUsed> productUsedList = pageList.getList();
@@ -574,11 +579,12 @@ public class DeviceController {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         String currentUser = request.getRemoteUser();
         try {
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) o;
 
             pageRequest.setCount(-1);//不分页，查询所有结果
             PageResult<ProductUsed> pageList = productUsedService.pageByStore(merchantStore1.getId(), pageRequest);
@@ -599,11 +605,12 @@ public class DeviceController {
     public List productUsedList(HttpServletRequest request) {
         AjaxResponse resp = new AjaxResponse() ;
         try {
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp.setErrorString("请先切换门店");
                 return null;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) o;
 
             PageRequest pageRequest = new PageRequest();
             pageRequest.setCount(-1);//不分页，查询所有结果
@@ -627,7 +634,8 @@ public class DeviceController {
     public AjaxResponse saveUsedProduct(@Valid @RequestBody ProductUsed productUsed,@RequestParam(value = "autoStart")Long autoStart,@RequestParam(value = "autoEnd")Long autoEnd, HttpServletRequest request) throws Exception {
         AjaxResponse resp ;
         try {
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
                 return resp;
@@ -650,7 +658,7 @@ public class DeviceController {
                 }
             }
 
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) o;
 
             List<Object> updateResult = new ArrayList<Object>();
             productUsed.setStore(merchantStore1);
