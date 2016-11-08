@@ -181,10 +181,10 @@ public class PushController {
         String fileName = fileItem.getName();
         String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
         File resFile = getResFile(orgID, fileItem.getPath());
-        String type = FileType.getFileType(resFile.getAbsolutePath());
         if (!resFile.exists()) {
             return AjaxResponse.failed(-2, "文件不存在");
         }
+        String type = FileType.getFileType(resFile.getAbsolutePath());
         if ((null != type && !type.matches(Constants.ALLOW_EDITOR_TEXT)) || !suffix.matches(Constants.ALLOW_EDITOR_TEXT)) {
             return AjaxResponse.failed(-5, "不支持该格式文件在线编辑。");
         }
