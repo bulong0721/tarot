@@ -60,10 +60,11 @@ public class AdminUserController {
             user = dbUser;
         } else {
             //新建账号将绑定切换的门店
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"请先切换门店");
             }
-            MerchantStore merchantStore1 = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore)o;
             user.setMerchantStore(merchantStore1);
             user.setPassword(DEFAULT_PASSWORD);
         }
@@ -113,11 +114,12 @@ public class AdminUserController {
             dbUser.setDeactivated(user.isDeactivated());
             user = dbUser;
         } else {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
             //新建账号将绑定切换的门店
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            if (o == null) {
                 return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"请先切换门店");
             }
-            MerchantStore merchantStore1 = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore)o;
             user.setMerchantStore(merchantStore1);
             user.setPasswordChangeRequired(false);
             user.setRegistered(true);
@@ -134,11 +136,12 @@ public class AdminUserController {
     @ResponseBody
     AjaxPageableResponse pageCustomer(Model model, HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
-        if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+        Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+        if (o == null) {
             resp.setErrorString("请先切换门店");
             return resp;
         }
-        MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        MerchantStore merchantStore1 = (MerchantStore) o;
 
         PageResult<Customer> pageList = customerService.pageByStore(merchantStore1.getId(), pageRequest);
         List<Customer> customerList = pageList.getList();

@@ -159,12 +159,13 @@ public class PriceInfoController {
     public AjaxResponse checkCodePrice(@RequestParam("checkCode") String checkCode, HttpServletRequest request) {
         AjaxResponse resp = new AjaxResponse();
         try {
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp.setErrorString("当前无门店");
                 resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) o;
             PriceInfo priceInfo = priceInfoService.priceCheckCode(merchantStore1.getId(), checkCode.toUpperCase());
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
             if (priceInfo != null) {

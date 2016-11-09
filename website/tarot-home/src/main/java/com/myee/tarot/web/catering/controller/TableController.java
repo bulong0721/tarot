@@ -72,13 +72,13 @@ public class TableController {
     public AjaxResponse addTableType(@RequestBody TableType type, HttpServletRequest request) throws Exception {
         AjaxResponse resp;
         try {
-            Merchant merchant1 = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) o;
             type.setStore(merchantStore1);
             type = typeService.update(type);
 
@@ -98,7 +98,8 @@ public class TableController {
     public AjaxResponse delTableType(@RequestBody TableType type, HttpServletRequest request) throws Exception {
         AjaxResponse resp;
         try {
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
                 return resp;
@@ -114,7 +115,7 @@ public class TableController {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "类型不存在");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) o;
             if (merchantStore1.getId() != type.getStore().getId()) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "要删除的类型不属于与当前切换的门店");
                 return resp;
@@ -135,11 +136,12 @@ public class TableController {
     @ResponseBody
     AjaxPageableResponse pageTypes(Model model, HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
-        if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+        Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+        if (o == null) {
             resp.setErrorString("请先切换门店");
             return resp;
         }
-        MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        MerchantStore merchantStore1 = (MerchantStore) o;
         PageResult<TableType> pageList = typeService.pageByStore(merchantStore1.getId(), pageRequest);
         List<TableType> typeList = pageList.getList();
         for (TableType type : typeList) {
@@ -160,12 +162,13 @@ public class TableController {
     public AjaxResponse addTableZone(@RequestBody TableZone zone, HttpServletRequest request) throws Exception {
         AjaxResponse resp;
         try {
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) o;
             zone.setStore(merchantStore1);
             zone = zoneService.update(zone);
 
@@ -185,12 +188,13 @@ public class TableController {
     public AjaxResponse delTableZone(@RequestBody TableZone zone, HttpServletRequest request) throws Exception {
         AjaxResponse resp;
         try {
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) o;
             if (zone.getId() == null || StringUtil.isNullOrEmpty(zone.getId().toString())) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("参数错误");
@@ -214,11 +218,12 @@ public class TableController {
     AjaxPageableResponse pageZones(Model model, HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) o;
 
             PageResult<TableZone> pageList = zoneService.pageByStore(merchantStore1.getId(), pageRequest);
             List<TableZone> typeList = pageList.getList();
@@ -249,7 +254,8 @@ public class TableController {
                                  HttpServletRequest request) throws Exception {
         AjaxResponse resp;
         try {
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
                 return resp;
@@ -263,7 +269,7 @@ public class TableController {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "桌子码只能是000-200之间的三位数字！");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) o;
             DeviceUsed deviceUsed = null;
             String dUCommonName = null;
             String commonBoardNo = null;
@@ -386,12 +392,13 @@ public class TableController {
     public AjaxResponse delTable(@RequestBody Table table, HttpServletRequest request) throws Exception {
         AjaxResponse resp;
         try {
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) o;
             if (table.getId() == null || StringUtil.isNullOrEmpty(table.getId().toString())) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("参数错误");
@@ -415,11 +422,12 @@ public class TableController {
     AjaxPageableResponse pageTables(Model model, HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) o;
             PageResult<Table> pageList = tableService.pageByStore(merchantStore1.getId(), pageRequest);
 
             List<Table> typeList = pageList.getList();
@@ -485,8 +493,8 @@ public class TableController {
     public AjaxResponse addSuperMenu(@RequestBody MenuInfo menuInfo, HttpServletRequest request) throws Exception {
         AjaxResponse resp;
         try {
-            Merchant merchant1 = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
                 return resp;
@@ -503,7 +511,7 @@ public class TableController {
             if(!StringUtil.isNumeric(menuInfo.getScanCode())){
                 return AjaxResponse.failed(-1,"商户菜品扫描码只能为整数");
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) o;
             menuInfo.setStore(merchantStore1);
             menuInfo = menuService.update(menuInfo);
 
@@ -523,7 +531,8 @@ public class TableController {
     public AjaxResponse delSuperMenu(@RequestBody MenuInfo menuInfo, HttpServletRequest request) throws Exception {
         AjaxResponse resp;
         try {
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
                 return resp;
@@ -539,7 +548,7 @@ public class TableController {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "菜品不存在");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            MerchantStore merchantStore1 = (MerchantStore) o;
             if (merchantStore1.getId() != menuInfo1.getStore().getId()) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "要删除的菜品不属于与当前切换的门店");
                 return resp;
@@ -560,11 +569,12 @@ public class TableController {
     @ResponseBody
     AjaxPageableResponse pageSuperMenus(Model model, HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
-        if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+        Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+        if (o == null) {
             resp.setErrorString("请先切换门店");
             return resp;
         }
-        MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        MerchantStore merchantStore1 = (MerchantStore) o;
         PageResult<MenuInfo> pageList = menuService.pageByStore(merchantStore1.getId(), pageRequest);
         List<MenuInfo> menuList = pageList.getList();
         for (MenuInfo menuInfo : menuList) {
@@ -578,11 +588,12 @@ public class TableController {
     @ResponseBody
     public AjaxResponse fileUpload(@RequestParam("file") CommonsMultipartFile[] files, HttpServletRequest request) {
         AjaxResponse resp = new AjaxResponse();
-        if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+        Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+        if (o == null) {
             resp.setErrorString("请先切换门店");
             return resp;
         }
-        MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        MerchantStore merchantStore1 = (MerchantStore) o;
 
         LOGGER.info("----商户菜品上传----,商户ID:"+merchantStore1.getId());
 
@@ -692,10 +703,11 @@ public class TableController {
     public
     @ResponseBody
     List<TableDTO> tableOptions(Model model, HttpServletRequest request) {
-        if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+        Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+        if (o == null) {
             return null;
         }
-        MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        MerchantStore merchantStore1 = (MerchantStore) o;
         List<Table> tableList = tableService.listByStore(merchantStore1.getId());
         return Lists.transform(tableList, new Function<Table, TableDTO>() {
             @Nullable
@@ -710,10 +722,11 @@ public class TableController {
     public
     @ResponseBody
     List<TypeDTO> typeOptions(Model model, HttpServletRequest request) {
-        if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+        Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+        if (o == null) {
             return null;
         }
-        MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        MerchantStore merchantStore1 = (MerchantStore) o;
         List<TableType> typeList = typeService.listByStore(merchantStore1.getId());
         return Lists.transform(typeList, new Function<TableType, TypeDTO>() {
             @Nullable
@@ -728,10 +741,11 @@ public class TableController {
     public
     @ResponseBody
     List<ZoneDTO> zoneOptions(Model model, HttpServletRequest request) {
-        if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+        Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+        if (o == null) {
             return null;
         }
-        MerchantStore merchantStore1 = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        MerchantStore merchantStore1 = (MerchantStore) o;
         List<TableZone> typeList = zoneService.listByStore(merchantStore1.getId());
         return Lists.transform(typeList, new Function<TableZone, ZoneDTO>() {
             @Nullable
