@@ -453,6 +453,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
                     entityText =  JSON.stringify(object) ;
                 }
                 //var addFile = $scope.formData_addFile || {};
+                $scope.disableSubmit = true;
                 $resource(mgrData.api.create).save({entityText: entityText}, addFile).$promise.then(function (res) {
                     if ($scope.formData.model.editorModel == 1 ? true : false) {
                         var fileNewName = $scope.formData.model.name;
