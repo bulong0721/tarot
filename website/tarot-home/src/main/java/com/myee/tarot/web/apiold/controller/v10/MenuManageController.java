@@ -1,12 +1,16 @@
 package com.myee.tarot.web.apiold.controller.v10;
 
+import com.myee.djinn.dto.WaitToken;
+import com.myee.djinn.rpc.RemoteException;
+import com.myee.djinn.server.operations.MealsService;
 import com.myee.tarot.apiold.domain.MenuInfo;
 import com.myee.tarot.apiold.service.MenuService;
 import com.myee.tarot.apiold.view.MenuDataInfo;
 import com.myee.tarot.apiold.view.MenuInfoView;
 import com.myee.tarot.cache.uitl.RedissonUtil;
-import com.myee.tarot.web.apiold.controller.BaseController;
+import com.myee.tarot.core.util.AutoNumUtil;
 import com.myee.tarot.web.ClientAjaxResult;
+import com.myee.tarot.web.apiold.controller.BaseController;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
@@ -40,6 +44,8 @@ public class MenuManageController extends BaseController {
     private MenuService    menuManageService;
     @Autowired
     private RedissonClient redisson;
+    @Autowired
+    private MealsService mealsService;
 
 
     /**
@@ -90,6 +96,38 @@ public class MenuManageController extends BaseController {
             logger.error(e.getMessage(), e);
             return ClientAjaxResult.failed("糟了...系统出错了...");
         }
+    }
+
+    @RequestMapping(value = "test")
+    public ClientAjaxResult test(){
+        try {
+            WaitToken waitToken = new WaitToken();
+            waitToken.setTableTypeId(4L);
+            waitToken.setShopId(100L);
+            waitToken.setIdentityCode(AutoNumUtil.getCode(6, 3));
+            waitToken.setToken("A2");
+            waitToken.setWaitStatus(0);
+            mealsService.takeNumber(waitToken);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return ClientAjaxResult.failed();
+    }
+
+    @RequestMapping(value = "test1")
+    public ClientAjaxResult test1(){
+        try {
+            WaitToken waitToken = new WaitToken();
+            waitToken.setTableTypeId(4L);
+            waitToken.setShopId(100L);
+            waitToken.setIdentityCode(AutoNumUtil.getCode(6, 3));
+            waitToken.setToken("A1");
+            waitToken.setWaitStatus(1);
+            mealsService.skipNumber(waitToken);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return ClientAjaxResult.failed();
     }
 
 
