@@ -22,6 +22,8 @@ public class AdminController {
     private String pushUrl;
     @Value("${qiniu_cdn}")
     private String qiniuCdn;
+	@Value("${maxUploadSize}")
+	private String maxUploadSize;
 
     @RequestMapping(value = {"admin/home.html", "admin/", "admin","admin/home"}, method = RequestMethod.GET)
     public ModelAndView displayDashboard(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -29,6 +31,7 @@ public class AdminController {
         Map<String,Object> entry = new HashMap<String ,Object>();
         entry.put("pushUrl",pushUrl);
         entry.put("qiniuCdn",qiniuCdn);
+		entry.put("maxUploadSize",maxUploadSize);
         mv.addObject("downloadBase", JSON.toJSON(entry));
         return mv;
     }
