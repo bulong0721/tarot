@@ -855,6 +855,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
                         web: indexData.web,
                         type:type,
                         uploadState: false,
+                        md5InputValid: false,
                         show: true,
                         editing: false
                     });
@@ -887,6 +888,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
             md5: '',
             web: '',
             uploadState: false,
+            md5InputValid: false,
             show: true,
             editing: true
         });

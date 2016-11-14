@@ -29,7 +29,7 @@
                                 <thead>
                                 <tr>
                                     <th width="15%" class="center">名称</th>
-                                    <th width="15%" class="center">版本号</th>
+                                    <th width="12%" class="center">版本号</th>
                                     <th width="80px" class="center">强制升级</th>
                                     <th width="10%" class="center">类型</th>
                                     <th width="145px" class="center">md5</th>
@@ -74,14 +74,14 @@
                                         </div>
                                     </td>
                                     <td>
+                                        <copy-to-clip ng-model="attr.md5" content="attr.md5" style="float: left"></copy-to-clip>
                                         <div ng-switch-default>
-                                            <copy-to-clip ng-model="attr.md5" content="attr.md5" style="float: left"></copy-to-clip>
                                             <i class="btn btn-sm btn-success" ng-click="showMd5Input(attr)">校验</i>
                                             <br>
                                             <input style="float: left;" ng-if="attr.md5InputValid" ng-model="attr.md5InputContent" type="text" class="editable-input form-control input-sm inputMd5"/>
                                             <span style="float: right;">
-                                                <i class="fa fa-times checkMd5MarkWrong" aria-hidden="true" ng-show="attr.md5InputValid && attr.md5InputContent != null && attr.md5InputContent.length != 0 && attr.md5InputContent!=attr.md5"></i>
-                                                <i class="fa fa-check checkMd5MarkRight" aria-hidden="true" ng-show="attr.md5InputValid && attr.md5InputContent != null && attr.md5InputContent.length != 0 && attr.md5InputContent==attr.md5"></i>
+                                                <i class="fa fa-times-circle checkMd5MarkWrong" aria-hidden="true" ng-show="attr.md5InputValid && attr.md5InputContent != null && attr.md5InputContent.length != 0 && attr.md5InputContent!=attr.md5"></i>
+                                                <i class="fa fa-check-circle checkMd5MarkRight" aria-hidden="true" ng-show="attr.md5InputValid && attr.md5InputContent != null && attr.md5InputContent.length != 0 && attr.md5InputContent==attr.md5"></i>
                                             </span>
                                         </div>
                                         <div class="controls cropLongString" ng-switch-when="true">
@@ -100,8 +100,8 @@
                                     </td>
                                     <td class="center">
                                         <span ng-switch-default>
-                                            <i ng-if="attr.uploadState" class="btn-icon fa fa-check"></i>
-                                            <i ng-if="!attr.uploadState" class="btn-icon fa fa-close"></i>
+                                            <i ng-if="attr.uploadState" class="btn-icon fa fa-check" tooltip-placement="top" uib-tooltip="本次已上传升级包"></i>
+                                            <i ng-if="!attr.uploadState" class="btn-icon fa fa-times-circle" tooltip-placement="top" uib-tooltip="本次未上传升级包，若下载地址对应的升级包已存在，则不用重复上传"></i>
                                         </span>
                                         <div class="controls" ng-switch-when="true">
                                             <span class="btn btn-sm btn-success upMenuBut">
