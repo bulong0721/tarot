@@ -43,15 +43,16 @@ public class MerchantController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MerchantController.class);
 
     @Autowired
-    private MerchantService         merchantService;
+    private MerchantService merchantService;
     @Autowired
-    private MerchantStoreService    merchantStoreService;
+    private MerchantStoreService merchantStoreService;
     @Autowired
-    private GeoZoneService          geoZoneService;
+    private GeoZoneService geoZoneService;
     @Autowired
     private SaleCorpMerchantService saleCorpMerchantService;
     @Value("${cleverm.push.dirs}")
     private String DOWNLOAD_HOME;
+
     /**
      * 商户接口
      */
@@ -70,7 +71,7 @@ public class MerchantController {
 
             //校验商户名称不能重复
             Merchant merchantTemp = merchantService.getByMerchantName(merchant.getName());
-            if( merchantTemp != null && merchantTemp.getId() != merchant.getId()){
+            if (merchantTemp != null && merchantTemp.getId() != merchant.getId()) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("错误:重复的商户名称，请修改后重新提交");
                 return resp;
@@ -80,15 +81,15 @@ public class MerchantController {
             Boolean logoSaveSucc = false;
             String path = "";
             String imgBase64 = merchant.getLogoBase64();
-            if(imgBase64 != null && !StringUtil.isBlank(imgBase64)){
-                path = "images/logo/" + System.currentTimeMillis() +".png" ;
-                logoSaveSucc = FileValidCreateUtil.createBase64Img(imgBase64, DOWNLOAD_HOME+ "/"+path);
+            if (imgBase64 != null && !StringUtil.isBlank(imgBase64)) {
+                path = "images/logo/" + System.currentTimeMillis() + ".png";
+                logoSaveSucc = FileValidCreateUtil.createBase64Img(imgBase64, DOWNLOAD_HOME + "/" + path);
             }
-            if(logoSaveSucc){
+            if (logoSaveSucc) {
                 merchant.setLogo(path);
             }
 
-            merchant.setCuisineType(StringUtil.isBlank(merchant.getCuisineType())?"":merchant.getCuisineType());
+            merchant.setCuisineType(StringUtil.isBlank(merchant.getCuisineType()) ? "" : merchant.getCuisineType());
             Merchant merchant1 = merchantService.update(merchant);//新建或更新
 
             Long counts = merchantStoreService.getCountById(null, merchant1.getId());
@@ -97,7 +98,7 @@ public class MerchantController {
                 MerchantStore merchantStore = new MerchantStore();
                 merchantStore.setMerchant(merchant1);
                 merchantStore.setName(merchant1.getName() + "默认门店");
-                merchantStore.setCode("defaultCode0000"+ DateTimeUtils.toShortDateTime(new Date()));
+                merchantStore.setCode("defaultCode0000" + DateTimeUtils.toShortDateTime(new Date()));
                 merchantStoreService.update(merchantStore);
             }
             resp = AjaxResponse.success();
@@ -126,7 +127,7 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = {"admin/merchant/getSwitch","shop/merchant/getSwitch"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"admin/merchant/getSwitch", "shop/merchant/getSwitch"}, method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse getSwitchMerchant(HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -152,19 +153,30 @@ public class MerchantController {
     public AjaxResponse deleteMerchant(@Valid @RequestBody Merchant merchantDelete, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
-            Merchant thisSwitchMerchant = (Merchant)request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
-            if(thisSwitchMerchant == null ){
+            Merchant thisSwitchMerchant = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
+            if (thisSwitchMerchant == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            if(thisSwitchMerchant.getId() == merchantDelete.getId()){
+            if (thisSwitchMerchant.getId() == merchantDelete.getId()) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("要删除的商户是当前切换的门店商户，不能删除");
                 return resp;
             }
-
-
+            List<MerchantStore> merchantStores = merchantStoreService.listByMerchantId(merchantDelete.getId());
+            if (merchantStores != null && merchantStores.size() > 0) {
+                //删除当前商户下所有门店，如果报错，则提示“该商户下有门店在被其他模块使用，无法删除”；如果没报错，则说明商户可以删除
+                for (MerchantStore merchantStore : merchantStores) {
+                    try {
+                        merchantStoreService.delete(merchantStore);
+                    } catch (Exception e) {
+                        resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                        resp.setErrorString("该商户下'" + merchantStore.getName() + "'门店在被其他模块使用，无法删除");
+                        return resp;
+                    }
+                }
+            }
             Merchant merchant = merchantService.findById(merchantDelete.getId());
             if (merchant != null) merchantService.delete(merchant);
         } catch (Exception e) {
@@ -226,13 +238,13 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = {"admin/merchant/typeList4Select","shop/merchant/typeList4Select"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"admin/merchant/typeList4Select", "shop/merchant/typeList4Select"}, method = RequestMethod.GET)
     @ResponseBody
     public List getMerchantType4Select() {
         return new BusinessType().getMerchantBusinessType4Select();
     }
 
-    @RequestMapping(value = {"admin/merchant/cuisineList4Select","shop/merchant/cuisineList4Select"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"admin/merchant/cuisineList4Select", "shop/merchant/cuisineList4Select"}, method = RequestMethod.GET)
     @ResponseBody
     public List getMerchantCuisine4Select() {
         return new CuisineType().getMerchantCuisine4Select();
@@ -247,7 +259,7 @@ public class MerchantController {
         entry.put("businessTypeKey", new BusinessType().getBusinessTypeName(merchant.getBusinessType()));
         String suisineType = merchant.getCuisineType();
         entry.put("cuisineType", merchant.getCuisineType());
-        entry.put("cuisineTypeKey",(suisineType == null || "".equals(suisineType))?"": new CuisineType().getCuisineTypeName(merchant.getCuisineType()));
+        entry.put("cuisineTypeKey", (suisineType == null || "".equals(suisineType)) ? "" : new CuisineType().getCuisineTypeName(merchant.getCuisineType()));
         entry.put("logo", merchant.getLogo());
         entry.put("description", merchant.getDescription());
         return entry;
@@ -278,7 +290,7 @@ public class MerchantController {
             }
             //code不能重复
             MerchantStore merchantStoreTemp = merchantStoreService.getByCode(merchantStore.getCode());
-            if( merchantStoreTemp != null && merchantStoreTemp.getId() != merchantStore.getId()){
+            if (merchantStoreTemp != null && merchantStoreTemp.getId() != merchantStore.getId()) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("错误:重复的门店码，请修改后重新提交");
                 return resp;
@@ -286,7 +298,7 @@ public class MerchantController {
 
             //校验门店名称不能重复
             MerchantStore merchantStoreTemp1 = merchantStoreService.getByMerchantStoreName(merchantStore.getName());
-            if( merchantStoreTemp1 != null && merchantStoreTemp1.getId() != merchantStore.getId()){
+            if (merchantStoreTemp1 != null && merchantStoreTemp1.getId() != merchantStore.getId()) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("错误:重复的门店名称，请修改后重新提交");
                 return resp;
@@ -360,13 +372,13 @@ public class MerchantController {
     public AjaxResponse deleteMerchantStore(@Valid @RequestBody MerchantStore merchantStoreDelete, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
-            MerchantStore thisSwitchMerchantStore = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
-            if(thisSwitchMerchantStore == null ){
+            MerchantStore thisSwitchMerchantStore = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (thisSwitchMerchantStore == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            if(thisSwitchMerchantStore.getId() == merchantStoreDelete.getId()){
+            if (thisSwitchMerchantStore.getId() == merchantStoreDelete.getId()) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("要删除的门店是当前切换的门店，不能删除");
                 return resp;
@@ -382,14 +394,14 @@ public class MerchantController {
         } catch (Exception e) {
             e.printStackTrace();
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-            resp.setErrorString("删除出错");
+            resp.setErrorString("该门店在被其他模块使用，无法删除");
         }
         return resp;
     }
 
-    @RequestMapping(value = {"admin/merchantStore/list","shop/merchantStore/list"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"admin/merchantStore/list", "shop/merchantStore/list"}, method = RequestMethod.GET)
     @ResponseBody
-    public AjaxPageableResponse listMerchantStore(PageRequest pageRequest , HttpServletRequest request) throws Exception {
+    public AjaxPageableResponse listMerchantStore(PageRequest pageRequest, HttpServletRequest request) throws Exception {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
             String path = request.getServletPath();
@@ -455,7 +467,7 @@ public class MerchantController {
             for (MerchantStore merchantStore : merchantStoreList) {
                 SaleCorpMerchant saleCorpMerchant = saleCorpMerchantService.findByMerchantId(merchantStore.getId());
                 List<MerchantStore> bindStores = Lists.newArrayList();
-                if(saleCorpMerchant!=null&& !StringUtil.isBlank(saleCorpMerchant.getRelatedMerchants())){
+                if (saleCorpMerchant != null && !StringUtil.isBlank(saleCorpMerchant.getRelatedMerchants())) {
                     List<Long> bindStore = JSON.parseArray(saleCorpMerchant.getRelatedMerchants(), Long.class);
                     for (Long storeId : bindStore) {
                         MerchantStore store = merchantStoreService.findById(storeId);
@@ -514,7 +526,7 @@ public class MerchantController {
                 resp.setErrorString("请切换门店！");
                 return resp;
             }
-            Long numFind = merchantStoreService.getCountById(id,null);
+            Long numFind = merchantStoreService.getCountById(id, null);
             if (numFind != 1L) {
                 //抛出异常给异常处理机制
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -535,7 +547,7 @@ public class MerchantController {
         return resp;
     }
 
-    @RequestMapping(value = {"admin/merchantStore/getSwitch","shop/merchantStore/getSwitch"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"admin/merchantStore/getSwitch", "shop/merchantStore/getSwitch"}, method = RequestMethod.GET)
     @ResponseBody
     public AjaxResponse getSwitchMerchantStore(HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
@@ -553,7 +565,7 @@ public class MerchantController {
 
             //因为懒加载可能导致修改商户后，关联查询出来点商户信息没更新，所以强制重新查询一次
             Merchant merchant = merchantService.findById(merchantStore1.getMerchant().getId());
-            entry.put("merchant",merchant);
+            entry.put("merchant", merchant);
             resp.addDataEntry(entry);
         } catch (Exception e) {
             e.printStackTrace();
@@ -565,9 +577,9 @@ public class MerchantController {
 
     @RequestMapping(value = "admin/merchantStore/getAllStoreExceptSelf", method = RequestMethod.GET)
     @ResponseBody
-    public AjaxResponse getAllStoreExceptSelf(){
+    public AjaxResponse getAllStoreExceptSelf() {
         try {
-            AjaxResponse resp =  new AjaxResponse();
+            AjaxResponse resp = new AjaxResponse();
             List<MerchantStore> result = merchantStoreService.list();
             for (MerchantStore merchantStore : result) {
                 resp.addDataEntry(objectToEntry(merchantStore));
@@ -598,9 +610,9 @@ public class MerchantController {
     }
 
     //把类转换成entry返回给前端，解耦和  额外添加个绑定属性
-    private Map objectToEntryAdd(MerchantStore merchantStore,List<MerchantStore> bindStores) {
+    private Map objectToEntryAdd(MerchantStore merchantStore, List<MerchantStore> bindStores) {
         Map entry = objectToEntry(merchantStore);
-        entry.put("bindStores",bindStores);
+        entry.put("bindStores", bindStores);
         return entry;
     }
 

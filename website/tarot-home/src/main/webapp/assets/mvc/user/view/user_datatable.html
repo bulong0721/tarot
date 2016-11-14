@@ -44,7 +44,8 @@
                     <td class="center">
                         <a ng-click="goEditor($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
                         <span class="divider"></span>
-                        <a ng-click="doDelete($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
+                        <a ng-if="row.login != userName" ng-click="doDelete($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
+                        <a ng-if="row.login == userName" tooltip-placement="top" uib-tooltip="{{lang_zh.noDeleteThisUser}}"><i class="btn-icon fa fa-ban"></i></a>
                     </td>
                 </tr>
                 </tbody>

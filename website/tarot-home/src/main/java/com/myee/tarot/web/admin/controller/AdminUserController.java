@@ -1,5 +1,6 @@
 package com.myee.tarot.web.admin.controller;
 
+import com.google.common.collect.Maps;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.admin.service.AdminUserService;
 import com.myee.tarot.core.Constants;
@@ -46,6 +47,23 @@ public class AdminUserController {
     @Autowired
     private RoleService roleService;
 
+    @RequestMapping(value = "admin/users/paging", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    AjaxPageableResponse pageUsers(Model model, HttpServletRequest request) {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
+        List<AdminUser> userList = userService.list();
+        for (AdminUser user : userList) {
+            resp.addDataEntry(objectToEntry(user));
+        }
+        AdminUser user = (AdminUser) request.getSession().getAttribute(Constants.ADMIN_USER);
+        Long id = user.getId();
+        Map map = Maps.newHashMap();
+        map.put("loggedUserId", id);
+        resp.setDataMap(map);
+        return resp;
+    }
+
     @RequestMapping(value = "admin/users/save", method = RequestMethod.POST)
      @ResponseBody
      public AjaxResponse addUser(@RequestBody AdminUser user, HttpServletRequest request) throws Exception {
@@ -69,21 +87,44 @@ public class AdminUserController {
             user.setMerchantStore(merchantStore1);
             user.setPassword(DEFAULT_PASSWORD);
         }
+
+        //校验登录名不能重复
+        AdminUser adminUser = userService.getByUserName(user.getLogin());
+        if (adminUser != null && adminUser.getId() != user.getId()) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("错误:重复的登录名，请修改后重新提交");
+            return resp;
+        }
+
         user = userService.update(user);
         resp = AjaxResponse.success();
         resp.addEntry("updateResult", objectToEntry(user));
         return resp;
     }
 
-    @RequestMapping(value = "admin/users/paging", method = RequestMethod.GET)
-    public
+    @RequestMapping(value = "admin/users/delete", method = RequestMethod.POST)
     @ResponseBody
-    AjaxPageableResponse pageUsers(Model model, HttpServletRequest request) {
-        AjaxPageableResponse resp = new AjaxPageableResponse();
-        List<AdminUser> userList = userService.list();
-        for (AdminUser user : userList) {
-            resp.addDataEntry(objectToEntry(user));
+    public AjaxResponse deleteUser(@Valid @RequestBody AdminUser adminUser, HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
+        MerchantStore thisSwitchMerchantStore = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        AdminUser loggedUser = (AdminUser) request.getSession().getAttribute(Constants.ADMIN_USER);
+        if (thisSwitchMerchantStore == null) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("请先切换门店");
+            return resp;
         }
+        AdminUser adminUserFound = userService.findById(adminUser.getId());
+        if (adminUserFound == null) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("错误:该用户不存在，无法被删除");
+            return resp;
+        }
+        if (adminUserFound.getId() == loggedUser.getId()) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("要删除的用户是当前登录的账号，不能删除");
+            return resp;
+        }
+        userService.delete(adminUserFound);
         return resp;
     }
 
@@ -156,6 +197,26 @@ public class AdminUserController {
         }
         resp.setRecordsTotal(pageList.getRecordsTotal());
 
+        return resp;
+    }
+
+    @RequestMapping(value = "admin/customers/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse deleteCustomer(@Valid @RequestBody Customer user, HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
+        MerchantStore thisSwitchMerchantStore = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        if (thisSwitchMerchantStore == null) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("请先切换门店");
+            return resp;
+        }
+        Customer customerFound = customerService.findById(user.getId());
+        if (customerFound == null) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("错误:该用户不存在，无法被删除");
+            return resp;
+        }
+        customerService.delete(customerFound);
         return resp;
     }
 
