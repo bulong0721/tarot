@@ -35,6 +35,11 @@ public class MerchantStoreServiceImpl extends GenericEntityServiceImpl<Long, Mer
         return storeDao.getCountById(merchantStoreId, merchantId);
     }
 
+    @Override
+    public MerchantStore getByMerchantStoreName(String name) {
+        return storeDao.getByMerchantStoreName(name);
+    }
+
 //    @Override
 //    public List<MerchantStore> listByMerchant(Long id){
 //        return storeDaoDao.listByMerchant(id);

@@ -33,4 +33,9 @@ public class MerchantServiceImpl extends GenericEntityServiceImpl<Long, Merchant
         return merchantDao.pageList(pageRequest);
     }
 
+    @Override
+    public Merchant getByMerchantName(String name) {
+        return merchantDao.getByMerchantName(name);
+    }
+
 }

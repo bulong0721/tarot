@@ -68,6 +68,14 @@ public class MerchantController {
                 return resp;
             }
 
+            //校验商户名称不能重复
+            Merchant merchantTemp = merchantService.getByMerchantName(merchant.getName());
+            if( merchantTemp != null && merchantTemp.getId() != merchant.getId()){
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("错误:重复的商户名称，请修改后重新提交");
+                return resp;
+            }
+
             //处理logo截图
             Boolean logoSaveSucc = false;
             String path = "";
@@ -273,6 +281,14 @@ public class MerchantController {
             if( merchantStoreTemp != null && merchantStoreTemp.getId() != merchantStore.getId()){
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("错误:重复的门店码，请修改后重新提交");
+                return resp;
+            }
+
+            //校验门店名称不能重复
+            MerchantStore merchantStoreTemp1 = merchantStoreService.getByMerchantStoreName(merchantStore.getName());
+            if( merchantStoreTemp1 != null && merchantStoreTemp1.getId() != merchantStore.getId()){
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("错误:重复的门店名称，请修改后重新提交");
                 return resp;
             }
 

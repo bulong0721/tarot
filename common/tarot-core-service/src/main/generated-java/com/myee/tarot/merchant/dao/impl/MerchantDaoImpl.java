@@ -50,4 +50,14 @@ public class MerchantDaoImpl extends GenericEntityDaoImpl<Long, Merchant> implem
         return pageList;
     }
 
+    @Override
+    public Merchant getByMerchantName(String name) {
+        QMerchant qMerchant = QMerchant.merchant;
+        JPQLQuery<Merchant> query = new JPAQuery(getEntityManager());
+        query.from(qMerchant)
+                .where(qMerchant.name.eq(name));
+        log.info(query.fetchCount());
+        return query.fetchFirst();
+    }
+
 }
