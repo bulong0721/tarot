@@ -584,6 +584,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
                     md5: indexData.md5,
                     web: indexData.web,
                     uploadState: true,
+                    md5InputValid: false,
                     show: true,
                     editing: false
                 });
@@ -601,6 +602,15 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
             }
             $scope.loadConfigFile(code,"应用配置读取失败！",data,$scope.mgrUpdateConfigData.constant.TYPE_APK);
         });
+    }
+
+    //版本升级校验Md5是否一致
+    $scope.showMd5Input = function (thisRow) {
+        if (thisRow.md5InputValid == true) {
+            thisRow.md5InputValid = false;
+        } else {
+            thisRow.md5InputValid = true;
+        }
     }
 
     //查询推送设备组下拉框内容

@@ -32,7 +32,7 @@
                                     <th width="15%" class="center">版本号</th>
                                     <th width="80px" class="center">强制升级</th>
                                     <th width="10%" class="center">类型</th>
-                                    <th width="50px" class="center">md5</th>
+                                    <th width="145px" class="center">md5</th>
                                     <th class="center">下载地址</th>
                                     <th width="15%" class="center">上传升级包</th>
                                     <th width="80px" class="center"><a ng-click="insertAttr(formDataUpdateConfig.model)" tooltip-placement="top" uib-tooltip="{{lang_zh.add}}"><i class="btn-icon fa fa-plus"></i></a></th>
@@ -74,7 +74,16 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <copy-to-clip content="attr.md5"></copy-to-clip>
+                                        <div ng-switch-default>
+                                            <copy-to-clip ng-model="attr.md5" content="attr.md5" style="float: left"></copy-to-clip>
+                                            <i class="btn btn-sm btn-success checkMd5But" ng-click="showMd5Input(attr)">校验</i>
+                                            <br>
+                                            <input style="float: left;" ng-if="attr.md5InputValid" ng-model="attr.md5InputContent" type="text" class="editable-input form-control input-sm inputMd5"/>
+                                            <span style="float: right;">
+                                                <i class="fa fa-times checkMd5MarkWrong" aria-hidden="true" ng-show="attr.md5InputValid && attr.md5InputContent != null && attr.md5InputContent.length != 0 && attr.md5InputContent!=attr.md5"></i>
+                                                <i class="fa fa-check checkMd5MarkRight" aria-hidden="true" ng-show="attr.md5InputValid && attr.md5InputContent != null && attr.md5InputContent.length != 0 && attr.md5InputContent==attr.md5"></i>
+                                            </span>
+                                        </div>
                                         <div class="controls cropLongString" ng-switch-when="true">
                                             <span>
                                                 {{attr.md5?"":"自动生成" }}
