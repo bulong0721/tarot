@@ -28,7 +28,8 @@ function userMgrCtrl($scope, cTables, cfromly) {
                 key: 'activeStatusFlag',
                 type: 'c_input',
                 className: 'formly-min-checkbox',
-                templateOptions: {label: '激活账号', placeholder: '激活账号',type: 'checkbox'}
+                templateOptions: {label: '激活账号', placeholder: '激活账号',type: 'checkbox'},
+                defaultValue: false
             }
         ],
         api: {
