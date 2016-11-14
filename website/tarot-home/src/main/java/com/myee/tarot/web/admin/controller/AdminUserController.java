@@ -50,6 +50,7 @@ public class AdminUserController {
      @ResponseBody
      public AjaxResponse addUser(@RequestBody AdminUser user, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
+        MerchantStore merchantStore1 = null;
         if (null != user.getId()) {
             AdminUser dbUser = userService.findById(user.getId());
             dbUser.setName(user.getName());
@@ -64,13 +65,13 @@ public class AdminUserController {
             if (o == null) {
                 return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"请先切换门店");
             }
-            MerchantStore merchantStore1 = (MerchantStore)o;
+            merchantStore1 = (MerchantStore)o;
             user.setMerchantStore(merchantStore1);
             user.setPassword(DEFAULT_PASSWORD);
         }
         user = userService.update(user);
         resp = AjaxResponse.success();
-        resp.addEntry("updateResult", user);
+        resp.addEntry("updateResult", objectToEntry(user));
         return resp;
     }
 
@@ -81,19 +82,24 @@ public class AdminUserController {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         List<AdminUser> userList = userService.list();
         for (AdminUser user : userList) {
-            Map entry = new HashMap();
-            entry.put("id", user.getId());
-            entry.put("login", user.getLogin());
-            entry.put("name", user.getName());
-            entry.put("email", user.getEmail());
-            entry.put("phoneNumber", user.getPhoneNumber());
-            entry.put("activeStatusFlag", user.getActiveStatusFlag());
-            entry.put("lastLogin", user.getLastLogin());
-            entry.put("loginIP", user.getLoginIP());
-            entry.put("storeName", user.getMerchantStore().getName());
-            resp.addDataEntry(entry);
+            resp.addDataEntry(objectToEntry(user));
         }
         return resp;
+    }
+
+    //把类转换成entry返回给前端，解耦和
+    private Map objectToEntry(AdminUser user) {
+        Map entry = new HashMap();
+        entry.put("id", user.getId());
+        entry.put("login", user.getLogin());
+        entry.put("name", user.getName());
+        entry.put("email", user.getEmail());
+        entry.put("phoneNumber", user.getPhoneNumber());
+        entry.put("activeStatusFlag", user.getActiveStatusFlag());
+        entry.put("lastLogin", user.getLastLogin());
+        entry.put("loginIP", user.getLoginIP());
+        entry.put("storeName", user.getMerchantStore().getName());
+        return entry;
     }
 
     @RequestMapping(value = "admin/customers/save", method = RequestMethod.POST)
