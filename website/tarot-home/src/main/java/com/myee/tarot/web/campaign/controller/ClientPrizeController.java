@@ -517,7 +517,8 @@ public class ClientPrizeController extends BaseController {
                         return ClientAjaxResult.failed("你手慢了，电影票已被领取完");
                     }
                 } else if (priceGetInfo.getPrice().getPhonePrizeType() == Constants.CLIENT_PRICE_PHONE_CMB_CREDIT_CARD){
-                    content = "尊敬的用户，恭喜您获得招商银行信用卡新户专享礼品，办卡成功并满足条件，即可获得新秀丽电脑双肩包或奔腾全新4D剃须刀，快通过下方链接办卡领取吧！https://ccclub.cmbchina.com/mca/MPreContract.aspx?cardsel=8745&swbrief=y&WT.mc_id=N37CJYX20614307500MY";
+                    //String oldUrl = "https://ccclub.cmbchina.com/mca/MPreContract.aspx?cardsel=8745&swbrief=y&WT.mc_id=N37CJYX20614307500MY";
+                    content = "尊敬的顾客，恭喜您获得招商银行信用卡新户专享礼品，办卡成功并满足条件，即可获得新秀丽电脑双肩包或奔腾全新4D剃须刀，快通过下方链接办卡领取吧！http://t.cn/RVkCluX";
                 }
                 Runnable task = AlidayuSmsClient.sendSMS(
                         IPUtils.getIpAddr(getRequest()),

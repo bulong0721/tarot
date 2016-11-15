@@ -1,14 +1,13 @@
 package com.myee.tarot.quartz;
 
 import com.myee.tarot.cache.entity.MealsCache;
-import com.myee.tarot.cache.uitl.RedissonUtil;
+import com.myee.tarot.cache.util.RedissonUtil;
 import com.myee.tarot.cache.view.WxWaitTokenView;
 import com.myee.tarot.campaign.service.ClientPrizeGetInfoService;
 import com.myee.tarot.campaign.service.ClientPrizeService;
 import com.myee.tarot.campaign.service.ClientPrizeTicketService;
 import com.myee.tarot.campaign.service.PriceInfoService;
 import com.myee.tarot.core.exception.ServiceException;
-import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,7 @@ public class QuartzForCampaign {
     @Autowired
     private ClientPrizeTicketService clientPrizeTicketService;
     @Autowired
-    private RedissonClient redissonClient;
+    private RedissonUtil redissonUtil;
 
     //@Scheduled(cron = "0/5 * *  * * ? ")//测试每隔1秒隔行一次
     public void run(){
@@ -105,7 +104,7 @@ public class QuartzForCampaign {
     public void clearMealCache() {
         LOGGER.info("清除就餐排队数据开始");
         try {
-            MealsCache mealsCache = RedissonUtil.mealsCache(redissonClient);
+            MealsCache mealsCache = redissonUtil.mealsCache();
             if(mealsCache!=null) {
                 Map<String,String> openIdInfo = mealsCache.getOpenIdInfo();
                 openIdInfo.clear();

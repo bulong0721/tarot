@@ -2,7 +2,7 @@ package com.myee.tarot.wechat.handler;
 
 import com.google.common.collect.Maps;
 import com.myee.tarot.cache.entity.MealsCache;
-import com.myee.tarot.cache.uitl.RedissonUtil;
+import com.myee.tarot.cache.util.RedissonUtil;
 import com.myee.tarot.cache.view.WxWaitTokenView;
 import com.myee.tarot.campaign.domain.PriceInfo;
 import com.myee.tarot.campaign.service.PriceInfoService;
@@ -22,7 +22,6 @@ import me.chanjar.weixin.mp.bean.WxMpXmlOutNewsMessage;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +52,7 @@ public class SubscribeHandler implements WxMpMessageHandler {
     @Autowired
     private MerchantStoreService merchantStoreService;
     @Autowired
-    private RedissonClient redissonClient;
+    private RedissonUtil redissonUtil;
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) throws WxErrorException {
@@ -107,7 +106,7 @@ public class SubscribeHandler implements WxMpMessageHandler {
                 String tableType = keys[3];
                 String token = keys[4];
                 String key = shopId + "_" + tableType;
-                MealsCache mealCache = RedissonUtil.mealsCache(redissonClient);
+                MealsCache mealCache = redissonUtil.mealsCache();
                 WxWaitTokenView waitTokenView = null;
                 if(mealCache!=null){
                     List<WxWaitTokenView> wxWaitTokenViewList = mealCache.getWxWaitTokenCache().get(key);

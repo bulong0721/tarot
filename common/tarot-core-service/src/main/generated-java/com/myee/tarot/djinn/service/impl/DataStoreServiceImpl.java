@@ -8,7 +8,7 @@ import com.myee.djinn.dto.metrics.SystemMetrics;
 import com.myee.djinn.rpc.RemoteException;
 import com.myee.djinn.server.operations.DataStoreService;
 import com.myee.tarot.cache.entity.MetricCache;
-import com.myee.tarot.cache.uitl.RedissonUtil;
+import com.myee.tarot.cache.util.RedissonUtil;
 import com.myee.tarot.catalog.service.DeviceUsedService;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
@@ -23,7 +23,6 @@ import com.myee.tarot.remote.service.MetricInfoService;
 import com.myee.tarot.remote.service.SystemMetricsService;
 import com.myee.tarot.remote.util.MetricsUtil;
 import org.apache.commons.io.FileUtils;
-import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +60,7 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
     private String DOWNLOAD_HOME;
 
     @Autowired
-    private RedissonClient redissonClient;
+    private RedissonUtil redissonUtil;
 
     @Override
     public int receiveLog(long orgId, UploadResourceType fileType, String logText) throws RemoteException {
@@ -134,7 +133,7 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
                 List<SystemMetrics> list1 = JSON.parseArray(JSON.toJSONString(list), SystemMetrics.class);
                 long now = System.currentTimeMillis();
                 for (Long range : Constants.METRICS_SELECT_RANGE_LIST) {
-                    insertReportTable(now, redissonClient, range, list1);
+                    insertReportTable(now, range, list1);
                 }
             }
         });
@@ -148,13 +147,12 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
      * 查看更新时间
      * 1个小时有多少个5秒钟
      * @param now
-     * @param redissonClient
      * @param type
      * @param list
      */
-    private void insertReportTable(long now, RedissonClient redissonClient, Long type, List<SystemMetrics> list) {
+    private void insertReportTable(long now, Long type, List<SystemMetrics> list) {
         int pointCount = 0;
-        MetricCache metricCache = RedissonUtil.metricCache(redissonClient);
+        MetricCache metricCache = redissonUtil.metricCache();
         LOG.info("{}", metricCache);
         try {
             Map<String, Long> map = metricCache.getLastUpdateTimeCache();
@@ -238,7 +236,7 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
 
         } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(7))) { //一年范围
             pointCount = Constants.ONE_YEAR_POINT_COUNT;
-            Map<String, List<MetricInfo>> oneYearMetricInfoCache = RedissonUtil.metricCache(redissonClient).getOneYearMetricInfoPointsCache();
+            Map<String, List<MetricInfo>> oneYearMetricInfoCache = redissonUtil.metricCache().getOneYearMetricInfoPointsCache();
             if (oneYearMetricInfoCache == null) {
                 oneYearMetricInfoCache = Maps.newConcurrentMap();
                 metricCache.setOneYearMetricInfoPointsCache(oneYearMetricInfoCache);

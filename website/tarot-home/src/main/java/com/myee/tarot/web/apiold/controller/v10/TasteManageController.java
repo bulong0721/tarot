@@ -3,10 +3,9 @@ package com.myee.tarot.web.apiold.controller.v10;
 import com.myee.tarot.apiold.domain.BaseDataInfo;
 import com.myee.tarot.apiold.domain.TasteInfo;
 import com.myee.tarot.apiold.service.TasteService;
-import com.myee.tarot.cache.uitl.RedissonUtil;
-import com.myee.tarot.web.apiold.controller.BaseController;
+import com.myee.tarot.cache.util.RedissonUtil;
 import com.myee.tarot.web.ClientAjaxResult;
-import org.redisson.api.RedissonClient;
+import com.myee.tarot.web.apiold.controller.BaseController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,7 @@ public class TasteManageController extends BaseController {
     @Autowired
     private TasteService   tasteManageService;
     @Autowired
-    private RedissonClient redisson;
+    private RedissonUtil redissonUtil;
 
 
     /**
@@ -54,7 +53,7 @@ public class TasteManageController extends BaseController {
                 //如果为空，从数据库中查询数据
 
 //            BaseDataInfo baseData = redisUtil.get("system:menu:taste", BaseDataInfo.class);
-            Map<String, BaseDataInfo> tasteInfoCache = RedissonUtil.commonCache(redisson).getTasteCache();
+            Map<String, BaseDataInfo> tasteInfoCache = redissonUtil.commonCache().getTasteCache();
             BaseDataInfo baseData = tasteInfoCache.get("menu_taste");
             if (baseData!=null) {
                 if(timestamp == baseData.getTimestamp()){

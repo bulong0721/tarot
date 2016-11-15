@@ -1,7 +1,7 @@
 package com.myee.tarot.wechat.handler;
 
 import com.myee.tarot.cache.entity.MealsCache;
-import com.myee.tarot.cache.uitl.RedissonUtil;
+import com.myee.tarot.cache.util.RedissonUtil;
 import com.myee.tarot.cache.view.WxWaitTokenView;
 import com.myee.tarot.wechat.service.WechatService;
 import me.chanjar.weixin.common.exception.WxErrorException;
@@ -12,7 +12,6 @@ import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
-import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +36,13 @@ public class ProgressHandler implements WxMpMessageHandler {
     @Autowired
     protected WechatService     coreService;
     @Autowired
-    private RedissonClient redissonClient;
+    private RedissonUtil redissonUtil;
 
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) throws WxErrorException {
         WxWaitTokenView waitTokenView = null;
-        MealsCache mealsCache = RedissonUtil.mealsCache(redissonClient);
+        MealsCache mealsCache = redissonUtil.mealsCache();
         if(mealsCache!=null){
             Map<String,String> openIdInfo = mealsCache.getOpenIdInfo();
             if (openIdInfo!=null&& StringUtils.isNotBlank(openIdInfo.get(wxMessage.getFromUserName()))) {
