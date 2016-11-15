@@ -22,5 +22,9 @@ public class RoleServiceImpl extends GenericEntityServiceImpl<java.lang.Long, Ro
     }
 
 
+    @Override
+    public Role getByName(String name) {
+        return dao.getByName(name);
+    }
 }
 
