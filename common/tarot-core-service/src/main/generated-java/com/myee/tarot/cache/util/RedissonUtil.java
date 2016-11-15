@@ -1,4 +1,4 @@
-package com.myee.tarot.cache.uitl;
+package com.myee.tarot.cache.util;
 
 import com.google.common.collect.Lists;
 import com.myee.tarot.cache.entity.CommonCache;
@@ -8,6 +8,8 @@ import org.redisson.api.RAtomicLong;
 import org.redisson.api.RFuture;
 import org.redisson.api.RLiveObjectService;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -17,34 +19,35 @@ import java.util.concurrent.ExecutionException;
  */
 public final class RedissonUtil {
 
-    static final String ENV_TEST = "ENV_TEST";
-    static final String MEAL_CACHE = "MEAL_CACHE";
-    static final String METRIC_CACHE = "METRIC_CACHE";
+    @Value("${redis.redissonCache}")
+    private String REDISSON_CACHE;
 
-    public static CommonCache commonCache(RedissonClient client) {
-        RLiveObjectService liveObjectService = client.getLiveObjectService();
-        return liveObjectService.getOrCreate(CommonCache.class, ENV_TEST);
+    @Autowired
+    private RedissonClient redissonClient;
+
+    public CommonCache commonCache() {
+        RLiveObjectService liveObjectService = redissonClient.getLiveObjectService();
+        return liveObjectService.getOrCreate(CommonCache.class, REDISSON_CACHE);
     }
 
-    public static MealsCache mealsCache(RedissonClient client) {
-        RLiveObjectService liveObjectService = client.getLiveObjectService();
-        return liveObjectService.getOrCreate(MealsCache.class, MEAL_CACHE);
+    public MealsCache mealsCache() {
+        RLiveObjectService liveObjectService = redissonClient.getLiveObjectService();
+        return liveObjectService.getOrCreate(MealsCache.class, REDISSON_CACHE);
     }
 
-    public static MetricCache metricCache(RedissonClient client) {
-        RLiveObjectService liveObjectService = client.getLiveObjectService();
-        return liveObjectService.getOrCreate(MetricCache.class, METRIC_CACHE);
+    public MetricCache metricCache() {
+        RLiveObjectService liveObjectService = redissonClient.getLiveObjectService();
+        return liveObjectService.getOrCreate(MetricCache.class, REDISSON_CACHE);
     }
 
     /**
      *  生成自增长的主键，支持批量
-     * @param client
      * @param tableName
      * @param idCount
      * @return
      */
-    public static List<Long> incrementKey(RedissonClient client, String tableName, long idCount) {
-        RAtomicLong at = client.getAtomicLong(tableName);
+    public List<Long> incrementKey(String tableName, long idCount) {
+        RAtomicLong at = redissonClient.getAtomicLong(tableName);
         List<Long> idList = Lists.newArrayList();
         for (int i = 0; i < idCount; i++) {
             RFuture<Long> id = at.addAndGetAsync(1);
@@ -57,10 +60,7 @@ public final class RedissonUtil {
             }
 
         }
-
-        client.shutdown();
         return idList;
     }
-
 
 }

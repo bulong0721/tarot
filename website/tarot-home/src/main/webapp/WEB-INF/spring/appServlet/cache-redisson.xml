@@ -6,4 +6,7 @@
     <bean id="redisson" class="com.myee.tarot.cache.redisson.RedissonBean">
         <property name="masterAddress" value="${redis.masterAddress}" />
     </bean>
+
+    <bean id="redissonUtil" class="com.myee.tarot.cache.util.RedissonUtil"/>
+
 </beans>

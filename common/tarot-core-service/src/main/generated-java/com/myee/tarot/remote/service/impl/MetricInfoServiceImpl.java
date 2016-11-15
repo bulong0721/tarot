@@ -2,15 +2,15 @@ package com.myee.tarot.remote.service.impl;
 
 import com.google.common.collect.Lists;
 import com.myee.tarot.cache.entity.MetricCache;
-import com.myee.tarot.cache.uitl.RedissonUtil;
+import com.myee.tarot.cache.util.RedissonUtil;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
 import com.myee.tarot.metric.domain.MetricInfo;
 import com.myee.tarot.remote.dao.MetricInfoDao;
 import com.myee.tarot.remote.service.MetricInfoService;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +23,7 @@ public class MetricInfoServiceImpl extends GenericEntityServiceImpl<Long, Metric
     protected MetricInfoDao metricInfoDao;
 
     @Autowired
-    private RedissonClient redissonClient;
+    private RedissonUtil redissonUtil;
 
     @Autowired
     public MetricInfoServiceImpl(MetricInfoDao metricInfoDao) {
@@ -41,7 +41,7 @@ public class MetricInfoServiceImpl extends GenericEntityServiceImpl<Long, Metric
 
     @Override
     public List<MetricInfo> listMetricsInfoPointsByPeriod(List<String> metricsKeyString, Long period, String boardNo) {
-        MetricCache metricCache = RedissonUtil.metricCache(redissonClient);
+        MetricCache metricCache = redissonUtil.metricCache();
         List<MetricInfo> list = getListOfMetricInfoByKeyName(metricsKeyString, period, metricCache);
         return list;
     }

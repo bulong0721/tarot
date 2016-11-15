@@ -2,13 +2,12 @@ package com.myee.tarot.web.apiold.controller.v10;
 
 import com.google.common.collect.Lists;
 import com.myee.tarot.apiold.domain.BaseDataInfo;
-import com.myee.tarot.cache.uitl.RedissonUtil;
+import com.myee.tarot.cache.util.RedissonUtil;
 import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.catering.service.TableTypeService;
-import com.myee.tarot.web.apiold.controller.BaseController;
 import com.myee.tarot.web.ClientAjaxResult;
+import com.myee.tarot.web.apiold.controller.BaseController;
 import org.apache.commons.lang3.StringUtils;
-import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,7 @@ public class TableTypeController extends BaseController {
     @Autowired
     private TableTypeService tableTypeService;
     @Autowired
-    private RedissonClient   redisson;
+    private RedissonUtil   redissonUtil;
 
     /**
      * 商户菜品列表
@@ -61,7 +60,7 @@ public class TableTypeController extends BaseController {
                 timestamp = 0l;
             }
 
-            Map<String, BaseDataInfo> tableTypeInfoCache = RedissonUtil.commonCache(redisson).getTableTypeCache();
+            Map<String, BaseDataInfo> tableTypeInfoCache = redissonUtil.commonCache().getTableTypeCache();
             BaseDataInfo tableTypes = tableTypeInfoCache.get(shopId);
             if (tableTypes!=null) {
                 if(timestamp == tableTypes.getTimestamp()){

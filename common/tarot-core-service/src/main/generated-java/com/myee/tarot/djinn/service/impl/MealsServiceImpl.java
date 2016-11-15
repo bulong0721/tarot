@@ -7,13 +7,12 @@ import com.myee.djinn.dto.WaitToken;
 import com.myee.djinn.rpc.RemoteException;
 import com.myee.djinn.server.operations.MealsService;
 import com.myee.tarot.cache.entity.MealsCache;
-import com.myee.tarot.cache.uitl.RedissonUtil;
+import com.myee.tarot.cache.util.RedissonUtil;
 import com.myee.tarot.cache.view.WxWaitTokenView;
 import com.myee.tarot.core.service.TransactionalAspectAware;
 import com.myee.tarot.datacenter.service.WaitTokenService;
 import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.wechat.domain.WxWaitToken;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +32,7 @@ public class MealsServiceImpl implements MealsService, TransactionalAspectAware 
     @Autowired
     private MerchantStoreService merchantStoreService;
     @Autowired
-    private RedissonClient redissonClient;
+    private RedissonUtil redissonUtil;
 
     @Override
     public CommonResult takeNumber(WaitToken waitToken) throws RemoteException {
@@ -47,7 +46,7 @@ public class MealsServiceImpl implements MealsService, TransactionalAspectAware 
         WxWaitToken updatedToken = waitTokenService.update(wxWaitToken);
         //同时保存至redis中
         String key = waitToken.getShopId() + "_" + waitToken.getTableTypeId();
-        MealsCache mealCache = RedissonUtil.mealsCache(redissonClient);
+        MealsCache mealCache = redissonUtil.mealsCache();
         if(mealCache.getWxWaitTokenCache() !=null){
             List<WxWaitTokenView> wxWaitTokenViewList = mealCache.getWxWaitTokenCache().get(key);
             WxWaitTokenView wxWaitTokenView = changeToView(updatedToken);
@@ -83,7 +82,7 @@ public class MealsServiceImpl implements MealsService, TransactionalAspectAware 
             waitTokenService.update(wxWaitToken);
             //更新redis
             String key = waitToken.getShopId() + "_" + waitToken.getTableTypeId();
-            MealsCache mealCache = RedissonUtil.mealsCache(redissonClient);
+            MealsCache mealCache = redissonUtil.mealsCache();
             boolean flag = false;
             if(mealCache.getWxWaitTokenCache() !=null){
                 Map<String,List<WxWaitTokenView>> mapView = mealCache.getWxWaitTokenCache();
@@ -115,7 +114,7 @@ public class MealsServiceImpl implements MealsService, TransactionalAspectAware 
             waitTokenService.update(wxWaitToken);
             //更新redis
             String key = waitToken.getShopId() + "_" + waitToken.getTableTypeId();
-            MealsCache mealCache = RedissonUtil.mealsCache(redissonClient);
+            MealsCache mealCache = redissonUtil.mealsCache();
             boolean flag = false;
             if(mealCache.getWxWaitTokenCache() !=null){
                 Map<String,List<WxWaitTokenView>> mapView = mealCache.getWxWaitTokenCache();
@@ -147,7 +146,7 @@ public class MealsServiceImpl implements MealsService, TransactionalAspectAware 
             waitTokenService.update(wxWaitToken);
             //更新redis
             String key = waitToken.getShopId() + "_" + waitToken.getTableTypeId();
-            MealsCache mealCache = RedissonUtil.mealsCache(redissonClient);
+            MealsCache mealCache = redissonUtil.mealsCache();
             boolean flag = false;
             if(mealCache.getWxWaitTokenCache() !=null){
                 Map<String,List<WxWaitTokenView>> mapView = mealCache.getWxWaitTokenCache();
