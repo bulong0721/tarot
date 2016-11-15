@@ -26,7 +26,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
         },
         {
             displayName: '修改时间',
-            columnWidth: '10%',
+            columnWidth: '15%',
             cellTemplate: '<span>{{cellTemplateScope.format(row.branch)}}</span>',
             cellTemplateScope: {
                 format: function (data) {
@@ -37,7 +37,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
         },
         {
             displayName: '类型',
-            columnWidth: '10%',
+            columnWidth: '7%',
             cellTemplate: '<span>{{cellTemplateScope.text(row.branch)}}</span>',
             cellTemplateScope: {
                 text: function (data) {
@@ -50,7 +50,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
         },
         {
             displayName: '大小',
-            columnWidth: '10%',
+            columnWidth: '7%',
             cellTemplate: '<span>{{cellTemplateScope.format(row.branch)}}</span>',
             cellTemplateScope: {
                 format: function (data) {
@@ -61,13 +61,13 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
         },
         {
             displayName: '操作',
-            columnWidth: '150',
+            columnWidth: '120',
             cellTemplate: '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-plus" tooltip-placement="top" uib-tooltip="' + lang.addResource + '" ng-click="cellTemplateScope.add(row.branch)"></i></a>' +
             '<a><i ng-if="row.branch.type == 1" class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="' + lang.noAddFile + '"></i></a>' +
             '<span class="divider"></span>' +
-            '<a><i ng-if="row.branch.type == 1" class="btn-icon fa fa-pencil" tooltip-placement="top" uib-tooltip="' + lang.edit + '" ng-click="cellTemplateScope.edit(row.branch)"></i></a>' +
-            '<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="' + lang.noEditFolder + '"></i></a>' +
-            '<span class="divider"></span>' +
+                //'<a><i ng-if="row.branch.type == 1" class="btn-icon fa fa-pencil" tooltip-placement="top" uib-tooltip="' + lang.edit + '" ng-click="cellTemplateScope.edit(row.branch)"></i></a>' +
+                //'<a><i ng-if="row.branch.type == 0" class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="' + lang.noEditFolder + '"></i></a>' +
+                //'<span class="divider"></span>' +
             '<a><i ng-if="row.branch.salt == row.branch.storeId && row.branch.path != \'/\'" class="btn-icon fa fa-trash-o" tooltip-placement="top" uib-tooltip="' + lang.delete + '" ng-click="cellTemplateScope.delete(row.branch)"></i></a>' +
             '<a><i ng-if="row.branch.salt != row.branch.storeId || row.branch.path == \'/\'" class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="' + lang.noAuthDelete + '"></i></a>' +
             '<span class="divider"></span>' +
@@ -299,9 +299,9 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
                 name: '',
                 templateOptions: {required: false, type: 'file', label: '上传文件'},
                 hideExpression: function ($viewValue, $modelValue, scope) {
-                    if(scope.model.type == 0  ){  //新增文件夹
+                    if (scope.model.type == 0) {  //新增文件夹
                         return true
-                    }else{
+                    } else {
                         return scope.model.ifEditor
                     }
                     //return scope.model.type == 0 ? true : false;//true新增文件夹时隐藏文件内容输入框 false新增时显示批量修改
@@ -310,50 +310,50 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
                 //    'templateOptions.disabled': 'model.ifEditor', // disabled when ifEditor is true
                 //    //'templateOptions.disabled': 'model.editorModel==1?true:false'
                 //}
-            },
-            {
-                key: 'ifEditor',
-                type: 'c_input',
-                className: 'formly-min-checkbox',
-                templateOptions: {label: '文本编辑', required: false, type: 'checkbox'},
-                defaultValue: false,
-                hideExpression: function ($viewValue, $modelValue, scope) {
-                    var flag = scope.model.editorModel == 1 ? true : false;//是否是编辑模式
-                    if (scope.model.ifEditor && flag && $scope.flag1) {
-                        $scope.showContent($scope.current);
-                        $scope.flag1 = false;
-                    }
-                    return scope.model.type == 0 ? true : false;//新增文件夹时隐藏
-                }
-            },
-            {
-                id: 'content',
-                key: 'content',
-                type: 'c_textarea',
-                ngModelAttrs: {
-                    style: {attribute: 'style'},
-                    maxlen: {attribute: 'maxlength'}
-                },
-                templateOptions: {
-                    disabled: true,
-                    label: '文件内容',
-                    placeholder: '文件内容(长度小于2000)',
-                    rows: 15,
-                    style: 'max-width:500px',
-                    maxlen: 2000
-                },
-                hideExpression: function ($viewValue, $modelValue, scope) {
-                    if(scope.model.type == 0  ){  //新增文件夹
-                       return true
-                    }else{
-                        return !scope.model.ifEditor
-                    }
-                },
-                expressionProperties: {
-                    'templateOptions.disabled': '!model.ifEditor', // disabled when ifEditor is false
-                    'templateOptions.required': 'model.ifEditor' // disabled when ifEditor is false
-                }
             }
+            //{
+            //    key: 'ifEditor',
+            //    type: 'c_input',
+            //    className: 'formly-min-checkbox',
+            //    templateOptions: {label: '文本编辑', required: false, type: 'checkbox'},
+            //    defaultValue: false,
+            //    hideExpression: function ($viewValue, $modelValue, scope) {
+            //        var flag = scope.model.editorModel == 1 ? true : false;//是否是编辑模式
+            //        if (scope.model.ifEditor && flag && $scope.flag1) {
+            //            $scope.showContent($scope.current);
+            //            $scope.flag1 = false;
+            //        }
+            //        return scope.model.type == 0 ? true : false;//新增文件夹时隐藏
+            //    }
+            //},
+            //{
+            //    id: 'content',
+            //    key: 'content',
+            //    type: 'c_textarea',
+            //    ngModelAttrs: {
+            //        style: {attribute: 'style'},
+            //        maxlen: {attribute: 'maxlength'}
+            //    },
+            //    templateOptions: {
+            //        disabled: true,
+            //        label: '文件内容',
+            //        placeholder: '文件内容(长度小于2000)',
+            //        rows: 15,
+            //        style: 'max-width:500px',
+            //        maxlen: 2000
+            //    },
+            //    hideExpression: function ($viewValue, $modelValue, scope) {
+            //        if(scope.model.type == 0  ){  //新增文件夹
+            //           return true
+            //        }else{
+            //            return !scope.model.ifEditor
+            //        }
+            //    },
+            //    expressionProperties: {
+            //        'templateOptions.disabled': '!model.ifEditor', // disabled when ifEditor is false
+            //        'templateOptions.required': 'model.ifEditor' // disabled when ifEditor is false
+            //    }
+            //}
         ],
         api: {
             getContent: '../admin/content/get',
@@ -430,45 +430,98 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
                 addFile = new FormData();
             }
             if ($scope.formData.model.type == 0) { //新增文件夹
-                var parentPath = $scope.current.path == '/' ? "" : $scope.current.path;
-                $scope.current.children.push({
-                    name: $scope.formData.model.name,
-                    path: parentPath + "/" + $scope.formData.model.name,
-                    salt: $scope.current.salt,
-                    storeId: $scope.current.storeId,
-                    url: $scope.current.url + "/" + $scope.formData.model.name,
-                    size: 0,
-                    modified: new Date(),
-                    children: [],
-                    type: 0
-                });
-                $scope.goDataTable();
-            } else { //新增文件
-                var addFile = {};
-                var entityText = JSON.stringify($scope.formData.model) ;
-                if(!$scope.formData.model.ifEditor){ //文件上传
-                    addFile = $scope.formData_addFile;
-                    var object = JSON.parse(entityText);
-                    object.content="";
-                    entityText =  JSON.stringify(object) ;
-                }
-                //var addFile = $scope.formData_addFile || {};
-                $scope.disableSubmit = true;
-                $resource(mgrData.api.create).save({entityText: entityText}, addFile).$promise.then(function (res) {
-                    if ($scope.formData.model.editorModel == 1 ? true : false) {
-                        var fileNewName = $scope.formData.model.name;
-                        $scope.current.name = fileNewName;
-                        var index = $scope.formData.model.path.lastIndexOf("/");
-                        var path = $scope.formData.model.path.substring(0, index);
-                        $scope.current.path = path + "/" + fileNewName;
-                    } else {
-                        angular.merge($scope.current.children, res.rows);
+                var newFileName = $scope.formData.model.name;
+                var childrenArray = $scope.current.children;
+                var sameDirFlag = false;
+                for (var i = 0; i < childrenArray.length; i++) {
+                    if (newFileName == childrenArray[i].name) {
+                        sameDirFlag = true;
                     }
-                    $scope.goDataTable();
-                });
+                }
+                if (sameDirFlag) {
+                    cAlerts.confirm('已存在同名文件夹，是否覆盖?', function () {
+                        //点击确定回调
+                        createDir();
+                    }, function () {
+                        //点击取消回调
+                    });
+                } else {
+                    createDir();
+                }
+            } else { //新增文件
+                //添加同文件夹下同名检测
+                var newFileName = $scope.formData.model.name;
+                var childrenArray = $scope.current.children;
+                var sameFileFlag = false;
+                for (var i = 0; i < childrenArray.length; i++) {
+                    var name = childrenArray[i].name;
+                    if (newFileName == name) {
+                        sameFileFlag = true;
+                    }
+                }
+                if (sameFileFlag) {
+                    cAlerts.confirm('已存在同名文件，是否覆盖?', function () {
+                        //点击确定回调
+                        createFile();
+                    }, function () {
+                        //点击取消回调
+                    });
+                } else {
+                    createFile();
+                }
+
+                //暂时注释，勿删
+                //var addFile = {};
+                //var entityText = JSON.stringify($scope.formData.model);
+                //if (!$scope.formData.model.ifEditor) { //文件上传
+                //    addFile = $scope.formData_addFile;
+                //    var object = JSON.parse(entityText);
+                //    object.content = "";
+                //    entityText = JSON.stringify(object);
+                //}
+                ////var addFile = $scope.formData_addFile || {};
+                //$scope.disableSubmit = true;
+                //$resource(mgrData.api.create).save({entityText: entityText}, addFile).$promise.then(function (res) {
+                //    //if ($scope.formData.model.editorModel == 1) {
+                //    //    var fileNewName = $scope.formData.model.name;
+                //    //    $scope.current.name = fileNewName;
+                //    //    var index = $scope.formData.model.path.lastIndexOf("/");
+                //    //    var path = $scope.formData.model.path.substring(0, index);
+                //    //    $scope.current.path = path + "/" + fileNewName;
+                //    //} else {
+                //    angular.merge($scope.current.children, res.rows);
+                //    //}
+                //    $scope.goDataTable();
+                //});
             }
         }
     };
+
+    function createFile() {
+        var entityText = JSON.stringify($scope.formData.model);
+        var addFile = $scope.formData_addFile;
+        $scope.disableSubmit = true;
+        $resource(mgrData.api.create).save({entityText: entityText}, addFile).$promise.then(function (res) {
+            angular.merge($scope.current.children, res.rows);
+            $scope.goDataTable();
+        });
+    }
+
+    function createDir() {
+        var parentPath = $scope.current.path == '/' ? "" : $scope.current.path;
+        $scope.current.children.push({
+            name: $scope.formData.model.name,
+            path: parentPath + "/" + $scope.formData.model.name,
+            salt: $scope.current.salt,
+            storeId: $scope.current.storeId,
+            url: $scope.current.url + "/" + $scope.formData.model.name,
+            size: 0,
+            modified: new Date(),
+            children: [],
+            type: 0
+        });
+        $scope.goDataTable();
+    }
 
     $scope.$on('fileToUpload', function (event, arg) {
         $scope.formData_addFile = arg;
