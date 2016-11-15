@@ -10485,3 +10485,8 @@ table tr:hover,table>tbody>tr:nth-of-type(odd):hover {background-color: #f6fefc;
 /**/
 .copyToClip {position: relative;width: 80px;cursor:pointer;}
 .copyToClip input {position: absolute;opacity:0;width:1px;border:none;}
+
+/* md5验证码输入框 */
+.inputMd5 {width:80px;}
+.checkMd5MarkRight {color:green}
+.checkMd5MarkWrong {color:red}

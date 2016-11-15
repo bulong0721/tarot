@@ -19,9 +19,9 @@
                 <tr>
                     <th width="10%" class="center">昵称</th>
                     <th width="12%" class="center">登录名</th>
-                    <th width="12%" class="center">最后登录时间</th>
-                    <th width="12%" class="center">最后登录IP</th>
-                    <th width="12%" class="center">电话号码</th>
+                    <th width="10%" class="center">最后登录时间</th>
+                    <th width="10%" class="center">最后登录IP</th>
+                    <th width="10%" class="center">电话号码</th>
                     <th width="12%" class="center">所属门店</th>
                     <th class="center">电子邮件</th>
                     <th width="100" class="center">状态</th>
@@ -44,7 +44,8 @@
                     <td class="center">
                         <a ng-click="goEditor($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
                         <span class="divider"></span>
-                        <a ng-click="doDelete($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
+                        <a ng-if="row.login != userName" ng-click="doDelete($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
+                        <a ng-if="row.login == userName" tooltip-placement="top" uib-tooltip="{{lang_zh.noDeleteThisUser}}"><i class="btn-icon fa fa-ban"></i></a>
                     </td>
                 </tr>
                 </tbody>

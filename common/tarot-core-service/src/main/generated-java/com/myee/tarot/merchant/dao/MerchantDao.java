@@ -14,4 +14,5 @@ public interface MerchantDao extends GenericEntityDao<Long, Merchant> {
 
     PageResult<Merchant> pageList(PageRequest pageRequest);
 
+    Merchant getByMerchantName(String name);
 }

@@ -7,9 +7,9 @@ angular.module('myee', [])
 /**
  * roleCtrl - controller
  */
-userMgrCtrl.$inject = ['$scope', 'cTables', 'cfromly'];
+userMgrCtrl.$inject = ['$scope', 'cTables', 'cfromly','$rootScope'];
 
-function userMgrCtrl($scope, cTables, cfromly) {
+function userMgrCtrl($scope, cTables, cfromly, $rootScope) {
     var mgrData = {
         fields: [
             {key: 'name', type: 'c_input', templateOptions: {label: '昵称', required: true, placeholder: '昵称,20字以内', maxlength: 20}},
@@ -28,15 +28,18 @@ function userMgrCtrl($scope, cTables, cfromly) {
                 key: 'activeStatusFlag',
                 type: 'c_input',
                 className: 'formly-min-checkbox',
-                templateOptions: {label: '激活账号', placeholder: '激活账号',type: 'checkbox'}
+                templateOptions: {label: '激活账号', placeholder: '激活账号',type: 'checkbox'},
+                defaultValue: false
             }
         ],
         api: {
             read: '../admin/users/paging',
-            update: '../admin/users/save'
+            update: '../admin/users/save',
+            delete: '../admin/users/delete'
         }
     };
 
     cTables.initNgMgrCtrl(mgrData, $scope);
     $scope.tips = "*新建的管理员账号将绑定当前所切换的门店";
+    $scope.userName = $rootScope.baseUrl.userName;
 }

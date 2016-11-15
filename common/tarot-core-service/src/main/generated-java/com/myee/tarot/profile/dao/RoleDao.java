@@ -6,5 +6,6 @@ import com.myee.tarot.core.dao.GenericEntityDao;
 
 public interface RoleDao extends GenericEntityDao<java.lang.Long, Role> {
 
+    Role getByName(String name);
 }
 

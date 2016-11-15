@@ -14,4 +14,5 @@ public interface MerchantService extends GenericEntityService<Long, Merchant> {
 
     PageResult<Merchant> pageList(PageRequest pageRequest);
 
+    Merchant getByMerchantName(String name);
 }

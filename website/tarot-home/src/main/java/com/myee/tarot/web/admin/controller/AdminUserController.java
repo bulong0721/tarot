@@ -1,5 +1,6 @@
 package com.myee.tarot.web.admin.controller;
 
+import com.google.common.collect.Maps;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.admin.service.AdminUserService;
 import com.myee.tarot.core.Constants;
@@ -46,10 +47,28 @@ public class AdminUserController {
     @Autowired
     private RoleService roleService;
 
+    @RequestMapping(value = "admin/users/paging", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    AjaxPageableResponse pageUsers(Model model, HttpServletRequest request) {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
+        List<AdminUser> userList = userService.list();
+        for (AdminUser user : userList) {
+            resp.addDataEntry(objectToEntry(user));
+        }
+        AdminUser user = (AdminUser) request.getSession().getAttribute(Constants.ADMIN_USER);
+        Long id = user.getId();
+        Map map = Maps.newHashMap();
+        map.put("loggedUserId", id);
+        resp.setDataMap(map);
+        return resp;
+    }
+
     @RequestMapping(value = "admin/users/save", method = RequestMethod.POST)
      @ResponseBody
      public AjaxResponse addUser(@RequestBody AdminUser user, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
+        MerchantStore merchantStore1 = null;
         if (null != user.getId()) {
             AdminUser dbUser = userService.findById(user.getId());
             dbUser.setName(user.getName());
@@ -64,36 +83,64 @@ public class AdminUserController {
             if (o == null) {
                 return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"请先切换门店");
             }
-            MerchantStore merchantStore1 = (MerchantStore)o;
+            merchantStore1 = (MerchantStore)o;
             user.setMerchantStore(merchantStore1);
             user.setPassword(DEFAULT_PASSWORD);
         }
+
+        //校验登录名不能重复
+        AdminUser adminUser = userService.getByUserName(user.getLogin());
+        if (adminUser != null && adminUser.getId() != user.getId()) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("错误:重复的登录名，请修改后重新提交");
+            return resp;
+        }
+
         user = userService.update(user);
         resp = AjaxResponse.success();
-        resp.addEntry("updateResult", user);
+        resp.addEntry("updateResult", objectToEntry(user));
         return resp;
     }
 
-    @RequestMapping(value = "admin/users/paging", method = RequestMethod.GET)
-    public
+    @RequestMapping(value = "admin/users/delete", method = RequestMethod.POST)
     @ResponseBody
-    AjaxPageableResponse pageUsers(Model model, HttpServletRequest request) {
-        AjaxPageableResponse resp = new AjaxPageableResponse();
-        List<AdminUser> userList = userService.list();
-        for (AdminUser user : userList) {
-            Map entry = new HashMap();
-            entry.put("id", user.getId());
-            entry.put("login", user.getLogin());
-            entry.put("name", user.getName());
-            entry.put("email", user.getEmail());
-            entry.put("phoneNumber", user.getPhoneNumber());
-            entry.put("activeStatusFlag", user.getActiveStatusFlag());
-            entry.put("lastLogin", user.getLastLogin());
-            entry.put("loginIP", user.getLoginIP());
-            entry.put("storeName", user.getMerchantStore().getName());
-            resp.addDataEntry(entry);
+    public AjaxResponse deleteUser(@Valid @RequestBody AdminUser adminUser, HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
+        MerchantStore thisSwitchMerchantStore = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        AdminUser loggedUser = (AdminUser) request.getSession().getAttribute(Constants.ADMIN_USER);
+        if (thisSwitchMerchantStore == null) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("请先切换门店");
+            return resp;
         }
+        AdminUser adminUserFound = userService.findById(adminUser.getId());
+        if (adminUserFound == null) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("错误:该用户不存在，无法被删除");
+            return resp;
+        }
+        if (adminUserFound.getId() == loggedUser.getId()) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("要删除的用户是当前登录的账号，不能删除");
+            return resp;
+        }
+        userService.delete(adminUserFound);
         return resp;
+    }
+
+    //把类转换成entry返回给前端，解耦和
+    private Map objectToEntry(AdminUser user) {
+        Map entry = new HashMap();
+        entry.put("id", user.getId());
+        entry.put("login", user.getLogin());
+        entry.put("name", user.getName());
+        entry.put("email", user.getEmail());
+        entry.put("phoneNumber", user.getPhoneNumber());
+        entry.put("activeStatusFlag", user.getActiveStatusFlag());
+        entry.put("lastLogin", user.getLastLogin());
+        entry.put("loginIP", user.getLoginIP());
+        entry.put("storeName", user.getMerchantStore().getName());
+        return entry;
     }
 
     @RequestMapping(value = "admin/customers/save", method = RequestMethod.POST)
@@ -153,6 +200,26 @@ public class AdminUserController {
         return resp;
     }
 
+    @RequestMapping(value = "admin/customers/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse deleteCustomer(@Valid @RequestBody Customer user, HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
+        MerchantStore thisSwitchMerchantStore = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        if (thisSwitchMerchantStore == null) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("请先切换门店");
+            return resp;
+        }
+        Customer customerFound = customerService.findById(user.getId());
+        if (customerFound == null) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("错误:该用户不存在，无法被删除");
+            return resp;
+        }
+        customerService.delete(customerFound);
+        return resp;
+    }
+
     //把类转换成entry返回给前端，解耦和
     private Map objectToEntry(Customer customer) {
         Map entry = new HashMap();
@@ -186,9 +253,37 @@ public class AdminUserController {
     @ResponseBody
     public AjaxResponse mergeRole(@Valid @RequestBody Role role, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
+        //校验角色名不能重复
+        Role role1 = roleService.getByName(role.getRoleName());
+        if (role1 != null && role1.getId() != role.getId()) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("错误:重复的角色名，请修改后重新提交");
+            return resp;
+        }
         role = roleService.update(role);
         resp = AjaxResponse.success();
         resp.addEntry("updateResult", role);
+        return resp;
+    }
+
+    @RequestMapping(value = "admin/roles/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse deleteRole(@Valid @RequestBody Role role, HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
+
+        MerchantStore thisSwitchMerchantStore = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        if (thisSwitchMerchantStore == null) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("请先切换门店");
+            return resp;
+        }
+        Role roleFound = roleService.findById(role.getId());
+        if (roleFound == null) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("错误:该角色不存在，无法被删除");
+            return resp;
+        }
+        roleService.delete(roleFound);
         return resp;
     }
 
