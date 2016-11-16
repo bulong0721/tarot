@@ -90,8 +90,13 @@
     </div>
 </script>
 <script type="text/ng-template" id="metricsBig.html">
-    <div class="modal-header">
+    <div class="modal-header metricsBig">
         <h3 class="modal-title">{{metricBigVal.name}}</h3>
+        <div class="ibox-tools">
+            <select class="form-control" onchange="angular.element(this).scope().periodNow(this.options[this.options.selectedIndex].value)">
+                <option ng-repeat="p in periods" value="{{p.ts}}">{{p.name}}</option>
+            </select>
+        </div>
     </div>
     <div class="modal-body">
         <div class="metricInfoListApp bn">

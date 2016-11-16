@@ -4141,7 +4141,7 @@ video {
     outline: 0 none;
     position: relative;
 }
-
+.modal-content button {padding: 3px 8px; font-size: 14px; border: none}
 .modal-dialog {
     z-index: 2200;
 }
@@ -10106,6 +10106,9 @@ th.center, td.center {
 }
 
 /*/!*====================================new style====================================*!/*/
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button{  -webkit-appearance: none !important;  margin: 0;  }
+input[type="number"]{-moz-appearance:textfield; text-align: right}
 address {margin: 0}
 canvas {cursor: pointer}
 ::-webkit-scrollbar-track{background-color:#F5F5F5}::-webkit-scrollbar{width:6px;background-color:#F5F5F5}::-webkit-scrollbar-thumb{background-color:#999}
@@ -10126,6 +10129,7 @@ canvas {cursor: pointer}
 table tr:hover,table>tbody>tr:nth-of-type(odd):hover {background-color: #f6fefc;}
 .tableXyAuto {overflow-x: auto;}
 .tableXyAuto td,.tableXyAuto tr {white-space:nowrap;}
+.table.ng-table td, .table.table-bordered>tbody>tr>td{ vertical-align: middle;}
 /*.wrapper-content {padding: 15px 0px 20px;}*/
 .navbar {
     position: inherit;
@@ -10233,6 +10237,7 @@ table tr:hover,table>tbody>tr:nth-of-type(odd):hover {background-color: #f6fefc;
 .formly input[type=checkbox]:checked {  background-color: #4a90e2;  border-color: #4a90e2 !important;  }
 .formly input[type=checkbox] {  -webkit-appearance: none;  -moz-appearance: none;  appearance: none;  outline: 0;  background-color: #fff;  border: 2px solid #757575;  position: relative;  width: 20px;  height: 20px;  vertical-align: top;  border-radius: 2px;  padding: 0;  margin: 5px 10px 0 0;  }
 .formly input[type=checkbox]:after {  border: 2px solid transparent;  border-left: 0;  border-top: 0;  content: " ";  top: 0px;  left: 6px;  position: absolute;  width: 5px;  height: 13px;  -webkit-transform: rotate(45deg);  transform: rotate(45deg);  border-color: #fff;  }
+.formly em.active {color: #ed5565; font-style: inherit}
 
 .uploadFileT,.uploadFileF {position: relative; display: inline-block; margin-left: 15px;cursor: pointer}
 .uploadFileT ul,.uploadFileT li,.uploadFileF ul,.uploadFileF li {list-style: none;margin: 0;padding: 0}
@@ -10470,8 +10475,8 @@ table tr:hover,table>tbody>tr:nth-of-type(odd):hover {background-color: #f6fefc;
 .metrics .metricInfoList li {margin: 5px 0;}
 .metrics .metricInfoList span {margin-right: 5px;}
 .metrics .metricInfoList .l {width: 130px; text-align: right; display: inline-block;}
-
-.metrics select {display: inline;  width: auto; text-align: right}
+.metrics select,.metricsBig select {display: inline;  width: auto; text-align: right}
+.metricsBig h3 {float: left}
 .metricInfoListApp {height: 500px; overflow-y: auto;  border: #eee 1px solid;  padding: 0;list-style: none;margin: 0;}
 .metricInfoListApp table{width: 100%;}
 .metricInfoListApp thead {border-bottom: #ccc 1px solid;}

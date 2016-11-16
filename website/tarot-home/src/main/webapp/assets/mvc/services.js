@@ -300,7 +300,7 @@ function cfromlyService(formlyConfig, $window,$q, toaster, $filter,$timeout,form
         name: 'lineLabel',
         template: [
             '<label ng-hide="hide" for="{{::id}}" class="col-sm-2 control-label">',
-            '{{to.label}} {{to.required ? "*" : ""}}',
+            '<em class="active">{{to.required ? "*" : ""}}</em> {{to.label}}',
             '</label>',
             '<div ng-hide="hide" class="col-sm-8">',
             '<formly-transclude></formly-transclude> <div class="validation" ng-if="showError" ng-messages="fc.$error">',
@@ -576,13 +576,13 @@ function cfromlyService(formlyConfig, $window,$q, toaster, $filter,$timeout,form
     formlyConfig.setType({
         name: 'datepicker',
         template: [
-            '<div class="col-sm-8"><p class="input-group">',
+            '<p class="input-group">',
             '<input  type="text" id="{{::id}}" name="{{::id}}" ng-model="model[options.key]" class="form-control" ng-click="datepicker.open($event)" uib-datepicker-popup="{{to.datepickerOptions.format}}" is-open="datepicker.opened" datepicker-options="to.datepickerOptions" />',
             '<span class="input-group-btn">',
             '<button type="button" class="btn btn-default" ng-click="datepicker.open($event)" ng-disabled="to.disabled"><i class="fa fa-calendar"></i></button>',
-            '</span></p></div>'
+            '</span></p>'
         ].join(' '),
-        wrapper: ['bootstrapLabel', 'bootstrapHasError'],
+        wrapper: ['lineLabel', 'bootstrapHasError'],
         defaultOptions: {
             ngModelAttrs: {},
             className: 'c_datepicker',
@@ -693,21 +693,21 @@ function cResource(){
 function metrics($filter){
     //时间戳分段
     function _time(time){
-        switch(time) {
+        switch(time.toString()) {
             case '3600000'://1h
-                return 'mm';
+                return 'HH:mm';
                 break;
             case '7200000'://2h
-                return 'mm';
+                return 'HH:mm';
                 break;
             case '14400000'://4h
-                return 'mm';
+                return 'HH:mm';
                 break;
             case '43200000'://12h
-                return 'HH:mm:ss';
+                return 'HH:mm';
                 break;
             case '86400000'://24h
-                return 'HH:mm:ss';
+                return 'HH:mm';
                 break;
             case '604800000'://1w
                 return 'yyyy-MM-dd';
@@ -765,7 +765,7 @@ function metrics($filter){
                 color: ['#3398DB'],
                 tooltip: {trigger: 'axis'},
                 grid: {left: '0%', right: '10%', bottom: '0%', containLabel: true},
-                xAxis : [{type : 'category',data: type?opt.values.map(function (item) {return $filter('date')(item.time, _time(period))}):[], axisTick: {alignWithLabel: true, show:false, lineStyle:{color:'#ccc'}}}],
+                xAxis : [{type : 'category',data: type?opt.values.map(function (item) {return $filter('date')(item.time, _time(period))}):[], axisTick: {alignWithLabel: true, show:type?true:false, lineStyle:{color:'#ccc'}}}],
                 yAxis : [{type : 'value',max:parseFloat(opt.maxValue),name: opt.unit, axisTick:{show:false, lineStyle:{color:'#333'}}}],
                 series : [
                     {
@@ -798,7 +798,7 @@ function metrics($filter){
                 xAxis : [{
                     type : 'category',
                     data: type?opt.values.map(function (item) {return $filter('date')(item.time, _time(period))}):[],
-                    axisTick: {alignWithLabel: true, show:false, lineStyle:{color:'#ccc'}}
+                    axisTick: {alignWithLabel: true, show:type?true:false, lineStyle:{color:'#ccc'}}
                 }],
                 yAxis : [{type : 'value',max:parseFloat(opt.maxValue),name: opt.unit, axisTick:{show:false, lineStyle:{color:'#333'}}}],
                 series : [

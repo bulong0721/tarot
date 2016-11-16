@@ -50,7 +50,7 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
             {
                 key: 'total',
                 type: 'c_input',
-                templateOptions: {type: 'text', label: '奖券数量', required: true, placeholder: '奖券数量,11位以内数字',maxlength:11,pattern: '^[0-9]*$'}
+                templateOptions: {type: 'number', label: '奖券数量', required: true, placeholder: '奖券数量,11位以内数字',maxlength:11,pattern: '^[0-9]*$'}
             },
             {
                 key: 'startDate',

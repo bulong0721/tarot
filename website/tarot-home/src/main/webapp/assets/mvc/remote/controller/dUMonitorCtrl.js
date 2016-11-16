@@ -24,7 +24,7 @@ function dUMonitorMgrCtrl($scope,$resource,$uibModal,$interval) {
             },
             getMetrics:function(gets,call){
                 //type == 1 大图
-                $resource('../admin/remoteMonitor/deviceUsed/metrics').get(gets, function (resp) {
+                $resource('../admin/remoteMonitor/deviceUsed/queryMetricPointsByRange').get(gets, function (resp) {
                     if(resp.rows && resp.rows.length>0) {
                         var r = resp.rows[0];
                         call(
@@ -43,6 +43,7 @@ function dUMonitorMgrCtrl($scope,$resource,$uibModal,$interval) {
             metrics:function(){
                 //Metrics 获取动态指标
                 vm.gets.type = 0;
+                vm.gets.metricsKeyString = '';
                 this.getMetrics(this.gets,function(data){
                     vm.metricVal = data;
                 });
@@ -107,12 +108,23 @@ function dUMonitorMgrCtrl($scope,$resource,$uibModal,$interval) {
                     controller: function ($scope) {
                         $scope.metricBigVal = '';
                         $scope.period = vm.gets.period;
+                        $scope.periods = vm.period;
                         vm.gets.metricsKeyString = "['"+val+"']";
                         vm.gets.type = 1;
                         //type == 1;//大图
-                        vm.getMetrics(vm.gets,function(data){
-                            $scope.metricBigVal =  data;
-                        });
+                        function getMetrics(){
+                            vm.getMetrics(vm.gets,function(data){
+                                $scope.metricBigVal =  data;
+                            });
+                        }
+                        //
+                        getMetrics();
+
+                        //切换时间段
+                        $scope.periodNow = function(val){
+                            vm.gets.period = val;
+                            getMetrics();
+                        }
                     }
                 });
             }
