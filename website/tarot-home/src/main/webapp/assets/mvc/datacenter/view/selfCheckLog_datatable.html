@@ -4,7 +4,7 @@
            <!-- <select ng-model="where.eventLevel" ng-options="c.name for c in errorLevels" class="form-control" style="width:110px;">
                 <option value="" ng-show="errorLevels">事件等级</option>
             </select>-->
-            <select ng-model="where.eventLevel"  class="form-control" style="width:110px;">
+            <select ng-model="where.eventLevel"  class="form-control">
                 <option value="" >事件等级</option>
                 <option value="error" >ERROR</option>
                 <option value="warn" >WARN</option>
@@ -12,11 +12,10 @@
                 <option value="debug" >DEBUG</option>
             </select>
             <select ng-model="where.moduleObject" ng-options="c.name for c in moduleNames" ng-change="moduleChange(where.moduleObject)"
-                    class="form-control m-l-sm" style="width:140px;">
+                    class="form-control m-l-sm">
                 <option value="" ng-show="moduleNames">模块名称</option>
             </select>
-            <select ng-model="where.functionObject" ng-options="c.name for c in functionNames" class="form-control m-l-sm"
-                    style="width:160px;">
+            <select ng-model="where.functionObject" ng-options="c.name for c in functionNames" class="form-control m-l-sm">
                 <option value="" ng-show="functionNames">事件功能</option>
             </select>
             <button class="btn btn-sm btn-danger m-l" type="button" ng-click="search()"><i
