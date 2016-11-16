@@ -49,6 +49,12 @@ public class VoiceLogController {
     private static final int TYPE_CHAT_NUM = 1;
     private static final int MAX_QUERY_COUNT = 10000;
 
+    @RequestMapping(value = "admin/testWalle")
+    @ResponseBody
+    public String testWalle() {
+        return "testWalle";
+    }
+
     /**
      * 下载
      *
