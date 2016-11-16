@@ -45,18 +45,19 @@ public class MerchantActivityController {
 
     /**
      * 添加个新的奖券活动 传过来
+     *
      * @param
      * @return
      */
-    @RequestMapping(value = "api/activity/saveOrUpdate",method = RequestMethod.POST)
+    @RequestMapping(value = "api/activity/saveOrUpdate", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse saveActivity(@RequestParam("activityJson")String activityJson){
+    public AjaxResponse saveActivity(@RequestParam("activityJson") String activityJson) {
         try {
             //json转化为对象
             MerchantActivity merchantActivity = JSON.parseObject(activityJson, MerchantActivity.class);
             AjaxResponse resp = new AjaxResponse();
             //先判断商户的ID是否存在
-            if(merchantActivity.getStore()==null|| merchantActivity.getStore().getId()==null){
+            if (merchantActivity.getStore() == null || merchantActivity.getStore().getId() == null) {
                 resp.setErrorString("发起商户的ID不能为空");
                 resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 return resp;
@@ -66,12 +67,12 @@ public class MerchantActivityController {
             Date startDate = checkPrice.getStartDate();
             Date endDate = checkPrice.getEndDate();
             Date startToday = DateTimeUtils.startToday();
-            if(startDate.compareTo(startToday) < 0){   //开始时间小于当天开始时间
+            if (startDate.compareTo(startToday) < 0) {   //开始时间小于当天开始时间
                 resp.setErrorString("有效期开始日期不得小于当天日期");
                 resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 return resp;
-            }else {
-                if(endDate.compareTo(startDate) < 0){  //有效期结束时间不能小于开始时间
+            } else {
+                if (endDate.compareTo(startDate) < 0) {  //有效期结束时间不能小于开始时间
                     resp.setErrorString("有效期结束时间不能小于开始时间");
                     resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
                     return resp;
@@ -79,8 +80,8 @@ public class MerchantActivityController {
             }
             //前台再次判断 奖券名字是否重复
             String checkPriceName = checkPrice.getName();
-            boolean isOnlyPriceName = merchantPriceService.isOnlyPriceName(checkPrice.getId(),checkPriceName,merchantActivity.getStore().getId());
-            if(isOnlyPriceName ==  false){
+            boolean isOnlyPriceName = merchantPriceService.isOnlyPriceName(checkPrice.getId(), checkPriceName, merchantActivity.getStore().getId());
+            if (isOnlyPriceName == false) {
                 resp.setErrorString("该奖券名称重复");
                 resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 return resp;
@@ -88,19 +89,19 @@ public class MerchantActivityController {
             //多种情况的添加或修改逻辑
             boolean exist = false;
             Long storeId = merchantActivity.getStore().getId();
-            MerchantActivity existActivity =  merchantActivityService.findStoreActivity(storeId);
+            MerchantActivity existActivity = merchantActivityService.findStoreActivity(storeId);
             List<MerchantPrice> existPrices = null;
-            if(existActivity != null){
+            if (existActivity != null) {
                 exist = true;
                 existPrices = existActivity.getPrices();
             }
             List<MerchantPrice> prices = merchantActivity.getPrices();
             for (MerchantPrice price : prices) {
-                if(exist){
+                if (exist) {
                     price.setLogoUrl(existActivity.getStore().getMerchant().getLogo());
                     price.setStoreId(existActivity.getStore().getId());
                     price.setActivity(existActivity);
-                }else{
+                } else {
                     MerchantStore ms = merchantStoreService.findById(merchantActivity.getStore().getId());
                     price.setLogoUrl(ms.getMerchant().getLogo());
                     price.setStoreId(merchantActivity.getStore().getId());
@@ -108,18 +109,18 @@ public class MerchantActivityController {
                 }
             }
             MerchantActivity activity = null;
-            if(exist){
+            if (exist) {
                 //id存在
                 Long priceId = merchantActivity.getPrices().get(0).getId();
-                if(priceId!= null){
+                if (priceId != null) {
                     MerchantPrice findPrice = merchantPriceService.findById(priceId);
-                    if(findPrice!=null){
+                    if (findPrice != null) {
                         //标记是否有已激活的奖券被修改
                         boolean flag = false;
                         //修改
                         for (MerchantPrice price : existPrices) {
-                            if(price.getId() == priceId){
-                                if(price.getActiveStatus() == Constants.PRICE_START){
+                            if (price.getId().equals(priceId)) {
+                                if (price.getActiveStatus() == Constants.PRICE_START) {
                                     flag = true;
                                 }
                                 //redis放缓存
@@ -142,10 +143,10 @@ public class MerchantActivityController {
                         existActivity.setPrices(existPrices);
                         activity = existActivity;
                         //修改重置抽奖规则表
-                        if(flag){
+                        if (flag) {
                             List<MerchantPrice> activePrice = Lists.newArrayList();
                             for (MerchantPrice existPrice : existPrices) {
-                                if(existPrice.getActiveStatus() == Constants.PRICE_START){
+                                if (existPrice.getActiveStatus() == Constants.PRICE_START) {
                                     activePrice.add(existPrice);
                                 }
                             }
@@ -154,20 +155,20 @@ public class MerchantActivityController {
                             existActivity.setPriceList(JSON.toJSONString(newPriceList));
                             merchantActivityService.update(existActivity);
                         }
-                    }else{
+                    } else {
                         //去除id
                         prices.get(0).setId(null);
                         existPrices.add(prices.get(0));
                         existActivity.setPrices(existPrices);
                         activity = merchantActivityService.update(existActivity);
                     }
-                }else{
+                } else {
                     //id不存在情况
                     existPrices.add(merchantActivity.getPrices().get(0));
                     existActivity.setPrices(existPrices);
                     activity = merchantActivityService.update(existActivity);
                 }
-            }else{
+            } else {
                 activity = merchantActivityService.update(merchantActivity);
             }
             //添加或更新的时候，修改redis对应的商户的活动List
@@ -175,7 +176,7 @@ public class MerchantActivityController {
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
             resp.addEntry("result", activity);
             return resp;
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return AjaxResponse.failed(-1);
@@ -183,16 +184,17 @@ public class MerchantActivityController {
 
     /**
      * 修改奖券活动状态  暂时可不用 暂存
+     *
      * @param storeId
      * @param status  0为不
      * @return
      */
-    @RequestMapping(value = "api/activity/delete",method = RequestMethod.POST)
+    @RequestMapping(value = "api/activity/delete", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse deleteActivity(@RequestParam("storeId")Long storeId,@RequestParam("status")int status){
+    public AjaxResponse deleteActivity(@RequestParam("storeId") Long storeId, @RequestParam("status") int status) {
         try {
             MerchantActivity activity = merchantActivityService.findStoreActivity(storeId);
-            if(activity!=null){
+            if (activity != null) {
                 activity.setDeleteStatus(Constants.DELETE_YES);
                 for (MerchantPrice merchantPrice : activity.getPrices()) {
                     merchantPrice.setDeleteStatus(Constants.DELETE_YES);
@@ -200,7 +202,7 @@ public class MerchantActivityController {
                 merchantActivityService.update(activity);
                 return AjaxResponse.success();
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return AjaxResponse.failed(-1);
@@ -208,12 +210,13 @@ public class MerchantActivityController {
 
     /**
      * 根据商户id寻找所有奖券
+     *
      * @param storeId
      * @return
      */
-    @RequestMapping(value = "api/activity/findStoreActivity",method = RequestMethod.POST)
+    @RequestMapping(value = "api/activity/findStoreActivity", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse findStoreActivity(@RequestParam("storeId")Long storeId){
+    public AjaxResponse findStoreActivity(@RequestParam("storeId") Long storeId) {
         try {
             AjaxResponse response = new AjaxResponse();
             MerchantActivity result = merchantActivityService.findStoreActivity(storeId);
@@ -227,12 +230,13 @@ public class MerchantActivityController {
 
     /**
      * 修改商户激活的奖券
+     *
      * @param storeId
-     * @param priceIds     * @return
+     * @param priceIds * @return
      */
-    @RequestMapping(value = "api/activity/openActivity",method = RequestMethod.POST)
+    @RequestMapping(value = "api/activity/openActivity", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse openActivity(@RequestParam("storeId")Long storeId,@RequestParam("priceIds")Long[] priceIds){
+    public AjaxResponse openActivity(@RequestParam("storeId") Long storeId, @RequestParam("priceIds") Long[] priceIds) {
         try {
             AjaxResponse resp = new AjaxResponse();
             MerchantActivity activity = merchantActivityService.findStoreActivity(storeId);
@@ -254,16 +258,16 @@ public class MerchantActivityController {
             //修改状态
             boolean active = false;
             for (MerchantPrice merchantPrice : activity.getPrices()) {
-                if(Arrays.asList(priceIds).contains(merchantPrice.getId())){
+                if (Arrays.asList(priceIds).contains(merchantPrice.getId())) {
                     merchantPrice.setActiveStatus(Constants.PRICE_START);
                     activePrice.add(merchantPrice);
                     active = true;
-                }else{
+                } else {
                     merchantPrice.setActiveStatus(Constants.PRICE_END);
                 }
                 merchantPriceService.update(merchantPrice);
             }
-            if(active){
+            if (active) {
                 activity.setActivityStatus(Constants.ACTIVITY_ACTIVE);
             }
             //生成抽奖的List
@@ -287,12 +291,13 @@ public class MerchantActivityController {
 
     /**
      * 根据活动ID 获取所有奖项设置  可以暂时不用
+     *
      * @param activityId
      * @return
      */
-    @RequestMapping(value = "api/activity/findPriceByActivityId",method = RequestMethod.POST)
+    @RequestMapping(value = "api/activity/findPriceByActivityId", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse findPriceByActivityId(@RequestParam("activityId")Long activityId){
+    public AjaxResponse findPriceByActivityId(@RequestParam("activityId") Long activityId) {
         try {
             AjaxResponse response = new AjaxResponse();
             MerchantActivity activity = merchantActivityService.findById(activityId);
@@ -307,25 +312,26 @@ public class MerchantActivityController {
 
     /**
      * 微信抽奖是否开启
+     *
      * @param storeId
      * @param status  0为开启 1为关闭
      * @return
      */
     @RequestMapping(value = "api/activity/modeSwitch")
     @ResponseBody
-    public AjaxResponse modeSwitch(@RequestParam("storeId")Long storeId,@RequestParam("status")int status){
+    public AjaxResponse modeSwitch(@RequestParam("storeId") Long storeId, @RequestParam("status") int status) {
         try {
             AjaxResponse resp = new AjaxResponse();
             ModeSwitch modeSwitch = modeSwitchService.findByStoreId(storeId);
-            if(modeSwitch!= null){
+            if (modeSwitch != null) {
                 modeSwitch.setStatus(status);
                 modeSwitchService.update(modeSwitch);
-                if(Constants.WECHAT_OPEN == status){
+                if (Constants.WECHAT_OPEN == status) {
                     resp.setErrorString("开启成功");
-                }else{
+                } else {
                     resp.setErrorString("关闭成功");
                 }
-            }else{
+            } else {
                 ModeSwitch ms = new ModeSwitch();
                 ms.setStatus(status);
                 ms.setStoreId(storeId);
@@ -342,7 +348,8 @@ public class MerchantActivityController {
     }
 
     //重新分配奖券list
-    public List<Integer> getPriceCountList(List<MerchantPrice> prices){;
+    public List<Integer> getPriceCountList(List<MerchantPrice> prices) {
+        ;
         List<Integer> priceList = Lists.newArrayList();
         int totalAll = 0;
         for (MerchantPrice price : prices) {
@@ -354,8 +361,6 @@ public class MerchantActivityController {
         }
         return priceList;
     }
-
-
 
 
 }

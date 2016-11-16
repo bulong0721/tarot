@@ -312,7 +312,7 @@ public class DeviceController {
             }
             else {//单个校验主板编号不能重复
                 DeviceUsed dU = deviceUsedService.getByBoardNo(deviceUsed.getBoardNo());
-                if (dU != null && dU.getId() != deviceUsed.getId()) { //编辑时排除当前设备
+                if (dU != null && !dU.getId().equals(deviceUsed.getId())) { //编辑时排除当前设备
                     resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                     resp.setErrorString("已存在的主板编号");
                     return resp;
@@ -651,7 +651,7 @@ public class DeviceController {
             }
             else {//单个校验设备组编号不能重复
                 ProductUsed pU = productUsedService.getByCode(productUsed.getCode());
-                if (pU != null && pU.getId() != productUsed.getId()) { //编辑时排除当前设备
+                if (pU != null && !pU.getId().equals(productUsed.getId())) { //编辑时排除当前设备
                     resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                     resp.setErrorString("重复的设备组编号，请更换编号");
                     return resp;

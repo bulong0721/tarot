@@ -34,7 +34,7 @@ import java.util.Map;
  */
 @Controller
 public class AdminUserController {
-    private static final Logger LOGGER           = LoggerFactory.getLogger(AdminUserController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminUserController.class);
     private static final String DEFAULT_PASSWORD = "1234561";
     private static final String DEFAULT_CUSTOMER_PASSWORD = "123456";
 
@@ -65,8 +65,8 @@ public class AdminUserController {
     }
 
     @RequestMapping(value = "admin/users/save", method = RequestMethod.POST)
-     @ResponseBody
-     public AjaxResponse addUser(@RequestBody AdminUser user, HttpServletRequest request) throws Exception {
+    @ResponseBody
+    public AjaxResponse addUser(@RequestBody AdminUser user, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         MerchantStore merchantStore1 = null;
         if (null != user.getId()) {
@@ -81,16 +81,16 @@ public class AdminUserController {
             //新建账号将绑定切换的门店
             Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
             if (o == null) {
-                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"请先切换门店");
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "请先切换门店");
             }
-            merchantStore1 = (MerchantStore)o;
+            merchantStore1 = (MerchantStore) o;
             user.setMerchantStore(merchantStore1);
             user.setPassword(DEFAULT_PASSWORD);
         }
 
         //校验登录名不能重复
         AdminUser adminUser = userService.getByUserName(user.getLogin());
-        if (adminUser != null && adminUser.getId() != user.getId()) {
+        if (adminUser != null && !adminUser.getId().equals(user.getId())) {
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("错误:重复的登录名，请修改后重新提交");
             return resp;
@@ -119,7 +119,7 @@ public class AdminUserController {
             resp.setErrorString("错误:该用户不存在，无法被删除");
             return resp;
         }
-        if (adminUserFound.getId() == loggedUser.getId()) {
+        if (adminUserFound.getId().equals(loggedUser.getId())) {
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("要删除的用户是当前登录的账号，不能删除");
             return resp;
@@ -148,8 +148,8 @@ public class AdminUserController {
     public AjaxResponse addCustomer(@RequestBody Customer user, HttpServletRequest request) throws Exception {
         AjaxResponse resp;
         Customer userOld = customerService.getByUsername(user.getUsername());
-        if( userOld != null && userOld.getId() != user.getId() ){
-            return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"已有该用户名");
+        if (userOld != null && !userOld.getId().equals(user.getId())) {
+            return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "已有该用户名");
         }
         if (null != user.getId()) {
             Customer dbUser = customerService.findById(user.getId());
@@ -164,9 +164,9 @@ public class AdminUserController {
             Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
             //新建账号将绑定切换的门店
             if (o == null) {
-                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"请先切换门店");
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "请先切换门店");
             }
-            MerchantStore merchantStore1 = (MerchantStore)o;
+            MerchantStore merchantStore1 = (MerchantStore) o;
             user.setMerchantStore(merchantStore1);
             user.setPasswordChangeRequired(false);
             user.setRegistered(true);
@@ -255,7 +255,7 @@ public class AdminUserController {
         AjaxResponse resp = new AjaxResponse();
         //校验角色名不能重复
         Role role1 = roleService.getByName(role.getRoleName());
-        if (role1 != null && role1.getId() != role.getId()) {
+        if (role1 != null && !role1.getId().equals(role.getId())) {
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("错误:重复的角色名，请修改后重新提交");
             return resp;
