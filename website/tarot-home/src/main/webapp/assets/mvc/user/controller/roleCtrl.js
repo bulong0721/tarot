@@ -21,7 +21,8 @@ function roleMgrCtrl($scope, cTables,cfromly) {
         ],
         api: {
             read: '../admin/roles/paging',
-            update: '../admin/roles/save'
+            update: '../admin/roles/save',
+            delete: '../admin/roles/delete'
         }
     };
 

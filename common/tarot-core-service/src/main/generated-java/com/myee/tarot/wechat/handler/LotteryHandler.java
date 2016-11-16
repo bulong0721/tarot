@@ -3,7 +3,7 @@ package com.myee.tarot.wechat.handler;
 import com.alibaba.druid.util.StringUtils;
 import com.google.common.collect.Maps;
 import com.myee.tarot.cache.entity.MealsCache;
-import com.myee.tarot.cache.uitl.RedissonUtil;
+import com.myee.tarot.cache.util.RedissonUtil;
 import com.myee.tarot.cache.view.WxWaitTokenView;
 import com.myee.tarot.campaign.domain.PriceInfo;
 import com.myee.tarot.campaign.service.PriceInfoService;
@@ -19,7 +19,6 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutNewsMessage;
-import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +40,7 @@ public class LotteryHandler implements WxMpMessageHandler {
     @Autowired
     protected WechatService coreService;
     @Autowired
-    private RedissonClient redissonClient;
+    private RedissonUtil redissonUtil;
 
 
 
@@ -89,7 +88,7 @@ public class LotteryHandler implements WxMpMessageHandler {
                 String tableType = splitParam[2];
                 String token = splitParam[3];
                 String key = shopId + "_" + tableType;
-                MealsCache mealCache = RedissonUtil.mealsCache(redissonClient);
+                MealsCache mealCache = redissonUtil.mealsCache();
                 WxWaitTokenView waitTokenView = null;
                 if(mealCache!=null){
                     List<WxWaitTokenView> wxWaitTokenViewList = mealCache.getWxWaitTokenCache().get(key);

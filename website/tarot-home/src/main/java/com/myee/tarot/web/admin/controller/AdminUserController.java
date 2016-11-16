@@ -253,9 +253,37 @@ public class AdminUserController {
     @ResponseBody
     public AjaxResponse mergeRole(@Valid @RequestBody Role role, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
+        //校验角色名不能重复
+        Role role1 = roleService.getByName(role.getRoleName());
+        if (role1 != null && role1.getId() != role.getId()) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("错误:重复的角色名，请修改后重新提交");
+            return resp;
+        }
         role = roleService.update(role);
         resp = AjaxResponse.success();
         resp.addEntry("updateResult", role);
+        return resp;
+    }
+
+    @RequestMapping(value = "admin/roles/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse deleteRole(@Valid @RequestBody Role role, HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
+
+        MerchantStore thisSwitchMerchantStore = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        if (thisSwitchMerchantStore == null) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("请先切换门店");
+            return resp;
+        }
+        Role roleFound = roleService.findById(role.getId());
+        if (roleFound == null) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("错误:该角色不存在，无法被删除");
+            return resp;
+        }
+        roleService.delete(roleFound);
         return resp;
     }
 

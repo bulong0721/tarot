@@ -1,14 +1,14 @@
 package com.myee.tarot.web.apiold.controller.v10;
 
+import com.myee.djinn.server.operations.MealsService;
 import com.myee.tarot.apiold.domain.MenuInfo;
 import com.myee.tarot.apiold.service.MenuService;
 import com.myee.tarot.apiold.view.MenuDataInfo;
 import com.myee.tarot.apiold.view.MenuInfoView;
-import com.myee.tarot.cache.uitl.RedissonUtil;
-import com.myee.tarot.web.apiold.controller.BaseController;
+import com.myee.tarot.cache.util.RedissonUtil;
 import com.myee.tarot.web.ClientAjaxResult;
+import com.myee.tarot.web.apiold.controller.BaseController;
 import org.apache.commons.lang3.StringUtils;
-import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,9 @@ public class MenuManageController extends BaseController {
     @Autowired
     private MenuService    menuManageService;
     @Autowired
-    private RedissonClient redisson;
+    private RedissonUtil redissonUtil;
+    @Autowired
+    private MealsService mealsService;
 
 
     /**
@@ -58,7 +60,7 @@ public class MenuManageController extends BaseController {
             if (StringUtils.isNotEmpty(shopId)) {
                 id = Long.parseLong(shopId);
             }
-            Map<String, MenuDataInfo> menuInfoCache = RedissonUtil.commonCache(redisson).getMenuCache();
+            Map<String, MenuDataInfo> menuInfoCache = redissonUtil.commonCache().getMenuCache();
             MenuDataInfo shopMenu = menuInfoCache.get(shopId);
             if (shopMenu != null) {
                 if (timestamp == shopMenu.getTimestamp()) {

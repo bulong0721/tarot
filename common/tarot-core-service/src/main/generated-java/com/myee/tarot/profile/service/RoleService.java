@@ -5,5 +5,6 @@ import com.myee.tarot.profile.domain.Role;
 
 public interface RoleService extends GenericEntityService<java.lang.Long, Role> {
 
+    Role getByName(String name);
 }
 
