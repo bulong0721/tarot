@@ -71,7 +71,7 @@ public class MerchantController {
 
             //校验商户名称不能重复
             Merchant merchantTemp = merchantService.getByMerchantName(merchant.getName());
-            if (merchantTemp != null && merchantTemp.getId() != merchant.getId()) {
+            if (merchantTemp != null && !merchantTemp.getId().equals(merchant.getId())) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("错误:重复的商户名称，请修改后重新提交");
                 return resp;
@@ -290,7 +290,8 @@ public class MerchantController {
             }
             //code不能重复
             MerchantStore merchantStoreTemp = merchantStoreService.getByCode(merchantStore.getCode());
-            if (merchantStoreTemp != null && merchantStoreTemp.getId() != merchantStore.getId()) {
+            //id是Long包装类的比较值要用equals
+            if (merchantStoreTemp != null && merchantStoreTemp.getId().equals(merchantStore.getId())) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("错误:重复的门店码，请修改后重新提交");
                 return resp;
@@ -298,7 +299,7 @@ public class MerchantController {
 
             //校验门店名称不能重复
             MerchantStore merchantStoreTemp1 = merchantStoreService.getByMerchantStoreName(merchantStore.getName());
-            if (merchantStoreTemp1 != null && merchantStoreTemp1.getId() != merchantStore.getId()) {
+            if (merchantStoreTemp1 != null && !merchantStoreTemp1.equals(merchantStore.getId())) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("错误:重复的门店名称，请修改后重新提交");
                 return resp;

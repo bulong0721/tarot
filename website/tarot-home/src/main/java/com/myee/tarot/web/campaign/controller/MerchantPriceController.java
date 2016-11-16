@@ -23,22 +23,23 @@ public class MerchantPriceController {
 
     /**
      * 添加个奖项
+     *
      * @param merchantPrice
      * @return
      */
-    @RequestMapping(value = "api/price/saveOrUpdate",method = RequestMethod.POST)
+    @RequestMapping(value = "api/price/saveOrUpdate", method = RequestMethod.POST)
     @ResponseBody
-    private AjaxResponse priceSave(@RequestBody MerchantPrice merchantPrice){
+    private AjaxResponse priceSave(@RequestBody MerchantPrice merchantPrice) {
         try {
             AjaxResponse resp = new AjaxResponse();
-            if(merchantPrice.getActivity()==null|| merchantPrice.getActivity().getId()==null){
+            if (merchantPrice.getActivity() == null || merchantPrice.getActivity().getId() == null) {
                 resp.setErrorString("添加活动ID不能为空");
                 resp.setStatus(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 return resp;
             }
             MerchantPrice price = merchantPriceService.update(merchantPrice);
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
-            resp.addEntry("result",price);
+            resp.addEntry("result", price);
             return resp;
         } catch (Exception e) {
             e.printStackTrace();
@@ -49,15 +50,16 @@ public class MerchantPriceController {
 
     /**
      * 删除 奖项
+     *
      * @param id
      * @return
      */
-    @RequestMapping(value = "api/price/deleteById",method = RequestMethod.POST)
+    @RequestMapping(value = "api/price/deleteById", method = RequestMethod.POST)
     @ResponseBody
-    private AjaxResponse priceDelete(@RequestParam("id") Long id){
+    private AjaxResponse priceDelete(@RequestParam("id") Long id) {
         try {
             MerchantPrice price = merchantPriceService.findById(id);
-            if(price!=null){
+            if (price != null) {
                 price.setDeleteStatus(Constants.DELETE_YES);
                 merchantPriceService.update(price);
                 return AjaxResponse.success();

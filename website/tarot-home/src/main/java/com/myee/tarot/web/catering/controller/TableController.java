@@ -116,7 +116,7 @@ public class TableController {
                 return resp;
             }
             MerchantStore merchantStore1 = (MerchantStore) o;
-            if (merchantStore1.getId() != type.getStore().getId()) {
+            if (!merchantStore1.getId().equals(type.getStore().getId())) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "要删除的类型不属于与当前切换的门店");
                 return resp;
             }
@@ -549,7 +549,7 @@ public class TableController {
                 return resp;
             }
             MerchantStore merchantStore1 = (MerchantStore) o;
-            if (merchantStore1.getId() != menuInfo1.getStore().getId()) {
+            if (!merchantStore1.getId().equals(menuInfo1.getStore().getId())) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "要删除的菜品不属于与当前切换的门店");
                 return resp;
             }
