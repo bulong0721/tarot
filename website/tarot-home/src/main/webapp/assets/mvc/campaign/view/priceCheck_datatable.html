@@ -2,16 +2,13 @@
 <div class="alert alert-info">
     <div class="form-inline">
         <div class="form-group">
-            <input placeholder="查询" ng-model="where.queryName" type="text" class="form-control" style="width:200px;"/>
+            <input placeholder="查询" ng-model="where.queryName" ng-keyup="search($event)" type="text" class="form-control" style="width:200px;"/>
         </div>
-        <button class="btn btn-sm btn-danger m-l" type="button" ng-click="search()"><i
-                class="fa fa-search"></i><span class="bold">搜索</span></button>
+        <button class="btn btn-sm btn-danger m-l" type="button" ng-click="search()"><i class="fa fa-search"></i><span class="bold">搜索</span></button>
         <div class="form-group m-l">
-            <input placeholder="优惠码" ng-model="where.checkCode" type="text" class="form-control" style="width:200px;"/>
+            <input placeholder="优惠码" ng-model="where.checkCode" ng-keyup="checkCode($event)" type="text" class="form-control" style="width:200px;"/>
         </div>
-        <button class="btn btn-sm btn-danger m-l" type="button" ng-click="checkCode()"><i
-                class="fa fa-search"></i><span class="bold">验证</span></button>
-
+        <button class="btn btn-sm btn-danger m-l" type="button" ng-click="checkCode()"><i class="fa fa-search"></i><span class="bold">验证</span></button>
     </div>
 
 </div>

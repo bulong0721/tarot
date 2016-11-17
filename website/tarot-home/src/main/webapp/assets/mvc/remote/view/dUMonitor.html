@@ -4,7 +4,7 @@
             <div class="ibox-title">
                 <h5><i class="fa fa-line-chart m-r-sm"></i>Summary</h5>
                 <div class="ibox-tools">
-                    <span>切换机器：</span>
+                    <span>切换设备：</span>
                     <select class="form-control" onchange="angular.element(this).scope().vm.periodNow(this.options[this.options.selectedIndex].value,true)">
                         <option ng-repeat="l in vm.listByStoreId" value="{{l.id}}">{{l.name}}</option>
                     </select>
