@@ -13,7 +13,11 @@ function clientPrizeCheckCtrl($scope, Constants,cTables,cfromly,toaster,$timeout
     };
     cTables.initNgMgrCtrl(mgrData, $scope);
 
-    $scope.checkCode = function() {
+    $scope.checkCode = function(e) {
+        //回车(enter)判断开始
+        if(e){if((window.event?e.keyCode:e.which)!=13){return false;}}
+        //回车(enter)判断结束
+
         var data= $scope.where;
         if(data.checkCode==null){
             toaster.warning({ body:"请输入验证码！"});

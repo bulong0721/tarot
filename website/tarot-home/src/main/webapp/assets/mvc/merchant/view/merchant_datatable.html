@@ -2,12 +2,11 @@
 <i class="ace-icon fa fa-question-circle" tooltip-placement="right" uib-tooltip="{{tips}}"></i>
 <div class="space-6"></div>
 <div class="alert alert-info">
-    <div class="form-inline">
+    <div class="form-inline" ng-keyup="search($event)">
         <div class="form-group">
             <input placeholder="商户名" ng-model="where.queryName" type="text" class="form-control" style="width:200px;"/>
         </div>
-        <button class="btn btn-sm btn-danger m-l" type="button" ng-click="search()"><i
-                class="fa fa-search"></i><span class="bold">搜索</span></button>
+        <button class="btn btn-sm btn-danger m-l" type="button" ng-click="search()"><i class="fa fa-search"></i><span class="bold">搜索</span></button>
     </div>
 </div>
 <div class="space-6"></div>
