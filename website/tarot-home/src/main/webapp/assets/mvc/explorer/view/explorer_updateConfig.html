@@ -29,12 +29,13 @@
                                 <thead>
                                 <tr>
                                     <th width="15%" class="center">名称</th>
-                                    <th width="12%" class="center">版本号</th>
+                                    <th width="10%" class="center">版本号</th>
+                                    <th width="12%" class="center">描述</th>
                                     <th width="80px" class="center">强制升级</th>
                                     <th width="10%" class="center">类型</th>
                                     <th width="145px" class="center">md5</th>
                                     <th class="center">下载地址</th>
-                                    <th width="15%" class="center">上传升级包</th>
+                                    <th width="100px" class="center">上传升级包</th>
                                     <th width="80px" class="center"><a ng-click="insertAttr(formDataUpdateConfig.model)" tooltip-placement="top" uib-tooltip="{{lang_zh.add}}"><i class="btn-icon fa fa-plus"></i></a></th>
                                 </tr>
                                 </thead>
@@ -52,7 +53,14 @@
                                     <td>
                                         <span ng-switch-default>{{::attr.version}}</span>
                                         <div class="controls" ng-switch-when="true">
-                                            <input type="text" name="attrVersion" ng-model="attr.version" placeholder="版本号" class="editable-input form-control input-sm" required/>
+                                            <input ng-if="attr.type != 'apk'" type="text" name="attrVersion" ng-model="attr.version" placeholder="版本号" class="editable-input form-control input-sm" required/>
+                                            <input ng-if="attr.type == 'apk'"type="number" name="attrVersion" ng-model="attr.version" placeholder="纯数字" class="editable-input form-control input-sm" required/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span ng-switch-default>{{::attr.description}}</span>
+                                        <div class="controls" ng-switch-when="true">
+                                            <textarea type="text" name="attrDescription" ng-model="attr.description" placeholder="描述" class="editable-input form-control input-sm" required/>
                                         </div>
                                     </td>
                                     <td class="center">
@@ -105,7 +113,7 @@
                                         </span>
                                         <div class="controls" ng-switch-when="true">
                                             <span class="btn btn-sm btn-success upMenuBut">
-                                                <i class="fa fa-upload bigger-120"></i><span>选择升级包</span>
+                                                <i class="fa fa-upload bigger-120"></i><span>请选择</span>
                                                 <input ng-model="attr.file" type="file" data-attr="{{attr}}" data-index="{{$index}}" onchange="angular.element(this).scope().checkUpdate(this, JSON.parse(this.getAttribute('data-attr')),this.getAttribute('data-index'))"/>
                                             </span>
                                         </div>

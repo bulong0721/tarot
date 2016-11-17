@@ -633,6 +633,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
                     name: indexData.name,
                     version: indexData.version,
                     force_update: indexData.force_update,
+                    description:indexData.description,
                     type: type,
                     md5: indexData.md5,
                     web: indexData.web,
@@ -699,6 +700,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
                 name: indexData.name,
                 version: indexData.version,
                 force_update: indexData.force_update,
+                description:indexData.description,
                 md5: indexData.md5,
                 web: indexData.web
             };
@@ -786,7 +788,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
     };
 
     $scope.updateAttr = function (model, thisRow, index) {
-        console.log(thisRow)
+        //console.log(thisRow)
         var _file = $scope.fileList[index];
         if( !_file ){
             $timeout(function () {
@@ -794,9 +796,15 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
             }, 0);
             return;
         }
-        if ( thisRow.name == "" || thisRow.version == "" || thisRow.force_update == "" || thisRow.type == "") {
+        if ( thisRow == null || thisRow.name == "" || thisRow.version == "" || thisRow.force_update == "" || thisRow.type == "") {
             $timeout(function () {
                 toaster.error({body: "请填写完整信息!"})
+            }, 0);
+            return;
+        }
+        if( thisRow.type == $scope.mgrUpdateConfigData.constant.TYPE_APK && (typeof thisRow.version != 'number') ){
+            $timeout(function () {
+                toaster.error({body: "请填写纯数字版本信息!"})
             }, 0);
             return;
         }
@@ -904,6 +912,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
                         name: indexData.name,
                         version: indexData.version,
                         force_update: indexData.force_update,
+                        description: indexData.description,
                         md5: indexData.md5,
                         web: indexData.web,
                         type:type,
@@ -937,6 +946,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
             name: '',
             version: '',
             force_update: '',
+            description: '',
             type: $scope.mgrUpdateConfigData.constant.TYPE_MODULE,
             md5: '',
             web: '',
