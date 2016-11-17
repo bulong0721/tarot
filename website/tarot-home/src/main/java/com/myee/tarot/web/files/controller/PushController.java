@@ -37,9 +37,7 @@ import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Martin on 2016/4/21.
@@ -68,7 +66,8 @@ public class PushController {
     public AjaxPageableResponse searchResource(@RequestParam("node") String parentNode, HttpServletRequest request) {
         MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
         File template = getResFile(100L, parentNode);
-        Map<String, FileItem> resMap = Maps.newLinkedHashMap();
+//        Map<String, FileItem> resMap = Maps.newLinkedHashMap();
+		Map<String, FileItem> resMap = getTreeMap();
         listFiles(template, resMap, 100L, store.getId());
         if (100L != store.getId()) {
             File dir = getResFile(store.getId(), parentNode);
@@ -90,7 +89,8 @@ public class PushController {
         FileItem vo = JSON.parseObject(jsonObject.toJSONString(), FileItem.class);
 		String name = vo.getName();
 
-        Map<String, FileItem> resMap = Maps.newLinkedHashMap();
+//        Map<String, FileItem> resMap = Maps.newLinkedHashMap();
+		Map<String, FileItem> resMap = getTreeMap();
         try {
             File dest = FileUtils.getFile(DOWNLOAD_HOME, Long.toString(store.getId()), vo.getPath()); //新增文件父路径
 			if (!dest.exists())
@@ -135,7 +135,8 @@ public class PushController {
         String message = "";
         //不允许删除别的店铺下的资源
         MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
-        Map<String, FileItem> resMap = Maps.newLinkedHashMap();
+//        Map<String, FileItem> resMap = Maps.newLinkedHashMap();
+		Map<String, FileItem> resMap = getTreeMap();
         if (!store.getId().equals(orgID)) {
             message = "不允许删除别的店铺下的资源";
             return AjaxResponse.failed(-1, message);
@@ -369,4 +370,17 @@ public class PushController {
 
     static class StopMsgException extends RuntimeException {
     }
+
+	private Map<String, FileItem> getTreeMap(){
+		Map<String, FileItem> resultMap = new TreeMap<>(new Comparator<String>() {
+			@Override
+			public int compare(String str1, String str2) {
+				if(null == str1){
+					return -1;
+				}
+				return str1.compareToIgnoreCase(str2);
+			}
+		});
+		return resultMap;
+	}
 }
