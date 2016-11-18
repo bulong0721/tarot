@@ -17,7 +17,14 @@ function roleMgrCtrl($scope, cTables,cfromly) {
                 type: 'c_input',
                 templateOptions: {label: '角色名', required: true, placeholder: '角色名,20字以内', maxlength: 20}
             },
-            {key: 'description', type: 'c_input', templateOptions: {label: '描述', placeholder: '描述,255字以内', maxlength: 255}}
+            {
+                key: 'description',
+                type: 'c_textarea',
+                ngModelAttrs: {
+                    style: {attribute: 'style'}
+                },
+                templateOptions: {label: '描述', placeholder: '描述,255字以内', rows: 10, style: 'max-width:500px',maxlength:255}
+            }
         ],
         api: {
             read: '../admin/roles/paging',

@@ -21,8 +21,11 @@ function deviceTypeCtrl($scope, $resource, Constants, cTables, cfromly, cAlerts)
             },
             {
                 key: 'description',
-                type: 'c_input',
-                templateOptions: {label: '描述', placeholder: '描述,255字以内', maxlength: 255}
+                type: 'c_textarea',
+                ngModelAttrs: {
+                    style: {attribute: 'style'}
+                },
+                templateOptions: {label: '描述', placeholder: '描述,255字以内', rows: 10, style: 'max-width:500px',maxlength:255}
             }
         ],
         api: {
