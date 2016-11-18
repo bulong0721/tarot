@@ -273,12 +273,14 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
     $scope.processSubmit = function () {
         var formly = $scope.formData;
         if (formly.form.$valid) {
+            $scope.disableSubmit = true;
             //formly.options.updateInitialValue();//这句会报错
             var xhr = $resource(mgrData.api.update);
             xhr.save({
                 autoStart: formly.model.startNo ? formly.model.startNo : "",
                 autoEnd: formly.model.endNo ? formly.model.endNo : ""
             }, formly.model).$promise.then(function saveSuccess(response) {
+                    $scope.disableSubmit = false;
                     if (0 != response.status) {
                         $scope.toasterManage($scope.toastError, response);
                         return;

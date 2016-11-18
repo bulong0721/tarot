@@ -375,9 +375,10 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
     $scope.pushSubmit = function () {
         var formly = $scope.formDataPusher;
         if (formly.form.$valid) {
+            $scope.disableSubmit = true;
             formly.options.updateInitialValue();
-            $resource(mgrDataPusher.api.push).save({}, formly.model).$promise.then(
-                function success(resp) {
+            $resource(mgrDataPusher.api.push).save({}, formly.model).$promise.then(function success(resp) {
+                    $scope.disableSubmit = false;
                     if (resp != null && resp.status == 0) {
                         toaster.success({body: resp.statusMessage});
                         $scope.goDataTable();
@@ -734,6 +735,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
                 }
                 $scope.goDataTable();
                 toaster.success({body: "保存模块配置文件成功!"});
+
             });
 
         $resource(mgrData.api.create).save({

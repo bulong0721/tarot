@@ -8,8 +8,8 @@
                 <form name="formDataPusher.form" novalidate>
                     <formly-form model="formDataPusher.model" fields="formDataPusher.fields" form="formDataPusher.form" options="formDataPusher.options">
                         <div class="text-center col-xs-8">
-                            <button class="btn btn-primary" ng-click="pushSubmit()" ng-disabled="formDataPusher.form.$invalid"><i class="fa fa-sm fa-check"></i>&nbsp;推送</button>
-                            <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
+                            <button ng-disabled="disableSubmit || formDataPusher.form.$invalid" class="btn btn-primary" ng-click="pushSubmit()"><i class="fa fa-sm {{disableSubmit?'fa-spinner icon-spin':'fa-check'}}"></i>&nbsp;提交</button>
+                            <button ng-if="!disableSubmit" class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
                         </div>
                     </formly-form>
                 </form>

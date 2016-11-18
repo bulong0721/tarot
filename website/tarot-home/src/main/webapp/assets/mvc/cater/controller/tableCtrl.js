@@ -400,6 +400,7 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly, Constants, NgTablePar
     $scope.processSubmit = function () {
         var formly = $scope.formData;
         if (formly.form.$valid) {
+            $scope.disableSubmit = true;
             //formly.options.updateInitialValue();//这句会报错
             //console.log(formly.model.deviceUsed)
             //console.log(formly.model)
@@ -411,6 +412,7 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly, Constants, NgTablePar
                 autoDUStart: formly.model.startDeviceUsedNo ? formly.model.startDeviceUsedNo : "",
                 dUString: formly.model.dU ? formly.model.dU : ""
             }, formly.model).$promise.then(function saveSuccess(response) {
+                    $scope.disableSubmit = false;
                     if (0 != response.status) {
                         $scope.toasterManage($scope.toastError, response);
                         return;

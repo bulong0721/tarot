@@ -150,6 +150,7 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster) {
         scope.toastError = 0, scope.toastOperationSucc = 1, scope.toastDeleteSucc = 2, scope.toastSearchSucc = 3, scope.toastUploadSucc = 4;
         //初始化搜索配置
         scope.where = {};
+        scope.disableSubmit = false;//防止二次提交
 
         //formly配置项
         scope.formData = {
@@ -195,6 +196,7 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster) {
         scope.processSubmit = function () {
             var formly = scope.formData;
             if (formly.form.$valid) {
+                scope.disableSubmit = true;
                 formly.options.updateInitialValue();
                 var xhr = $resource(mgrOpts.api.update);
                 xhr.save({}, formly.model).$promise.then(scope.saveSuccess, scope.saveFailed);
@@ -240,6 +242,7 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster) {
 
         //增删改查后处理tables数据
         scope.saveSuccess = function (response) {
+            scope.disableSubmit = false;
             if (0 != response.status) {
                 scope.toasterManage(scope.toastError, response);
                 return;
@@ -288,6 +291,11 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster) {
             scope.tableOpts.page(1);
             scope.tableOpts.reload();
         };
+
+        //loading
+        scope.loading = function(){
+            //scope.disableSubmit = true;
+        }
     }
 }
 

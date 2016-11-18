@@ -167,6 +167,7 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
     $scope.processSubmit = function () {
         var formly = $scope.formData;
         if (formly.form.$valid) {
+            $scope.disableSubmit = true;
             var xhr = $resource(mgrData.api.update);
             xhr.save({}, formly.model).$promise.then($scope.saveSuccess, $scope.saveFailed);
         }

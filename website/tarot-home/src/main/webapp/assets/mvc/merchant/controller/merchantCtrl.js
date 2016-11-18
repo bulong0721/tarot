@@ -91,6 +91,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$ti
     $scope.processSubmit = function () {
         var formly = $scope.formData;
         if (formly.form.$valid) {
+            $scope.disableSubmit = true;
             //formly.options.updateInitialValue();
             var xhr = $resource(mgrData.api.update);
             xhr.save({}, formly.model).$promise.then($scope.saveSuccess, $scope.saveFailed);
