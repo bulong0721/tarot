@@ -23,9 +23,6 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
     @Column(name = "NAME", length=60)
     protected String name;
 
-    @Column(name = "HEARTBEAT", length=60)
-    protected String heartbeat;
-
     @Column(name = "BOARD_NO", length=60)
     protected String boardNo;
 
@@ -100,14 +97,6 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getHeartbeat() {
-        return heartbeat;
-    }
-
-    public void setHeartbeat(String heartbeat) {
-        this.heartbeat = heartbeat;
     }
 
     public String getBoardNo() {

@@ -17,7 +17,6 @@
                 <tr>
                     <th width="65" class="center">详细</th>
                     <th width="15%" class="center">名称</th>
-                    <th width="5%" class="center">心跳</th>
                     <th width="10%" class="center">主板编号</th>
                     <th width="10%" class="center">设备号</th>
                     <th width="10%" class="center">手机号</th>
@@ -34,7 +33,6 @@
                 <tr ng-repeat-start="row in $data">
                     <td class="center"><a ng-click="row.showDetail=!row.showDetail" tooltip-placement="top" uib-tooltip="{{lang_zh.attrDetail}}"><i class="btn-icon fa fa-bars"></i></a></td>
                     <td>{{::row.name}}</td>
-                    <td>{{::row.heartbeat}}</td>
                     <td>{{::row.boardNo}}</td>
                     <td>{{::row.deviceNum}}</td>
                     <td>{{::row.phone}}</td>
