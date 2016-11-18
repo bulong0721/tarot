@@ -422,7 +422,6 @@ public class DeviceController {
         Map entry = new HashMap();
         entry.put("id",deviceUsed.getId());
         entry.put("name",deviceUsed.getName());
-        entry.put("heartbeat",deviceUsed.getHeartbeat());
         entry.put("boardNo",deviceUsed.getBoardNo());
         entry.put("deviceNum", deviceUsed.getDeviceNum());
         entry.put("description",deviceUsed.getDescription());

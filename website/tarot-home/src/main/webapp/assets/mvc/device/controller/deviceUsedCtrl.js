@@ -216,7 +216,6 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
                 },
                 hideExpression: '!model.ifBatch'
             },
-            {key: 'heartbeat', type: 'c_input', templateOptions: {label: '心跳', placeholder: '心跳,60字以内', maxlength: 60}},
             {
                 key: 'boardNo',
                 type: 'c_input',
