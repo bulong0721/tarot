@@ -10133,9 +10133,11 @@ canvas {cursor: pointer}
 
 /*table tr[]*/
 table tr:hover,table>tbody>tr:nth-of-type(odd):hover {background-color: #f6fefc;}
+table th,table td {white-space:nowrap;}
 .tableXyAuto {overflow-x: auto;}
 .tableXyAuto td,.tableXyAuto tr {white-space:nowrap;}
 .table.ng-table td, .table.table-bordered>tbody>tr>td{ vertical-align: middle;}
+
 /*.wrapper-content {padding: 15px 0px 20px;}*/
 .navbar {
     position: inherit;
