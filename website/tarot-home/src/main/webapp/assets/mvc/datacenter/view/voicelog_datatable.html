@@ -23,35 +23,39 @@
 <div class="row">
     <div class="col-xs-12">
         <div class="ibox float-e-margins">
-            <table id="example" ng-table="tableOpts" class="table table-striped table-bordered">
-                <thead>
-                <tr>
-                    <th width="5%" class="center">序号</th>
-                    <th width="10%" class="center">设备类型</th>
-                    <th width="10%" class="center">设备名称</th>
-                    <th width="15%" class="center">日期-时间</th>
-                    <th width="15%" class="center">提问</th>
-                    <th width="15%" class="center">回答</th>
-                    <th width="15%" class="center">种类</th>
-                    <th width="15%" class="center">商户</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td colspan="8" class="center" ng-if="$data.length<=0">没有查找到数据</td>
-                </tr>
-                <tr ng-repeat="row in $data">
-                    <td>{{::$index+1}}</td>
-                    <td>{{::row.deviceType}}</td>
-                    <td>{{::row.deviceName}}</td>
-                    <td>{{::row.dateTimeStr}}</td>
-                    <td>{{::row.cookyListen}}</td>
-                    <td>{{::row.cookySpeak}}</td>
-                    <td>{{::row.voiceType}}</td>
-                    <td>{{::row.merchantName}}</td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="fixed-table-container" ng-table="tableOpts">
+                <div class="fixed-table-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th width="5%" class="center">序号</th>
+                            <th width="10%" class="center">设备类型</th>
+                            <th width="10%" class="center">设备名称</th>
+                            <th width="15%" class="center">日期-时间</th>
+                            <th width="15%" class="center">提问</th>
+                            <th class="center">回答</th>
+                            <th width="100" class="center">类型</th>
+                            <th width="15%" class="center">商户</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td colspan="8" class="center" ng-if="$data.length<=0">没有查找到数据</td>
+                        </tr>
+                        <tr ng-repeat="row in $data">
+                            <td>{{::$index+1}}</td>
+                            <td>{{::row.deviceType}}</td>
+                            <td>{{::row.deviceName}}</td>
+                            <td>{{::row.dateTimeStr}}</td>
+                            <td>{{::row.cookyListen}}</td>
+                            <td>{{::row.cookySpeak}}</td>
+                            <td>{{::row.voiceType}}</td>
+                            <td>{{::row.merchantName}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
