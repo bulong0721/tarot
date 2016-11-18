@@ -18,7 +18,16 @@ function userMgrCtrl($scope, cTables, cfromly, $rootScope) {
                 type: 'c_input',
                 templateOptions: {label: '登录名', required: true, placeholder: '登录名,40字以内', maxlength: 40}
             },
-            {key: 'phoneNumber', type: 'c_input', templateOptions: {label: '电话号码', placeholder: '电话号码,20字以内', maxlength: 20}},
+            {
+                key: 'phoneNumber',
+                type: 'c_input',
+                templateOptions: {
+                    label: '电话号码',
+                    placeholder: '电话号码,11位手机',
+                    maxlength: 11,
+                    pattern: '^(1[3578][0-9]|14[0-7])[0-9]{8}$|(^((1[3578][0-9]|14[0-7])[0-9]{8},)*(1[3578][0-9]|14[0-7])[0-9]{8}$)'
+                }
+            },
             {
                 key: 'email',
                 type: 'c_input',
