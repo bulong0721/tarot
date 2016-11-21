@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * explorerCtrl - controller
  */
-explorerCtrl.$inject = ['$scope', '$resource', '$filter', 'cfromly', 'Constants', 'cAlerts', 'toaster', '$rootScope', '$timeout'];
-function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, toaster, $rootScope, $timeout) {
+explorerCtrl.$inject = ['$scope', '$resource', '$filter', 'cfromly', 'Constants', 'cAlerts', 'toaster', '$rootScope', '$timeout','$q'];
+function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, toaster, $rootScope, $timeout,$q) {
     var lang = $rootScope.lang_zh;
     var iDatatable = 0, iPush = 2, iEditor = 1, iConfig = 3;
     $scope.activeTab = iDatatable;
@@ -719,42 +719,41 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
         //console.log($scope.submitApkResult);
 
         //存储追中结果到文件 {"salt":100,"path":"catch","ifEditor":true,"type":1,"name":"test.txt","content":"tetst"}
-        $resource(mgrData.api.create).save({
-            entityText: JSON.stringify({
-                "salt": "/",
-                "path": $scope.mgrUpdateConfigData.constant.BASE_PATH_MODULE + code,
-                "ifEditor": true,
-                "type": 1,
-                "name": $scope.mgrUpdateConfigData.constant.FILE_NAME_MODULE,
-                "content": $scope.submitModuleResult
-            })
-        }, {}).$promise.then(function (res) {
-                if (0 != res.status) {
-                    toaster.error({body: "保存模块配置文件失败!"})
-                    return;
-                }
-                $scope.goDataTable();
-                toaster.success({body: "保存模块配置文件成功!"});
-
-            });
-
-        $resource(mgrData.api.create).save({
-            entityText: JSON.stringify({
-                "salt": "/",
-                "path": $scope.mgrUpdateConfigData.constant.BASE_PATH_APK + code,
-                "ifEditor": true,
-                "type": 1,
-                "name": $scope.mgrUpdateConfigData.constant.FILE_NAME_APK,
-                "content": $scope.submitApkResult
-            })
-        }, {}).$promise.then(function (res) {
-                if (0 != res.status) {
-                    toaster.error({body: "保存应用配置文件失败!"})
-                    return;
-                }
-                $scope.goDataTable();
-                toaster.success({body: "保存应用配置文件成功!"});
-            });
+        $q.all([
+            $resource(mgrData.api.create).save({
+                entityText: JSON.stringify({
+                    "salt": "/",
+                    "path": $scope.mgrUpdateConfigData.constant.BASE_PATH_MODULE + code,
+                    "ifEditor": true,
+                    "type": 1,
+                    "name": $scope.mgrUpdateConfigData.constant.FILE_NAME_MODULE,
+                    "content": $scope.submitModuleResult
+                })
+            }, {}).$promise,
+            $resource(mgrData.api.create).save({
+                entityText: JSON.stringify({
+                    "salt": "/",
+                    "path": $scope.mgrUpdateConfigData.constant.BASE_PATH_APK + code,
+                    "ifEditor": true,
+                    "type": 1,
+                    "name": $scope.mgrUpdateConfigData.constant.FILE_NAME_APK,
+                    "content": $scope.submitApkResult
+                })
+            }, {}).$promise
+        ]).then(function(respArray){//返回结果的序列顺序跟上面参数的promise数组顺序一致
+            console.log(respArray)
+            if (0 != respArray[0].status) {
+                toaster.error({body: "保存模块配置文件失败!"})
+                return;
+            }
+            toaster.success({body: "保存模块配置文件成功!"});
+            if (0 != respArray[1].status) {
+                toaster.error({body: "保存应用配置文件失败!"})
+                return;
+            }
+            toaster.success({body: "保存应用配置文件成功!"});
+            $scope.goDataTable();
+        });
     };
 
     //formly返回
