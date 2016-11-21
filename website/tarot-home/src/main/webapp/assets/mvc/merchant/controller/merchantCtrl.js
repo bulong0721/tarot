@@ -71,7 +71,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$ti
                 ngModelAttrs: {
                     style: {attribute: 'style'}
                 },
-                templateOptions: {label: '商户描述', placeholder: '商户描述,255字以内', rows: 10, style: 'max-width:500px',maxlength:255}
+                templateOptions: {label: '描述', placeholder: '描述,255字以内', rows: 10, style: 'max-width:500px',maxlength:255}
             }
         ],
         api: {

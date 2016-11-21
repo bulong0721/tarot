@@ -87,7 +87,16 @@ function merchantShopCtrl($scope, Constants, cTables, cfromly, $resource, NgTabl
                 templateOptions: {label: '商场', options: Constants.malls}
             },
             {key: 'address.address', type: 'c_input', templateOptions: {label: '地址', placeholder: '地址,255字以内',maxlength:255}},
-            {key: 'phone', type: 'c_input', templateOptions: {label: '联系电话', placeholder: '联系电话,手机或固话,20字以内',maxlength:20}},
+            {
+                key: 'phone',
+                type: 'c_input',
+                templateOptions: {
+                    label: '联系电话',
+                    placeholder: '联系电话,11位手机或固话,20字以内',
+                    maxlength:20,
+                    pattern: '^(1[3578][0-9]|14[0-7])[0-9]{8}$|(^((1[3578][0-9]|14[0-7])[0-9]{8},)*(1[3578][0-9]|14[0-7])[0-9]{8}$)|(^(0[0-9]{2,3}\-)?([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$)'
+                }
+            },
             {key: 'code', type: 'c_input', templateOptions: {label: '门店码', required: true, placeholder: '门店码,字母和数字的组合,100字以内',maxlength:100,pattern:'^[a-zA-Z0-9_]*$'}},
         ],
         api: {

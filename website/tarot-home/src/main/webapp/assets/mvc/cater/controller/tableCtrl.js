@@ -243,9 +243,11 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly, Constants, NgTablePar
             },
             {
                 key: 'description',
-                type: 'c_input',
-                className: 'c_formly_line',
-                templateOptions: {label: '描述', placeholder: '描述,255字以内', maxlength: 255}
+                type: 'c_textarea',
+                ngModelAttrs: {
+                    style: {attribute: 'style'}
+                },
+                templateOptions: {label: '描述', placeholder: '描述,255字以内', rows: 10, style: 'max-width:500px',maxlength:255}
             },
             {
                 key: 'tableType.id',
