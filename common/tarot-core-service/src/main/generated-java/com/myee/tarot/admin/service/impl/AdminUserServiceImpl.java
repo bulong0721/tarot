@@ -5,6 +5,8 @@ import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.admin.service.AdminUserService;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
 import com.myee.tarot.core.service.GenericResponse;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,5 +37,10 @@ public class AdminUserServiceImpl extends GenericEntityServiceImpl<Long, AdminUs
     @Override
     public AdminUser getByLogin(String login) {
         return adminUserDao.getByLogin(login);
+    }
+
+    @Override
+    public PageResult<AdminUser> pageList(PageRequest pageRequest){
+        return adminUserDao.pageList(pageRequest);
     }
 }

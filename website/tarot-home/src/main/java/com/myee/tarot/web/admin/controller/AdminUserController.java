@@ -50,9 +50,10 @@ public class AdminUserController {
     @RequestMapping(value = "admin/users/paging", method = RequestMethod.GET)
     public
     @ResponseBody
-    AjaxPageableResponse pageUsers(Model model, HttpServletRequest request) {
+    AjaxPageableResponse pageUsers(Model model, HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
-        List<AdminUser> userList = userService.list();
+        PageResult<AdminUser> pageList = userService.pageList(pageRequest);
+        List<AdminUser> userList = pageList.getList();
         for (AdminUser user : userList) {
             resp.addDataEntry(objectToEntry(user));
         }
@@ -60,6 +61,7 @@ public class AdminUserController {
         Long id = user.getId();
         Map map = Maps.newHashMap();
         map.put("loggedUserId", id);
+        resp.setRecordsTotal(pageList.getRecordsTotal());
         resp.setDataMap(map);
         return resp;
     }
