@@ -142,7 +142,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
     function recursionTree(data, arraySelected) {
         angular.forEach(data, function (d) {
             if (d.checked == true && d.type == 1) {
-                arraySelected.push({url: d.url, name: d.name});
+                arraySelected.push({url: d.url, name: d.name, md5: d.md5});
             }
             if (d.children.length > 0) {
                 recursionTree(d.children, arraySelected);

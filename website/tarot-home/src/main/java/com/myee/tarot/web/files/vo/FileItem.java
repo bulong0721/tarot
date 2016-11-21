@@ -20,12 +20,20 @@ public class FileItem implements Serializable{
     private Long   size;
     private int    type;
     private String currPath;
+    private String md5;
 
     private List<FileItem> children;
 
     public FileItem() {
     }
 
+    public String getMd5() {
+        return md5;
+    }
+
+    public void setMd5(String md5) {
+        this.md5 = md5;
+    }
 
     public int getType() {
         return type;

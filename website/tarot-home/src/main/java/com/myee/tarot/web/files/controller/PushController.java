@@ -19,6 +19,7 @@ import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.resource.domain.Notification;
 import com.myee.tarot.resource.service.NotificationService;
+import com.myee.tarot.web.apiold.util.FileValidCreateUtil;
 import com.myee.tarot.web.files.FileType;
 import com.myee.tarot.web.files.vo.FileItem;
 import org.apache.commons.codec.binary.Base64;
@@ -216,6 +217,12 @@ public class PushController {
 			fileItem.setSaltName(merchantStore.getName());
             fileItem.setPath((trimStart(fileItem.getPath(), prefix)).replace(Constants.BACKSLASH, Constants.SLASH));
             fileItem.setUrl(DOWNLOAD_HTTP + orgID + Constants.SLASH + fileItem.getPath().replace(Constants.BACKSLASH, Constants.SLASH));
+            try{
+                fileItem.setMd5(FileValidCreateUtil.fileMD5(file.getPath()));
+            }
+            catch (Exception e){
+                LOGGER.error(e.getMessage());
+            }
             resMap.put(file.getName(), fileItem);
         }
     }
