@@ -61,7 +61,7 @@
         <!--</dependency>-->
     </dependencies>
     <build>
-        <finalName>tarot</finalName>
+        <finalName>${final.name}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -104,7 +104,9 @@
         <profile>
             <id>dev</id>
             <properties>
-                <env>dev</env>
+                <runtime.env>src/main/env/dev</runtime.env>
+                <final.name>tarot</final.name>
+                <!--<env>dev</env>-->
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -113,13 +115,15 @@
         <profile>
             <id>prd</id>
             <properties>
-                <env>prd</env>
+                <runtime.env>src/main/env/prd</runtime.env>
+                <final.name>tarot</final.name>
             </properties>
         </profile>
         <profile>
             <id>prdtest</id>
             <properties>
-                <env>prdtest</env>
+                <runtime.env>src/main/env/prdtest</runtime.env>
+                <final.name>tarot_test</final.name>
             </properties>
         </profile>
     </profiles>
