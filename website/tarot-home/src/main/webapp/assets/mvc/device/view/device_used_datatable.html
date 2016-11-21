@@ -38,7 +38,7 @@
                             <td>{{::row.boardNo}}</td>
                             <td>{{::row.deviceNum}}</td>
                             <td>{{::row.phone}}</td>
-                            <td>{{::row.description}}</td>
+                            <td><div class="cropLongString-220">{{::row.description}}</div></td>
                             <td>{{::row.device.name}}</td>
                             <td class="center">
                                 <a ng-click="goDeviceBindProductEditor($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.bindProduct}}"><i class="btn-icon fa fa-link"></i></a>

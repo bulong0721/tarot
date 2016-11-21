@@ -10467,7 +10467,24 @@ table th,table td {white-space:nowrap;}
     text-overflow:ellipsis;
     white-space:nowrap;
 }
-
+.cropLongString-120 {
+    width:120px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+.cropLongString-220 {
+    width:220px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+.cropLongString-320 {
+    width:320px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
 /*metrics*/
 .metrics .ibox {border:#e7eaec 1px solid; border-top:none }
 .metrics .ibox-content {padding: 10px; display: inline-block; width: 100%;}

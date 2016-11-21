@@ -638,7 +638,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
                     type: type,
                     md5: indexData.md5,
                     web: indexData.web,
-                    uploadState: true,
+                    uploadState: false,
                     md5InputValid: false,
                     show: true,
                     editing: false
@@ -718,7 +718,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
         //console.log($scope.submitModuleResult);
         //console.log($scope.submitApkResult);
 
-        //存储追中结果到文件 {"salt":100,"path":"catch","ifEditor":true,"type":1,"name":"test.txt","content":"tetst"}
+        //存储表中结果到文件 {"salt":100,"path":"catch","ifEditor":true,"type":1,"name":"test.txt","content":"tetst"}
         $q.all([
             $resource(mgrData.api.create).save({
                 entityText: JSON.stringify({

@@ -33,7 +33,7 @@
                             <td class="center"><a ng-click="row.showDetail=!row.showDetail" tooltip-placement="top" uib-tooltip="{{lang_zh.attrDetail}}"><i class="btn-icon fa fa-bars"></i></a></td>
                             <td>{{::row.name}}</td>
                             <td>{{::row.versionNum}}</td>
-                            <td>{{::row.description}}</td>
+                            <td><div class="cropLongString-320">{{::row.description}}</div></td>
                             <td class="center">
                                 <a ng-click="goEditor($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
                                 <span class="divider"></span>

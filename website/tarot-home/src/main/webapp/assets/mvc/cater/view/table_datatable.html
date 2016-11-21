@@ -36,7 +36,7 @@
                         <tr ng-repeat-start="row in $data">
                             <td class="center"><a ng-click="row.showDetail=!row.showDetail" tooltip-placement="top" uib-tooltip="{{lang_zh.bindDeviceDetail}}"><i class="btn-icon fa fa-bars"></i></a></td>
                             <td>{{::row.name}}</td>
-                            <td>{{::row.description}}</td>
+                            <td><div class="cropLongString-220">{{::row.description}}</div></td>
                             <td>{{::row.scanCode}}</td>
                             <td>{{::row.textId}}</td>
                             <td class="center">{{::row.tableType.name}}</td>
