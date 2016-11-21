@@ -50,14 +50,14 @@
             <artifactId>qiniu-java-sdk</artifactId>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>org.apache.commons</groupId>-->
-            <!--<artifactId>commons-lang3</artifactId>-->
+        <!--<groupId>org.apache.commons</groupId>-->
+        <!--<artifactId>commons-lang3</artifactId>-->
         <!--</dependency>-->
         <!-- 暂时引用下excel包，给点点笔老的接口用，以后更新掉接口后可以删除，要关注是不是会内存泄漏-->
         <!--<dependency>-->
-            <!--<groupId>org.apache.poi</groupId>-->
-            <!--<artifactId>poi</artifactId>-->
-            <!--<version>3.11</version>-->
+        <!--<groupId>org.apache.poi</groupId>-->
+        <!--<artifactId>poi</artifactId>-->
+        <!--<version>3.11</version>-->
         <!--</dependency>-->
     </dependencies>
     <build>
@@ -96,7 +96,7 @@
         </plugins>
         <resources>
             <resource>
-                <directory>src/main/profiles/${env}</directory>
+                <directory>${runtime.env}</directory>
             </resource>
         </resources>
     </build>
@@ -104,7 +104,7 @@
         <profile>
             <id>dev</id>
             <properties>
-                <runtime.env>src/main/env/dev</runtime.env>
+                <runtime.env>src/main/profiles/dev</runtime.env>
                 <final.name>tarot</final.name>
                 <!--<env>dev</env>-->
             </properties>
@@ -115,14 +115,14 @@
         <profile>
             <id>prd</id>
             <properties>
-                <runtime.env>src/main/env/prd</runtime.env>
+                <runtime.env>src/main/profiles/prd</runtime.env>
                 <final.name>tarot</final.name>
             </properties>
         </profile>
         <profile>
             <id>prdtest</id>
             <properties>
-                <runtime.env>src/main/env/prdtest</runtime.env>
+                <runtime.env>src/main/profiles/prdtest</runtime.env>
                 <final.name>tarot_test</final.name>
             </properties>
         </profile>
