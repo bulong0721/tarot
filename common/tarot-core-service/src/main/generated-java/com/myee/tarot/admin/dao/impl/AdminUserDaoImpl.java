@@ -4,6 +4,9 @@ import com.myee.tarot.admin.dao.AdminUserDao;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.admin.domain.QAdminUser;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.StringUtil;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;
@@ -57,5 +60,24 @@ public class AdminUserDaoImpl extends GenericEntityDaoImpl<Long, AdminUser> impl
         AdminUser user = query.fetchFirst();
 
         return user;
+    }
+
+    @Override
+    public PageResult<AdminUser> pageList(PageRequest pageRequest){
+        PageResult<AdminUser> pageList = new PageResult<AdminUser>();
+        QAdminUser qAdminUser = QAdminUser.adminUser;
+        JPQLQuery<AdminUser> query = new JPAQuery(getEntityManager());
+        query.from(qAdminUser);
+
+        if(!StringUtil.isBlank(pageRequest.getQueryName())){
+            query.where(qAdminUser.name.like("%" + pageRequest.getQueryName() + "%")
+                    .or(qAdminUser.login.like("%" + pageRequest.getQueryName() + "%")));
+        }
+        pageList.setRecordsTotal(query.fetchCount());
+        if( pageRequest.getCount() > 0){
+            query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
+        }
+        pageList.setList(query.fetch());
+        return pageList;
     }
 }

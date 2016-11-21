@@ -2,6 +2,8 @@ package com.myee.tarot.admin.dao;
 
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.core.dao.GenericEntityDao;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
 
 import java.util.List;
 import java.util.Set;
@@ -18,4 +20,6 @@ public interface AdminUserDao extends GenericEntityDao<Long, AdminUser> {
     List<AdminUser> listByIds(Set<Long> ids);
 
     AdminUser getByLogin(String login);
+
+    PageResult<AdminUser> pageList(PageRequest pageRequest);
 }

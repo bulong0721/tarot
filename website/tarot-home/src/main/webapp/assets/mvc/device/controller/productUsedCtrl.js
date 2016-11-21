@@ -189,7 +189,7 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
                 key: 'code',
                 type: 'c_input',
                 templateOptions: {
-                    label: '设备组编号',
+                    label: '编号',
                     required: true,
                     placeholder: '设备组编号,100字以内',
                     maxlength: 100
@@ -225,7 +225,7 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
                 type: 'c_select',
                 className: 'c_select',
                 templateOptions: {
-                    label: '设备组名称',
+                    label: '名称',
                     required: true,
                     placeholder: '设备组名称',
                     valueProp: 'type',
@@ -237,7 +237,7 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
                 key: 'productNum',
                 type: 'c_input',
                 templateOptions: {
-                    label: '设备组版本',
+                    label: '版本',
                     required: true,
                     placeholder: '设备组版本,100字以内',
                     maxlength: 100

@@ -64,8 +64,9 @@ public class CustomerDaoImpl extends GenericEntityDaoImpl<Long, Customer> implem
         query.where(qCustomer.merchantStore.id.eq(storeId));
 
         if (!StringUtil.isBlank(pageRequest.getQueryName())) {
-            query.where( (qCustomer.firstName.like("%" + pageRequest.getQueryName() + "%")).or
-                    (qCustomer.lastName.like("%" + pageRequest.getQueryName() + "%")) );
+            query.where( (qCustomer.firstName.like("%" + pageRequest.getQueryName() + "%"))
+                    .or(qCustomer.lastName.like("%" + pageRequest.getQueryName() + "%"))
+                    .or(qCustomer.username.like("%" + pageRequest.getQueryName() + "%")) );
         }
         pageList.setRecordsTotal(query.fetchCount());
         if( pageRequest.getCount() > 0){
