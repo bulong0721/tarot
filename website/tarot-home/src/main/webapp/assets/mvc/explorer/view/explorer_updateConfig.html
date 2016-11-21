@@ -35,7 +35,7 @@
                                     <th width="10%" class="center">类型</th>
                                     <th width="145px" class="center">md5</th>
                                     <th class="center">下载地址</th>
-                                    <th width="100px" class="center">上传升级包</th>
+                                    <th width="80px" class="center">上传升级包</th>
                                     <th width="80px" class="center"><a ng-click="insertAttr(formDataUpdateConfig.model)" tooltip-placement="top" uib-tooltip="{{lang_zh.add}}"><i class="btn-icon fa fa-plus"></i></a></th>
                                 </tr>
                                 </thead>
@@ -84,6 +84,7 @@
                                     <td>
                                         <copy-to-clip ng-model="attr.md5" content="attr.md5" style="float: left"></copy-to-clip>
                                         <div ng-switch-default>
+                                            <br>
                                             <i class="btn btn-sm btn-success" ng-click="showMd5Input(attr)">校验</i>
                                             <br>
                                             <input style="float: left;" ng-if="attr.md5InputValid" ng-model="attr.md5InputContent" type="text" class="editable-input form-control input-sm inputMd5"/>

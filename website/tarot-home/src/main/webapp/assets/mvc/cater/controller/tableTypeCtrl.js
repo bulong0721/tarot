@@ -15,9 +15,11 @@ function tableTypeMgrCtrl($scope, cTables,cfromly) {
             {key: 'name', type: 'c_input',className:'c_formly_line', templateOptions: {label: '名称', required: true, placeholder: '名称,50字以内',maxlength: 50}},
             {
                 key: 'description',
-                type: 'c_input',
-                className:'c_formly_line',
-                templateOptions: {label: '描述', required: true, placeholder: '描述,255字以内',maxlength: 255}
+                type: 'c_textarea',
+                ngModelAttrs: {
+                    style: {attribute: 'style'}
+                },
+                templateOptions: {label: '描述', placeholder: '描述,255字以内', rows: 10, style: 'max-width:500px',maxlength:255}
             },
             {key: 'capacity', type: 'c_input',className:'c_formly_line', templateOptions: {type: 'number',label: '容纳人数', placeholder: '容纳人数,11位以内数字',maxlength: 11,pattern: '^[0-9]*$'}},
             {

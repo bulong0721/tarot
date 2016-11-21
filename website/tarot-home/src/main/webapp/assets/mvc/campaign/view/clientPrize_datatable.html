@@ -42,7 +42,7 @@
                             <td>{{::row.endDate | date:'yyyy-MM-dd'}}</td>
                             <td>{{::row.total}}</td>
                             <td>{{::row.leftNum}}</td>
-                            <td>{{::row.description}}</td>
+                            <td><div class="cropLongString-120">{{::row.description}}</div></td>
                             <td class="center"><span ng-class="{true: 'label label-primary', false: 'label label-danger'}[row.activeStatus]">{{row.activeStatus?'开启':'关闭'}}</span></td>
                             <td class="center">
                                 <span class="btn btn-sm btn-success upMenuBut">
