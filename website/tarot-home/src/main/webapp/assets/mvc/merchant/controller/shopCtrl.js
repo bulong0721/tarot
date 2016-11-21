@@ -19,7 +19,7 @@ function merchantShopCtrl($scope, Constants, cTables, cfromly, $resource, NgTabl
             {
                 key: 'name',
                 type: 'c_input',
-                templateOptions: {label: '门店名称', required: true, placeholder: '门店名称,60字以内',maxlength:60}
+                templateOptions: {label: '名称', required: true, placeholder: '门店名称,60字以内',maxlength:60}
             },
             {
                 key: 'address.province.id',

@@ -11,7 +11,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$ti
             {
                 key: 'name',
                 type: 'c_input',
-                templateOptions: {type: 'text', label: '商户名称', required: true, placeholder: '商户名称,60字以内',maxlength:60}
+                templateOptions: {type: 'text', label: '名称', required: true, placeholder: '商户名称,60字以内',maxlength:60}
             },
             {
                 key: 'businessType',
@@ -19,7 +19,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$ti
                 className: 'c_select',
                 templateOptions: {
                     required: true,
-                    label: '商户类型',
+                    label: '类型',
                     options: Constants.merchantType
                 }
             },
@@ -29,7 +29,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$ti
                 className: 'c_select',
                 templateOptions: {
                     required:false,
-                    label: '商户菜系',
+                    label: '菜系',
                     options: Constants.merchantCuisine
                 },
                 hideExpression: function ($viewValue, $modelValue, scope) {
@@ -44,7 +44,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$ti
                 id: 'imgFile',
                 key: 'imgFile',
                 type: 'c_images',
-                templateOptions: {type: 'file', label: '商户图标预览', required: false, placeholder: '商户图标预览',on:true},
+                templateOptions: {type: 'file', label: '图标预览', required: false, placeholder: '商户图标预览',on:true},
                 controller:['$scope', function ($scope) {
                     $scope.on = function(){
                         $scope.model.imgCropBool = true;
@@ -55,7 +55,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$ti
             {
                 key: 'imgCrop',
                 type: 'c_img_crop',
-                templateOptions: {label: '商户图标裁剪'},
+                templateOptions: {label: '图标裁剪'},
                 hideExpression: function ($viewValue, $modelValue, scope) {
                     return scope.model.imgCropBool?false:true;
                 },

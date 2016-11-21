@@ -248,7 +248,7 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
                 key: 'device.id',
                 type: 'c_select',
                 className: 'c_select',
-                templateOptions: {label: '选择设备类型', required: true, options: getDeviceList()}
+                templateOptions: {label: '类型', required: true, options: getDeviceList()}
             }
 
         ],

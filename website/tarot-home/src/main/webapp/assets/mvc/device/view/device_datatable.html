@@ -4,7 +4,7 @@
 <div class="alert alert-info">
     <div class="form-inline" ng-keyup="search($event)">
         <div class="form-group">
-            <input placeholder="类型名" ng-model="where.queryName" type="text" class="form-control" style="width:200px;"/>
+            <input placeholder="名称" ng-model="where.queryName" type="text" class="form-control" style="width:200px;"/>
         </div>
         <button class="btn btn-sm btn-danger m-l" type="button" ng-click="search()"><i class="fa fa-search"></i><span class="bold">搜索</span></button>
     </div>
@@ -20,7 +20,7 @@
                         <tr>
                             <th width="65" class="center">详细</th>
                             <th width="25%" class="center">名称</th>
-                            <th class="center">版本</th>
+                            <th class="center">版本号</th>
                             <th width="35%" class="center">描述</th>
                             <th width="120" class="center">操作</th>
                         </tr>
