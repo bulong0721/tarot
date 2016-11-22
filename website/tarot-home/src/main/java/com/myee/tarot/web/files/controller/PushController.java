@@ -12,6 +12,8 @@ import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
@@ -31,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import javax.servlet.http.HttpServletRequest;
@@ -218,7 +221,9 @@ public class PushController {
             fileItem.setPath((trimStart(fileItem.getPath(), prefix)).replace(Constants.BACKSLASH, Constants.SLASH));
             fileItem.setUrl(DOWNLOAD_HTTP + orgID + Constants.SLASH + fileItem.getPath().replace(Constants.BACKSLASH, Constants.SLASH));
             try{
-                fileItem.setMd5(FileValidCreateUtil.fileMD5(file.getPath()));
+                if(file.isFile()){//只有是文件才算md5码
+                    fileItem.setMd5(FileValidCreateUtil.fileMD5(file.getPath()));
+                }
             }
             catch (Exception e){
                 LOGGER.error(e.getMessage());
@@ -237,6 +242,48 @@ public class PushController {
             result = result.substring(prefix.length() + 1);
         }
         return result;
+    }
+
+    /**
+     * 根据切换的门店获取推送日志
+     * @param model
+     * @param request
+     * @param pageRequest
+     * @return
+     */
+    @RequestMapping(value = "admin/pushLog/paging", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    AjaxPageableResponse pageZones(Model model, HttpServletRequest request, PageRequest pageRequest) {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
+        try {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) o;
+
+            PageResult<Notification> pageList = notificationService.pageByStore(merchantStore1.getId(), pageRequest);
+            List<Notification> notificationList = pageList.getList();
+            for (Notification notification : notificationList) {
+                Map entry = new HashMap();
+                entry.put("userName", notification.getAdminUser().getLogin());
+                entry.put("boardNo", notification.getUniqueNo());
+                entry.put("content", notification.getContent());
+                entry.put("created", notification.getCreateTime());
+                entry.put("timeOut", notification.getTimeout());
+                entry.put("comment", notification.getComment());
+                resp.addDataEntry(entry);
+            }
+
+            resp.setRecordsTotal(pageList.getRecordsTotal());
+
+            return resp;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return resp;
+        }
     }
 
     @RequestMapping(value = "admin/file/push", method = RequestMethod.POST)

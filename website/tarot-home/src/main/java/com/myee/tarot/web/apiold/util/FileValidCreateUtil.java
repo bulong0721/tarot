@@ -106,15 +106,20 @@ public class FileValidCreateUtil {
             LOGGER.info("文件"+ inputFile +"的md5:" + md5);
             return md5;
         } catch (NoSuchAlgorithmException e) {
+            LOGGER.error(e.getMessage());
             return null;
         } finally {
             try {
-                digestInputStream.close();
+                if(digestInputStream != null)
+                    digestInputStream.close();
             } catch (Exception e) {
+                LOGGER.error(e.getMessage());
             }
             try {
-                fileInputStream.close();
+                if(fileInputStream != null)
+                    fileInputStream.close();
             } catch (Exception e) {
+                LOGGER.error(e.getMessage());
             }
         }
     }
