@@ -1,7 +1,10 @@
 package com.myee.tarot.resource.service.impl;
 
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
+import com.myee.tarot.core.util.PageRequest;
+import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.resource.dao.NotificationDao;
+import com.myee.tarot.resource.domain.Notification;
 import com.myee.tarot.resource.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,5 +21,9 @@ public class NotificationServiceImpl extends GenericEntityServiceImpl<Long, com.
     public NotificationServiceImpl(NotificationDao notificationDao) {
         super(notificationDao);
         this.notificationDao = notificationDao;
+    }
+
+    public PageResult<Notification> pageByStore(Long id, PageRequest pageRequest){
+        return notificationDao.pageByStore( id,  pageRequest);
     }
 }
