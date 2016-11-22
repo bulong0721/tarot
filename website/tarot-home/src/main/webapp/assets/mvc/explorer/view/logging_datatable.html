@@ -1,7 +1,7 @@
 <div class="alert alert-info">
     <div class="form-inline" ng-keyup="search($event)">
         <div class="form-group">
-            <input placeholder="餐桌名" ng-model="where.queryName" type="text" class="form-control" style="width:200px;"/>
+            <input placeholder="内容" ng-model="where.queryName" type="text" class="form-control" style="width:200px;"/>
         </div>
         <button class="btn btn-sm btn-danger m-l" type="button" ng-click="search()"><i class="fa fa-search"></i><span class="bold">搜索</span></button>
     </div>
@@ -15,27 +15,25 @@
                     <table class="table table-striped table-bordered">
                         <thead>
                         <tr>
-                            <th width="20%" class="center">名称</th>
-                            <th width="30%" class="center">描述</th>
-                            <th width="20%" class="center">桌型</th>
-                            <th width="20%" class="center">区域</th>
-                            <th width="10%" class="center">操作</th>
+                            <th width="10%" class="center">操作者</th>
+                            <th width="20%" class="center">目标主板编号</th>
+                            <th width="30%" class="center">内容</th>
+                            <th width="10%" class="center">操作时间</th>
+                            <th width="10%" class="center">过期时间</th>
+                            <th width="20%" class="center">备注</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr>
-                            <td colspan="5" class="center" ng-if="$data.length<=0">没有查找到数据</td>
+                            <td colspan="6" class="center" ng-if="$data.length<=0">没有查找到数据</td>
                         </tr>
                         <tr ng-repeat="row in $data">
-                            <td>{{::row.name}}</td>
-                            <td>{{::row.description}}</td>
-                            <td class="center">{{::row.tableType.name}}</td>
-                            <td class="center">{{::row.tableZone.name}}</td>
-                            <td class="center">
-                                <a ng-click="goEditor($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
-                                <span class="divider"></span>
-                                <a ng-click="doDelete($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
-                            </td>
+                            <td>{{::row.userName}}</td>
+                            <td>{{::row.boardNo}}</td>
+                            <td tooltip-placement="top" uib-tooltip="{{row.content}}"><div class="cropLongString-320">{{::row.content}}</div></td>
+                            <td class="center">{{::row.created | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                            <td class="center">{{::row.timeOut | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                            <td>{{::row.comment}}</td>
                         </tr>
                         </tbody>
                     </table>
