@@ -2,6 +2,7 @@ package com.myee.tarot.catalog.dao.impl;
 
 import com.myee.tarot.catalog.domain.Device;
 import com.myee.tarot.catalog.domain.QDevice;
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
@@ -27,7 +28,7 @@ public class DeviceDaoImpl extends GenericEntityDaoImpl<Long, Device> implements
             query.where(qDevice.name.like("%" + pageRequest.getQueryName() + "%"));
         }
         pageList.setRecordsTotal(query.fetchCount());
-        if( pageRequest.getCount() > 0){
+        if( pageRequest.getCount() > Constants.COUNT_PAGING_MARK){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
         pageList.setList(query.fetch());

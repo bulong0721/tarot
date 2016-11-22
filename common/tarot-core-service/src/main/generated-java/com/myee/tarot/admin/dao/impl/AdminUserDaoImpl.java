@@ -3,6 +3,7 @@ package com.myee.tarot.admin.dao.impl;
 import com.myee.tarot.admin.dao.AdminUserDao;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.admin.domain.QAdminUser;
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
@@ -74,7 +75,7 @@ public class AdminUserDaoImpl extends GenericEntityDaoImpl<Long, AdminUser> impl
                     .or(qAdminUser.login.like("%" + pageRequest.getQueryName() + "%")));
         }
         pageList.setRecordsTotal(query.fetchCount());
-        if( pageRequest.getCount() > 0){
+        if( pageRequest.getCount() > Constants.COUNT_PAGING_MARK){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
         pageList.setList(query.fetch());

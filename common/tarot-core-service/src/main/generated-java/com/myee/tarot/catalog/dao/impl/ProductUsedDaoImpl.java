@@ -2,6 +2,7 @@ package com.myee.tarot.catalog.dao.impl;
 
 import com.myee.tarot.catalog.domain.ProductUsed;
 import com.myee.tarot.catalog.domain.QProductUsed;
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
@@ -29,7 +30,7 @@ public class ProductUsedDaoImpl extends GenericEntityDaoImpl<Long, ProductUsed> 
             query.where(qProductUsed.code.like("%" + pageRequest.getQueryName() + "%"));
         }
         pageList.setRecordsTotal(query.fetchCount());
-        if( pageRequest.getCount() > 0){
+        if( pageRequest.getCount() > Constants.COUNT_PAGING_MARK){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
         pageList.setList(query.fetch());
@@ -48,7 +49,7 @@ public class ProductUsedDaoImpl extends GenericEntityDaoImpl<Long, ProductUsed> 
             query.where(qProductUsed.code.like("%" + pageRequest.getQueryName() + "%"));
         }
         pageList.setRecordsTotal(query.fetchCount());
-        if( pageRequest.getCount() > 0){
+        if( pageRequest.getCount() > Constants.COUNT_PAGING_MARK){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
         pageList.setList(query.fetch());

@@ -46,8 +46,8 @@ public class Constants {
 	public final static Locale   DEFAULT_LOCALE   = Locale.US;
 	public final static Currency DEFAULT_CURRENCY = Currency.getInstance(Locale.US);
 
-	public final static int NOPAGING = 1;//不分页
-	public final static int PAGING = 0;//分页
+	public final static int COUNT_NOPAGING = -1;//不分页
+	public final static int COUNT_PAGING_MARK = 0;//分页标准
 
 	//抽奖 奖项状态
 	public final static int PRICEINFO_USED = 0; //已使用

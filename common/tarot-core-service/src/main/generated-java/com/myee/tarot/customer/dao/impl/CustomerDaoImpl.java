@@ -1,5 +1,6 @@
 package com.myee.tarot.customer.dao.impl;
 
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
@@ -69,7 +70,7 @@ public class CustomerDaoImpl extends GenericEntityDaoImpl<Long, Customer> implem
                     .or(qCustomer.username.like("%" + pageRequest.getQueryName() + "%")) );
         }
         pageList.setRecordsTotal(query.fetchCount());
-        if( pageRequest.getCount() > 0){
+        if( pageRequest.getCount() > Constants.COUNT_PAGING_MARK){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
         pageList.setList(query.fetch());

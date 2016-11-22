@@ -47,7 +47,7 @@ public class PriceInfoDaoImpl extends GenericEntityDaoImpl<Long, PriceInfo> impl
         }
         query.where(qPriceInfo.status.eq(Constants.PRICEINFO_USED).and(qPriceInfo.price.storeId.eq(storeId))).orderBy(qPriceInfo.checkDate.desc());
         pageList.setRecordsTotal(query.fetchCount());
-        if( pageRequest.getCount() > 0){
+        if( pageRequest.getCount() > Constants.COUNT_PAGING_MARK){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
         pageList.setList(query.fetch());

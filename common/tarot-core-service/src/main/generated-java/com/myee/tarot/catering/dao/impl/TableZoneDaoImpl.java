@@ -3,6 +3,7 @@ package com.myee.tarot.catering.dao.impl;
 import com.myee.tarot.catering.dao.TableZoneDao;
 import com.myee.tarot.catering.domain.QTableZone;
 import com.myee.tarot.catering.domain.TableZone;
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
@@ -42,7 +43,7 @@ public class TableZoneDaoImpl extends GenericEntityDaoImpl<Long, TableZone> impl
         }
         query.where(qTableZone.store.id.eq(id));
         pageList.setRecordsTotal(query.fetchCount());
-        if( pageRequest.getCount() > 0){
+        if( pageRequest.getCount() > Constants.COUNT_PAGING_MARK){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
         pageList.setList(query.fetch());

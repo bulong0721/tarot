@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+import com.myee.djinn.dto.AppType;
 import com.myee.djinn.dto.NoticeType;
 import com.myee.djinn.dto.PushResourceDTO;
 import com.myee.djinn.endpoint.EndpointInterface;
 import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.catalog.domain.DeviceUsed;
+import com.myee.tarot.catalog.service.DeviceUsedService;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.PageRequest;
@@ -19,6 +21,7 @@ import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantStoreService;
+import com.myee.tarot.remote.util.MetricsUtil;
 import com.myee.tarot.resource.domain.Notification;
 import com.myee.tarot.resource.service.NotificationService;
 import com.myee.tarot.web.apiold.util.FileValidCreateUtil;
@@ -64,6 +67,9 @@ public class PushController {
 
 	@Autowired
 	private MerchantStoreService merchantStoreService;
+
+    @Autowired
+    private DeviceUsedService deviceUsedService;
 
     @RequestMapping(value = "admin/file/search", method = RequestMethod.POST)
     @ResponseBody
@@ -263,17 +269,25 @@ public class PushController {
                 return resp;
             }
             MerchantStore merchantStore1 = (MerchantStore) o;
-
+            PageRequest pageRequestTemp = new PageRequest();
+            pageRequestTemp.setCount(Constants.COUNT_NOPAGING);
+            List<DeviceUsed> deviceUsedList = deviceUsedService.pageByStore(merchantStore1.getId(),pageRequestTemp ).getList();
+            Map<String,DeviceUsed> deviceUsedMap = deviceUsedListToBoardNoMap(deviceUsedList);
             PageResult<Notification> pageList = notificationService.pageByStore(merchantStore1.getId(), pageRequest);
             List<Notification> notificationList = pageList.getList();
             for (Notification notification : notificationList) {
                 Map entry = new HashMap();
                 entry.put("userName", notification.getAdminUser().getLogin());
-                entry.put("boardNo", notification.getUniqueNo());
+                String boardNo = notification.getUniqueNo();
+                entry.put("deviceUsedName", ( StringUtil.isBlank(boardNo)?"":deviceUsedMap.get(boardNo).getName() ));
                 entry.put("content", notification.getContent());
                 entry.put("created", notification.getCreateTime());
                 entry.put("timeOut", notification.getTimeout());
                 entry.put("comment", notification.getComment());
+                Integer appId = notification.getAppId();
+                entry.put("appId", (appId == null || "".equals(appId)) ? 0 : AppType.getValue(appId));
+                String noticeType = notification.getNoticeType();
+                entry.put("noticeType", (noticeType == null || "".equals(noticeType)) ? "" : NoticeType.getValue(noticeType) );
                 resp.addDataEntry(entry);
             }
 
@@ -284,6 +298,20 @@ public class PushController {
             LOGGER.error(e.getMessage());
             return resp;
         }
+    }
+
+    /**
+     * 把deviceUsed的list转为map，以便快速使用。键名是指标BoardNo
+     *
+     * @param deviceUsedList
+     * @return
+     */
+    public static Map<String, DeviceUsed> deviceUsedListToBoardNoMap(List<DeviceUsed> deviceUsedList) {
+        Map<String, DeviceUsed> entry = new HashMap<String, DeviceUsed>();
+        for (DeviceUsed deviceUsed : deviceUsedList) {
+            entry.put(deviceUsed.getBoardNo(), deviceUsed);
+        }
+        return entry;
     }
 
     @RequestMapping(value = "admin/file/push", method = RequestMethod.POST)
@@ -321,6 +349,7 @@ public class PushController {
             notification.setAdminUser((AdminUser) request.getSession().getAttribute(Constants.ADMIN_USER));
             notification.setStore(merchantStore);
             notification.setCreateTime(new Date());
+            notification.setNoticeType(pushResourceDTO.getNoticeType());
             if (isSuccess) {
                 notification.setSuccess(true);
                 notification.setComment("推送成功");
@@ -445,8 +474,8 @@ public class PushController {
 		try {
 			for (NoticeType noticeType : NoticeType.values()) {
 				Map entry = new HashMap();
-				entry.put("name",noticeType.getCaption());
-				entry.put("value",noticeType.getValue());
+				entry.put("name",noticeType.getValue());
+				entry.put("value",noticeType.getCaption());
 				resp.addDataEntry(entry);
 			}
 			return resp.getRows();
@@ -455,4 +484,22 @@ public class PushController {
 		}
 		return null;
 	}
+
+    @RequestMapping(value = "admin/file/getAppType", method = RequestMethod.GET)
+    @ResponseBody
+    public List getAppType() {
+        AjaxResponse resp = new AjaxResponse() ;
+        try {
+            for (AppType appType : AppType.values()) {
+                Map entry = new HashMap();
+                entry.put("name",appType.getValue());
+                entry.put("value",appType.getCaption());
+                resp.addDataEntry(entry);
+            }
+            return resp.getRows();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

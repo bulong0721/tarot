@@ -641,6 +641,7 @@ angular
             bindDevice:"关联设备",
             bindDeviceDetail:"关联设备详细",
             attrDetail:"详细属性",
+            contentDetail:"内容详细",
             flowDetail:"引流详细",
             flowSet:"设置引流",
             noDeleteThisShop:"当前切换的门店，不能删除",

@@ -3,6 +3,7 @@ package com.myee.tarot.apiold.dao.impl;
 import com.myee.tarot.apiold.dao.MenuDao;
 import com.myee.tarot.apiold.domain.MenuInfo;
 import com.myee.tarot.apiold.domain.QMenuInfo;
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
@@ -44,7 +45,7 @@ public class MenuDaoImpl extends GenericEntityDaoImpl<Long, MenuInfo> implements
         }
         query.where(qMenuInfo.store.id.eq(id));
         pageList.setRecordsTotal(query.fetchCount());
-        if (pageRequest.getCount() > 0) {
+        if (pageRequest.getCount() > Constants.COUNT_PAGING_MARK) {
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
         pageList.setList(query.fetch());

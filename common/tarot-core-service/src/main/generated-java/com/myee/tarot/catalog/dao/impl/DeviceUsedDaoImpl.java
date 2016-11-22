@@ -3,6 +3,7 @@ package com.myee.tarot.catalog.dao.impl;
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catalog.domain.QDevice;
 import com.myee.tarot.catalog.domain.QDeviceUsed;
+import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
@@ -36,7 +37,7 @@ public class DeviceUsedDaoImpl extends GenericEntityDaoImpl<Long, DeviceUsed> im
             query.where(qDeviceUsed.name.like("%" + pageRequest.getQueryName() + "%"));
         }
         pageList.setRecordsTotal(query.fetchCount());
-        if( pageRequest.getCount() > 0){
+        if( pageRequest.getCount() > Constants.COUNT_PAGING_MARK){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
         pageList.setList(query.fetch());

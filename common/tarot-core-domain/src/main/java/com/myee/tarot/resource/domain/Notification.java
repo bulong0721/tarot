@@ -1,8 +1,10 @@
 package com.myee.tarot.resource.domain;
 
 import com.myee.tarot.admin.domain.AdminUser;
+import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -18,7 +20,7 @@ public class Notification extends GenericEntity<Long, Notification> {
     private String uniqueNo;
 
     @Column(name = "APP_ID")
-    private Integer appId;
+    private Integer appId;//推送应用
 
     @Column(name = "TIME_OUT")
     private Long timeout;
@@ -26,7 +28,7 @@ public class Notification extends GenericEntity<Long, Notification> {
     @Column(name = "STORAGE_PATH")
     private String storagePath;
 
-    @Column(name="CONTENT", columnDefinition="TEXT", nullable=true)
+    @Column(name = "CONTENT", columnDefinition = "TEXT", nullable = true)
     private String content;
 
     @Column(name = "SUCCESS")
@@ -45,6 +47,12 @@ public class Notification extends GenericEntity<Long, Notification> {
     @ManyToOne(targetEntity = AdminUser.class, optional = false)
     @JoinColumn(name = "ADMIN_USER_ID")
     private AdminUser adminUser;
+
+    @Column(name = "NOTICE_TYPE",length = 100)
+    private String noticeType;
+
+    @Transient//不持久化到数据库，查询关联用
+    private DeviceUsed deviceUsed;
 
     @Override
     public Long getId() {
@@ -134,5 +142,21 @@ public class Notification extends GenericEntity<Long, Notification> {
 
     public void setAdminUser(AdminUser adminUser) {
         this.adminUser = adminUser;
+    }
+
+    public String getNoticeType() {
+        return noticeType;
+    }
+
+    public void setNoticeType(String noticeType) {
+        this.noticeType = noticeType;
+    }
+
+    public DeviceUsed getDeviceUsed() {
+        return deviceUsed;
+    }
+
+    public void setDeviceUsed(DeviceUsed deviceUsed) {
+        this.deviceUsed = deviceUsed;
     }
 }

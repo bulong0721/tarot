@@ -164,7 +164,8 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
 
     //查询推送应用下拉框内容
     function getAppList() {
-        return [{name: 'gaea', value: 1}];
+        var data = $resource("../admin/file/getAppType").query();
+        return data;
     }
 
     function parsePushContent(value) {

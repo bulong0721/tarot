@@ -31,7 +31,7 @@ public class PictureDaoImpl extends GenericEntityDaoImpl<Long, Picture> implemen
                 .orderBy(qPicture.id.desc());
 
         pageList.setRecordsTotal(query.from(qPicture).fetchCount());
-        if (pageRequest.getCount() > 0) {
+        if (pageRequest.getCount() > Constants.COUNT_PAGING_MARK) {
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
         pageList.setList(query.fetch());
