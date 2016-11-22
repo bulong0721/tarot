@@ -4,12 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.myee.djinn.dto.NoticeType;
 import com.myee.djinn.dto.PushResourceDTO;
 import com.myee.djinn.endpoint.EndpointInterface;
-import com.myee.djinn.endpoint.OrchidService;
 import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
 import com.myee.tarot.admin.domain.AdminUser;
+import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.PageRequest;
@@ -24,7 +24,6 @@ import com.myee.tarot.resource.service.NotificationService;
 import com.myee.tarot.web.apiold.util.FileValidCreateUtil;
 import com.myee.tarot.web.files.FileType;
 import com.myee.tarot.web.files.vo.FileItem;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -36,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.File;
@@ -436,5 +436,23 @@ public class PushController {
 			}
 		});
 		return resultMap;
+	}
+
+	@RequestMapping(value = "admin/file/getNoticeType", method = RequestMethod.GET)
+	@ResponseBody
+	public List getNoticeType() {
+		AjaxResponse resp = new AjaxResponse() ;
+		try {
+			for (NoticeType noticeType : NoticeType.values()) {
+				Map entry = new HashMap();
+				entry.put("name",noticeType.getCaption());
+				entry.put("value",noticeType.getValue());
+				resp.addDataEntry(entry);
+			}
+			return resp.getRows();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

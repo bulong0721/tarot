@@ -156,6 +156,12 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
         return data;
     }
 
+    //查询推送设备下拉框内容
+    function getNoticeType() {
+        var data = $resource("../admin/file/getNoticeType").query();
+        return data;
+    }
+
     //查询推送应用下拉框内容
     function getAppList() {
         return [{name: 'gaea', value: 1}];
@@ -182,6 +188,12 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
                 type: 'c_select',
                 className: 'c_select',
                 templateOptions: {label: '选择推送设备', required: true, options: getDeviceUsedList()}
+            },
+            {
+                key: 'noticeType',
+                type: 'c_select',
+                className: 'c_select',
+                templateOptions: {label: '通知类型', required: true, options: getNoticeType()}
             },
             {
                 key: 'appId',
