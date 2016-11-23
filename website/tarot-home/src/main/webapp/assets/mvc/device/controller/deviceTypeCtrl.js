@@ -7,17 +7,17 @@ angular.module('myee', [])
 deviceTypeCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables', 'cfromly', 'cAlerts'];
 function deviceTypeCtrl($scope, $resource, Constants, cTables, cfromly, cAlerts) {
 
-    var mgrData = {
+    var mgrData = $scope.mgrData = {
         fields: [
             {
                 key: 'name',
                 type: 'c_input',
-                templateOptions: {label: '名称', required: true, placeholder: '名称,60字以内', maxlength: 60}
+                templateOptions: {label: '名称', required: true, placeholder: '名称,60字以内', maxlength: 60,isSearch:true}
             },
             {
                 key: 'versionNum',
                 type: 'c_input',
-                templateOptions: {label: '版本号', placeholder: '版本号,60字以内', maxlength: 60}
+                templateOptions: {label: '版本号', placeholder: '版本号,60字以内', maxlength: 60,isSearch:true}
             },
             {
                 key: 'description',

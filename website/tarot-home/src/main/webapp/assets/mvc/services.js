@@ -151,6 +151,13 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster) {
         //初始化搜索配置
         scope.where = {};
         scope.disableSubmit = false;//防止二次提交
+        scope.sHigh = false;//默认简化
+
+        //高级搜索切换
+        scope.sHighBut = function(){
+            scope.where={};
+            scope.sHigh = !scope.sHigh;
+        }
 
         //formly配置项
         scope.formData = {

@@ -10,13 +10,13 @@ angular.module('myee', [])
 userMgrCtrl.$inject = ['$scope', 'cTables', 'cfromly','$rootScope'];
 
 function userMgrCtrl($scope, cTables, cfromly, $rootScope) {
-    var mgrData = {
+    var mgrData = $scope.mgrData = {
         fields: [
-            {key: 'name', type: 'c_input', templateOptions: {label: '昵称', required: true, placeholder: '昵称,20字以内', maxlength: 20}},
+            {key: 'name', type: 'c_input', templateOptions: {label: '昵称', required: true, placeholder: '昵称,20字以内', maxlength: 20,isSearch:true}},
             {
                 key: 'login',
                 type: 'c_input',
-                templateOptions: {label: '登录名', required: true, placeholder: '登录名,40字以内', maxlength: 40}
+                templateOptions: {label: '登录名', required: true, placeholder: '登录名,40字以内', maxlength: 40,isSearch:true}
             },
             {
                 key: 'phoneNumber',
@@ -25,13 +25,14 @@ function userMgrCtrl($scope, cTables, cfromly, $rootScope) {
                     label: '电话号码',
                     placeholder: '电话号码,11位手机',
                     maxlength: 11,
-                    pattern: '^(1[3578][0-9]|14[0-7])[0-9]{8}$|(^((1[3578][0-9]|14[0-7])[0-9]{8},)*(1[3578][0-9]|14[0-7])[0-9]{8}$)'
+                    pattern: '^(1[3578][0-9]|14[0-7])[0-9]{8}$|(^((1[3578][0-9]|14[0-7])[0-9]{8},)*(1[3578][0-9]|14[0-7])[0-9]{8}$)',
+                    isSearch:true
                 }
             },
             {
                 key: 'email',
                 type: 'c_input',
-                templateOptions: {type: 'email', label: '电子邮件', required: true, placeholder: '电子邮件,60字以内', maxlength: 60}
+                templateOptions: {type: 'email', label: '电子邮件', required: true, placeholder: '电子邮件,60字以内', maxlength: 60,isSearch:true}
             },
             {
                 key: 'activeStatusFlag',

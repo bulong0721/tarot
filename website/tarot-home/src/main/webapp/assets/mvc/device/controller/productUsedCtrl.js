@@ -163,13 +163,13 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
 
     var productOpts = Constants.productOpts;
 
-    var mgrData = {
+    var mgrData = $scope.mgrData = {
         fields: [
             {
                 id: 'store.name',
                 key: 'store.name',
                 type: 'c_input',
-                templateOptions: {disabled: true, label: '门店名称', placeholder: '门店名称'}
+                templateOptions: {disabled: true, label: '门店名称', placeholder: '门店名称',isSearch:true}
             },
             {
                 key: 'ifBatch',
@@ -192,7 +192,8 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
                     label: '编号',
                     required: true,
                     placeholder: '设备组编号,100字以内',
-                    maxlength: 100
+                    maxlength: 100,
+                    isSearch:true
                 },
                 hideExpression: 'model.ifBatch'
             },
@@ -230,7 +231,8 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
                     placeholder: '设备组名称',
                     valueProp: 'type',
                     labelProp: 'friendlyType',
-                    options: productOpts
+                    options: productOpts,
+                    isSearch:true
                 }
             },
             {
@@ -240,7 +242,8 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
                     label: '版本',
                     required: true,
                     placeholder: '设备组版本,100字以内',
-                    maxlength: 100
+                    maxlength: 100,
+                    isSearch:true
                 }
             },
             {

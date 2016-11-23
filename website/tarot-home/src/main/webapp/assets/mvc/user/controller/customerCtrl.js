@@ -10,20 +10,20 @@ angular.module('myee', [])
 customerMgrCtrl.$inject = ['$scope', 'cTables', 'cfromly'];
 
 function customerMgrCtrl($scope, cTables, cfromly) {
-    var mgrData = {
+    var mgrData = $scope.mgrData = {
         fields: [
             {key: 'firstName', type: 'c_input', templateOptions: {label: '姓氏', required: false, placeholder: '20字以内', maxlength: 20}},
             {key: 'lastName', type: 'c_input', templateOptions: {label: '名字', required: true, placeholder: '20字以内', maxlength: 20}},
             {
                 key: 'username',
                 type: 'c_input',
-                templateOptions: {label: '登录名', required: true, placeholder: '登录名,40字以内', maxlength: 40}
+                templateOptions: {label: '登录名', required: true, placeholder: '登录名,40字以内', maxlength: 40,isSearch:true}
             },
             //{key: 'phoneNumber', type: 'c_input', templateOptions: {label: '电话号码', placeholder: '电话号码'}},
             {
                 key: 'emailAddress',
                 type: 'c_input',
-                templateOptions: {type: 'email', label: '电子邮件', required: false, placeholder: '电子邮件,60字以内', maxlength: 60}
+                templateOptions: {type: 'email', label: '电子邮件', required: false, placeholder: '电子邮件,60字以内', maxlength: 60,isSearch:true}
             },
             {
                 key: 'receiveEmail',

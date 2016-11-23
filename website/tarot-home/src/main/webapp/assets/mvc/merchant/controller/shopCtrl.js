@@ -8,7 +8,7 @@ merchantShopCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', '$resou
 function merchantShopCtrl($scope, Constants, cTables, cfromly, $resource, NgTableParams, $q) {
 
     var iDatatable = 0, iEditor = 1;
-    var mgrData = {
+    var mgrData = $scope.mgrData = {
         fields: [
             {
                 id: 'merchant.name',
@@ -19,7 +19,7 @@ function merchantShopCtrl($scope, Constants, cTables, cfromly, $resource, NgTabl
             {
                 key: 'name',
                 type: 'c_input',
-                templateOptions: {label: '名称', required: true, placeholder: '门店名称,60字以内',maxlength:60}
+                templateOptions: {label: '名称', required: true, placeholder: '门店名称,60字以内',maxlength:60,isSearch:true}
             },
             {
                 key: 'address.province.id',
@@ -28,7 +28,7 @@ function merchantShopCtrl($scope, Constants, cTables, cfromly, $resource, NgTabl
                 templateOptions: {
                     label: '省份',
                     options: Constants.provinces,
-
+                    isSearch:true
                 },
             },
             {
@@ -38,6 +38,7 @@ function merchantShopCtrl($scope, Constants, cTables, cfromly, $resource, NgTabl
                 templateOptions: {
                     label: '城市',
                     options: Constants.citys,
+                    isSearch:true
                 },
                 controller: function ($scope, Constants) {
                     $scope.$watch('model.address.province.id', function (newValue, oldValue, theScope) {
@@ -58,7 +59,7 @@ function merchantShopCtrl($scope, Constants, cTables, cfromly, $resource, NgTabl
                 key: 'address.county.id',
                 type: 'c_select',
                 className: 'c_select',
-                templateOptions: {label: '区县', options: Constants.districts},
+                templateOptions: {label: '区县', options: Constants.districts,isSearch:true},
                 controller: function ($scope, Constants) {
                     $scope.$watch('model.address.city.id', function (newValue, oldValue, theScope) {
                         if (newValue !== oldValue) {
@@ -86,7 +87,7 @@ function merchantShopCtrl($scope, Constants, cTables, cfromly, $resource, NgTabl
                 className: 'c_select',
                 templateOptions: {label: '商场', options: Constants.malls}
             },
-            {key: 'address.address', type: 'c_input', templateOptions: {label: '地址', placeholder: '地址,255字以内',maxlength:255}},
+            {key: 'address.address', type: 'c_input', templateOptions: {label: '地址', placeholder: '地址,255字以内',maxlength:255,isSearch:true}},
             {
                 key: 'phone',
                 type: 'c_input',
@@ -94,10 +95,11 @@ function merchantShopCtrl($scope, Constants, cTables, cfromly, $resource, NgTabl
                     label: '联系电话',
                     placeholder: '联系电话,11位手机或固话,20字以内',
                     maxlength:20,
-                    pattern: '^(1[3578][0-9]|14[0-7])[0-9]{8}$|(^((1[3578][0-9]|14[0-7])[0-9]{8},)*(1[3578][0-9]|14[0-7])[0-9]{8}$)|(^(0[0-9]{2,3}\-)?([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$)'
+                    pattern: '^(1[3578][0-9]|14[0-7])[0-9]{8}$|(^((1[3578][0-9]|14[0-7])[0-9]{8},)*(1[3578][0-9]|14[0-7])[0-9]{8}$)|(^(0[0-9]{2,3}\-)?([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$)',
+                    isSearch:true
                 }
             },
-            {key: 'code', type: 'c_input', templateOptions: {label: '门店码', required: true, placeholder: '门店码,字母和数字的组合,100字以内',maxlength:100,pattern:'^[a-zA-Z0-9_]*$'}},
+            {key: 'code', type: 'c_input', templateOptions: {label: '门店码', required: true, placeholder: '门店码,字母和数字的组合,100字以内',maxlength:100,pattern:'^[a-zA-Z0-9_]*$',isSearch:true}},
         ],
         api: {
             read: './merchantStore/pagingByMerchant',
@@ -121,7 +123,6 @@ function merchantShopCtrl($scope, Constants, cTables, cfromly, $resource, NgTabl
     vm.selectAll = false;
     vm.toggleAll = toggleAll;
     vm.toggleOne = toggleOne;
-
 
     function initalBindProduct() {
         if ($scope.initalBindProductList) {//如果已经从后台读取过数据了，则不再访问后台获取列表

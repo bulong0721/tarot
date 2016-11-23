@@ -216,13 +216,13 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly, Constants, NgTablePar
     var typeOpts = $resource('./catering/type/options').query();
     var zoneOpts = $resource('./catering/zone/options').query();
 
-    var mgrData = {
+    var mgrData = $scope.mgrData = {
         fields: [
             {
                 key: 'name',
                 type: 'c_input',
                 className: 'c_formly_line',
-                templateOptions: {label: '名称', required: true, placeholder: '名称,50字以内', maxlength: 50}
+                templateOptions: {label: '名称', required: true, placeholder: '名称,50字以内', maxlength: 50,isSearch:true}
             },
             {
                 key: 'scanCode',
@@ -232,14 +232,15 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly, Constants, NgTablePar
                     label: '餐桌码',
                     placeholder: '输入000-200之间的3位数字,批量添加时将自动+1递增',
                     pattern: '(([01]{1}[0-9]{2})|([2]{1}[0]{2}))$',
-                    maxlength: 3
+                    maxlength: 3,
+                    isSearch:true
                 }
             },
             {
                 key: 'textId',
                 type: 'c_input',
                 className: 'c_formly_line',
-                templateOptions: {label: 'ERP ID', placeholder: '小超人点菜用,10字以内', maxlength: 10}
+                templateOptions: {label: 'ERP ID', placeholder: '小超人点菜用,10字以内', maxlength: 10,isSearch:true}
             },
             {
                 key: 'description',
@@ -258,14 +259,15 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly, Constants, NgTablePar
                     valueProp: 'id',
                     options: typeOpts,
                     required: true,
-                    placeholder: '桌型'
+                    placeholder: '桌型',
+                    isSearch:true
                 }
             },
             {
                 key: 'tableZone.id',
                 type: 'c_select',
                 className: 'c_formly_line c_select',
-                templateOptions: {label: '区域', valueProp: 'id', options: zoneOpts, required: true, placeholder: '区域'}
+                templateOptions: {label: '区域', valueProp: 'id', options: zoneOpts, required: true, placeholder: '区域',isSearch:true}
             },
             {
                 key: 'ifBatch',
