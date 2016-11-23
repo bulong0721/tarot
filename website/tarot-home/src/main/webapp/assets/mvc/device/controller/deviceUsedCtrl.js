@@ -165,18 +165,18 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
         return data;
     }
 
-    var mgrData = {
+    var mgrData = $scope.mgrData = {
         fields: [
             {
                 id: 'store.name',
                 key: 'store.name',
                 type: 'c_input',
-                templateOptions: {disabled: true, label: '门店名称', placeholder: '门店名称'}
+                templateOptions: {disabled: true, label: '门店名称', placeholder: '门店名称',isSearch:true}
             },
             {
                 key: 'name',
                 type: 'c_input',
-                templateOptions: {label: '名称', required: true, placeholder: '名称,60字以内', maxlength: 60}
+                templateOptions: {label: '名称', required: true, placeholder: '名称,60字以内', maxlength: 60,isSearch:true}
             },
             {
                 key: 'ifBatch',
@@ -219,12 +219,12 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
             {
                 key: 'boardNo',
                 type: 'c_input',
-                templateOptions: {label: '主板编号', placeholder: '主板编号,60字以内', required: true, maxlength: 60}
+                templateOptions: {label: '主板编号', placeholder: '主板编号,60字以内', required: true, maxlength: 60,isSearch:true}
             },
             {
                 key: 'deviceNum',
                 type: 'c_input',
-                templateOptions: {label: '设备号', placeholder: '设备号,60字以内', maxlength: 60}
+                templateOptions: {label: '设备号', placeholder: '设备号,60字以内', maxlength: 60,isSearch:true}
             },
             {
                 key: 'description',

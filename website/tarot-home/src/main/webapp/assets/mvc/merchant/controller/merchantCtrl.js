@@ -6,12 +6,12 @@ angular.module('myee', [])
  */
 merchantCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', '$resource','$filter','$timeout'];
 function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$timeout) {
-    var mgrData = {
+    var mgrData = $scope.mgrData =  {
         fields: [
             {
                 key: 'name',
                 type: 'c_input',
-                templateOptions: {type: 'text', label: '名称', required: true, placeholder: '商户名称,60字以内',maxlength:60}
+                templateOptions: {type: 'text', label: '名称', required: true, placeholder: '商户名称,60字以内',maxlength:60,isSearch:true}
             },
             {
                 key: 'businessType',
@@ -20,7 +20,8 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$ti
                 templateOptions: {
                     required: true,
                     label: '类型',
-                    options: Constants.merchantType
+                    options: Constants.merchantType,
+                    isSearch:true
                 }
             },
             {
@@ -30,7 +31,8 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$ti
                 templateOptions: {
                     required:false,
                     label: '菜系',
-                    options: Constants.merchantCuisine
+                    options: Constants.merchantCuisine,
+                    isSearch:true
                 },
                 hideExpression: function ($viewValue, $modelValue, scope) {
                     if (scope.model.businessType != 'FOOD') {
@@ -68,10 +70,8 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$ti
             {
                 key: 'description',
                 type: 'c_textarea',
-                ngModelAttrs: {
-                    style: {attribute: 'style'}
-                },
-                templateOptions: {label: '描述', placeholder: '描述,255字以内', rows: 10, style: 'max-width:500px',maxlength:255}
+                ngModelAttrs: {style: {attribute: 'style'}},
+                templateOptions: {label: '商户描述', placeholder: '商户描述,255字以内', rows: 10, style: 'max-width:500px',maxlength:255,isSearch:true}
             }
         ],
         api: {

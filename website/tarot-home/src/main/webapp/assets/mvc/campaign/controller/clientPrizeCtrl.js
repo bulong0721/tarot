@@ -6,12 +6,12 @@ angular.module('myee', [])
  */
 clientPrizeCtrl.$inject = ['$scope', 'Constants','cTables','cfromly','toaster','$resource','$filter','baseConstant'];
 function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$filter,baseConstant) {
-    var mgrData = {
+    var mgrData = $scope.mgrData = {
         fields: [
             {
                 key: 'name',
                 type: 'c_input',
-                templateOptions: {type: 'text', label: '奖券名称', required: true, placeholder: '奖券名称,255字以内',maxlength:255},
+                templateOptions: {type: 'text', label: '奖券名称', required: true, placeholder: '奖券名称,255字以内',maxlength:255,isSearch:true},
                 hideExpression: function ($viewValue, $modelValue, scope) {
                     if (scope.model.type != '2') {
                         return false;
@@ -27,7 +27,8 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
                 templateOptions: {
                     required: true,
                     label: '奖券类型',
-                    options:  [{name:"手机",value: 0},{name:"验证码",value: 1},{name:"谢谢惠顾",value: 2}]
+                    options:  [{name:"手机",value: 0},{name:"验证码",value: 1},{name:"谢谢惠顾",value: 2}],
+                    isSearch:true
                 }
             },
             {
@@ -37,7 +38,8 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
                 templateOptions: {
                     required: true,
                     label: '手机奖券类型',
-                    options:  [{name:"实物",value: 0},{name:"电影券",value: 1},{name:"招行信用卡",value: 2}]
+                    options:  [{name:"实物",value: 0},{name:"电影券",value: 1},{name:"招行信用卡",value: 2}],
+                    isSearch:true
                 },
                 hideExpression: function ($viewValue, $modelValue, scope) {
                     if (scope.model.type == '0') {
