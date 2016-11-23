@@ -2,6 +2,7 @@ package com.myee.tarot.djinn.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.myee.djinn.dto.NotificationDTO;
 import com.myee.djinn.dto.ShopDetail;
 import com.myee.djinn.dto.VersionInfo;
 import com.myee.djinn.rpc.RemoteException;
@@ -12,6 +13,7 @@ import com.myee.tarot.core.service.TransactionalAspectAware;
 import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.profile.domain.Address;
+import com.myee.tarot.resource.dao.NotificationDao;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -104,6 +106,12 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 		ShopDetail shopDetail =toDto(merchantStore);
 		shopDetail.setOpeningTime(toHourString(merchantStore.getTimeOpen()) + "~" + toHourString(merchantStore.getTimeClose()));
 		return shopDetail;
+	}
+
+	//TODO
+	@Override
+	public boolean receiveNotice(NotificationDTO notification) throws RemoteException {
+		return false;
 	}
 
 	private VersionInfo readfile(File file) {
