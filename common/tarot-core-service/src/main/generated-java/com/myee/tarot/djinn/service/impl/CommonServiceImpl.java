@@ -26,8 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Created by Martin on 2016/9/6.
@@ -41,6 +40,7 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 	@Value("${cleverm.push.dirs}")
 	private String DOWNLOAD_HOME;
 
+	private List<String> versionInfoList = new ArrayList<>(Arrays.asList("app", "ipc", "tinker"));
 	@Override
 	public Boolean isConnection() throws RemoteException {
 		return true;
@@ -57,7 +57,7 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 			String orgId = object.getString("orgId");
 			StringBuilder sb = new StringBuilder();
 			LOG.info("================ request info  name:{} type:{} orgId:{}", name, type, orgId);
-			if ("app".equals(type) || "ipc".equals(type)) {
+			if (versionInfoList.contains(type)) {
 				sb.append(DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(type).append(File.separator).append(name).append(File.separator).append("VersionInfo.xml");
 			} else {
 
