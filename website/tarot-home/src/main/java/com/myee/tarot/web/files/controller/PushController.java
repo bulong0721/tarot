@@ -21,7 +21,6 @@ import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantStoreService;
-import com.myee.tarot.remote.util.MetricsUtil;
 import com.myee.tarot.resource.domain.Notification;
 import com.myee.tarot.resource.service.NotificationService;
 import com.myee.tarot.web.apiold.util.FileValidCreateUtil;
