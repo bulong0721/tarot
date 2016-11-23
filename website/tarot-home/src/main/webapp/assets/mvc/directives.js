@@ -410,6 +410,25 @@ function copyToClip(toaster){
     };
 }
 
+//cameraVideo video.js
+function cameraVideo($ocLazyLoad){
+    return {
+        //template:'<video id="{{id}}" class="video-js vjs-default-skin vjs-big-play-centered"><source src="{{rtmpSrc}}" type="rtmp/flv"/></video>',
+        scope: {
+            "id": "@id"
+        },
+        link:function(scope){
+            $ocLazyLoad.load(['http://vjs.zencdn.net/5.0.2/video-js.min.css','http://vjs.zencdn.net/5.0.2/video.min.js']).then(function(){
+                //videojs.options.flash.swf = "video-js.swf";
+                videojs(scope.id).ready(function(){
+                    this.play();
+                    this.dimensions(320,240)
+                });
+            });
+        }
+    }
+}
+
 /**
  *
  * Pass all functions into module
@@ -428,4 +447,5 @@ angular
     .directive("cVideo", cVideo)
     .directive('metrics', metrics)
     .directive('copyToClip', copyToClip)
-    .directive('iboxToolsFullScreen', iboxToolsFullScreen);
+    .directive('iboxToolsFullScreen', iboxToolsFullScreen)
+    .directive('cameraVideo', cameraVideo);
