@@ -1,0 +1,20 @@
+<div class="row metrics">
+    <div class="col-lg-12" >
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5><i class="fa fa-video-camera m-r-sm"></i>摄像头监控</h5>
+                <div class="ibox-tools">
+                    <span>切换设备：</span>
+                    <select class="form-control" onchange="angular.element(this).scope().vm.getMachine(this.options[this.options.selectedIndex].value,true)">
+                        <option ng-repeat="m in vm.machines" value="{{m.code}}">{{m.name}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <video camera-video id="palyer1" class="video-js vjs-default-skin vjs-big-play-centered">
+                    <source src="rtmp://172.16.1.80/selim/test" type="rtmp/flv"/>
+                </video>
+            </div>
+        </div>
+    </div>
+</div>

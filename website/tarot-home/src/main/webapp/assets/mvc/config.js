@@ -619,6 +619,21 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'remote', 'dUMonitorCtrl.js')
                 }
             }
+        })
+        .state('remote.camera', {
+            url: "/camera",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'camera',
+            data: {
+                pageTitle: '摄像头监控',
+                subTitle: '摄像头监控',
+                datatable: 'assets/mvc/remote/view/camera.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'remote', 'camera.js')
+                }
+            }
         });
 
 }
