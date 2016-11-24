@@ -26,6 +26,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 /**
@@ -58,14 +60,10 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 			StringBuilder sb = new StringBuilder();
 			LOG.info("================ request info  name:{} type:{} orgId:{}", name, type, orgId);
 			if (versionInfoList.contains(type)) {
-				sb.append(DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(type).append(File.separator).append(name).append(File.separator).append("VersionInfo.xml");
-			} else {
-
-			}
-			LOG.info("========File path {} " + sb.toString());
-			File file = new File(sb.toString());
-			if (file.exists()) {
-				info = readfile(file);
+				sb.append(DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(type).append(File.separator).append(name).append(File.separator).append("VersionInfo.txt");
+				LOG.info("========File path {} " + sb.toString());
+				String str  = readTXT(sb.toString());
+				info = JSON.parseObject(str,VersionInfo.class);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -131,6 +129,39 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 			e.printStackTrace();
 		}
 		return versionInfo;
+	}
+
+	private String readTXT(String path) {
+		String res = "";
+		try {
+			File file = new File(path);
+			if(!file.exists()){
+				createFileAndDir(path);
+				return res;
+			}
+			FileInputStream fis = new FileInputStream(path);
+			int length = fis.available();
+			byte[] buffer = new byte[length];
+			fis.read(buffer);
+			res = new String(buffer, "UTF-8");
+		} catch (FileNotFoundException e) {
+			LOG.info(" read version txt error ", e);
+		} catch (Exception e) {
+			LOG.info(" read version txt error ", e);
+		}
+		return res;
+	}
+
+	private static void createFileAndDir(String path){
+		File file= new File(path);
+		String dir = path.substring(0,path.lastIndexOf("/"));
+		File fileDir = new File(dir);
+		fileDir.mkdirs();
+		try {
+			file.createNewFile();
+		} catch (Exception e) {
+			LOG.info(" create file error ", e);
+		}
 	}
 
 	String toHourString(Date time) {
