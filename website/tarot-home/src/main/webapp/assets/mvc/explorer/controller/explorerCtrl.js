@@ -631,7 +631,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
             FILE_NAME_APK: 'apkUpdateConfig.txt',
             BASE_PATH_AGENT: 'tinker/agent/',
             FILE_NAME_AGENT: 'versionInfo.txt',
-            BASE_PATH_AGENT_PATCH: 'tinker/agent/',
+            BASE_PATH_AGENT_PATCH: 'tinker/agentPatch/',
             FILE_NAME_AGENT_PATCH: 'versionInfo.txt',
             TYPE_MODULE: 'module',
             TYPE_APK: 'apk',
