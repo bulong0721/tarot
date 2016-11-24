@@ -51,6 +51,9 @@ public class Notification extends GenericEntity<Long, Notification> {
     @Column(name = "NOTICE_TYPE",length = 100)
     private String noticeType;
 
+    @Column(name = "UPDATE_NOTICE_TYPE")
+    private String updateNoticeType;
+
     @Transient//不持久化到数据库，查询关联用
     private DeviceUsed deviceUsed;
 
@@ -159,4 +162,5 @@ public class Notification extends GenericEntity<Long, Notification> {
     public void setDeviceUsed(DeviceUsed deviceUsed) {
         this.deviceUsed = deviceUsed;
     }
+
 }

@@ -1,5 +1,6 @@
 package com.myee.tarot.resource.service.impl;
 
+import com.myee.djinn.dto.NotificationDTO;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
@@ -25,5 +26,11 @@ public class NotificationServiceImpl extends GenericEntityServiceImpl<Long, com.
 
     public PageResult<Notification> pageByStore(Long id, PageRequest pageRequest){
         return notificationDao.pageByStore( id,  pageRequest);
+    }
+
+    @Override
+    public boolean receiveNotice(NotificationDTO notificationDTO) {
+//        return notificationDao.save(notificationDTO);
+        return false;
     }
 }

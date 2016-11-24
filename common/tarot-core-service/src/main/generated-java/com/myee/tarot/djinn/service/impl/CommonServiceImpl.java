@@ -7,12 +7,16 @@ import com.myee.djinn.dto.ShopDetail;
 import com.myee.djinn.dto.VersionInfo;
 import com.myee.djinn.rpc.RemoteException;
 import com.myee.djinn.server.operations.CommonService;
+import com.myee.tarot.admin.domain.AdminUser;
+import com.myee.tarot.admin.service.AdminUserService;
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catalog.service.DeviceUsedService;
 import com.myee.tarot.core.service.TransactionalAspectAware;
 import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.profile.domain.Address;
+import com.myee.tarot.resource.domain.Notification;
+import com.myee.tarot.resource.service.NotificationService;
 import com.myee.tarot.resource.dao.NotificationDao;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -39,6 +43,9 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 	private static final Logger LOG = LoggerFactory.getLogger(CommonServiceImpl.class);
 	@Autowired
 	private DeviceUsedService deviceUsedService;
+	@Autowired
+	private NotificationService notificationService;
+
 	@Value("${cleverm.push.dirs}")
 	private String DOWNLOAD_HOME;
 
@@ -106,10 +113,19 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 		return shopDetail;
 	}
 
-	//TODO
+	private Notification convertToNotification(NotificationDTO notificationDTO) {
+//		Notification notification = new Notification();
+//        notification.setComment(notificationDTO.getComment());
+//        notification.setCreateTime(notificationDTO.getCreateTime());
+//        notification.setUpdateNoticeType(notificationDTO.get);
+        return null;
+	}
+
 	@Override
-	public boolean receiveNotice(NotificationDTO notification) throws RemoteException {
-		return false;
+	public boolean receiveNotice(NotificationDTO notificationDTO) throws RemoteException {
+        Notification notification = convertToNotification(notificationDTO);
+        boolean received = notificationService.receiveNotice(notificationDTO);
+        return received;
 	}
 
 	private VersionInfo readfile(File file) {
