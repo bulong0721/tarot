@@ -53,8 +53,8 @@
                                     <td>
                                         <span ng-switch-default>{{::attr.version}}</span>
                                         <div class="controls" ng-switch-when="true">
-                                            <input ng-if="attr.type != 'apk'" type="text" name="attrVersion" ng-model="attr.version" placeholder="版本号" class="editable-input form-control input-sm" required/>
-                                            <input ng-if="attr.type == 'apk'"type="number" name="attrVersion" ng-model="attr.version" placeholder="纯数字" class="editable-input form-control input-sm" required/>
+                                            <input ng-if="attr.type == 'module'" type="text" name="attrVersion" ng-model="attr.version" placeholder="版本号" class="editable-input form-control input-sm" required/>
+                                            <input ng-if="attr.type != 'module'"type="number" name="attrVersion" ng-model="attr.version" placeholder="纯数字" class="editable-input form-control input-sm" required/>
                                         </div>
                                     </td>
                                     <td>
@@ -65,7 +65,7 @@
                                     </td>
                                     <td class="center">
                                         <span ng-switch-default>{{::attr.force_update}}</span>
-                                        <div class="controls" ng-switch-when="true">
+                                        <div ng-if="attr.type != 'agent' && attr.type != 'agentPatch'" class="controls" ng-switch-when="true">
                                             <select ng-model="attr.force_update">
                                                 <option value="Y">Y</option>
                                                 <option value="N">N</option>
@@ -78,6 +78,8 @@
                                             <select ng-model="attr.type">
                                                 <option value="module">模块</option>
                                                 <option value="apk">应用</option>
+                                                <option ng-if="mgrUpdateConfigData.constant.SWITCH_MERCHANT_STORE == 100" value="agent">Agent</option>
+                                                <option ng-if="mgrUpdateConfigData.constant.SWITCH_MERCHANT_STORE == 100" value="agentPatch">AgentPatch</option>
                                             </select>
                                         </div>
                                     </td>

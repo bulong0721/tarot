@@ -5,6 +5,21 @@ angular
     .filter('inputType',inputType)
     .filter('myeeUrlImg',myeeUrlImg)
     .filter('getFileName',getFileName)
+    .filter('isNullOrEmptyString',isNullOrEmptyString)
+
+//判断对象是否是空或空字符
+function isNullOrEmptyString(){
+    return function (obj) {
+        if( obj == null){
+            return true;
+        }
+        if( typeof obj == 'string' && obj == ''){
+            return true;
+        }
+        return false;
+    }
+}
+
 
 //计算文件大小的单位
 function sizeFormatter() {
