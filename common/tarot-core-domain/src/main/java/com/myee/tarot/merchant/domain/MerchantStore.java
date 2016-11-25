@@ -25,7 +25,7 @@ public class MerchantStore extends GenericEntity<Long, MerchantStore> {
     private Long id;
 
     @NotEmpty
-    @Column(name = "NAME", length = 60)
+    @Column(name = "NAME", unique = true,length = 60)
     private String name;
 
     @NotEmpty

@@ -23,7 +23,7 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
     @Column(name = "NAME", length=60)
     protected String name;
 
-    @Column(name = "BOARD_NO", length=60)
+    @Column(name = "BOARD_NO",unique = true,length=60)
     protected String boardNo;
 
     @Column(name = "DEVICE_NUM", length=60)

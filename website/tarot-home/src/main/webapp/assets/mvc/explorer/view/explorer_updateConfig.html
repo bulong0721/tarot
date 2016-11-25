@@ -35,7 +35,7 @@
                                     <th width="10%" class="center">类型</th>
                                     <th width="145px" class="center">md5</th>
                                     <th class="center">下载地址</th>
-                                    <th width="80px" class="center">上传升级包</th>
+                                    <th width="80px" class="center">升级包</th>
                                     <th width="80px" class="center"><a ng-click="insertAttr(formDataUpdateConfig.model)" tooltip-placement="top" uib-tooltip="{{lang_zh.add}}"><i class="btn-icon fa fa-plus"></i></a></th>
                                 </tr>
                                 </thead>
@@ -78,8 +78,8 @@
                                             <select ng-model="attr.type">
                                                 <option value="module">模块</option>
                                                 <option value="apk">应用</option>
-                                                <option ng-if="mgrUpdateConfigData.constant.SWITCH_MERCHANT_STORE == 100" value="agent">Agent</option>
-                                                <option ng-if="mgrUpdateConfigData.constant.SWITCH_MERCHANT_STORE == 100" value="agentPatch">AgentPatch</option>
+                                                <option ng-if="mgrUpdateConfigData.constant.SWITCH_MERCHANT_STORE == 100 && showTypeAgent" value="agent">Agent</option>
+                                                <option ng-if="mgrUpdateConfigData.constant.SWITCH_MERCHANT_STORE == 100 && showTypeAgentPatch" value="agentPatch">AgentPatch</option>
                                             </select>
                                         </div>
                                     </td>

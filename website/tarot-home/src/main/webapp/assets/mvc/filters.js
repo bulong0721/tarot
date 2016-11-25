@@ -6,6 +6,7 @@ angular
     .filter('myeeUrlImg',myeeUrlImg)
     .filter('getFileName',getFileName)
     .filter('isNullOrEmptyString',isNullOrEmptyString)
+    .filter('isHasProp',isHasProp)
 
 //判断对象是否是空或空字符
 function isNullOrEmptyString(){
@@ -17,6 +18,18 @@ function isNullOrEmptyString(){
             return true;
         }
         return false;
+    }
+}
+
+//判断对象是否是{}
+function isHasProp(){
+    return function (obj) {
+        var hasProp = false;
+        for (var prop in obj) {
+            hasProp = true;
+            break;
+        }
+        return hasProp;
     }
 }
 

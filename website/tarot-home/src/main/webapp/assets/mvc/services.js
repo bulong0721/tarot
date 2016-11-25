@@ -96,7 +96,7 @@ function constServiceCtor($resource, $q,$rootScope) {
 /**
  * cTables
  * */
-function cTablesService($resource, NgTableParams, cAlerts, toaster) {
+function cTablesService($resource, NgTableParams, cAlerts, toaster,$timeout) {
     var vm = this, iDatatable = 0, iEditor = 1;
 
 
@@ -299,10 +299,7 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster) {
             scope.tableOpts.reload();
         };
 
-        //loading
-        scope.loading = function(){
-            //scope.disableSubmit = true;
-        }
+        $timeout(function () {scope.search()}, 100);//初始加载列表数据
     }
 }
 

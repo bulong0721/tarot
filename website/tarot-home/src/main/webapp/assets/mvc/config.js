@@ -241,7 +241,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'loggingCtrl',
             data: {
-                subTitle: '推送日志',
+                subTitle: '资源日志',
                 datatable: 'assets/mvc/explorer/view/logging_datatable.html'
             },
             resolve: {
