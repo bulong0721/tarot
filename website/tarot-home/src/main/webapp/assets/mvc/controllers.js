@@ -12,7 +12,7 @@ function mainCtrl($scope, cAlerts, $window) {
     //通栏方法[登出,]
     var main = $scope.main = {
         logout: function () {//登出
-            cAlerts.confirm('确定登出?', function () {
+            cAlerts.confirm('确定注销?', function () {
                 $window.location.href = 'j_spring_security_logout';
             }, function () {
 

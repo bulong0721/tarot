@@ -11,7 +11,7 @@
             <div class="ibox-content">
                 <div class="form-group">
                     <div class="input-group col-md-9">
-                        <input type="text" class="form-control" ng-model="where.queryName" placeholder="输入门店名搜索">
+                        <input type="text" class="form-control" ng-model="where.queryName" placeholder="输入门店名搜索" ng-keyup="search($event)">
                         <span class="input-group-btn"> <button type="button" class="btn btn-primary" ng-click="search()">搜索</button> </span>
                     </div>
                 </div>

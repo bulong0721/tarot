@@ -162,7 +162,9 @@ function switchMerchant(Constants,$resource,$state,$rootScope,NgTableParams,toas
             });
 
             //搜索tables的数据
-            $scope.search = function () {
+            $scope.search = function (e) {
+                //回车(enter)判断
+                if(e){if((window.event?e.keyCode:e.which)!=13){return false;}}
                 $scope.loadByInit = true;
                 $scope.tableOpts.page(1);
                 $scope.tableOpts.reload();

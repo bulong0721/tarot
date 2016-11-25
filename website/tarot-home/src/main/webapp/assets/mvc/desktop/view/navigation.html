@@ -89,7 +89,7 @@
                 <a href="explorer"><i class="fa fa-lg fa-share-alt"></i> <span class="nav-label">资源管理</span> <span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level" ng-class="{in: $state.includes('explorer')}">
                     <li ui-sref-active="active"><a ui-sref="explorer.explorer">资源列表</a></li>
-                    <li ui-sref-active="active"><a ui-sref="explorer.logging">推送日志</a></li>
+                    <li ui-sref-active="active"><a ui-sref="explorer.logging">资源日志</a></li>
                 </ul>
             </li>
 
@@ -131,7 +131,7 @@
         <a tooltip-placement="top" uib-tooltip="锁屏">
             <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
         </a>
-        <a tooltip-placement="top" uib-tooltip="退出" ng-click="main.logout()">
+        <a tooltip-placement="top" uib-tooltip="注销" ng-click="main.logout()">
             <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
         </a>
     </div>

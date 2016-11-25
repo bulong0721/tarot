@@ -217,14 +217,14 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             abstract: true,
             url: "/explorer",
             template: "<div ui-view></div>",
-            data: {pageTitle: '资源推送'}
+            data: {pageTitle: '资源管理'}
         })
         .state('explorer.explorer', {
             url: "/explorer",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'explorerCtrl',
             data: {
-                subTitle: '资源管理',
+                subTitle: '资源列表',
                 datatable: 'assets/mvc/explorer/view/explorer_datatable.html',
                 editor: 'assets/mvc/explorer/view/explorer_editor.html',
                 other1: 'assets/mvc/explorer/view/explorer_push.html',
@@ -241,7 +241,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'loggingCtrl',
             data: {
-                subTitle: '推送日志',
+                subTitle: '资源日志',
                 datatable: 'assets/mvc/explorer/view/logging_datatable.html'
             },
             resolve: {
