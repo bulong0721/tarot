@@ -226,7 +226,7 @@ function productUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTable
                 type: 'c_select',
                 className: 'c_select',
                 templateOptions: {
-                    label: '名称',
+                    label: '设备组名称',
                     required: true,
                     placeholder: '设备组名称',
                     valueProp: 'type',

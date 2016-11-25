@@ -12,7 +12,7 @@ tableTypeMgrCtrl.$inject = ['$scope', 'cTables','cfromly'];
 function tableTypeMgrCtrl($scope, cTables,cfromly) {
     var mgrData = {
         fields: [
-            {key: 'name', type: 'c_input',className:'c_formly_line', templateOptions: {label: '名称', required: true, placeholder: '名称,50字以内',maxlength: 50}},
+            {key: 'name', type: 'c_input',className:'c_formly_line', templateOptions: {label: '餐桌类型名称', required: true, placeholder: '餐桌类型名称,50字以内',maxlength: 50}},
             {
                 key: 'description',
                 type: 'c_textarea',

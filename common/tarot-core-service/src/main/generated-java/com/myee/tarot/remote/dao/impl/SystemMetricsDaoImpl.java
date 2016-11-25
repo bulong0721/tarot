@@ -5,6 +5,7 @@ import com.myee.tarot.metric.domain.QSystemMetrics;
 import com.myee.tarot.metric.domain.SystemMetrics;
 import com.myee.tarot.remote.dao.SystemMetricsDao;
 import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPADeleteClause;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;
 
@@ -45,6 +46,23 @@ public class SystemMetricsDaoImpl extends GenericEntityDaoImpl<Long, SystemMetri
         }
         query.orderBy(qSystemMetrics.logTime.desc());
         return query.fetchFirst();
+    }
+
+    @Override
+    public List<SystemMetrics> listByCreateTime(Date date) {
+        QSystemMetrics qSystemMetrics = QSystemMetrics.systemMetrics;
+        JPQLQuery<SystemMetrics> query = new JPAQuery(getEntityManager());
+        query.from(qSystemMetrics);
+        if(date != null){
+            query.where(qSystemMetrics.created.before(date));
+        }
+        return query.fetch();
+    }
+
+    @Override
+    public void deleteByTime(Date date) {
+        QSystemMetrics qSystemMetrics = QSystemMetrics.systemMetrics;
+        new JPADeleteClause(getEntityManager(), qSystemMetrics).where(qSystemMetrics.created.before(date)).execute();
     }
 
     public List<SystemMetrics> listByBoardNoPeriod(String boardNo, Long now, Long period, String nodeName){

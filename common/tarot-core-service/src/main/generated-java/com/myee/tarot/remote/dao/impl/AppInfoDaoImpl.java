@@ -4,6 +4,7 @@ import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.metric.domain.AppInfo;
 import com.myee.tarot.metric.domain.QAppInfo;
 import com.myee.tarot.remote.dao.AppInfoDao;
+import com.querydsl.jpa.impl.JPADeleteClause;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;
 
@@ -46,5 +47,22 @@ public class AppInfoDaoImpl extends GenericEntityDaoImpl<Long, AppInfo> implemen
         }
         query.orderBy(qAppInfo.logTime.desc());
         return query.fetch();
+    }
+
+    @Override
+    public List<AppInfo> listByCreateTime(Date date) {
+        QAppInfo qAppInfo = QAppInfo.appInfo;
+        JPAQuery<AppInfo> query = new JPAQuery<>(getEntityManager());
+        query.from(qAppInfo);
+        if (date != null) {
+            query.where(qAppInfo.created.before(date));
+        }
+        return query.fetch();
+    }
+
+    @Override
+    public void deleteByTime(Date date) {
+        QAppInfo qAppInfo = QAppInfo.appInfo;
+        new JPADeleteClause(getEntityManager(), qAppInfo).where(qAppInfo.created.before(date)).execute();
     }
 }

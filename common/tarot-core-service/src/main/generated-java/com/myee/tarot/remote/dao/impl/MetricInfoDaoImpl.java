@@ -4,6 +4,7 @@ import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.metric.domain.MetricInfo;
 import com.myee.tarot.metric.domain.QMetricInfo;
 import com.myee.tarot.remote.dao.MetricInfoDao;
+import com.querydsl.jpa.impl.JPADeleteClause;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;
 
@@ -50,4 +51,23 @@ public class MetricInfoDaoImpl extends GenericEntityDaoImpl<Long, MetricInfo> im
         query.orderBy(qMetricInfo.logTime.desc());
         return query.fetch();
     }
+
+    @Override
+    public void deleteByTime(Date date) {
+        QMetricInfo qMetricInfo = QMetricInfo.metricInfo;
+        new JPADeleteClause(getEntityManager(), qMetricInfo).where(qMetricInfo.created.before(date)).execute();
+    }
+
+    @Override
+    public List<MetricInfo> listByCreateTime(Date date) {
+        QMetricInfo qMetricInfo = QMetricInfo.metricInfo;
+        JPAQuery<MetricInfo> query = new JPAQuery<>(getEntityManager());
+        query.from(qMetricInfo);
+        if (date != null) {
+            query.where(qMetricInfo.created.before(date));
+        }
+        return query.fetch();
+    }
+
+
 }

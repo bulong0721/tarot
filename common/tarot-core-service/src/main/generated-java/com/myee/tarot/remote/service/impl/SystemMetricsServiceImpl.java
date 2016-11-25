@@ -7,6 +7,7 @@ import com.myee.tarot.remote.service.SystemMetricsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,5 +37,15 @@ public class SystemMetricsServiceImpl extends GenericEntityServiceImpl<Long, Sys
     @Override
     public SystemMetrics getByBoardNoLogTimeNod(String boardNo, long logTime, String node) {
         return systemMetricsDao.getByBoardNoLogTimeNod(boardNo,  logTime,  node);
+    }
+
+    @Override
+    public List<SystemMetrics> listByCreateTime(Date date) {
+        return systemMetricsDao.listByCreateTime(date);
+    }
+
+    @Override
+    public void deleteByTime(Date date) {
+        systemMetricsDao.deleteByTime(date);
     }
 }

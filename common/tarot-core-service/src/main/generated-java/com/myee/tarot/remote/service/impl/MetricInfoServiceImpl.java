@@ -11,6 +11,7 @@ import com.myee.tarot.remote.service.MetricInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +45,16 @@ public class MetricInfoServiceImpl extends GenericEntityServiceImpl<Long, Metric
         MetricCache metricCache = redissonUtil.metricCache();
         List<MetricInfo> list = getListOfMetricInfoByKeyName(metricsKeyString, period, metricCache);
         return list;
+    }
+
+    @Override
+    public void deleteByTime(Date date) {
+        metricInfoDao.deleteByTime(date);
+    }
+
+    @Override
+    public List<MetricInfo> listByCreateTime(Date date) {
+        return metricInfoDao.listByCreateTime(date);
     }
 
     private List<MetricInfo> getListOfMetricInfoByKeyName(List<String> metricsKeyString, Long period, MetricCache metricCache) {

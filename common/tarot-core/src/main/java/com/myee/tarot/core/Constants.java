@@ -326,4 +326,5 @@ public class Constants {
 	//1年的间隔毫秒数
 	public static final int INTERVAL_ONE_YEAR = 3600 * 24 * 1000;
 
+	public static final int METRIC_EXPORT_BUFFER_SIZE = 1000;
 }

@@ -222,7 +222,7 @@ function tableMgrCtrl($scope, $resource, cTables, cfromly, Constants, NgTablePar
                 key: 'name',
                 type: 'c_input',
                 className: 'c_formly_line',
-                templateOptions: {label: '名称', required: true, placeholder: '名称,50字以内', maxlength: 50,isSearch:true}
+                templateOptions: {label: '餐桌名称', required: true, placeholder: '餐桌名称,50字以内', maxlength: 50,isSearch:true}
             },
             {
                 key: 'scanCode',

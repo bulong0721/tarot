@@ -176,7 +176,7 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
             {
                 key: 'name',
                 type: 'c_input',
-                templateOptions: {label: '名称', required: true, placeholder: '名称,60字以内', maxlength: 60,isSearch:true}
+                templateOptions: {label: '设备名称', required: true, placeholder: '设备名称,60字以内', maxlength: 60,isSearch:true}
             },
             {
                 key: 'ifBatch',

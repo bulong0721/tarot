@@ -6,7 +6,7 @@ import com.myee.tarot.remote.dao.AppInfoDao;
 import com.myee.tarot.remote.service.AppInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,5 +31,15 @@ public class AppInfoServiceImpl extends GenericEntityServiceImpl<Long, AppInfo> 
     @Override
     public List<AppInfo> listByBoardNoPeriod(String boardNo, Long now, Long period, String nodeName){
         return appInfoDao.listByBoardNoPeriod(boardNo, now, period, nodeName);
+    }
+
+    @Override
+    public List<AppInfo> listByCreateTime(Date date) {
+        return appInfoDao.listByCreateTime(date);
+    }
+
+    @Override
+    public void deleteByTime(Date date) {
+        appInfoDao.deleteByTime(date);
     }
 }

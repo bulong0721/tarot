@@ -12,7 +12,7 @@ function deviceTypeCtrl($scope, $resource, Constants, cTables, cfromly, cAlerts)
             {
                 key: 'name',
                 type: 'c_input',
-                templateOptions: {label: '名称', required: true, placeholder: '名称,60字以内', maxlength: 60,isSearch:true}
+                templateOptions: {label: '设备类型名称', required: true, placeholder: '设备类型名称,60字以内', maxlength: 60,isSearch:true}
             },
             {
                 key: 'versionNum',
