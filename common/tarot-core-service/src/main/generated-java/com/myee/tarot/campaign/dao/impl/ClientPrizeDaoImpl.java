@@ -32,6 +32,7 @@ public class ClientPrizeDaoImpl extends GenericEntityDaoImpl<Long, ClientPrize> 
             query.where(qClientPrize.store.id.eq(storeId));
         }
         pageList.setRecordsTotal(query.fetchCount());
+        query.orderBy(qClientPrize.name.asc());
         if( pageRequest.getCount() > Constants.COUNT_PAGING_MARK){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }

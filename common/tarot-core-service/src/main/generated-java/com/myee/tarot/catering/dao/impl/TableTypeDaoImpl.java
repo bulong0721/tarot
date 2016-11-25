@@ -43,6 +43,7 @@ public class TableTypeDaoImpl extends GenericEntityDaoImpl<Long, TableType> impl
         }
         query.where(qTableType.store.id.eq(id));
         pageList.setRecordsTotal(query.fetchCount());
+        query.orderBy(qTableType.name.asc());
         if( pageRequest.getCount() > Constants.COUNT_PAGING_MARK){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }

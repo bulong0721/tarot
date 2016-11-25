@@ -70,6 +70,7 @@ public class CustomerDaoImpl extends GenericEntityDaoImpl<Long, Customer> implem
                     .or(qCustomer.username.like("%" + pageRequest.getQueryName() + "%")) );
         }
         pageList.setRecordsTotal(query.fetchCount());
+        query.orderBy(qCustomer.username.asc());
         if( pageRequest.getCount() > Constants.COUNT_PAGING_MARK){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }

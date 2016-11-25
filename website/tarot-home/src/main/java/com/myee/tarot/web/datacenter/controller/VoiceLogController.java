@@ -4,10 +4,7 @@ import com.google.common.collect.Maps;
 import com.myee.tarot.catalog.domain.VoiceLog;
 import com.myee.tarot.catalog.service.impl.elasticSearch.EntityQueryDto;
 import com.myee.tarot.core.Constants;
-import com.myee.tarot.core.util.DateTimeUtils;
-import com.myee.tarot.core.util.PageResult;
-import com.myee.tarot.core.util.StringUtil;
-import com.myee.tarot.core.util.WhereRequest;
+import com.myee.tarot.core.util.*;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.catalog.service.impl.elasticSearch.ESUtils;
 import com.opencsv.CSVWriter;
@@ -140,6 +137,8 @@ public class VoiceLogController {
             queries.put("voiceType", voiceLogTypeDto);
         }
         PageResult<VoiceLog> voiceLogList = esUtils.searchPageQueries(Constants.ES_QUERY_INDEX, Constants.ES_QUERY_TYPE, queries, whereRequest.getPage(), whereRequest.getCount(), VoiceLog.class);
+        ListSortUtil<VoiceLog> sortList = new ListSortUtil<VoiceLog>();
+        sortList.sort(voiceLogList.getList(), "dateTime", "asc");
         for (VoiceLog voiceLog : voiceLogList.getList()) {
             resp.addDataEntry(objectToEntry(voiceLog));
         }

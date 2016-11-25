@@ -40,6 +40,7 @@ public class WaitTokenDaoImpl  extends GenericEntityDaoImpl<Long, WxWaitToken> i
             query.where(qWxWaitToken.created.after(DateTimeUtils.getDateByString(whereRequest.getBeginDate())));
         }
         pageList.setRecordsTotal(query.from(qWxWaitToken).fetchCount());
+        query.orderBy(qWxWaitToken.timeTook.asc(),qWxWaitToken.updated.asc());
         if( whereRequest.getCount() > 0){
             query.offset(whereRequest.getOffset()).limit(whereRequest.getCount());
         }

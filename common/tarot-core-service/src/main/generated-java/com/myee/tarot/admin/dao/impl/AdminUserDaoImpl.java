@@ -75,6 +75,7 @@ public class AdminUserDaoImpl extends GenericEntityDaoImpl<Long, AdminUser> impl
                     .or(qAdminUser.login.like("%" + pageRequest.getQueryName() + "%")));
         }
         pageList.setRecordsTotal(query.fetchCount());
+        query.orderBy(qAdminUser.login.asc());
         if( pageRequest.getCount() > Constants.COUNT_PAGING_MARK){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }

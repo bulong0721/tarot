@@ -125,6 +125,7 @@ public class MerchantStoreDaoImpl extends GenericEntityDaoImpl<Long, MerchantSto
         if (pageRequest.getCount() > Constants.COUNT_PAGING_MARK) {
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
+        query.orderBy(qMerchantStore.merchantStore.name.asc());
         pageList.setList(query.fetch());
         return pageList;
     }

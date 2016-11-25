@@ -49,6 +49,7 @@ public class ProductUsedDaoImpl extends GenericEntityDaoImpl<Long, ProductUsed> 
             query.where(qProductUsed.code.like("%" + pageRequest.getQueryName() + "%"));
         }
         pageList.setRecordsTotal(query.fetchCount());
+        query.orderBy(qProductUsed.type.asc(),qProductUsed.code.asc());
         if( pageRequest.getCount() > Constants.COUNT_PAGING_MARK){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
