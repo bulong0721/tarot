@@ -7,12 +7,16 @@ import com.myee.djinn.dto.ShopDetail;
 import com.myee.djinn.dto.VersionInfo;
 import com.myee.djinn.rpc.RemoteException;
 import com.myee.djinn.server.operations.CommonService;
+import com.myee.tarot.admin.domain.AdminUser;
+import com.myee.tarot.admin.service.AdminUserService;
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catalog.service.DeviceUsedService;
 import com.myee.tarot.core.service.TransactionalAspectAware;
 import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.profile.domain.Address;
+import com.myee.tarot.resource.domain.Notification;
+import com.myee.tarot.resource.service.NotificationService;
 import com.myee.tarot.resource.dao.NotificationDao;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -26,6 +30,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 /**
@@ -37,6 +43,9 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 	private static final Logger LOG = LoggerFactory.getLogger(CommonServiceImpl.class);
 	@Autowired
 	private DeviceUsedService deviceUsedService;
+	@Autowired
+	private NotificationService notificationService;
+
 	@Value("${cleverm.push.dirs}")
 	private String DOWNLOAD_HOME;
 
@@ -58,14 +67,10 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 			StringBuilder sb = new StringBuilder();
 			LOG.info("================ request info  name:{} type:{} orgId:{}", name, type, orgId);
 			if (versionInfoList.contains(type)) {
-				sb.append(DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(type).append(File.separator).append(name).append(File.separator).append("VersionInfo.xml");
-			} else {
-
-			}
-			LOG.info("========File path {} " + sb.toString());
-			File file = new File(sb.toString());
-			if (file.exists()) {
-				info = readfile(file);
+				sb.append(DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(type).append(File.separator).append(name).append(File.separator).append("VersionInfo.txt");
+				LOG.info("========File path {} " + sb.toString());
+				String str  = readTXT(sb.toString());
+				info = JSON.parseObject(str,VersionInfo.class);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -108,10 +113,19 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 		return shopDetail;
 	}
 
-	//TODO
+	private Notification convertToNotification(NotificationDTO notificationDTO) {
+//		Notification notification = new Notification();
+//        notification.setComment(notificationDTO.getComment());
+//        notification.setCreateTime(notificationDTO.getCreateTime());
+//        notification.setUpdateNoticeType(notificationDTO.get);
+        return null;
+	}
+
 	@Override
-	public boolean receiveNotice(NotificationDTO notification) throws RemoteException {
-		return false;
+	public boolean receiveNotice(NotificationDTO notificationDTO) throws RemoteException {
+        Notification notification = convertToNotification(notificationDTO);
+        boolean received = notificationService.receiveNotice(notificationDTO);
+        return received;
 	}
 
 	private VersionInfo readfile(File file) {
@@ -131,6 +145,39 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 			e.printStackTrace();
 		}
 		return versionInfo;
+	}
+
+	private String readTXT(String path) {
+		String res = "";
+		try {
+			File file = new File(path);
+			if(!file.exists()){
+				createFileAndDir(path);
+				return res;
+			}
+			FileInputStream fis = new FileInputStream(path);
+			int length = fis.available();
+			byte[] buffer = new byte[length];
+			fis.read(buffer);
+			res = new String(buffer, "UTF-8");
+		} catch (FileNotFoundException e) {
+			LOG.info(" read version txt error ", e);
+		} catch (Exception e) {
+			LOG.info(" read version txt error ", e);
+		}
+		return res;
+	}
+
+	private static void createFileAndDir(String path){
+		File file= new File(path);
+		String dir = path.substring(0,path.lastIndexOf("/"));
+		File fileDir = new File(dir);
+		fileDir.mkdirs();
+		try {
+			file.createNewFile();
+		} catch (Exception e) {
+			LOG.info(" create file error ", e);
+		}
 	}
 
 	String toHourString(Date time) {
