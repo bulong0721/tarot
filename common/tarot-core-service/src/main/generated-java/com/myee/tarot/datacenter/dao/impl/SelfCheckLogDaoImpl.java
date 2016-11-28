@@ -53,6 +53,7 @@ public class SelfCheckLogDaoImpl extends GenericEntityDaoImpl<Long, SelfCheckLog
             query.where(qSelfCheckLog.functionId.eq(functionId));
         }
         pageList.setRecordsTotal(query.fetchCount());
+        query.orderBy(qSelfCheckLog.time.desc());
         if( whereRequest.getCount() > 0){
             query.offset(whereRequest.getOffset()).limit(whereRequest.getCount());
         }

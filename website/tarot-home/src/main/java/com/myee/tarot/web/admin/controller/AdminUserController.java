@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.admin.service.AdminUserService;
 import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.util.ListSortUtil;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
@@ -241,6 +242,8 @@ public class AdminUserController {
     AjaxPageableResponse pageRoles(Model model, HttpServletRequest request) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         List<Role> roleList = roleService.list();
+        ListSortUtil<Role> sortList = new ListSortUtil<Role>();
+        sortList.sort(roleList, "roleName", "asc");
         for (Role role : roleList) {
             Map entry = new HashMap();
             entry.put("id", role.getId());

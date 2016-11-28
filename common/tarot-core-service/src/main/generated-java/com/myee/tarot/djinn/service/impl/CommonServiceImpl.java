@@ -14,6 +14,7 @@ import com.myee.tarot.catalog.service.DeviceUsedService;
 import com.myee.tarot.core.service.TransactionalAspectAware;
 import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.profile.domain.Address;
 import com.myee.tarot.resource.domain.Notification;
 import com.myee.tarot.resource.service.NotificationService;
@@ -45,11 +46,13 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 	private DeviceUsedService deviceUsedService;
 	@Autowired
 	private NotificationService notificationService;
-
+	@Autowired
+	private MerchantStoreService merchantStoreService;
+	@Autowired
+	private AdminUserService adminUserService;
 	@Value("${cleverm.push.dirs}")
 	private String DOWNLOAD_HOME;
 
-	private List<String> versionInfoList = new ArrayList<>(Arrays.asList("app", "ipc", "tinker"));
 	@Override
 	public Boolean isConnection() throws RemoteException {
 		return true;
@@ -66,7 +69,14 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 			String orgId = object.getString("orgId");
 			StringBuilder sb = new StringBuilder();
 			LOG.info("================ request info  name:{} type:{} orgId:{}", name, type, orgId);
-			if (versionInfoList.contains(type)) {
+			if ("app".equals(type) || "ipc".equals(type)) {
+				sb.append(DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(type).append(File.separator).append(name).append(File.separator).append("VersionInfo.xml");
+				LOG.info("========File path {} " + sb.toString());
+				File file = new File(sb.toString());
+				if (file.exists()) {
+					info = readfile(file);
+				}
+			}else if("tinker".equals(type)){
 				sb.append(DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(type).append(File.separator).append(name).append(File.separator).append("VersionInfo.txt");
 				LOG.info("========File path {} " + sb.toString());
 				String str  = readTXT(sb.toString());
@@ -114,18 +124,30 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 	}
 
 	private Notification convertToNotification(NotificationDTO notificationDTO) {
-//		Notification notification = new Notification();
-//        notification.setComment(notificationDTO.getComment());
-//        notification.setCreateTime(notificationDTO.getCreateTime());
-//        notification.setUpdateNoticeType(notificationDTO.get);
-        return null;
+		Notification notification = new Notification();
+        notification.setComment(notificationDTO.getComment());
+		notification.setContent(notificationDTO.getContent());
+        notification.setCreateTime(notificationDTO.getCreateTime());
+        notification.setOperationType(notificationDTO.getOperationType());
+		notification.setNoticeType(notificationDTO.getNoticeType());
+		notification.setAppId(notificationDTO.getAppId());
+		notification.setCreateTime(notificationDTO.getCreateTime());
+		notification.setStoragePath(notificationDTO.getStoragePath());
+		MerchantStore store = merchantStoreService.findById(notificationDTO.getStoreId());
+		notification.setStore(store);
+		AdminUser adminUser = adminUserService.findById(notificationDTO.getUserId());
+		notification.setAdminUser(adminUser);
+		notification.setSuccess(notificationDTO.getSuccess());
+		notification.setUniqueNo(notificationDTO.getUniqueNo());
+		notification.setUuid(notificationDTO.getUuid());
+        return notification;
 	}
 
 	@Override
 	public boolean receiveNotice(NotificationDTO notificationDTO) throws RemoteException {
         Notification notification = convertToNotification(notificationDTO);
-        boolean received = notificationService.receiveNotice(notificationDTO);
-        return received;
+        notificationService.save(notification);
+        return true;
 	}
 
 	private VersionInfo readfile(File file) {

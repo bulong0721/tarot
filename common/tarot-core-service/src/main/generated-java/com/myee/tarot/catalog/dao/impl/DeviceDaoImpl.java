@@ -28,6 +28,7 @@ public class DeviceDaoImpl extends GenericEntityDaoImpl<Long, Device> implements
             query.where(qDevice.name.like("%" + pageRequest.getQueryName() + "%"));
         }
         pageList.setRecordsTotal(query.fetchCount());
+        query.orderBy(qDevice.name.asc());
         if( pageRequest.getCount() > Constants.COUNT_PAGING_MARK){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }

@@ -51,8 +51,11 @@ public class Notification extends GenericEntity<Long, Notification> {
     @Column(name = "NOTICE_TYPE",length = 100)
     private String noticeType;
 
-    @Column(name = "UPDATE_NOTICE_TYPE")
-    private String updateNoticeType;
+    @Column(name = "OPERATION_TYPE")
+    private String operationType;   //send:云端推送   get:终端拉取
+
+	@Column(name = "uuid")
+	private String uuid;
 
     @Transient//不持久化到数据库，查询关联用
     private DeviceUsed deviceUsed;
@@ -163,4 +166,19 @@ public class Notification extends GenericEntity<Long, Notification> {
         this.deviceUsed = deviceUsed;
     }
 
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getOperationType() {
+		return operationType;
+	}
+
+	public void setOperationType(String operationType) {
+		this.operationType = operationType;
+	}
 }

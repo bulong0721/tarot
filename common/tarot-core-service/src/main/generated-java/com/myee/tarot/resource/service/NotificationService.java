@@ -13,5 +13,4 @@ public interface NotificationService extends GenericEntityService<Long, Notifica
 
     PageResult<Notification> pageByStore(Long id, PageRequest pageRequest);
 
-    boolean receiveNotice(NotificationDTO notificationDTO);
 }

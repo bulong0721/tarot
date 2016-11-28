@@ -27,10 +27,4 @@ public class NotificationServiceImpl extends GenericEntityServiceImpl<Long, com.
     public PageResult<Notification> pageByStore(Long id, PageRequest pageRequest){
         return notificationDao.pageByStore( id,  pageRequest);
     }
-
-    @Override
-    public boolean receiveNotice(NotificationDTO notificationDTO) {
-//        return notificationDao.save(notificationDTO);
-        return false;
-    }
 }

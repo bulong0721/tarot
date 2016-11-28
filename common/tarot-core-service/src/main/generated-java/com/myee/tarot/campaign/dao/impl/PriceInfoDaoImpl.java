@@ -50,6 +50,7 @@ public class PriceInfoDaoImpl extends GenericEntityDaoImpl<Long, PriceInfo> impl
         if( pageRequest.getCount() > Constants.COUNT_PAGING_MARK){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }
+        query.orderBy(qPriceInfo.checkDate.desc());
         pageList.setList(query.fetch());
         return pageList;
     }
@@ -72,7 +73,9 @@ public class PriceInfoDaoImpl extends GenericEntityDaoImpl<Long, PriceInfo> impl
         QPriceInfo qPriceInfo = QPriceInfo.priceInfo;
         JPQLQuery<PriceInfo> query = new JPAQuery(getEntityManager());
         query.from(qPriceInfo).leftJoin(qPriceInfo.price).fetchJoin();
-        List<PriceInfo> result = query.where(qPriceInfo.keyId.eq(keyId).and(qPriceInfo.price.storeId.eq(storeId))).fetch();
+        query.where(qPriceInfo.keyId.eq(keyId).and(qPriceInfo.price.storeId.eq(storeId)));
+        query.orderBy(qPriceInfo.checkDate.desc());
+        List<PriceInfo> result = query.fetch();
         return result;
     }
 

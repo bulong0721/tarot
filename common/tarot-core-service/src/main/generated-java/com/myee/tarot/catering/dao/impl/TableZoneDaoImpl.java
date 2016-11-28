@@ -43,6 +43,7 @@ public class TableZoneDaoImpl extends GenericEntityDaoImpl<Long, TableZone> impl
         }
         query.where(qTableZone.store.id.eq(id));
         pageList.setRecordsTotal(query.fetchCount());
+        query.orderBy(qTableZone.name.asc());
         if( pageRequest.getCount() > Constants.COUNT_PAGING_MARK){
             query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
         }

@@ -257,9 +257,8 @@ public class PushController {
      * @return
      */
     @RequestMapping(value = "admin/pushLog/paging", method = RequestMethod.GET)
-    public
     @ResponseBody
-    AjaxPageableResponse pageZones(Model model, HttpServletRequest request, PageRequest pageRequest) {
+	public AjaxPageableResponse pageLogs(Model model, HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
             Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
@@ -283,6 +282,9 @@ public class PushController {
                 entry.put("created", notification.getCreateTime());
                 entry.put("timeOut", notification.getTimeout());
                 entry.put("comment", notification.getComment());
+				entry.put("success", notification.getSuccess());
+				entry.put("operationType", ("get".equals(notification.getOperationType())? "终端拉取" : "云端推送"));
+				entry.put("uuid", notification.getUuid());
                 Integer appId = notification.getAppId();
                 entry.put("appId", (appId == null || "".equals(appId)) ? 0 : AppType.getValue(appId));
                 String noticeType = notification.getNoticeType();
@@ -338,17 +340,23 @@ public class PushController {
         Notification notification = new Notification();
         try {
             MerchantStore merchantStore = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
+			AdminUser adminUser = (AdminUser) request.getSession().getAttribute(Constants.ADMIN_USER);
             //入库
+			String notificationUUID = UUID.randomUUID().toString();
+			pushResourceDTO.setNotificationUUID(notificationUUID);
+			pushResourceDTO.setUserId(adminUser.getId());
             isSuccess = endpointInterface.receiveNotice(pushResourceDTO);
             notification.setAppId(pushResourceDTO.getAppId());
+			notification.setOperationType("send");
             notification.setContent(JSONArray.toJSONString(pushResourceDTO.getContent()));
             notification.setStoragePath(pushResourceDTO.getStoragePath());
             notification.setTimeout(pushResourceDTO.getTimeout());
             notification.setUniqueNo(pushResourceDTO.getUniqueNo());
-            notification.setAdminUser((AdminUser) request.getSession().getAttribute(Constants.ADMIN_USER));
+            notification.setAdminUser(adminUser);
             notification.setStore(merchantStore);
             notification.setCreateTime(new Date());
             notification.setNoticeType(pushResourceDTO.getNoticeType());
+			notification.setUuid(notificationUUID);
             if (isSuccess) {
                 notification.setSuccess(true);
                 notification.setComment("推送成功");
