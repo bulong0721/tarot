@@ -23,7 +23,7 @@ import java.util.List;
 @Repository
 public class PriceInfoDaoImpl extends GenericEntityDaoImpl<Long, PriceInfo> implements PriceInfoDao {
     @Override
-    public List<PriceInfo> findByStatusAndKeyId(String keyId, int status) {
+    public List<PriceInfo> listByStatusAndKeyId(String keyId, int status) {
         QPriceInfo qPriceInfo = QPriceInfo.priceInfo;
         JPQLQuery<PriceInfo> query = new JPAQuery(getEntityManager());
         query.from(qPriceInfo).where(qPriceInfo.status.eq(status).and(qPriceInfo.keyId.eq(keyId)));
@@ -69,7 +69,7 @@ public class PriceInfoDaoImpl extends GenericEntityDaoImpl<Long, PriceInfo> impl
     }
 
     @Override
-    public List<PriceInfo> findByStoreIdAndKeyId(Long storeId, String keyId) {
+    public List<PriceInfo> listByStoreIdAndKeyId(Long storeId, String keyId) {
         QPriceInfo qPriceInfo = QPriceInfo.priceInfo;
         JPQLQuery<PriceInfo> query = new JPAQuery(getEntityManager());
         query.from(qPriceInfo).leftJoin(qPriceInfo.price).fetchJoin();

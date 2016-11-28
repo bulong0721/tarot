@@ -11,13 +11,13 @@ import java.util.List;
  * Created by Administrator on 2016/7/14.
  */
 public interface PriceInfoDao extends GenericEntityDao<Long, PriceInfo>{
-    List<PriceInfo> findByStatusAndKeyId(String keyId,int status);
+    List<PriceInfo> listByStatusAndKeyId(String keyId, int status);
 
     PageResult<PriceInfo> pageList(Long storeId,PageRequest pageRequest);
 
     PriceInfo priceCheckCode(Long storeId,String checkCode);
 
-    List<PriceInfo> findByStoreIdAndKeyId(Long storeId,String keyId);
+    List<PriceInfo> listByStoreIdAndKeyId(Long storeId, String keyId);
 
     PriceInfo findByIdAndKeyId(Long id,String keyId);
 }

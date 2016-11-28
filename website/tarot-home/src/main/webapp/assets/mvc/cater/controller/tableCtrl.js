@@ -357,7 +357,7 @@ function tableMgrCtrl($scope, cResource, cTables, cfromly, Constants, NgTablePar
                 key: 'dU.device.id',
                 type: 'c_select',
                 className: 'c_select',
-                templateOptions: {label: '选择设备类型', required: true, options: getDeviceList()},
+                templateOptions: {label: '设备类型', required: true, options: getDeviceList()},
                 hideExpression: '!model.ifBatchBind || !model.ifBatch'
             }
         ],

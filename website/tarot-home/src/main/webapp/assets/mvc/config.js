@@ -203,8 +203,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'productUsedCtrl',
             data: {
-                pageTitle: '设备组管理',
-                subTitle: '设备组管理',
+                pageTitle: '设备管理',
+                subTitle: '设备组列表',
                 datatable: 'assets/mvc/device/view/product_used_datatable.html',
                 editor: 'assets/mvc/device/view/product_used_editor.html'
             },
@@ -626,7 +626,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'camera',
             data: {
-                pageTitle: '摄像头监控',
+                pageTitle: '远程监控',
                 subTitle: '摄像头监控',
                 datatable: 'assets/mvc/remote/view/camera.html'
             },

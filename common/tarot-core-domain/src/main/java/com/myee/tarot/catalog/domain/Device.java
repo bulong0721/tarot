@@ -19,7 +19,7 @@ public class Device extends GenericEntity<Long, Device> {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     protected Long id;
 
-    @Column(name = "NAME", length=60)
+    @Column(name = "NAME", unique = true, length=60)
     protected String name;
 
     @Column(name = "VERSION_NUM", length=60)
