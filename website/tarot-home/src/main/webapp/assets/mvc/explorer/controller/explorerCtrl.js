@@ -188,7 +188,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
                 key: 'uniqueNo',
                 type: 'c_select',
                 className: 'c_select',
-                templateOptions: {label: '选择推送设备', required: true, options: getDeviceUsedList()}
+                templateOptions: {label: '推送设备', required: true, options: getDeviceUsedList()}
             },
             {
                 key: 'noticeType',
@@ -200,7 +200,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
                 key: 'appId',
                 type: 'c_select',
                 className: 'c_select',
-                templateOptions: {label: '选择推送应用', required: true, options: getAppList()}
+                templateOptions: {label: '推送应用', required: true, options: getAppList()}
             },
             {
                 key: 'timeout',
@@ -597,7 +597,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
                 type: 'c_select',
                 className: 'c_select',
                 templateOptions: {
-                    label: '选择设备组',
+                    label: '设备组',
                     required: true,
                     options: getProductUsedList()
                 },
