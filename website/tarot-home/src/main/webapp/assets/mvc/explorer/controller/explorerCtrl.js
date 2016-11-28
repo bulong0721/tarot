@@ -812,7 +812,7 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
                     "ifEditor": true,
                     "type": 1,
                     "name": $scope.mgrUpdateConfigData.constant.FILE_NAME_MODULE,
-                    "content": $scope.submitModuleResult.length > 0 ? $scope.submitModuleResult : ''
+                    "content": $scope.submitModuleResult.length > 0 ? $scope.submitModuleResult : []
                 })
             }, {}).$promise
         );
