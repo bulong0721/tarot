@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * deviceCtrl - controller
  */
-deviceTypeCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables', 'cfromly', 'cAlerts'];
-function deviceTypeCtrl($scope, $resource, Constants, cTables, cfromly, cAlerts) {
+deviceTypeCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', 'cAlerts'];
+function deviceTypeCtrl($scope, Constants, cTables, cfromly, cAlerts) {
 
     var mgrData = $scope.mgrData = {
         fields: [

@@ -7,9 +7,9 @@ angular.module('myee', [])
 /**
  * dUMonitorMgrCtrl - controller
  */
-dUMonitorMgrCtrl.$inject = ['$scope','$resource','$uibModal','$interval'];
+dUMonitorMgrCtrl.$inject = ['$scope','cResource','$uibModal','$interval'];
 
-function dUMonitorMgrCtrl($scope,$resource,$uibModal,$interval) {
+function dUMonitorMgrCtrl($scope,cResource,$uibModal,$interval) {
     var ms = 3600000,
         vm = $scope.vm = {
             listByStoreId:[],
@@ -24,12 +24,12 @@ function dUMonitorMgrCtrl($scope,$resource,$uibModal,$interval) {
             },
             getMetrics:function(gets,call){
                 //type == 1 大图
-                $resource('../admin/remoteMonitor/deviceUsed/queryMetricPointsByRange').get(gets, function (resp) {
+                cResource.get('../admin/remoteMonitor/deviceUsed/queryMetricPointsByRange',gets).then(function(resp){
                     if(resp.rows && resp.rows.length>0) {
                         var r = resp.rows[0];
                         call(
                             vm.gets.type == 1?
-                            r.metricInfoList[0]:
+                                r.metricInfoList[0]:
                             {
                                 deviceUsed: r.deviceUsed,
                                 metricInfoList: r.metricInfoList,
@@ -50,9 +50,7 @@ function dUMonitorMgrCtrl($scope,$resource,$uibModal,$interval) {
             },
             summarys:function(){
                 //Summary 获取静态指标
-                $resource('../admin/remoteMonitor/deviceUsed/summary').get({
-                    deviceUsedId:vm.gets.deviceUsedId
-                }, function (resp) {
+                cResource.get('../admin/remoteMonitor/deviceUsed/summary',{deviceUsedId:vm.gets.deviceUsedId}).then(function(resp){
                     if(resp.rows && resp.rows.length>0) {
                         var r = resp.rows[0];
                         vm.summaryVal = {
@@ -65,14 +63,12 @@ function dUMonitorMgrCtrl($scope,$resource,$uibModal,$interval) {
             },
             listByStoreId:function(){
                 //listByStoreId 获取机器列表
-                $resource('../admin/device/used/listByStoreId').get({}, function (resp) {
-                    if(resp.status == '0'){
-                        if(resp.rows && resp.rows.length>0){
-                            vm.listByStoreId = resp.rows;
-                            vm.gets.deviceUsedId = resp.rows[0].id;
-                            vm.summarys();
-                            vm.metrics();
-                        }
+                cResource.get('../admin/device/used/listByStoreId',{}).then(function(resp){
+                    if(resp.rows && resp.rows.length>0){
+                        vm.listByStoreId = resp.rows;
+                        vm.gets.deviceUsedId = resp.rows[0].id;
+                        vm.summarys();
+                        vm.metrics();
                     }
                 });
             },

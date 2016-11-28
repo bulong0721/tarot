@@ -63,6 +63,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
     });
 
     $httpProvider.defaults.headers.post['Content-Type'] = undefined;
+    $httpProvider.interceptors.push('myInterceptor');
 
     $stateProvider
         .state('merchant', {

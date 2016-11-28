@@ -7,6 +7,7 @@ angular
     .filter('getFileName',getFileName)
     .filter('isNullOrEmptyString',isNullOrEmptyString)
     .filter('isHasProp',isHasProp)
+    .filter('toasterManage',toasterManage)
 
 //判断对象是否是空或空字符
 function isNullOrEmptyString(){
@@ -147,6 +148,34 @@ function getFileName(){
                 return getFileExt(filepath);
             case 4:
                 return getFileNameNoExt(filepath);
+        }
+    }
+}
+
+/**
+ * 弹提示
+ */
+function toasterManage(toaster){
+    return function(type, response){
+        var respMessage = response && response != undefined ? (response.statusMessage || '') : "" ;
+        switch (type) {
+            case 0://错误
+                toaster.error({body: "出错啦!" + respMessage});
+                break;
+            case 1://操作成功
+                toaster.success({body: "操作成功!"+ respMessage});
+                break;
+            case 2://删除成功
+                toaster.success({body: "删除成功!"+ respMessage});
+                break;
+            case 3://查询成功
+                toaster.success({body: "查询成功!"+ respMessage});
+                break;
+            case 4://查询成功
+                toaster.success({body: "上传成功!"+ respMessage});
+                break;
+            default :
+                toaster.error({body: '出错啦'+ respMessage});
         }
     }
 }

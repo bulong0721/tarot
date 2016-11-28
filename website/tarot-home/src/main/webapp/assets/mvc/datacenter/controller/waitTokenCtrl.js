@@ -7,9 +7,9 @@ angular.module('myee', [])
 /**
  * roleCtrl - controller
  */
-waitTokenCtrl.$inject = ['$scope', 'cTables','cfromly','$resource'];
+waitTokenCtrl.$inject = ['$scope', 'cTables','cfromly'];
 
-function waitTokenCtrl($scope, cTables,cfromly,$resource) {
+function waitTokenCtrl($scope, cTables,cfromly) {
 
     //$scope.waitStates = [];
     ///**

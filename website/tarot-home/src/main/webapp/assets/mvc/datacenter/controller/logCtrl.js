@@ -8,11 +8,11 @@ angular.module('myee', [])
 /**
  * productUsedCtrl - controller
  */
-logListCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables', 'cfromly', 'NgTableParams', '$q'];
-function logListCtrl($scope, $resource, Constants, cTables, cfromly, NgTableParams, $q) {
+logListCtrl.$inject = ['$scope', 'cResource','$resource', 'Constants', 'cTables', 'cfromly', 'NgTableParams', '$q'];
+function logListCtrl($scope, cResource,$resource, Constants, cTables, cfromly, NgTableParams, $q) {
 
     $scope.moduleChange = function($viewValue) {
-        $resource('./selfCheckLog/listFunction').query({moduleId:$viewValue== null ? '':$viewValue.value},{},function success(resp){
+        cResource.query('./selfCheckLog/listFunction',{moduleId:$viewValue== null ? '':$viewValue.value},true).then(function(resp){
             var length = resp.length;
             //console.log(1111)
             $scope.functionNames.splice(0, $scope.functionNames.length);

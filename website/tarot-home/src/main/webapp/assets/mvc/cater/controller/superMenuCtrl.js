@@ -7,9 +7,9 @@ angular.module('myee', [])
 /**
  * 小超人菜品列表 - controller
  */
-superMenuMgrCtrl.$inject = ['$scope', 'cTables', 'cfromly','$resource','$filter'];
+superMenuMgrCtrl.$inject = ['$scope', 'cTables', 'cfromly','cResource','$filter'];
 
-function superMenuMgrCtrl($scope, cTables, cfromly,$resource,$filter) {
+function superMenuMgrCtrl($scope, cTables, cfromly,cResource,$filter) {
     var mgrData = {
         fields: [
             {
@@ -127,36 +127,18 @@ function superMenuMgrCtrl($scope, cTables, cfromly,$resource,$filter) {
     $scope.$on('fileToUpload', function (event, arg) {
         //console.log(arg)
         //上传文件到后台
-        $resource(mgrData.api.upload).save({
-            path: "image/superMenu/"+$filter('date')(new Date().getTime(), "yyyyMMdd"),//按日期分图片文件夹
-            type: "file"
-        }, arg).$promise.then(function (res) {
-            //console.log(res)
-            if (0 != res.status) {
-                $scope.toasterManage($scope.toastError, res);
-                return;
-            }
+        cResource.upload(mgrData.api.upload,{path: "image/superMenu/"+$filter('date')(new Date().getTime(), "yyyyMMdd"), type: "file"}, arg).then(function(){
             var pic = res.dataMap.tree.downloadPath;
-            $scope.toasterManage($scope.toastUploadSucc);
             $scope.formData.model.photo = pic;
-
-            //console.log($scope.formData.model.images)
             $scope.formData.model.images = $filter('myeeUrlImg')( pic);
-        })
+        });
     });
 
     //批量上传菜单
     $scope.menuUP = function(file){
-        console.log(file)
         var fd = new FormData();
         fd.append('file', file.files[0]);
-        console.log(fd)
-        $resource(mgrData.api.uploadMenu).save({},fd).$promise.then(function(res){
-            if (0 != res.status) {
-                $scope.toasterManage($scope.toastError, res);
-                return;
-            }
-
+        cResource.save(mgrData.api.uploadMenu,{},fd).then(function(res){
             $scope.search();
         });
     };

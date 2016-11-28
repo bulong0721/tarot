@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * productUsedCtrl - controller
  */
-deviceUsedCtrl.$inject = ['$scope', '$resource', 'Constants', 'cTables', 'cfromly', 'NgTableParams', '$q', 'cAlerts', 'toaster', '$filter'];
-function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableParams, $q, cAlerts, toaster, $filter) {
+deviceUsedCtrl.$inject = ['$scope', 'cResource', 'Constants', 'cTables', 'cfromly', 'NgTableParams', '$q', 'cAlerts', 'toaster', '$filter'];
+function deviceUsedCtrl($scope, cResource, Constants, cTables, cfromly, NgTableParams, $q, cAlerts, toaster, $filter) {
 
     var iDatatable = 0, iEditor = 1;
     //绑定产品相关参数
@@ -21,7 +21,7 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
             deferred.resolve($scope.initalBindProductList);
             return deferred.promise;
         } else {//第一次需要从后台读取列表，且只返回前10个数据
-            return $resource('./product/used/listByStoreId').get().$promise.then(function (data) {
+            return cResource.get('./product/used/listByStoreId').then(function(data){
                 //初始化showCase.selected数组，给全选框用，让它知道应该全选哪些
                 angular.forEach(data.rows, function (indexData, index, array) {
                     //indexData等价于array[index]
@@ -119,15 +119,10 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
             }
         });
 
-        $resource('./device/used/bindProductUsed').save({
+        cResource.save('./device/used/bindProductUsed',{
             'bindString': JSON.stringify(result),
             'deviceUsedId': $scope.formBindData.model.id
-        }, {}, function (respSucc) {
-            if (0 != respSucc.status) {
-                $scope.toasterManage($scope.toastError, respSucc);
-                return;
-            }
-
+        }, {}).then(function(respSucc){
             //用js离线刷新表格数据
             $scope.tableOpts.data[$scope.showCase.currentRowIndex].productUsedList = [];//先清空
             angular.forEach($scope.showCase.selected, function (data, index, array) {
@@ -148,12 +143,7 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
                     }
                 }
             });
-
-            $scope.toasterManage($scope.toastOperationSucc);
             $scope.goDataTable();
-        }, function (respFail) {
-            //console.log(respFail);
-            $scope.toasterManage($scope.toastError, respFail);
         });
     };
 
@@ -161,7 +151,7 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
 
 
     function getDeviceList() {
-        var data = $resource("./device/list").query();
+        var data = cResource.query("./device/list");
         return data;
     }
 
@@ -277,31 +267,22 @@ function deviceUsedCtrl($scope, $resource, Constants, cTables, cfromly, NgTableP
         if (formly.form.$valid) {
             $scope.disableSubmit = true;
             //formly.options.updateInitialValue();//这句会报错
-            var xhr = $resource(mgrData.api.update);
-            xhr.save({
+            cResource.save(mgrData.api.update,{
                 autoStart: formly.model.startNo ? formly.model.startNo : "",
                 autoEnd: formly.model.endNo ? formly.model.endNo : ""
-            }, formly.model).$promise.then(function saveSuccess(response) {
-                    $scope.disableSubmit = false;
-                    if (0 != response.status) {
-                        $scope.toasterManage($scope.toastError, response);
-                        return;
+            }, formly.model).then(function(response){
+                $scope.disableSubmit = false;
+                //批量添加的数据添加到ngtables
+                angular.forEach(response.dataMap.updateResult, function (indexData, index, array) {
+                    var data = indexData;
+                    if ($scope.rowIndex < 0) {
+                        $scope.tableOpts.data.splice(0, 0, data);
+                    } else {
+                        $scope.tableOpts.data.splice($scope.rowIndex, 1, data);
                     }
-                    //批量添加的数据添加到ngtables
-                    angular.forEach(response.dataMap.updateResult, function (indexData, index, array) {
-                        var data = indexData;
-                        if ($scope.rowIndex < 0) {
-                            $scope.tableOpts.data.splice(0, 0, data);
-                        } else {
-                            $scope.tableOpts.data.splice($scope.rowIndex, 1, data);
-                        }
-                    })
-
-                    $scope.toasterManage($scope.toastOperationSucc, response);
-                    $scope.goDataTable();
-                }, function saveFailed(response) {
-                    $scope.toasterManage($scope.toastError, response);
                 });
+                $scope.goDataTable();
+            });
         }
     };
 

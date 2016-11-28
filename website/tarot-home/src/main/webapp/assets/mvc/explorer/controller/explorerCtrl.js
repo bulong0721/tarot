@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * explorerCtrl - controller
  */
-explorerCtrl.$inject = ['$scope', '$resource', '$filter', 'cfromly', 'Constants', 'cAlerts', 'toaster', '$rootScope', '$timeout', '$q'];
-function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, toaster, $rootScope, $timeout, $q) {
+explorerCtrl.$inject = ['$scope','$resource', 'cResource', '$filter', 'cfromly', 'Constants', 'cAlerts', 'toaster', '$rootScope', '$timeout', '$q'];
+function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, cAlerts, toaster, $rootScope, $timeout, $q) {
     var lang = $rootScope.lang_zh;
     var iDatatable = 0, iPush = 2, iEditor = 1, iConfig = 3;
     $scope.activeTab = iDatatable;
@@ -111,11 +111,9 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
 
     $scope.handleSelect = function (data) {
         if (data.type == 0) {
-            $resource('../admin/file/search').save({node: data.path}, {}).$promise.then(
-                function success(resp) {
-                    angular.merge(data.children, resp.rows);
-                }
-            );
+            cResource.save('../admin/file/search',{node: data.path}, {}).then(function(resp){
+                angular.merge(data.children, resp.rows);
+            });
         }
     };
 
@@ -152,20 +150,17 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
 
     //查询推送设备下拉框内容
     function getDeviceUsedList() {
-        var data = $resource("./device/used/list4Select").query();
-        return data;
+        return cResource.query("./device/used/list4Select");
     }
 
     //查询推送设备下拉框内容
     function getNoticeType() {
-        var data = $resource("../admin/file/getNoticeType").query();
-        return data;
+        return cResource.query("../admin/file/getNoticeType");
     }
 
     //查询推送应用下拉框内容
     function getAppList() {
-        var data = $resource("../admin/file/getAppType").query();
-        return data;
+        return cResource.query("../admin/file/getAppType");
     }
 
     function parsePushContent(value) {
@@ -390,16 +385,15 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
         if (formly.form.$valid) {
             $scope.disableSubmit = true;
             formly.options.updateInitialValue();
-            $resource(mgrDataPusher.api.push).save({}, formly.model).$promise.then(function success(resp) {
-                    $scope.disableSubmit = false;
-                    if (resp != null && resp.status == 0) {
-                        toaster.success({body: resp.statusMessage});
-                        $scope.goDataTable();
-                    } else {
-                        toaster.error({body: resp.statusMessage});
-                    }
+            cResource.save(mgrDataPusher.api.push,{}, formly.model).then(function(resp){
+                $scope.disableSubmit = false;
+                if (resp != null && resp.status == 0) {
+                    toaster.success({body: resp.statusMessage});
+                    $scope.goDataTable();
+                } else {
+                    toaster.error({body: resp.statusMessage});
                 }
-            );
+            });
         }
     };
 
@@ -408,18 +402,18 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
         var parentNode = $scope.treeControl.get_parent_branch(data);
         cAlerts.confirm('确定删除?', function () {
             //点击确定回调
-            $resource(mgrDataPusher.api.delete).save({
+            cResource.save(mgrDataPusher.api.delete,{
                 salt: data.salt,
                 path: data.path
-            }, {}).$promise.then(function success(resp) {
-                    if (resp != null && resp.status == 0) {
-                        $scope.deleteDom(parentNode.children, data.uid);
-                        toaster.success({body: "删除成功"});
-                        $scope.goDataTable();
-                    } else {
-                        toaster.error({body: resp.statusMessage});
-                    }
-                });
+            }, {}).then(function(resp){
+                if (resp != null && resp.status == 0) {
+                    $scope.deleteDom(parentNode.children, data.uid);
+                    toaster.success({body: "删除成功"});
+                    $scope.goDataTable();
+                } else {
+                    toaster.error({body: resp.statusMessage});
+                }
+            });
         });
     };
 
@@ -515,7 +509,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
         var entityText = JSON.stringify($scope.formData.model);
         var addFile = $scope.formData_addFile;
         $scope.disableSubmit = true;
-        $resource(mgrData.api.create).save({entityText: entityText}, addFile).$promise.then(function (res) {
+        cResource.save(mgrData.api.create,{entityText: entityText}, addFile).then(function(res){
             angular.merge($scope.current.children, res.rows);
             $scope.goDataTable();
         });
@@ -558,7 +552,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
 
     $scope.disableSubmit = false;
     $scope.showContent = function (data) {
-        $resource(mgrData.api.getContent).get({data: data}, {}).$promise.then(function success(resp) {
+        cResource.get(mgrData.api.getContent,{data: data}).then(function(resp){
             if (resp != null && resp.status == 0) {
                 $scope.formData.model.content = resp.rows[0].message;
                 $scope.disableSubmit = false;
@@ -570,7 +564,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
     }
 
 
-    //升级配置--------------------------------------------------------------
+//升级配置------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     $scope.goUpdateConfig = function () {
         $scope.activeTab = iConfig;
         $scope.formDataUpdateConfig.model.code = '';
@@ -648,7 +642,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
         //console.log("code:" + code);
         //先读取模块配置并加载
         //是XML的从XML解析成JSON
-        $resource(mgrData.api.getContent).get({data: data}, {}).$promise.then(function success(resp) {
+        cResource.get(mgrData.api.getContent,{data: data}).then(function(resp){
             if (!resp || resp.status != 0) {
                 toaster.error({body: code + failMessage + resp.statusMessage});
             }
@@ -731,7 +725,7 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
 
     //查询推送设备组下拉框内容
     function getProductUsedList() {
-        return $resource('./product/used/listByStore4Select').query();
+        return cResource.query('./product/used/listByStore4Select');
     }
 
     //formly配置项config
@@ -998,27 +992,23 @@ function explorerCtrl($scope, $resource, $filter, cfromly, Constants, cAlerts, t
             return;
         }
         fd.append('file', _file);
-        $resource($scope.mgrUpdateConfigData.api.uploadFile).save({
-            'type': 'file',
-            path: path
-        }, fd).$promise.then(function (res) {
-                if (0 != res.status) {
-                    $timeout(function () {
-                        toaster.error({body: _file.name + "上传失败!"})
-                    }, 0);
-                    $scope.formDataUpdateConfig.model.attributes[index].uploadState = false;
-                    return;
-                } else {
-                    $timeout(function () {
-                        toaster.success({body: _file.name + "上传成功!"})
-                    }, 0);
-                    $scope.formDataUpdateConfig.model.attributes[index].md5 = res.dataMap.tree.md5;
-                    $scope.formDataUpdateConfig.model.attributes[index].web = baseUrl.pushUrl + res.dataMap.tree.downloadPath;
-                    $scope.formDataUpdateConfig.model.attributes[index].uploadState = true;
-                    thisRow.editing = false;
-                }
-            });
-
+        cResource.upload($scope.mgrUpdateConfigData.api.uploadFile,{'type': 'file', path: path}, fd).then(function(res){
+            if (0 != res.status) {
+                $timeout(function () {
+                    toaster.error({body: _file.name + "上传失败!"})
+                }, 0);
+                $scope.formDataUpdateConfig.model.attributes[index].uploadState = false;
+                return;
+            } else {
+                $timeout(function () {
+                    toaster.success({body: _file.name + "上传成功!"})
+                }, 0);
+                $scope.formDataUpdateConfig.model.attributes[index].md5 = res.dataMap.tree.md5;
+                $scope.formDataUpdateConfig.model.attributes[index].web = baseUrl.pushUrl + res.dataMap.tree.downloadPath;
+                $scope.formDataUpdateConfig.model.attributes[index].uploadState = true;
+                thisRow.editing = false;
+            }
+        });
     };
 
     function checkThisRowOK(thisRow) {

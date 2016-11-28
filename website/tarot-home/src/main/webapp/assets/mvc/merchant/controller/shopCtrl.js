@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * merchantShopCtrl - controller
  */
-merchantShopCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', '$resource', 'NgTableParams', '$q'];
-function merchantShopCtrl($scope, Constants, cTables, cfromly, $resource, NgTableParams, $q) {
+merchantShopCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', 'cResource', 'NgTableParams', '$q'];
+function merchantShopCtrl($scope, Constants, cTables, cfromly, cResource, NgTableParams, $q) {
 
     var iDatatable = 0, iEditor = 1;
     var mgrData = $scope.mgrData = {
@@ -124,13 +124,14 @@ function merchantShopCtrl($scope, Constants, cTables, cfromly, $resource, NgTabl
     vm.toggleAll = toggleAll;
     vm.toggleOne = toggleOne;
 
+    //引流用
     function initalBindProduct() {
         if ($scope.initalBindProductList) {//如果已经从后台读取过数据了，则不再访问后台获取列表
             var deferred = $q.defer();
             deferred.resolve($scope.initalBindProductList);
             return deferred.promise;
         } else {//第一次需要从后台读取列表，且只返回前10个数据
-            return $resource('../admin/merchantStore/getAllStoreExceptSelf').get().$promise.then(function (data) {
+            return cResource.get('../admin/merchantStore/getAllStoreExceptSelf').then(function(data){
                 //console.log(data.rows)
                 //初始化showCase.selected数组，给全选框用，让它知道应该全选哪些
                 angular.forEach(data.rows, function (indexData, index, array) {
@@ -226,15 +227,7 @@ function merchantShopCtrl($scope, Constants, cTables, cfromly, $resource, NgTabl
             }
         });
 
-        $resource('../api/sale/corp/bindShop').save({
-            'bindString': JSON.stringify(result),
-            'merchantId': $scope.formBindData.model.id
-        }, {}, function (respSucc) {
-            if (0 != respSucc.status) {
-                $scope.toasterManage($scope.toastError, respSucc);
-                return;
-            }
-
+        cResource.save('../api/sale/corp/bindShop',{'bindString': JSON.stringify(result), 'merchantId': $scope.formBindData.model.id},{}).then(function(respSucc){
             //用js离线刷新表格数据
             $scope.tableOpts.data[$scope.showCase.currentRowIndex].bindStores = [];//先清空
             angular.forEach($scope.showCase.selected, function (data, index, array) {
@@ -255,12 +248,7 @@ function merchantShopCtrl($scope, Constants, cTables, cfromly, $resource, NgTabl
                     }
                 }
             });
-
-            $scope.toasterManage($scope.toastOperationSucc);
             $scope.goDataTable();
-        }, function (respFail) {
-            //console.log(respFail);
-            $scope.toasterManage($scope.toastError, respFail);
         });
     };
 

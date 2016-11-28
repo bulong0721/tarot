@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * merchantCtrl - controller
  */
-merchantCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', '$resource','$filter','$timeout'];
-function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$timeout) {
+merchantCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', 'cResource','$filter','$timeout'];
+function merchantCtrl($scope, Constants, cTables, cfromly, cResource,$filter,$timeout) {
     var mgrData = $scope.mgrData =  {
         fields: [
             {
@@ -93,8 +93,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$ti
         if (formly.form.$valid) {
             $scope.disableSubmit = true;
             //formly.options.updateInitialValue();
-            var xhr = $resource(mgrData.api.update);
-            xhr.save({}, formly.model).$promise.then($scope.saveSuccess, $scope.saveFailed);
+            cResource.save(mgrOpts.api.update,{},formly.model).then(scope.saveSuccess);
         }
     };
 
@@ -120,7 +119,6 @@ function merchantCtrl($scope, Constants, cTables, cfromly, $resource,$filter,$ti
         //console.log(res)
         //把上传结果赋值到formly.model对象对应字段
         var pic = res[0].dataMap.tree.downloadPath;
-        $scope.toasterManage($scope.toastUploadSucc);
         $scope.formData.model.logo = pic;
     });
 

@@ -7,9 +7,9 @@ angular.module('myee', [])
 /**
  * roleCtrl - controller
  */
-explorerCtrl.$inject = ['$scope', '$resource', '$uibModal','toaster'];
+explorerCtrl.$inject = ['$scope', 'cResource', '$uibModal','toaster'];
 
-function explorerCtrl($scope, $resource, $uibModal,toaster) {
+function explorerCtrl($scope, cResource, $uibModal,toaster) {
 
     $scope.search = function () {
         var to = false;
@@ -55,8 +55,8 @@ function explorerCtrl($scope, $resource, $uibModal,toaster) {
             fd.append("file",path.files[0]);
             fd.append("path",vm.filePath);
             //fd.append("type",'flie');
-            $resource('../files/create').save({type:'file'}, fd,function deleteSuccess(res){
-                console.log(res)
+            cResource.upload('../files/create',{type:'file'}, fd).then(function(res){
+
             });
         },
         delete:function(){

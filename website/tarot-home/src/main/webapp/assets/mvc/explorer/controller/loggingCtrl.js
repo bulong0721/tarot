@@ -7,9 +7,9 @@ angular.module('myee', [])
 /**
  * loggingCtrl - controller
  */
-loggingCtrl.$inject = ['$scope', '$resource', 'cTables', 'cfromly'];
+loggingCtrl.$inject = ['$scope', 'cTables', 'cfromly'];
 
-function loggingCtrl($scope, $resource, cTables, cfromly) {
+function loggingCtrl($scope, cTables, cfromly) {
     var mgrData = {
         fields: [
         ],

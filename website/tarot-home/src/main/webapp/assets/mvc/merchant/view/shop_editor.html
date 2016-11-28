@@ -47,7 +47,7 @@
                             </div>
                         </div>
                         <div class="text-center col-xs-8">
-                            <button class="btn btn-primary" ng-click="processBindSubmit()"><i class="fa fa-sm fa-check"></i><i class="fa fa-spinner icon-spin"></i>&nbsp;提交</button>
+                            <button ng-disabled="disableSubmit" class="btn btn-primary" ng-click="processBindSubmit()"><i class="fa fa-sm {{disableSubmit?'fa-spinner icon-spin':'fa-check'}}"></i>&nbsp;提交</button>
                             <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
                         </div>
                     </formly-form>

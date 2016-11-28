@@ -1,18 +1,16 @@
 /**
  * Created by Martin on 2016/4/12.
  */
-function constServiceCtor($resource, $q,$rootScope) {
+function constServiceCtor(cResource, $q,$rootScope) {
     var vm = this;
 
     //获取产品类型
-    vm.productOpts = $resource('./product/type/productOpts').query();
-
+    vm.productOpts = cResource.query('./product/type/productOpts');
     //从后台拿商户类型
-    vm.merchantType = $resource('./merchant/typeList4Select').query();
+    vm.merchantType = cResource.query('./merchant/typeList4Select');
 
     //从后台拿商户菜系
-    vm.merchantCuisine = $resource('./merchant/cuisineList4Select').query();
-
+    vm.merchantCuisine = cResource.query('./merchant/cuisineList4Select');
 
     //切换商户
     //vm.thisMerchant = {};
@@ -31,7 +29,7 @@ function constServiceCtor($resource, $q,$rootScope) {
     vm.thisMerchantStore = {};
     vm.getSwitchMerchantStore = function () {
         var deferred = $q.defer();
-        $resource('./merchantStore/getSwitch').get({}, function (resp) {
+        cResource.get('./merchantStore/getSwitch',{}).then(function(resp){
             if (resp.rows.length > 0) {
                 $rootScope.storeInfo = vm.thisMerchantStore = resp.rows[0];
             }
@@ -41,13 +39,13 @@ function constServiceCtor($resource, $q,$rootScope) {
     }
 
     //从后台拿到省列表
-    vm.provinces = $resource('./province/list4Select').query();
+    vm.provinces = cResource.query('./province/list4Select');
 
     //根据省从后台拿市列表
     vm.citys = [];
     vm.getCitysByProvince = function (provinceId) {
         if (provinceId) {
-            $resource('./city/listByProvince').get({id: provinceId}, function (resp) {
+            cResource.get('./city/listByProvince',{id: provinceId}).then(function(resp){
                 var length = resp.rows.length;
                 if (length > 0) {
                     vm.citys.splice(0, vm.citys.length);
@@ -63,7 +61,7 @@ function constServiceCtor($resource, $q,$rootScope) {
     vm.districts = [];
     vm.getDistrictsByCity = function (cityId) {
         if (cityId) {
-            $resource('./district/listByCity').get({id: cityId}, function (resp) {
+            cResource.get('./district/listByCity',{id: cityId}).then(function(resp){
                 var length = resp.rows.length;
                 if (length > 0) {
                     vm.districts.splice(0, vm.districts.length);
@@ -96,10 +94,13 @@ function constServiceCtor($resource, $q,$rootScope) {
 /**
  * cTables
  * */
-function cTablesService($resource, NgTableParams, cAlerts, toaster,$timeout) {
+function cTablesService(NgTableParams, cAlerts,$timeout,cResource) {
     var vm = this, iDatatable = 0, iEditor = 1;
-
-
+    //处理toaster
+    vm.toasterManage = function(type,res){
+        $filter('toasterManage')(type,res != undefined ? res : '');
+    }
+    //属性操作
     vm.initAttrNgMgr = function(mgrData,scope){
         scope.cancelAttr = function (product, attr) {
             //var index = product.attributes.indexOf(attr);
@@ -110,13 +111,7 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster,$timeout) {
         scope.deleteAttr = function (product, attr) {
             cAlerts.confirm('确定删除?',function(){
                 //点击确定回调
-                var xhr = $resource(mgrData.api.deleteAttr);
-                xhr.save({id: product.id}, attr).$promise.then(function (result) {
-                    if (0 != result.status) {
-                        scope.toasterManage(scope.toastError,result);
-                        return;
-                    }
-                    scope.toasterManage(scope.toastDeleteSucc);
+                cResource.remove(mgrData.api.deleteAttr,{id: product.id},attr).then(function(response){
                     var index = product.attributes.indexOf(attr);
                     product.attributes.splice(index, 1);
                 });
@@ -127,13 +122,7 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster,$timeout) {
         };
 
         scope.updateAttr = function (product, attr) {
-            var xhr = $resource(mgrData.api.updateAttr);
-            xhr.save({id: product.id}, attr).$promise.then(function (result) {
-                if (0 != result.status) {
-                    scope.toasterManage(scope.toastError,result);
-                    return;
-                }
-                scope.toasterManage(scope.toastOperationSucc);
+            cResource.save(mgrData.api.updateAttr,{id: product.id},attr).then(function(result){
                 attr.editing = false;
             });
         };
@@ -146,12 +135,14 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster,$timeout) {
         };
     }
 
+    //通用fromly 通用ngtable的操作
     vm.initNgMgrCtrl = function (mgrOpts, scope) {
         scope.toastError = 0, scope.toastOperationSucc = 1, scope.toastDeleteSucc = 2, scope.toastSearchSucc = 3, scope.toastUploadSucc = 4;
         //初始化搜索配置
         scope.where = {};
         scope.disableSubmit = false;//防止二次提交
         scope.sHigh = false;//默认简化
+        scope.activeTab = iDatatable;//初始化配置tabs的show or hide
 
         //高级搜索切换
         scope.sHighBut = function(){
@@ -168,50 +159,15 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster,$timeout) {
         scope.goDataTable = function () {
             scope.activeTab = iDatatable;
         };
-
-        //提交失败预留
-        scope.saveFailed = function (response) {
-            scope.toasterManage(scope.toastError, response);
-        }
-
-        //弹提示
-        scope.toasterManage = function (type, response) {
-            var respMessage = response ? response.statusMessage : "" ;
-            switch (type) {
-                case scope.toastError://错误
-                    toaster.error({body: "出错啦!" + respMessage});
-                    break;
-                case scope.toastOperationSucc://操作成功
-                    toaster.success({body: "操作成功!"+ respMessage});
-                    break;
-                case scope.toastDeleteSucc://删除成功
-                    toaster.success({body: "删除成功!"+ respMessage});
-                    break;
-                case scope.toastSearchSucc://查询成功
-                    toaster.success({body: "查询成功!"+ respMessage});
-                    break;
-                case scope.toastUploadSucc://查询成功
-                    toaster.success({body: "上传成功!"+ respMessage});
-                    break;
-                default :
-                    toaster.error({body: respMessage});
-            }
-
-        }
-
         //formly提交
         scope.processSubmit = function () {
             var formly = scope.formData;
             if (formly.form.$valid) {
                 scope.disableSubmit = true;
                 formly.options.updateInitialValue();
-                var xhr = $resource(mgrOpts.api.update);
-                xhr.save({}, formly.model).$promise.then(scope.saveSuccess, scope.saveFailed);
+                cResource.save(mgrOpts.api.update,{},formly.model).then(scope.saveSuccess);
             }
         };
-
-        //初始化配置tabs的show or hide
-        scope.activeTab = iDatatable;
 
         //点击编辑
         scope.goEditor = function (rowIndex) {
@@ -231,15 +187,9 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster,$timeout) {
             cAlerts.confirm('确定删除?', function () {
                 //点击确定回调
                 if (mgrOpts.api.delete && rowIndex > -1) {
-                    var data = scope.tableOpts.data[rowIndex];
-                    $resource(mgrOpts.api.delete).save({}, data, function deleteSuccess(response) {
-                        if (0 != response.status) {
-                            scope.toasterManage(scope.toastError, response);
-                            return;
-                        }
+                    cResource.remove(mgrOpts.api.delete,{},scope.tableOpts.data[rowIndex]).then(function(response){
                         scope.tableOpts.data.splice(rowIndex, 1);//更新数据表
-                        scope.toasterManage(scope.toastDeleteSucc);
-                    }, scope.saveFailed);
+                    });
                 }
             }, function () {
                 //点击取消回调
@@ -250,19 +200,13 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster,$timeout) {
         //增删改查后处理tables数据
         scope.saveSuccess = function (response) {
             scope.disableSubmit = false;
-            if (0 != response.status) {
-                scope.toasterManage(scope.toastError, response);
-                return;
-            }
             var data = response.dataMap.updateResult;//scope.formData.model;//response.rows[0].updateResult;//
-
             if (scope.rowIndex < 0) {
                 //scope.tableOpts.data.unshift(data);
                 scope.tableOpts.data.splice(0, 0, data);
             } else {
                 scope.tableOpts.data.splice(scope.rowIndex, 1, data);
             }
-            scope.toasterManage(scope.toastOperationSucc);
             scope.goDataTable();
         }
 
@@ -270,19 +214,10 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster,$timeout) {
         scope.tableOpts = new NgTableParams({}, {
             counts: [],
             getData: function (params) {
-                //params.count(20);
                 if (!scope.loadByInit) {
                     return [];
                 }
-                var xhr = $resource(mgrOpts.api.read);
-                var args = angular.extend(params.url(), scope.where);
-
-                return xhr.get(args).$promise.then(function (data) {
-                    if (0 != data.status) {
-                        scope.toasterManage(scope.toastError, data);
-                        return;
-                    }
-                    scope.toasterManage(scope.toastSearchSucc);
+                return cResource.get(mgrOpts.api.read,angular.extend(params.url(), scope.where)).then(function(data){
                     params.total(data.recordsTotal);
                     return data.rows ? data.rows : [];
                 });
@@ -298,8 +233,8 @@ function cTablesService($resource, NgTableParams, cAlerts, toaster,$timeout) {
             scope.tableOpts.page(1);
             scope.tableOpts.reload();
         };
-
-        $timeout(function () {scope.search()}, 100);//初始加载列表数据
+        //初始加载列表数据
+        $timeout(function () {scope.search()}, 100);
     }
 }
 
@@ -648,12 +583,16 @@ function cAlerts($uibModal) {
 /*
  * uploads
  * */
-function uploads($qupload,$resource) {
-    var token = $resource('./superman/picture/tokenAndKey').get();
+function uploads($qupload,cResource) {
+    //cResource
+    var token = '';
+    cResource.get('./superman/picture/tokenAndKey').then(function(data){
+        token = data.dataMap.uptoken;
+    });
     return {
         qnUpload: function (file,progress) {
             //七牛上传
-            var files = $qupload.upload({file: file, token: token.dataMap.uptoken})
+            var files = $qupload.upload({file: file, token: token})
             files.then(function (res) {
 
             }, function (res) {
@@ -667,14 +606,9 @@ function uploads($qupload,$resource) {
             //木爷服务器上传
             //qiniuPath:qn?qn:
             //attr.param.qiniuPath = 'key'
-            var files = $resource(attr.url).save(attr.param, file).$promise;
+            var files = cResource.save(attr.url,attr.param,file);
             files.then(function (res) {
-                if (0 != res.status) {
-                    $scope.toasterManage($scope.toastError, res);
-                    return false;
-                }else{
-                    return res;
-                }
+                return res;
             });
             progress(0)
             return files;
@@ -686,20 +620,48 @@ function uploads($qupload,$resource) {
 * cResource
 *
 * */
-function cResource(){
-    //$resource(url)
+function cResource($resource,$filter,$q){
+    //错误状态
+    var toastError = 0, toastOperationSucc = 1, toastDeleteSucc = 2, toastSearchSucc = 3, toastUploadSucc = 4;
+    //处理数据
+    function dataFilter(data,type,state){
+        if (0 != data.status) {
+            $filter('toasterManage')(toastError, data);
+            return false;
+        }
+        state && $filter('toasterManage')(type);
+        return data;
+    }
+    //res
     return {
-        query:function(){
-
+        query:function(url,params,q){
+            if(q){
+                var defer = $q.defer();
+                defer.resolve($resource(url).query(params || {}));
+                return defer.promise;
+            }else{
+                return $resource(url).query(params || {})
+            }
         },
-        get:function(){
-
+        get:function(url,params){
+            return $resource(url).get(params).$promise.then(function(data){
+                return dataFilter(data,toastSearchSucc,$filter('isHasProp')(params));
+            })
         },
-        save:function(){
-
+        save:function(url,params,payload){
+            return $resource(url).save(params, payload).$promise.then(function(data){
+                return dataFilter(data,toastOperationSucc,true);
+            });
         },
-        remove:function(){
-
+        upload:function(url,params,payload){
+            return $resource(url).save(params, payload).$promise.then(function(data){
+                return dataFilter(data,toastUploadSucc,true);
+            });
+        },
+        remove:function(url,params,payload){
+            return $resource(url).save(params, payload).$promise.then(function(data){
+                return dataFilter(data,toastDeleteSucc,true);
+            });
         }
     }
 }
@@ -856,7 +818,7 @@ function metrics($filter){
                     text: opt.name,
                     textStyle:{color:'#676a6c', fontWeight:'normal', fontSize:'13'}
                 },
-                tooltip : {trigger: 'axis'},
+                ooltip : {trigger: 'axis'},
                 color: ['#fff'],
                 series: [
                     {
@@ -874,6 +836,19 @@ function metrics($filter){
     }
 }
 
+//
+function myInterceptor() {
+    return {
+        response: function (response) {
+            return response;
+        },
+        responseError: function (res) {
+            console.log(res)
+            console.log('responseError')
+        }
+    };
+}
+
 angular
     .module('myee')
     .service('Constants', constServiceCtor)
@@ -883,3 +858,4 @@ angular
     .factory('cAlerts', cAlerts)
     .factory('cResource', cResource)
     .factory('metrics', metrics)
+    .factory('myInterceptor', myInterceptor)

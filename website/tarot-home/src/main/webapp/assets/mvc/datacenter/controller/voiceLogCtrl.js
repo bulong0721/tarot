@@ -5,8 +5,8 @@ angular.module('myee', [])
  * voiceLogCtrl - controller
  * @type {string[]}
  */
-voiceLogCtrl.$inject = ['$scope', '$resource', '$filter', 'cTables', 'Constants', 'cAlerts', 'toaster'];
-function voiceLogCtrl($scope, $resource, $filter, cTables, Constants, cAlerts, toaster) {
+voiceLogCtrl.$inject = ['$scope', '$filter', 'cTables', 'Constants', 'cAlerts', 'toaster'];
+function voiceLogCtrl($scope, $filter, cTables, Constants, cAlerts, toaster) {
     var mgrData = {
         fields: [],
         api: {

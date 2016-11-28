@@ -7,9 +7,9 @@ angular.module('myee', [])
 /**
  * camera - controller
  */
-camera.$inject = ['$scope','$resource'];
+camera.$inject = ['$scope','cResource'];
 
-function camera($scope,$resource) {
+function camera($scope,cResource) {
     var vm = $scope.vm = {
         machines:[],
         getMachine:function(val){
@@ -17,11 +17,9 @@ function camera($scope,$resource) {
         }
     }
     //
-    $resource('../admin/product/used/listByStoreId').get({}, function (resp) {
-        if(resp.status == '0'){
-            if(resp.rows && resp.rows.length>0){
-                vm.machines = resp.rows;
-            }
+    cResource.get('../admin/product/used/listByStoreId').then(function(resp){
+        if(resp.rows && resp.rows.length>0){
+            vm.machines = resp.rows;
         }
     });
 }

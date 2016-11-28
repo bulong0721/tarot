@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * clientPrizeCtrl - controller
  */
-clientPrizeCtrl.$inject = ['$scope', 'Constants','cTables','cfromly','toaster','$resource','$filter','baseConstant'];
-function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$filter,baseConstant) {
+clientPrizeCtrl.$inject = ['$scope', 'Constants','cTables','cfromly','toaster','cResource','$filter','baseConstant'];
+function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,cResource,$filter,baseConstant) {
     var mgrData = $scope.mgrData = {
         fields: [
             {
@@ -170,8 +170,7 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
         var formly = $scope.formData;
         if (formly.form.$valid) {
             $scope.disableSubmit = true;
-            var xhr = $resource(mgrData.api.update);
-            xhr.save({}, formly.model).$promise.then($scope.saveSuccess, $scope.saveFailed);
+            cResource.save(mgrData.api.update,{},formly.model).then(scope.saveSuccess);
         }
     };
 
@@ -197,7 +196,6 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
     $scope.$on('fileToUpload', function (event, arg) {
         var uploadId = event.targetScope.id;
         var pic = arg[0].dataMap.tree.downloadPath;
-        console.log(pic);
         if(uploadId == 'smallPic'){
             $scope.formData.model.smallPic = pic;
         }else if(uploadId == 'bigPic'){
@@ -207,19 +205,11 @@ function clientPrizeCtrl($scope, Constants,cTables,cfromly,toaster,$resource,$fi
     });
 
     $scope.checkCodeUp = function (file,id) {
-        console.log(file)
-        console.log(id)
         var fd = new FormData();
         fd.append('file', file.files[0]);
         fd.append('prizeId',id);
-        $resource(mgrData.api.uploadCheckCode).save({},fd).$promise.then(function(res){
-            console.log(res);
-            if (0 != res.status) {
-                $scope.toasterManage($scope.toastError, res);
-                return;
-            } else {
-                $scope.toasterManage($scope.toastUploadSucc);
-            }
+        cResource.upload(mgrData.api.uploadCheckCode,{},fd).then(function(res){
+
         });
     }
 }
