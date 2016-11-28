@@ -16,7 +16,7 @@ public class Role extends GenericEntity<Long, Role> {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     protected Long id;
 
-    @Column(name = "ROLE_NAME", length = 20, nullable = false)
+    @Column(name = "ROLE_NAME", length = 20, unique = true, nullable = false)
     protected String roleName;
 
     @Column(name = "DESCRIPTION", length = 255)

@@ -26,7 +26,7 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
     protected Long id;
 
     @NotEmpty
-    @Column(name = "CODE", length = 100, nullable = false)
+    @Column(name = "CODE", length = 100, unique = true, nullable = false)
     private String code;
 
     @ManyToOne(targetEntity = MerchantStore.class, optional = false)
