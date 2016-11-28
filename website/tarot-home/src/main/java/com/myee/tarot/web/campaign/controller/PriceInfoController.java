@@ -93,7 +93,7 @@ public class PriceInfoController {
                 }
             }
             LOGGER.info("keyID为" + openId);
-            List<PriceInfo> infos = priceInfoService.findByStatusAndKeyId(openId, status);
+            List<PriceInfo> infos = priceInfoService.listByStatusAndKeyId(openId, status);
             //每次请求未使用获取信息对后进行过期判定
             if (status == Constants.PRICEINFO_UNUSED) {
                 Iterator<PriceInfo> iter = infos.iterator();

@@ -40,8 +40,8 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
     }
 
     @Override
-    public List<PriceInfo> findByStatusAndKeyId(String keyId, int status) {
-        return priceInfoDao.findByStatusAndKeyId(keyId, status);
+    public List<PriceInfo> listByStatusAndKeyId(String keyId, int status) {
+        return priceInfoDao.listByStatusAndKeyId(keyId, status);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class PriceInfoServiceImpl extends GenericEntityServiceImpl<Long, PriceIn
 
     @Override
     public boolean findByStoreIdAndKeyIdToday(Long storeId, String keyId) {
-        List<PriceInfo> priceInfo = priceInfoDao.findByStoreIdAndKeyId(storeId, keyId);
+        List<PriceInfo> priceInfo = priceInfoDao.listByStoreIdAndKeyId(storeId, keyId);
         List<PriceInfo> onlyInfo = Lists.newArrayList();
         for (PriceInfo info : priceInfo) {
             Date getDate = info.getGetDate();
