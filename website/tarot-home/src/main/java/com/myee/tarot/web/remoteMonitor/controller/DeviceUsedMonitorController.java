@@ -214,8 +214,11 @@ public class DeviceUsedMonitorController {
             //获取最新的一条静态指标，为了取出已安装的应用列表
             SystemMetrics systemMetricsSummary = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_SUMMARY);
             List<AppInfo> installedAppInfoList = null;
-            if (systemMetricsSummary.getId() != null) {
+            List<MetricInfo> metricInfoList4Summary = null;
+            if (systemMetricsSummary != null && systemMetricsSummary.getId() != null) {
                 installedAppInfoList = appInfoService.listBySystemMetricsId(systemMetricsSummary.getId());
+                //指标概览summary里面要用的实时指标值
+                metricInfoList4Summary = metricInfoService.listBySystemMetricsId(systemMetricsSummary.getId(),Constants.METRICS_4_SUMMARY_KEY_LIST);
             }
             //把已安装的应用列表缓存到Map中
             Map<String, AppInfo> installedAppMap = MetricsUtil.appInfoListToMap(installedAppInfoList, Constants.APPINFO_TYPE_APP);
@@ -224,7 +227,6 @@ public class DeviceUsedMonitorController {
             entry.putAll(commonMetricsToMap(systemMetrics, deviceUsed, installedAppMap));
 
             //指标概览summary里面要用的实时指标值
-            List<MetricInfo> metricInfoList4Summary = metricInfoService.listBySystemMetricsId(systemMetricsSummary.getId(),Constants.METRICS_4_SUMMARY_KEY_LIST);
             entry.putAll(systemMetrics4SummaryToMap(metricInfoList4Summary));
 
 
@@ -345,8 +347,11 @@ public class DeviceUsedMonitorController {
             //获取最新的一条静态指标，为了取出已安装的应用列表
             SystemMetrics systemMetricsSummary = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_SUMMARY);
             List<AppInfo> installedAppInfoList = null;
-            if (systemMetricsSummary.getId() != null) {
+            List<MetricInfo> metricInfoList4Summary = null;
+            if (systemMetricsSummary != null && systemMetricsSummary.getId() != null) {
                 installedAppInfoList = appInfoService.listBySystemMetricsId(systemMetricsSummary.getId());
+                //指标概览summary里面要用的实时指标值
+                metricInfoList4Summary = metricInfoService.listBySystemMetricsId(systemMetricsSummary.getId(),Constants.METRICS_4_SUMMARY_KEY_LIST);
             }
             //把已安装的应用列表缓存到Map中
             Map<String, AppInfo> installedAppMap = MetricsUtil.appInfoListToMap(installedAppInfoList, Constants.APPINFO_TYPE_APP);
@@ -355,7 +360,6 @@ public class DeviceUsedMonitorController {
             entry.putAll(commonMetricsToMap(systemMetrics, deviceUsed, installedAppMap));
 
             //指标概览summary里面要用的实时指标值
-            List<MetricInfo> metricInfoList4Summary = metricInfoService.listBySystemMetricsId(systemMetricsSummary.getId(),Constants.METRICS_4_SUMMARY_KEY_LIST);
             entry.putAll(systemMetrics4SummaryToMap(metricInfoList4Summary));
             resp.addDataEntry(entry);
         } catch (Exception e) {

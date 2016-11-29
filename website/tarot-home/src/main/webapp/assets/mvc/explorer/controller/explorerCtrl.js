@@ -1024,7 +1024,12 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
             }, 0);
             return false;
         }
-
+        if($filter('isNullOrEmptyString')(thisRow.editing) || thisRow.editing == true){
+            $timeout(function () {
+                toaster.error({body: "有未保存的行，请点击√保存!"})
+            }, 0);
+            return false;
+        }
         if (thisRow.type == $scope.mgrUpdateConfigData.constant.TYPE_APK && (typeof thisRow.version != 'number')) {
             $timeout(function () {
                 toaster.error({body: "类型为“应用”的请填写纯数字版本信息!"})
