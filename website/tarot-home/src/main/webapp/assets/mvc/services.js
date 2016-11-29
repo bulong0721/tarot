@@ -200,6 +200,7 @@ function cTablesService(NgTableParams, cAlerts,$timeout,cResource) {
         //增删改查后处理tables数据
         scope.saveSuccess = function (response) {
             scope.disableSubmit = false;
+            if(!response.dataMap) return false;
             var data = response.dataMap.updateResult;//scope.formData.model;//response.rows[0].updateResult;//
             if (scope.rowIndex < 0) {
                 //scope.tableOpts.data.unshift(data);
@@ -625,12 +626,31 @@ function cResource($resource,$filter,$q){
     var toastError = 0, toastOperationSucc = 1, toastDeleteSucc = 2, toastSearchSucc = 3, toastUploadSucc = 4;
     //处理数据
     function dataFilter(data,type,state){
-        if (0 != data.status) {
+        if (data.status != 0) {
             $filter('toasterManage')(toastError, data);
             return false;
         }
         state && $filter('toasterManage')(type);
         return data;
+    }
+    //
+    function transformResponse(data, headers,state){
+        if(state == 200 && headers('content-type') != 'application/json;charset=UTF-8'){
+            window.location.href="/admin/login.html";
+            return false;
+        }else if(state == 500){
+            console.log('联系管理员');
+            return false;
+        }
+        return angular.fromJson(data);
+    }
+    //
+    function _http(url){
+        return $resource(url,{},{
+            get:{method: 'GET',transformResponse: transformResponse},
+            save:{method: 'POST',transformResponse: transformResponse}
+        })
+
     }
     //res
     return {
@@ -643,25 +663,33 @@ function cResource($resource,$filter,$q){
                 return $resource(url).query(params || {})
             }
         },
-        get:function(url,params){
-            return $resource(url).get(params).$promise.then(function(data){
-                return dataFilter(data,toastSearchSucc,$filter('isHasProp')(params));
+        get:function(url,params,payload){
+            var defer = $q.defer();
+            _http(url).get(params).$promise.then(function(data){
+                defer.resolve(dataFilter(data,toastSearchSucc,$filter('isHasProp')(params)));
             })
+            return defer.promise;
         },
         save:function(url,params,payload){
-            return $resource(url).save(params, payload).$promise.then(function(data){
-                return dataFilter(data,toastOperationSucc,true);
-            });
+            var defer = $q.defer();
+            _http(url).save(params, payload).$promise.then(function(data){
+                defer.resolve(dataFilter(data,toastOperationSucc,true));
+            })
+            return defer.promise;
         },
         upload:function(url,params,payload){
-            return $resource(url).save(params, payload).$promise.then(function(data){
-                return dataFilter(data,toastUploadSucc,true);
-            });
+            var defer = $q.defer();
+            _http(url).save(params, payload).$promise.then(function(data){
+                defer.resolve(dataFilter(data,toastUploadSucc,true));
+            })
+            return defer.promise;
         },
         remove:function(url,params,payload){
-            return $resource(url).save(params, payload).$promise.then(function(data){
-                return dataFilter(data,toastDeleteSucc,true);
-            });
+            var defer = $q.defer();
+            _http(url).save(params, payload).$promise.then(function(data){
+                defer.resolve(dataFilter(data,toastDeleteSucc,true));
+            })
+            return defer.promise;
         }
     }
 }
@@ -836,19 +864,6 @@ function metrics($filter){
     }
 }
 
-//
-function myInterceptor() {
-    return {
-        response: function (response) {
-            return response;
-        },
-        responseError: function (res) {
-            console.log(res)
-            console.log('responseError')
-        }
-    };
-}
-
 angular
     .module('myee')
     .service('Constants', constServiceCtor)
@@ -858,4 +873,3 @@ angular
     .factory('cAlerts', cAlerts)
     .factory('cResource', cResource)
     .factory('metrics', metrics)
-    .factory('myInterceptor', myInterceptor)

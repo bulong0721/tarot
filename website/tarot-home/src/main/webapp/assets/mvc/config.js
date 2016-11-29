@@ -58,12 +58,10 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
     $urlRouterProvider.otherwise("/merchant/shop");
 
     $ocLazyLoadProvider.config({
-        // Set to true if you want to see what and when is dynamically loaded
         debug: false
     });
 
     $httpProvider.defaults.headers.post['Content-Type'] = undefined;
-    $httpProvider.interceptors.push('myInterceptor');
 
     $stateProvider
         .state('merchant', {

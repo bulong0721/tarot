@@ -93,7 +93,7 @@ function merchantCtrl($scope, Constants, cTables, cfromly, cResource,$filter,$ti
         if (formly.form.$valid) {
             $scope.disableSubmit = true;
             //formly.options.updateInitialValue();
-            cResource.save(mgrOpts.api.update,{},formly.model).then(scope.saveSuccess);
+            cResource.save(mgrData.api.update,{},formly.model).then($scope.saveSuccess);
         }
     };
 
