@@ -438,7 +438,7 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
                 addFile = new FormData();
             }
             var newFilePath = $scope.formData.model.currPath;
-            if(newFilePath.indexOf("/") >= 0 || newFilePath.indexOf("\\") >= 0){
+            if(newFilePath != "" && newFilePath != undefined && (newFilePath.indexOf("/") >= 0 || newFilePath.indexOf("\\") >= 0)){
                 toaster.error({body: "文件路径不能包含/、\\！"});
                 return;
             }
