@@ -227,7 +227,7 @@ public class MetricsUtil {
                 if (metricDetail == null) {
                     continue;
                 }
-                List<MetricInfo> tempList = map.get(metricInfo.getName());
+                List<MetricInfo> tempList = map.get(systemMetrics.getBoardNo() + "_" + metricInfo.getName());
                 DeviceUsed deviceUsed = deviceUsedService.getByBoardNo(systemMetrics.getBoardNo());
 
                 if (tempList != null && tempList.size() >= pointCount) {

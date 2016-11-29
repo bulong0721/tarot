@@ -156,7 +156,13 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
         LOG.info("{}", metricCache);
         try {
             Map<String, Long> map = metricCache.getLastUpdateTimeCache();
-            if (metricCache != null && map == null) {
+            boolean ifContainKey = false;
+            for (String key : map.keySet()) {
+                key.startsWith(list.get(0).getBoardNo());
+                ifContainKey = true;
+                break;
+            }
+            if (metricCache != null && map == null && !ifContainKey) {
                 Map<String, Long> lastUpdateTimeCache = Maps.newConcurrentMap();
                 lastUpdateTimeCache.put(list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_HOUR, 0L);
                 lastUpdateTimeCache.put(list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_TWO_HOUR, 0L);
@@ -179,7 +185,7 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
                 oneHourMetricInfoCache = Maps.newConcurrentMap();
                 metricCache.setOneHourMetricInfoPointsCache(oneHourMetricInfoCache);
             }
-            insertDataToRedisByRange(pointCount, list, now, lastUpdateTimeCache, oneHourMetricInfoCache, MetricCache.LAST_UPDATE_TIME_KEY_ONE_HOUR, Constants.INTERVAL_ONE_HOUR);
+            insertDataToRedisByRange(pointCount, list, now, lastUpdateTimeCache, oneHourMetricInfoCache, list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_HOUR, Constants.INTERVAL_ONE_HOUR);
         } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(1))) { //两小时范围
             pointCount = Constants.TWO_HOUR_POINT_COUNT;
             Map<String, List<MetricInfo>> twoHourMetricInfoCache = metricCache.getTwoHourMetricInfoPointsCache();
@@ -187,7 +193,7 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
                 twoHourMetricInfoCache = Maps.newConcurrentMap();
                 metricCache.setTwoHourMetricInfoPointsCache(twoHourMetricInfoCache);
             }
-            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, twoHourMetricInfoCache, MetricCache.LAST_UPDATE_TIME_KEY_TWO_HOUR, Constants.INTERVAL_TWO_HOUR);
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, twoHourMetricInfoCache, list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_TWO_HOUR, Constants.INTERVAL_TWO_HOUR);
 
         } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(2))) { //四小时范围
             pointCount = Constants.FOUR_HOUR_POINT_COUNT;
@@ -196,7 +202,7 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
                 fourHourMetricInfoCache = Maps.newConcurrentMap();
                 metricCache.setFourHourMetricInfoPointsCache(fourHourMetricInfoCache);
             }
-            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, fourHourMetricInfoCache, MetricCache.LAST_UPDATE_TIME_KEY_FOUR_HOUR, Constants.INTERVAL_FOUR_HOUR);
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, fourHourMetricInfoCache, list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_FOUR_HOUR, Constants.INTERVAL_FOUR_HOUR);
 
         } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(3))) { //半天范围
             pointCount = Constants.HALF_DAY_POINT_COUNT;
@@ -205,7 +211,7 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
                 halfDayMetricInfoCache = Maps.newConcurrentMap();
                 metricCache.setHalfDayMetricInfoPointsCache(halfDayMetricInfoCache);
             }
-            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, halfDayMetricInfoCache, MetricCache.LAST_UPDATE_TIME_KEY_HALF_DAY, Constants.INTERVAL_HALF_DAY);
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, halfDayMetricInfoCache, list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_HALF_DAY, Constants.INTERVAL_HALF_DAY);
 
         } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(4))) { //一天范围
             pointCount = Constants.ONE_DAY_POINT_COUNT;
@@ -214,7 +220,7 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
                 oneDayMetricInfoCache = Maps.newConcurrentMap();
                 metricCache.setOneDayMetricInfoPointsCache(oneDayMetricInfoCache);
             }
-            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, oneDayMetricInfoCache, MetricCache.LAST_UPDATE_TIME_KEY_ONE_DAY, Constants.INTERVAL_ONE_DAY);
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, oneDayMetricInfoCache, list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_DAY, Constants.INTERVAL_ONE_DAY);
 
         } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(5))) { //一周范围
             pointCount = Constants.ONE_WEEK_POINT_COUNT;
@@ -223,7 +229,7 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
                 oneWeekMetricInfoCache = Maps.newConcurrentMap();
                 metricCache.setOneWeekMetricInfoPointsCache(oneWeekMetricInfoCache);
             }
-            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, oneWeekMetricInfoCache, MetricCache.LAST_UPDATE_TIME_KEY_ONE_WEEK, Constants.INTERVAL_ONE_WEEK);
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, oneWeekMetricInfoCache, list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_WEEK, Constants.INTERVAL_ONE_WEEK);
 
         } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(6))) { //一个月范围
             pointCount = Constants.ONE_MONTH_POINT_COUNT;
@@ -232,7 +238,7 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
                 oneMonthMetricInfoCache = Maps.newConcurrentMap();
                 metricCache.setOneMonthMetricInfoPointsCache(oneMonthMetricInfoCache);
             }
-            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, oneMonthMetricInfoCache, MetricCache.LAST_UPDATE_TIME_KEY_ONE_MONTH, Constants.INTERVAL_ONE_MONTH);
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, oneMonthMetricInfoCache, list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_MONTH, Constants.INTERVAL_ONE_MONTH);
 
         } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(7))) { //一年范围
             pointCount = Constants.ONE_YEAR_POINT_COUNT;
@@ -241,7 +247,7 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
                 oneYearMetricInfoCache = Maps.newConcurrentMap();
                 metricCache.setOneYearMetricInfoPointsCache(oneYearMetricInfoCache);
             }
-            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, oneYearMetricInfoCache, MetricCache.LAST_UPDATE_TIME_KEY_ONE_YEAR, Constants.INTERVAL_ONE_YEAR);
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, oneYearMetricInfoCache, list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_YEAR, Constants.INTERVAL_ONE_YEAR);
         }
     }
 
