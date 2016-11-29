@@ -77,10 +77,10 @@ public class DeviceController {
     //把类转换成entry返回给前端，解耦和
     private Map objectToEntry(Device device) {
         Map entry = new HashMap();
-        entry.put("id",device.getId());
-        entry.put("name",device.getName());
-        entry.put("versionNum",device.getVersionNum());
-        entry.put("description",device.getDescription());
+        entry.put("id", device.getId());
+        entry.put("name", device.getName());
+        entry.put("versionNum", device.getVersionNum());
+        entry.put("description", device.getDescription());
         List<AttributeDTO> attributeDTOs = Lists.transform(device.getAttributes(), new Function<DeviceAttribute, AttributeDTO>() {
             @Nullable
             @Override
@@ -96,14 +96,14 @@ public class DeviceController {
     @ResponseBody
     public AjaxResponse updateDevice(@Valid @RequestBody Device device, HttpServletRequest request) {
         try {
-            AjaxResponse resp ;
+            AjaxResponse resp;
             device = deviceService.update(device);
             resp = AjaxResponse.success();
             resp.addEntry("updateResult", objectToEntry(device));
             return resp;
         } catch (Exception e) {
             e.printStackTrace();
-            return AjaxResponse.failed(-1,"失败");
+            return AjaxResponse.failed(-1, "失败");
         }
 
     }
@@ -116,12 +116,12 @@ public class DeviceController {
             List<Device> deviceList = deviceService.list();
             for (Device device : deviceList) {
                 Map entry = new HashMap();
-                entry.put("name",device.getName());
-                entry.put("value",device.getId());
+                entry.put("name", device.getName());
+                entry.put("value", device.getId());
                 resp.addDataEntry(entry);
             }
             return resp.getRows();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -132,7 +132,7 @@ public class DeviceController {
     @ResponseBody
     public AjaxResponse deleteDevice(@Valid @RequestBody Device device, HttpServletRequest request) {
         try {
-            AjaxResponse resp ;
+            AjaxResponse resp;
             if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
@@ -146,7 +146,7 @@ public class DeviceController {
             return AjaxResponse.success();
         } catch (Exception e) {
             e.printStackTrace();
-            return AjaxResponse.failed(-1,"在其他地方被使用，无法删除");
+            return AjaxResponse.failed(-1, "在其他地方被使用，无法删除");
         }
 
     }
@@ -154,7 +154,7 @@ public class DeviceController {
     @RequestMapping(value = {"admin/device/attribute/save", "shop/device/attribute/save"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveAttribute(@ModelAttribute Device device, @Valid @RequestBody DeviceAttribute attribute, HttpServletRequest request) throws Exception {
-        AjaxResponse resp ;
+        AjaxResponse resp;
         DeviceAttribute entity = attribute;
         if (null != attribute.getId()) {
             entity = deviceAttributeService.findById(attribute.getId());
@@ -172,7 +172,7 @@ public class DeviceController {
 
     @RequestMapping(value = {"admin/device/attribute/delete", "shop/device/attribute/delete"}, method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse deleteAttribute(@Valid @RequestBody DeviceAttribute attribute,  HttpServletRequest request) throws Exception {
+    public AjaxResponse deleteAttribute(@Valid @RequestBody DeviceAttribute attribute, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
             if (null != attribute.getId()) {
@@ -218,10 +218,10 @@ public class DeviceController {
         return resp;
     }
 
-    @RequestMapping(value = {"admin/device/used/listByStoreId", "shop/device/used/listByStoreId"} , method = RequestMethod.GET)
+    @RequestMapping(value = {"admin/device/used/listByStoreId", "shop/device/used/listByStoreId"}, method = RequestMethod.GET)
     public
     @ResponseBody
-    AjaxPageableResponse deviceUsedListByStoreId( HttpServletRequest request, PageRequest pageRequest) {
+    AjaxPageableResponse deviceUsedListByStoreId(HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
             Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
@@ -249,7 +249,7 @@ public class DeviceController {
     @RequestMapping(value = {"admin/device/used/list4Select", "shop/device/used/list4Select"}, method = RequestMethod.GET)
     @ResponseBody
     public List deviceUsedList(HttpServletRequest request) {
-        AjaxResponse resp = new AjaxResponse() ;
+        AjaxResponse resp = new AjaxResponse();
         try {
             Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
             if (o == null) {
@@ -264,12 +264,12 @@ public class DeviceController {
             List<DeviceUsed> deviceUsedList = pageList.getList();
             for (DeviceUsed deviceUsed : deviceUsedList) {
                 Map entry = new HashMap();
-                entry.put("name",deviceUsed.getName());
-                entry.put("value",deviceUsed.getBoardNo());
+                entry.put("name", deviceUsed.getName());
+                entry.put("value", deviceUsed.getBoardNo());
                 resp.addDataEntry(entry);
             }
             return resp.getRows();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -277,8 +277,8 @@ public class DeviceController {
 
     @RequestMapping(value = {"admin/device/used/update", "shop/device/used/update"}, method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse saveUsedProduct(@Valid @RequestBody DeviceUsed deviceUsed,@RequestParam(value = "autoStart")Long autoStart,@RequestParam(value = "autoEnd")Long autoEnd, HttpServletRequest request) throws Exception {
-        AjaxResponse resp ;
+    public AjaxResponse saveUsedProduct(@Valid @RequestBody DeviceUsed deviceUsed, @RequestParam(value = "autoStart") Long autoStart, @RequestParam(value = "autoEnd") Long autoEnd, HttpServletRequest request) throws Exception {
+        AjaxResponse resp;
         try {
             Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
             if (o == null) {
@@ -286,31 +286,30 @@ public class DeviceController {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            if(deviceUsed.getDevice().getId() == null || StringUtil.isNullOrEmpty(String.valueOf(deviceUsed.getDevice().getId()))){
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"设备类型不能为空");
+            if (deviceUsed.getDevice().getId() == null || StringUtil.isNullOrEmpty(String.valueOf(deviceUsed.getDevice().getId()))) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "设备类型不能为空");
                 return resp;
             }
             Device device = deviceService.findById(deviceUsed.getDevice().getId());
-            if(device == null){
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"设备类型错误");
+            if (device == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "设备类型错误");
                 return resp;
             }
             deviceUsed.setDevice(device);
-            if(autoEnd != null && autoStart !=null && autoEnd < autoStart){
+            if (autoEnd != null && autoStart != null && autoEnd < autoStart) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("结束编号不能小于开始编号");
                 return resp;
             }
-            if(StringUtil.isNullOrEmpty(deviceUsed.getBoardNo())){
+            if (StringUtil.isNullOrEmpty(deviceUsed.getBoardNo())) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("主板编号不能为空");
                 return resp;
             }
             //校验主板编号
-            if(autoEnd != null && autoStart !=null) {//批量校验主板编号不能重复
+            if (autoEnd != null && autoStart != null) {//批量校验主板编号不能重复
                 //....预留看需求是否要验证
-            }
-            else {//单个校验主板编号不能重复
+            } else {//单个校验主板编号不能重复
                 DeviceUsed dU = deviceUsedService.getByBoardNo(deviceUsed.getBoardNo());
                 if (dU != null && !dU.getId().equals(deviceUsed.getId())) { //编辑时排除当前设备
                     resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -320,7 +319,7 @@ public class DeviceController {
             }
 
             //如果手机号不为空，则校验手机号
-            if(deviceUsed.getPhone() != null && !ValidatorUtil.isMultiMobile(deviceUsed.getPhone())){
+            if (deviceUsed.getPhone() != null && !ValidatorUtil.isMultiMobile(deviceUsed.getPhone())) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "请输入正确的手机号！");
                 return resp;
             }
@@ -329,17 +328,17 @@ public class DeviceController {
             List<Object> updateResult = new ArrayList<Object>();
             deviceUsed.setStore(merchantStore1);
 
-            if(autoEnd != null && autoStart !=null &&  autoEnd >= 0 && autoStart >= 0 ){//批量新增
+            if (autoEnd != null && autoStart != null && autoEnd >= 0 && autoStart >= 0) {//批量新增
                 String commonName = deviceUsed.getName();
                 String commonBoardNo = deviceUsed.getBoardNo();
-                for(Long i=autoStart;i < autoEnd+1;i++){
+                for (Long i = autoStart; i < autoEnd + 1; i++) {
                     try {
                         //重复主板编号的不添加
                         DeviceUsed temp = deviceUsedService.getByBoardNo(commonBoardNo + "-" + i + "#");
-                        if(temp != null){
+                        if (temp != null) {
                             continue;
                         }
-                        DeviceUsed deviceUsedResult ;
+                        DeviceUsed deviceUsedResult;
                         deviceUsed.setName(commonName + "-" + i + "#");
                         deviceUsed.setBoardNo(commonBoardNo + "-" + i + "#");
                         deviceUsedResult = deviceUsedService.update(deviceUsed);
@@ -349,8 +348,11 @@ public class DeviceController {
                         continue;
                     }
                 }
-            }
-            else {//单个新增或修改
+            } else {//单个新增或修改
+                DeviceUsed deviceUsedOld = deviceUsedService.findById(deviceUsed.getId());
+                if (deviceUsedOld != null) {
+                    deviceUsed.setProductUsed(deviceUsedOld.getProductUsed());
+                }
                 deviceUsed = deviceUsedService.update(deviceUsed);
                 updateResult.add(objectToEntry(deviceUsed));
             }
@@ -359,16 +361,16 @@ public class DeviceController {
             resp.addEntry("updateResult", updateResult);
         } catch (Exception e) {
             e.printStackTrace();
-            resp = AjaxResponse.failed(-1,"失败");
+            resp = AjaxResponse.failed(-1, "失败");
         }
         return resp;
     }
 
     @RequestMapping(value = {"admin/device/used/bindProductUsed", "shop/device/used/bindProductUsed"}, method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse deviceUsedBindProductUsed(@RequestParam(value = "bindString") String bindString,@RequestParam(value = "deviceUsedId") Long deviceUsedId, HttpServletRequest request) {
+    public AjaxResponse deviceUsedBindProductUsed(@RequestParam(value = "bindString") String bindString, @RequestParam(value = "deviceUsedId") Long deviceUsedId, HttpServletRequest request) {
         try {
-            AjaxResponse resp ;
+            AjaxResponse resp;
             List<Long> bindList = JSON.parseArray(bindString, Long.class);
             DeviceUsed deviceUsed = deviceUsedService.findById(deviceUsedId);
             if (deviceUsed == null) {
@@ -385,7 +387,7 @@ public class DeviceController {
             return resp;
         } catch (Exception e) {
             e.printStackTrace();
-            return AjaxResponse.failed(-1,"失败");
+            return AjaxResponse.failed(-1, "失败");
         }
 
     }
@@ -394,7 +396,7 @@ public class DeviceController {
     @ResponseBody
     public AjaxResponse deleteDeviceUsed(@Valid @RequestBody DeviceUsed deviceUsed, HttpServletRequest request) {
         try {
-            AjaxResponse resp ;
+            AjaxResponse resp;
             if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
@@ -402,8 +404,8 @@ public class DeviceController {
             }
             DeviceUsed deviceUsed1 = deviceUsedService.findById(deviceUsed.getId());
 
-            if(deviceUsed1.getProductUsed() != null && deviceUsed1.getProductUsed().size() > 0){
-                return AjaxResponse.failed(-1,"已有关联设备组，无法删除！请取消关联后重试。");
+            if (deviceUsed1.getProductUsed() != null && deviceUsed1.getProductUsed().size() > 0) {
+                return AjaxResponse.failed(-1, "已有关联设备组，无法删除！请取消关联后重试。");
             }
 
             //先手动删除所有该对象关联的属性，再删除该对象。因为关联关系是属性多对一该对象，关联字段放在属性表里，不能通过删对象级联删除属性。
@@ -413,27 +415,27 @@ public class DeviceController {
             return AjaxResponse.success();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            return AjaxResponse.failed(-1,"在其他地方被使用，无法删除");
+            return AjaxResponse.failed(-1, "在其他地方被使用，无法删除");
         }
     }
 
     //把类转换成entry返回给前端，解耦和
     private Map objectToEntry(DeviceUsed deviceUsed) {
         Map entry = new HashMap();
-        entry.put("id",deviceUsed.getId());
-        entry.put("name",deviceUsed.getName());
-        entry.put("boardNo",deviceUsed.getBoardNo());
+        entry.put("id", deviceUsed.getId());
+        entry.put("name", deviceUsed.getName());
+        entry.put("boardNo", deviceUsed.getBoardNo());
         entry.put("deviceNum", deviceUsed.getDeviceNum());
-        entry.put("description",deviceUsed.getDescription());
-        entry.put("phone",deviceUsed.getPhone());
+        entry.put("description", deviceUsed.getDescription());
+        entry.put("phone", deviceUsed.getPhone());
 
-        if(deviceUsed.getProductUsed() != null ){
-            for(ProductUsed productUsed : deviceUsed.getProductUsed()){
+        if (deviceUsed.getProductUsed() != null) {
+            for (ProductUsed productUsed : deviceUsed.getProductUsed()) {
                 productUsed.setDeviceUsed(null);
                 productUsed.setAttributes(null);
             }
         }
-        entry.put("productUsedList",deviceUsed.getProductUsed());
+        entry.put("productUsedList", deviceUsed.getProductUsed());
 
         //把device的属性作为公共属性传到前端
 //        List<AttributeDTO> attributeDTOs = Lists.transform(deviceUsed.getDevice().getAttributes(), new Function<DeviceAttribute, AttributeDTO>() {
@@ -466,7 +468,7 @@ public class DeviceController {
     @RequestMapping(value = {"admin/device/used/attribute/save", "shop/device/used/attribute/save"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveAttribute(@ModelAttribute DeviceUsed deviceUsed, @Valid @RequestBody DeviceUsedAttribute attribute, HttpServletRequest request) throws Exception {
-        AjaxResponse resp ;
+        AjaxResponse resp;
         DeviceUsedAttribute entity = attribute;
         if (null != attribute.getId()) {
             entity = deviceUsedAttributeService.findById(attribute.getId());
@@ -485,7 +487,7 @@ public class DeviceController {
 
     @RequestMapping(value = {"admin/device/used/attribute/delete", "shop/device/used/attribute/delete"}, method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse deleteAttribute(@Valid @RequestBody DeviceUsedAttribute attribute,  HttpServletRequest request) throws Exception {
+    public AjaxResponse deleteAttribute(@Valid @RequestBody DeviceUsedAttribute attribute, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
             if (null != attribute.getId()) {
@@ -515,7 +517,7 @@ public class DeviceController {
             //查询设备实例的设备类型的公共属性
             DeviceUsed deviceUsed = deviceUsedService.findById(parentId);
             List<DeviceAttribute> commonAttributeList = deviceAttributeService.listByDeviceId(deviceUsed.getDevice().getId());
-            for(DeviceAttribute commonAttribute :commonAttributeList){
+            for (DeviceAttribute commonAttribute : commonAttributeList) {
                 Map entry = new HashMap();
                 entry.put("id", 0);//公共属性的id设为0，前端不显示编辑和删除按钮
                 entry.put("name", commonAttribute.getName());
@@ -574,7 +576,7 @@ public class DeviceController {
     @RequestMapping(value = {"admin/product/used/listByStoreId", "shop/product/used/listByStoreId"}, method = RequestMethod.GET)
     public
     @ResponseBody
-    AjaxPageableResponse productUsedlistByStoreId( HttpServletRequest request, PageRequest pageRequest) {
+    AjaxPageableResponse productUsedlistByStoreId(HttpServletRequest request, PageRequest pageRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         String currentUser = request.getRemoteUser();
         try {
@@ -602,7 +604,7 @@ public class DeviceController {
     @RequestMapping(value = {"admin/product/used/listByStore4Select", "shop/product/used/listByStore4Select"}, method = RequestMethod.GET)
     @ResponseBody
     public List productUsedList(HttpServletRequest request) {
-        AjaxResponse resp = new AjaxResponse() ;
+        AjaxResponse resp = new AjaxResponse();
         try {
             Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
             if (o == null) {
@@ -617,21 +619,21 @@ public class DeviceController {
             List<ProductUsed> productUsedList = pageList.getList();
             for (ProductUsed productUsed : productUsedList) {
                 Map entry = new HashMap();
-                entry.put("name",productUsed.getCode());
-                entry.put("value", productUsed.getCode().replaceAll("#",""));
+                entry.put("name", productUsed.getCode());
+                entry.put("value", productUsed.getCode().replaceAll("#", ""));
                 resp.addDataEntry(entry);
             }
             return resp.getRows();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    @RequestMapping(value = {"admin/product/used/save", "shop/product/used/save"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"admin/product/used/update", "shop/product/used/update"}, method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse saveUsedProduct(@Valid @RequestBody ProductUsed productUsed,@RequestParam(value = "autoStart")Long autoStart,@RequestParam(value = "autoEnd")Long autoEnd, HttpServletRequest request) throws Exception {
-        AjaxResponse resp ;
+    public AjaxResponse saveUsedProduct(@Valid @RequestBody ProductUsed productUsed, @RequestParam(value = "autoStart") Long autoStart, @RequestParam(value = "autoEnd") Long autoEnd, HttpServletRequest request) throws Exception {
+        AjaxResponse resp;
         try {
             Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
             if (o == null) {
@@ -639,16 +641,15 @@ public class DeviceController {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            if(autoEnd != null && autoStart !=null && autoEnd < autoStart){
+            if (autoEnd != null && autoStart != null && autoEnd < autoStart) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("结束编号不能小于开始编号");
                 return resp;
             }
             //校验主板编号
-            if(autoEnd != null && autoStart !=null) {//批量校验设备组编号不能重复
+            if (autoEnd != null && autoStart != null) {//批量校验设备组编号不能重复
                 //预留看需求是否要验证
-            }
-            else {//单个校验设备组编号不能重复
+            } else {//单个校验设备组编号不能重复
                 ProductUsed pU = productUsedService.getByCode(productUsed.getCode());
                 if (pU != null && !pU.getId().equals(productUsed.getId())) { //编辑时排除当前设备
                     resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -662,16 +663,16 @@ public class DeviceController {
             List<Object> updateResult = new ArrayList<Object>();
             productUsed.setStore(merchantStore1);
 
-            if(autoEnd != null && autoStart !=null &&  autoEnd >= 0 && autoStart >= 0 ){//批量新增
-                for(Long i=autoStart;i < autoEnd+1;i++){
+            if (autoEnd != null && autoStart != null && autoEnd >= 0 && autoStart >= 0) {//批量新增
+                for (Long i = autoStart; i < autoEnd + 1; i++) {
                     try {
                         //重复编号的不添加
-                        ProductUsed temp = productUsedService.getByCode(productUsed.getType() +"-" + i + "#");
-                        if(temp != null){
+                        ProductUsed temp = productUsedService.getByCode(productUsed.getType() + "-" + i + "#");
+                        if (temp != null) {
                             continue;
                         }
-                        ProductUsed productUsedResult ;
-                        productUsed.setCode( productUsed.getType() +"-" + i + "#");
+                        ProductUsed productUsedResult;
+                        productUsed.setCode(productUsed.getType() + "-" + i + "#");
                         productUsedResult = productUsedService.update(productUsed);
                         updateResult.add(objectToEntry(productUsedResult));
                     } catch (ServiceException e) {
@@ -679,8 +680,11 @@ public class DeviceController {
                         continue;
                     }
                 }
-            }
-            else {//单个新增或修改
+            } else {//单个新增或修改
+                ProductUsed productUsedOld = productUsedService.findById(productUsed.getId());
+                if (productUsedOld != null) {
+                    productUsed.setDeviceUsed(productUsedOld.getDeviceUsed());
+                }
                 productUsed = productUsedService.update(productUsed);
                 updateResult.add(objectToEntry(productUsed));
             }
@@ -689,16 +693,16 @@ public class DeviceController {
             resp.addEntry("updateResult", updateResult);
         } catch (Exception e) {
             e.printStackTrace();
-            resp = AjaxResponse.failed(-1,"失败");
+            resp = AjaxResponse.failed(-1, "失败");
         }
         return resp;
     }
 
     @RequestMapping(value = {"admin/product/used/bindDeviceUsed", "shop/product/used/bindDeviceUsed"}, method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse productUsedBindDeviceUsed(@RequestParam(value = "bindString") String bindString,@RequestParam(value = "productUsedId") Long productUsedId, HttpServletRequest request) {
+    public AjaxResponse productUsedBindDeviceUsed(@RequestParam(value = "bindString") String bindString, @RequestParam(value = "productUsedId") Long productUsedId, HttpServletRequest request) {
         try {
-            AjaxResponse resp ;
+            AjaxResponse resp;
             List<Long> bindList = JSON.parseArray(bindString, Long.class);
             ProductUsed productUsed = productUsedService.findById(productUsedId);
             if (productUsed == null) {
@@ -715,7 +719,7 @@ public class DeviceController {
             return resp;
         } catch (Exception e) {
             e.printStackTrace();
-            return AjaxResponse.failed(-1,"失败");
+            return AjaxResponse.failed(-1, "失败");
         }
 
     }
@@ -724,7 +728,7 @@ public class DeviceController {
     @ResponseBody
     public AjaxResponse deleteProductUsed(@Valid @RequestBody ProductUsed productUsed, HttpServletRequest request) {
         try {
-            AjaxResponse resp ;
+            AjaxResponse resp;
             if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
@@ -732,8 +736,8 @@ public class DeviceController {
             }
 
             ProductUsed productUsed1 = productUsedService.findById(productUsed.getId());
-            if(productUsed1.getDeviceUsed() != null && productUsed1.getDeviceUsed().size() > 0){
-                return AjaxResponse.failed(-1,"已有关联设备，无法删除！请取消关联后重试。");
+            if (productUsed1.getDeviceUsed() != null && productUsed1.getDeviceUsed().size() > 0) {
+                return AjaxResponse.failed(-1, "已有关联设备，无法删除！请取消关联后重试。");
             }
 
             //先手动删除所有该对象关联的属性，再删除该对象。因为关联关系是属性多对一该对象，关联字段放在属性表里，不能通过删对象级联删除属性。
@@ -744,7 +748,7 @@ public class DeviceController {
             return AjaxResponse.success();
         } catch (Exception e) {
             e.printStackTrace();
-            return AjaxResponse.failed(-1,"在其他地方被使用，无法删除");
+            return AjaxResponse.failed(-1, "在其他地方被使用，无法删除");
         }
 
     }
@@ -758,8 +762,8 @@ public class DeviceController {
         entry.put("type", productUsed.getType());
         entry.put("productNum", productUsed.getProductNum());
         entry.put("description", productUsed.getDescription());
-        if(productUsed.getDeviceUsed() != null ){
-            for(DeviceUsed deviceUsed : productUsed.getDeviceUsed()){
+        if (productUsed.getDeviceUsed() != null) {
+            for (DeviceUsed deviceUsed : productUsed.getDeviceUsed()) {
                 deviceUsed.setProductUsed(null);
                 deviceUsed.setAttributes(null);
                 deviceUsed.getDevice().setAttributes(null);
@@ -780,7 +784,7 @@ public class DeviceController {
     @RequestMapping(value = {"admin/product/attribute/save", "shop/product/attribute/save"}, method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse saveAttribute(@ModelAttribute ProductUsed product, @Valid @RequestBody ProductUsedAttribute attribute, HttpServletRequest request) throws Exception {
-        AjaxResponse resp ;
+        AjaxResponse resp;
         ProductUsedAttribute entity = attribute;
         if (null != attribute.getId()) {
             entity = productUsedAttributeService.findById(attribute.getId());
@@ -800,7 +804,7 @@ public class DeviceController {
 
     @RequestMapping(value = {"admin/product/attribute/delete", "shop/product/attribute/delete"}, method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse deleteAttributeProduct(@Valid @RequestBody ProductUsedAttribute attribute,  HttpServletRequest request) throws Exception {
+    public AjaxResponse deleteAttributeProduct(@Valid @RequestBody ProductUsedAttribute attribute, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
             if (null != attribute.getId()) {
