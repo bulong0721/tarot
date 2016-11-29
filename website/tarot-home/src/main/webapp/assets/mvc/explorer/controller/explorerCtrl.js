@@ -437,6 +437,11 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
             if (!addFile) {
                 addFile = new FormData();
             }
+            var newFilePath = $scope.formData.model.currPath;
+            if(newFilePath.indexOf("/") >= 0 || newFilePath.indexOf("\\") >= 0){
+                toaster.error({body: "文件路径不能包含/、\\！"});
+                return;
+            }
             if ($scope.formData.model.type == 0) { //新增文件夹
                 var newFileName = $scope.formData.model.name;
                 var childrenArray = $scope.current.children;
@@ -456,14 +461,30 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
                 } else {
                     createDir();
                 }
+                toaster.success({body: "创建成功！"});
             } else { //新增文件
                 //添加同文件夹下同名检测
                 var newFileName = $scope.formData.model.name;
+                var newFilePath = $scope.formData.model.currPath;
                 var childrenArray = $scope.current.children;
                 var sameFileFlag = false;
-                for (var i = 0; i < childrenArray.length; i++) {
+                for (var i = 0,childLen = childrenArray.length; i < childLen; i++) {
                     var name = childrenArray[i].name;
-                    if (newFileName == name) {
+                    var type = childrenArray[i].type;
+                    if(type == 0 && newFilePath == name){
+                        var path = $scope.formData.model.path+"/"+newFilePath;
+                        cResource.save('../admin/file/search',{node: path},{}).then(function(resp){
+                            console.log(resp.rows)
+                            var granderChildren = data.rows.children;
+                            for( var j = 0,len =granderChildren.length; j < len; j++){
+                                var granderName = granderChildren[j].name;
+                                var granderType = granderChildren[j].type;
+                                if (granderType == 1 && newFileName == granderName) {
+                                    sameFileFlag = true;
+                                }
+                            }
+                        });
+                    }else if (type == 1 && newFileName == name) {
                         sameFileFlag = true;
                     }
                 }
