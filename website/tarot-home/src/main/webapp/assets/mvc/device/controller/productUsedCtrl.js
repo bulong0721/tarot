@@ -247,7 +247,7 @@ function productUsedCtrl($scope, cResource, Constants, cTables, cfromly, NgTable
         ],
         api: {
             read: './product/used/paging',
-            update: './product/used/save',
+            update: './product/used/update',
             delete: './product/used/delete',
             updateAttr: './product/attribute/save',
             deleteAttr: './product/attribute/delete',

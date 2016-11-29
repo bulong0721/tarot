@@ -763,6 +763,15 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
                 checkAllRowOK = false;
                 return;
             }
+            if($filter('isNullOrEmptyString')(indexData.editing) || indexData.editing == true){
+                $timeout(function () {
+                    toaster.error({body: "有未保存的行，请点击√保存!"})
+                }, 0);
+                initialParams();
+                checkAllRowOK = false;
+                return false;
+            }
+
             if (indexData.show && (indexData.md5 == null || indexData.web == null || indexData.md5 == "" || indexData.web == "")) {
                 $timeout(function () {
                     toaster.error({body: indexData.name + "请上传文件并保存!"})
@@ -1024,7 +1033,6 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
             }, 0);
             return false;
         }
-
         if (thisRow.type == $scope.mgrUpdateConfigData.constant.TYPE_APK && (typeof thisRow.version != 'number')) {
             $timeout(function () {
                 toaster.error({body: "类型为“应用”的请填写纯数字版本信息!"})

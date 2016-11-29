@@ -26,6 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,6 +42,8 @@ import java.util.*;
  * Created by Martin on 2016/4/21.
  */
 @Controller
+@EnableWebSecurity
+//@EnableGlobalMethodSecurity(jsr250Enabled=true)
 public class MerchantController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MerchantController.class);
 
@@ -189,6 +194,7 @@ public class MerchantController {
 
     @RequestMapping(value = "admin/merchant/list", method = RequestMethod.GET)
     @ResponseBody
+//    @PreAuthorize("MERCHANT_MANAGE_R")
     public AjaxResponse listMerchant(HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
@@ -332,10 +338,21 @@ public class MerchantController {
                 }
             }
             merchantStore.setAddress(address);
+
             merchantStore = merchantStoreService.update(merchantStore);//新建或更新
 
+            //引流关系维护
+            SaleCorpMerchant saleCorpMerchant = saleCorpMerchantService.findByMerchantId(merchantStore.getId());
+            List<MerchantStore> bindStores = Lists.newArrayList();
+            if (saleCorpMerchant != null && !StringUtil.isBlank(saleCorpMerchant.getRelatedMerchants())) {
+                List<Long> bindStore = JSON.parseArray(saleCorpMerchant.getRelatedMerchants(), Long.class);
+                for (Long storeId : bindStore) {
+                    MerchantStore store = merchantStoreService.findById(storeId);
+                    bindStores.add(store);
+                }
+            }
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", objectToEntry(merchantStore));
+            resp.addEntry("updateResult", objectToEntryAdd(merchantStore, bindStores));
         } catch (Exception e) {
             e.printStackTrace();
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);

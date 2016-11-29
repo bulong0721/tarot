@@ -329,6 +329,10 @@ public class TableController {
                     updateResult.add(objectToEntry(tableResult));
                 }
             } else {//单个新增或修改
+                Table tableOld = tableService.findById(table.getId());
+                if(tableOld != null){
+                    table.setDeviceUsed(tableOld.getDeviceUsed());
+                }
                 table = tableService.update(table);
                 updateResult.add(objectToEntry(table));
             }

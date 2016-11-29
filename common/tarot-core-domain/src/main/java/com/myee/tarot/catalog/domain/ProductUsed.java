@@ -43,12 +43,12 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
     @Column(name = "PRODUCT_NUM", length = 100)
     protected String productNum;
 
-    @ManyToMany(targetEntity = DeviceUsed.class, cascade = CascadeType.REFRESH)
+    @ManyToMany(targetEntity = DeviceUsed.class,  fetch = FetchType.LAZY/*cascade = CascadeType.REFRESH*/)
     @JoinTable(name = "C_PRODUCT_USED_DEV_XREF",
             joinColumns = {@JoinColumn(name = "PRODUCT_USED_ID", nullable = false)},
             inverseJoinColumns = {@JoinColumn(name = "DEVICE_USED_ID", nullable = false)}
     )
-    protected List<DeviceUsed> deviceUsed;
+    protected List<DeviceUsed> deviceUsed  = new ArrayList<DeviceUsed>();
 
     @OneToMany(mappedBy = "productUsed", targetEntity = ProductUsedAttribute.class, fetch = FetchType.LAZY)
     protected List<ProductUsedAttribute> attributes = new ArrayList<ProductUsedAttribute>();

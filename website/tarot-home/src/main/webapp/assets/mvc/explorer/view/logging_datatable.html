@@ -31,7 +31,7 @@
                         </thead>
                         <tbody>
                         <tr>
-                            <td colspan="9" class="center" ng-if="$data.length<=0">没有查找到数据</td>
+                            <td colspan="11" class="center" ng-if="$data.length<=0">没有查找到数据</td>
                         </tr>
                         <tr ng-repeat-start="row in $data">
                             <td>{{::row.userName}}</td>
@@ -49,7 +49,7 @@
                             <td class="center"><a ng-click="row.showDetail=!row.showDetail" tooltip-placement="top" uib-tooltip="{{lang_zh.contentDetail}}"><i class="btn-icon fa fa-bars"></i></a></td>
                         </tr>
                         <tr ng-repeat-end ng-if="row.showDetail">
-                            <td colspan="9">
+                            <td colspan="11">
                                 {{::row.content}}
                             </td>
                         </tr>
