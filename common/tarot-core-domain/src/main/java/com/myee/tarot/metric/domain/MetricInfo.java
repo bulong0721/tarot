@@ -12,7 +12,7 @@ import java.util.Date;
  */
 
 @Entity
-@Table(name = "M_MATRIC_INFO",indexes = {@Index(name="METRIC_KEY_NAME",columnList = "KEY_NAME",unique = false),@Index(name="NODE_NAME",columnList = "NODE",unique = false)} )
+@Table(name = "M_METRIC_INFO",indexes = {@Index(name="METRIC_KEY_NAME",columnList = "KEY_NAME",unique = false),@Index(name="NODE_NAME",columnList = "NODE",unique = false)} )
 @DynamicUpdate //hibernate部分更新
 public class MetricInfo extends GenericEntity<Long, MetricInfo> {
 
