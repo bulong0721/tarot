@@ -763,6 +763,15 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
                 checkAllRowOK = false;
                 return;
             }
+            if($filter('isNullOrEmptyString')(indexData.editing) || indexData.editing == true){
+                $timeout(function () {
+                    toaster.error({body: "有未保存的行，请点击√保存!"})
+                }, 0);
+                initialParams();
+                checkAllRowOK = false;
+                return false;
+            }
+
             if (indexData.show && (indexData.md5 == null || indexData.web == null || indexData.md5 == "" || indexData.web == "")) {
                 $timeout(function () {
                     toaster.error({body: indexData.name + "请上传文件并保存!"})
@@ -1021,12 +1030,6 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
             || ($filter('isNullOrEmptyString')(thisRow.force_update) && !(thisRow.type == $scope.mgrUpdateConfigData.constant.TYPE_AGENT || thisRow.type == $scope.mgrUpdateConfigData.constant.TYPE_AGENT_PATCH ))) {
             $timeout(function () {
                 toaster.error({body: "请填写完整信息!"})
-            }, 0);
-            return false;
-        }
-        if($filter('isNullOrEmptyString')(thisRow.editing) || thisRow.editing == true){
-            $timeout(function () {
-                toaster.error({body: "有未保存的行，请点击√保存!"})
             }, 0);
             return false;
         }
