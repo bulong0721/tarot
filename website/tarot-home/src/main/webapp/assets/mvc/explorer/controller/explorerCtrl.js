@@ -437,13 +437,17 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
             if (!addFile) {
                 addFile = new FormData();
             }
+            var newFileName = $scope.formData.model.name;
             var newFilePath = $scope.formData.model.currPath;
             if(newFilePath != "" && newFilePath != undefined && (newFilePath.indexOf("/") >= 0 || newFilePath.indexOf("\\") >= 0)){
                 toaster.error({body: "文件路径不能包含/、\\！"});
                 return;
             }
+            if(newFileName != "" && newFileName != undefined && (newFileName.indexOf("/") >= 0 || newFileName.indexOf("\\") >= 0)){
+                toaster.error({body: "文件名称不能包含/、\\！"});
+                return;
+            }
             if ($scope.formData.model.type == 0) { //新增文件夹
-                var newFileName = $scope.formData.model.name;
                 var childrenArray = $scope.current.children;
                 var sameDirFlag = false;
                 for (var i = 0; i < childrenArray.length; i++) {
@@ -464,8 +468,6 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
                 toaster.success({body: "创建成功！"});
             } else { //新增文件
                 //添加同文件夹下同名检测
-                var newFileName = $scope.formData.model.name;
-                var newFilePath = $scope.formData.model.currPath;
                 var childrenArray = $scope.current.children;
                 var sameFileFlag = false;
                 for (var i = 0,childLen = childrenArray.length; i < childLen; i++) {
