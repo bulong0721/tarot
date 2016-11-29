@@ -11,7 +11,7 @@ import java.math.BigDecimal;
  */
 
 @Entity
-@Table(name = "M_MATRIC_DETAIL")
+@Table(name = "M_METRIC_DETAIL")
 @DynamicUpdate //hibernate部分更新
 public class MetricDetail extends GenericEntity<Long, MetricDetail> {
 
