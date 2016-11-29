@@ -158,14 +158,14 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
             Map<String, Long> map = metricCache.getLastUpdateTimeCache();
             if (metricCache != null && map == null) {
                 Map<String, Long> lastUpdateTimeCache = Maps.newConcurrentMap();
-                lastUpdateTimeCache.put(MetricCache.LAST_UPDATE_TIME_KEY_ONE_HOUR, 0L);
-                lastUpdateTimeCache.put(MetricCache.LAST_UPDATE_TIME_KEY_TWO_HOUR, 0L);
-                lastUpdateTimeCache.put(MetricCache.LAST_UPDATE_TIME_KEY_FOUR_HOUR, 0L);
-                lastUpdateTimeCache.put(MetricCache.LAST_UPDATE_TIME_KEY_HALF_DAY, 0L);
-                lastUpdateTimeCache.put(MetricCache.LAST_UPDATE_TIME_KEY_ONE_DAY, 0L);
-                lastUpdateTimeCache.put(MetricCache.LAST_UPDATE_TIME_KEY_ONE_WEEK, 0L);
-                lastUpdateTimeCache.put(MetricCache.LAST_UPDATE_TIME_KEY_ONE_MONTH, 0L);
-                lastUpdateTimeCache.put(MetricCache.LAST_UPDATE_TIME_KEY_ONE_YEAR, 0L);
+                lastUpdateTimeCache.put(list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_HOUR, 0L);
+                lastUpdateTimeCache.put(list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_TWO_HOUR, 0L);
+                lastUpdateTimeCache.put(list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_FOUR_HOUR, 0L);
+                lastUpdateTimeCache.put(list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_HALF_DAY, 0L);
+                lastUpdateTimeCache.put(list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_DAY, 0L);
+                lastUpdateTimeCache.put(list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_WEEK, 0L);
+                lastUpdateTimeCache.put(list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_MONTH, 0L);
+                lastUpdateTimeCache.put(list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_YEAR, 0L);
                 metricCache.setLastUpdateTimeCache(lastUpdateTimeCache);
             }
         } catch (Exception e) {

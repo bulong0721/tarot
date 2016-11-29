@@ -241,7 +241,7 @@ public class MetricsUtil {
                 LOGGER.info("本轮获取到的日志时间->{}", metricInfoTarot.getLogTime());
                 LOGGER.info("本轮获取到的值->{}", metricInfoTarot.getValue());
                 tempList.add(metricInfoTarot);
-                map.put(metricInfo.getName(), tempList);
+                map.put(metricInfoTarot.getBoardNo() + "_" + metricInfo.getName(), tempList);
             }
         }
         return map;
