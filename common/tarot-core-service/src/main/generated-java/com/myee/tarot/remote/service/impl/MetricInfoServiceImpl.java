@@ -79,7 +79,9 @@ public class MetricInfoServiceImpl extends GenericEntityServiceImpl<Long, Metric
             metricInfoPointsCache = metricCache.getOneYearMetricInfoPointsCache();
         }
         for (String keyName : metricsKeyString) {
-            list.addAll(metricInfoPointsCache.get(boardNo + "_" + keyName));
+            if (metricInfoPointsCache.get(boardNo + "_" + keyName) != null) {
+                list.addAll(metricInfoPointsCache.get(boardNo + "_" + keyName));
+            }
         }
         return list;
     }
