@@ -211,14 +211,18 @@ public class MetricsUtil {
                                                                             List<com.myee.djinn.dto.metrics.MetricInfo> metricInfoList,
                                                                             DeviceUsedService deviceUsedService,
                                                                             com.myee.djinn.dto.metrics.SystemMetrics systemMetrics) {
-        for (String keyName : map.keySet()) {
-            if (map.get(keyName) == null) {
-                LOGGER.info("{} 没有值", keyName);
+        boolean ifContainsKey = false;
+        if (map != null) {
+            for (String key : map.keySet()) {
+                if (key.startsWith(systemMetrics.getBoardNo())) {
+                    ifContainsKey = true;
+                    break;
+                }
             }
         }
-        if (map != null && map.size() == 0) {
+        if (map != null && map.size() == 0 || !ifContainsKey) {
             for (String keyName : Constants.METRICS_NEED_TIME_KEY_LIST) {
-                map.put(keyName, new ArrayList<MetricInfo>());
+                map.put(systemMetrics.getBoardNo() + "_"+ keyName, new ArrayList<MetricInfo>());
             }
         }
         for (com.myee.djinn.dto.metrics.MetricInfo metricInfo : metricInfoList) {
@@ -237,9 +241,9 @@ public class MetricsUtil {
                     tempList = new ArrayList<MetricInfo>();
                 }
                 MetricInfo metricInfoTarot = transformDijnnMetricInfo(metricInfo, deviceUsed, systemMetrics);
-                LOGGER.info("本轮获取到的指标名称->{}", metricInfoTarot.getKeyName());
-                LOGGER.info("本轮获取到的日志时间->{}", metricInfoTarot.getLogTime());
-                LOGGER.info("本轮获取到的值->{}", metricInfoTarot.getValue());
+                LOGGER.info("本轮获取到的指标名称->{}-{}",metricInfoTarot.getBoardNo(), metricInfoTarot.getKeyName());
+                LOGGER.info("本轮获取到的日志时间->{}-{}", metricInfoTarot.getBoardNo(), metricInfoTarot.getLogTime());
+                LOGGER.info("本轮获取到的值->{}-{}", metricInfoTarot.getBoardNo(), metricInfoTarot.getValue());
                 tempList.add(metricInfoTarot);
                 map.put(metricInfoTarot.getBoardNo() + "_" + metricInfo.getName(), tempList);
             }
@@ -265,7 +269,6 @@ public class MetricsUtil {
                 continue;
             }
             fiveMinMap = mapMetricInfoListByKeyName(pointCount, fiveMinMap, metricDetailMap, systemMetrics.getMetricInfoList(), deviceUsedService, systemMetrics);
-
         }
         return fiveMinMap;
     }

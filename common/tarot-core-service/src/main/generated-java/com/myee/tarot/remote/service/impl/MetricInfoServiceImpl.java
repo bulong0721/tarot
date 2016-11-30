@@ -43,7 +43,7 @@ public class MetricInfoServiceImpl extends GenericEntityServiceImpl<Long, Metric
     @Override
     public List<MetricInfo> listMetricsInfoPointsByPeriod(List<String> metricsKeyString, Long period, String boardNo) {
         MetricCache metricCache = redissonUtil.metricCache();
-        List<MetricInfo> list = getListOfMetricInfoByKeyName(metricsKeyString, period, metricCache);
+        List<MetricInfo> list = getListOfMetricInfoByKeyName(metricsKeyString, period, metricCache, boardNo);
         return list;
     }
 
@@ -57,7 +57,7 @@ public class MetricInfoServiceImpl extends GenericEntityServiceImpl<Long, Metric
         return metricInfoDao.listByCreateTime(date);
     }
 
-    private List<MetricInfo> getListOfMetricInfoByKeyName(List<String> metricsKeyString, Long period, MetricCache metricCache) {
+    private List<MetricInfo> getListOfMetricInfoByKeyName(List<String> metricsKeyString, Long period, MetricCache metricCache, String boardNo) {
         List<MetricInfo> list = Lists.newArrayList();
         Map<String, List<MetricInfo>> metricInfoPointsCache = null;
         //获取什么范围的list
@@ -79,7 +79,7 @@ public class MetricInfoServiceImpl extends GenericEntityServiceImpl<Long, Metric
             metricInfoPointsCache = metricCache.getOneYearMetricInfoPointsCache();
         }
         for (String keyName : metricsKeyString) {
-            list.addAll(metricInfoPointsCache.get(keyName));
+            list.addAll(metricInfoPointsCache.get(boardNo + "_" + keyName));
         }
         return list;
     }
