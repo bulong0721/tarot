@@ -67,48 +67,48 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
         return 0;
     }
 
-	@Override
-	public int receiveText(long orgId, String text) throws RemoteException {
-		return 0;
-	}
+    @Override
+    public int receiveText(long orgId, String text) throws RemoteException {
+        return 0;
+    }
 
-	@Override
-	public String readTextFile(long orgId, String path) throws RemoteException {
-		LOG.info("orgId= {}  path= {} DOWNLOAD_HOME={}", orgId, path, DOWNLOAD_HOME);
-		path = path.replaceAll("#","");
-		String fileData = "";
-		StringBuffer sb = new StringBuffer();
-		sb.append(DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(path);
-		String filePath = sb.toString();
-		LOG.info(" File path is ==========" + filePath);
-		File file = new File(filePath);
-		if (!file.exists()) {
-			return fileData;
-		}
-		try {
-			fileData = FileUtils.readFileToString(file, "utf-8");
-		} catch (IOException e) {
-			LOG.error(" read file error ", e);
-		}
+    @Override
+    public String readTextFile(long orgId, String path) throws RemoteException {
+        LOG.info("orgId= {}  path= {} DOWNLOAD_HOME={}", orgId, path, DOWNLOAD_HOME);
+        path = path.replaceAll("#","");
+        String fileData = "";
+        StringBuffer sb = new StringBuffer();
+        sb.append(DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(path);
+        String filePath = sb.toString();
+        LOG.info(" File path is ==========" + filePath);
+        File file = new File(filePath);
+        if (!file.exists()) {
+            return fileData;
+        }
+        try {
+            fileData = FileUtils.readFileToString(file, "utf-8");
+        } catch (IOException e) {
+            LOG.error(" read file error ", e);
+        }
 
-		return fileData;
-	}
+        return fileData;
+    }
 
-	@Override
-	public boolean uploadData(DataUploadInfoDTO dataUploadInfoDTO) throws RemoteException {
-		if (dataUploadInfoDTO != null && "selfCheckLog".equals(dataUploadInfoDTO.getType().getValue())) {
-			SelfCheckLogVO selfCheckLogVO = JSON.parseObject(dataUploadInfoDTO.getData(), SelfCheckLogVO.class);
-			try {
-				SelfCheckLog scl = selfCheckLogService.update(new SelfCheckLog(selfCheckLogVO));
-				if (scl != null) {
-					return true;
-				}
-			} catch (ServiceException e) {
-				System.out.println("error: " + e.toString());
-			}
-		}
-		return false;
-	}
+    @Override
+    public boolean uploadData(DataUploadInfoDTO dataUploadInfoDTO) throws RemoteException {
+        if (dataUploadInfoDTO != null && "selfCheckLog".equals(dataUploadInfoDTO.getType().getValue())) {
+            SelfCheckLogVO selfCheckLogVO = JSON.parseObject(dataUploadInfoDTO.getData(), SelfCheckLogVO.class);
+            try {
+                SelfCheckLog scl = selfCheckLogService.update(new SelfCheckLog(selfCheckLogVO));
+                if (scl != null) {
+                    return true;
+                }
+            } catch (ServiceException e) {
+                System.out.println("error: " + e.toString());
+            }
+        }
+        return false;
+    }
 
     @Override
     public boolean uploadSystemMetrics(final List<SystemMetrics> list) throws RemoteException {
@@ -118,13 +118,13 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
 
         //异步插入数据库
         //用线程池代替原来的new Thread方法
-        taskExecutor.submit(new Runnable() {
+        /*taskExecutor.submit(new Runnable() {
             @Override
 			public void run() {
 				List<SystemMetrics> list1 = JSON.parseArray(JSON.toJSONString(list), SystemMetrics.class);
 				MetricsUtil.updateSystemMetrics(list1, deviceUsedService, appInfoService, metricInfoService, metricDetailService, systemMetricsService);
 			}
-		});
+		});*/
         LOG.info("------开始执行-----");
         //新线程跑前台展示用的数据
         taskExecutor.submit(new Runnable() {
@@ -154,15 +154,18 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
         int pointCount = 0;
         MetricCache metricCache = redissonUtil.metricCache();
         LOG.info("{}", metricCache);
+        boolean ifContainKey = false;
         try {
             Map<String, Long> map = metricCache.getLastUpdateTimeCache();
-            boolean ifContainKey = false;
-            for (String key : map.keySet()) {
-                key.startsWith(list.get(0).getBoardNo());
-                ifContainKey = true;
-                break;
+            if (map != null) {
+                for (String key : map.keySet()) {
+                    if (key.startsWith(list.get(0).getBoardNo())) {
+                        ifContainKey = true;
+                        break;
+                    }
+                }
             }
-            if (metricCache != null && map == null && !ifContainKey) {
+            if (metricCache != null && map == null || (map != null && !ifContainKey)) {
                 Map<String, Long> lastUpdateTimeCache = Maps.newConcurrentMap();
                 lastUpdateTimeCache.put(list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_HOUR, 0L);
                 lastUpdateTimeCache.put(list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_TWO_HOUR, 0L);
@@ -177,77 +180,137 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
         } catch (Exception e) {
             e.printStackTrace();
         }
+        ifContainKey = false;
         Map<String, Long> lastUpdateTimeCache = metricCache.getLastUpdateTimeCache();
         if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(0))) { //一小时范围,每30秒1个点
             pointCount = Constants.ONE_HOUR_POINT_COUNT;
             Map<String, List<MetricInfo>> oneHourMetricInfoCache = metricCache.getOneHourMetricInfoPointsCache();
-            if (oneHourMetricInfoCache == null) {
+            if (oneHourMetricInfoCache != null) {
+                for (String key : oneHourMetricInfoCache.keySet()) {
+                    if (key.startsWith(list.get(0).getBoardNo())) {
+                        ifContainKey = true;
+                        break;
+                    }
+                }
+            }
+            if (oneHourMetricInfoCache == null || (oneHourMetricInfoCache != null && !ifContainKey)) {
                 oneHourMetricInfoCache = Maps.newConcurrentMap();
+
                 metricCache.setOneHourMetricInfoPointsCache(oneHourMetricInfoCache);
             }
-            insertDataToRedisByRange(pointCount, list, now, lastUpdateTimeCache, oneHourMetricInfoCache, list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_HOUR, Constants.INTERVAL_ONE_HOUR);
+            insertDataToRedisByRange(pointCount, list, now, lastUpdateTimeCache, metricCache.getOneHourMetricInfoPointsCache(), list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_HOUR, Constants.INTERVAL_ONE_HOUR);
         } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(1))) { //两小时范围
             pointCount = Constants.TWO_HOUR_POINT_COUNT;
             Map<String, List<MetricInfo>> twoHourMetricInfoCache = metricCache.getTwoHourMetricInfoPointsCache();
-            if (twoHourMetricInfoCache == null) {
+            if (twoHourMetricInfoCache != null) {
+                for (String key : twoHourMetricInfoCache.keySet()) {
+                    if (key.startsWith(list.get(0).getBoardNo())) {
+                        ifContainKey = true;
+                        break;
+                    }
+                }
+            }
+            if (twoHourMetricInfoCache == null || (twoHourMetricInfoCache != null && !ifContainKey)) {
                 twoHourMetricInfoCache = Maps.newConcurrentMap();
                 metricCache.setTwoHourMetricInfoPointsCache(twoHourMetricInfoCache);
             }
-            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, twoHourMetricInfoCache, list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_TWO_HOUR, Constants.INTERVAL_TWO_HOUR);
-
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, metricCache.getTwoHourMetricInfoPointsCache(), list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_TWO_HOUR, Constants.INTERVAL_TWO_HOUR);
         } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(2))) { //四小时范围
             pointCount = Constants.FOUR_HOUR_POINT_COUNT;
             Map<String, List<MetricInfo>> fourHourMetricInfoCache = metricCache.getTwoHourMetricInfoPointsCache();
-            if (fourHourMetricInfoCache == null) {
+            if (fourHourMetricInfoCache != null) {
+                for (String key : fourHourMetricInfoCache.keySet()) {
+                    if (key.startsWith(list.get(0).getBoardNo())) {
+                        ifContainKey = true;
+                        break;
+                    }
+                }
+            }
+            if (fourHourMetricInfoCache == null || (fourHourMetricInfoCache != null && !ifContainKey)) {
                 fourHourMetricInfoCache = Maps.newConcurrentMap();
                 metricCache.setFourHourMetricInfoPointsCache(fourHourMetricInfoCache);
             }
-            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, fourHourMetricInfoCache, list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_FOUR_HOUR, Constants.INTERVAL_FOUR_HOUR);
-
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, metricCache.getFourHourMetricInfoPointsCache(), list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_FOUR_HOUR, Constants.INTERVAL_FOUR_HOUR);
         } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(3))) { //半天范围
             pointCount = Constants.HALF_DAY_POINT_COUNT;
             Map<String, List<MetricInfo>> halfDayMetricInfoCache = metricCache.getTwoHourMetricInfoPointsCache();
-            if (halfDayMetricInfoCache == null) {
+            if (halfDayMetricInfoCache != null) {
+                for (String key : halfDayMetricInfoCache.keySet()) {
+                    if (key.startsWith(list.get(0).getBoardNo())) {
+                        ifContainKey = true;
+                        break;
+                    }
+                }
+            }
+            if (halfDayMetricInfoCache == null || (halfDayMetricInfoCache != null && !ifContainKey)) {
                 halfDayMetricInfoCache = Maps.newConcurrentMap();
                 metricCache.setHalfDayMetricInfoPointsCache(halfDayMetricInfoCache);
             }
-            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, halfDayMetricInfoCache, list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_HALF_DAY, Constants.INTERVAL_HALF_DAY);
-
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, metricCache.getHalfDayMetricInfoPointsCache(), list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_HALF_DAY, Constants.INTERVAL_HALF_DAY);
         } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(4))) { //一天范围
             pointCount = Constants.ONE_DAY_POINT_COUNT;
             Map<String, List<MetricInfo>> oneDayMetricInfoCache = metricCache.getOneDayMetricInfoPointsCache();
-            if (oneDayMetricInfoCache == null) {
+            if (oneDayMetricInfoCache != null) {
+                for (String key : oneDayMetricInfoCache.keySet()) {
+                    if (key.startsWith(list.get(0).getBoardNo())) {
+                        ifContainKey = true;
+                        break;
+                    }
+                }
+            }
+            if (oneDayMetricInfoCache == null || (oneDayMetricInfoCache != null && !ifContainKey)) {
                 oneDayMetricInfoCache = Maps.newConcurrentMap();
                 metricCache.setOneDayMetricInfoPointsCache(oneDayMetricInfoCache);
             }
-            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, oneDayMetricInfoCache, list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_DAY, Constants.INTERVAL_ONE_DAY);
-
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, metricCache.getOneDayMetricInfoPointsCache(), list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_DAY, Constants.INTERVAL_ONE_DAY);
         } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(5))) { //一周范围
             pointCount = Constants.ONE_WEEK_POINT_COUNT;
             Map<String, List<MetricInfo>> oneWeekMetricInfoCache = metricCache.getOneWeekMetricInfoPointsCache();
-            if (oneWeekMetricInfoCache == null) {
+            if (oneWeekMetricInfoCache != null) {
+                for (String key : oneWeekMetricInfoCache.keySet()) {
+                    if (key.startsWith(list.get(0).getBoardNo())) {
+                        ifContainKey = true;
+                        break;
+                    }
+                }
+            }
+            if (oneWeekMetricInfoCache == null || (oneWeekMetricInfoCache != null && !ifContainKey)) {
                 oneWeekMetricInfoCache = Maps.newConcurrentMap();
                 metricCache.setOneWeekMetricInfoPointsCache(oneWeekMetricInfoCache);
             }
-            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, oneWeekMetricInfoCache, list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_WEEK, Constants.INTERVAL_ONE_WEEK);
-
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, metricCache.getOneWeekMetricInfoPointsCache(), list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_WEEK, Constants.INTERVAL_ONE_WEEK);
         } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(6))) { //一个月范围
             pointCount = Constants.ONE_MONTH_POINT_COUNT;
             Map<String, List<MetricInfo>> oneMonthMetricInfoCache = metricCache.getOneMonthMetricInfoPointsCache();
-            if (oneMonthMetricInfoCache == null) {
+            if (oneMonthMetricInfoCache != null) {
+                for (String key : oneMonthMetricInfoCache.keySet()) {
+                    if (key.startsWith(list.get(0).getBoardNo())) {
+                        ifContainKey = true;
+                        break;
+                    }
+                }
+            }
+            if (oneMonthMetricInfoCache == null || (oneMonthMetricInfoCache != null && !ifContainKey)) {
                 oneMonthMetricInfoCache = Maps.newConcurrentMap();
                 metricCache.setOneMonthMetricInfoPointsCache(oneMonthMetricInfoCache);
             }
-            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, oneMonthMetricInfoCache, list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_MONTH, Constants.INTERVAL_ONE_MONTH);
-
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, metricCache.getOneMonthMetricInfoPointsCache(), list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_MONTH, Constants.INTERVAL_ONE_MONTH);
         } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(7))) { //一年范围
             pointCount = Constants.ONE_YEAR_POINT_COUNT;
             Map<String, List<MetricInfo>> oneYearMetricInfoCache = redissonUtil.metricCache().getOneYearMetricInfoPointsCache();
-            if (oneYearMetricInfoCache == null) {
+            if (oneYearMetricInfoCache != null) {
+                for (String key : oneYearMetricInfoCache.keySet()) {
+                    if (key.startsWith(list.get(0).getBoardNo())) {
+                        ifContainKey = true;
+                        break;
+                    }
+                }
+            }
+            if (oneYearMetricInfoCache == null || (oneYearMetricInfoCache != null && !ifContainKey)) {
                 oneYearMetricInfoCache = Maps.newConcurrentMap();
                 metricCache.setOneYearMetricInfoPointsCache(oneYearMetricInfoCache);
             }
-            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, oneYearMetricInfoCache, list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_YEAR, Constants.INTERVAL_ONE_YEAR);
+            insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, metricCache.getOneYearMetricInfoPointsCache(), list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_YEAR, Constants.INTERVAL_ONE_YEAR);
         }
     }
 
