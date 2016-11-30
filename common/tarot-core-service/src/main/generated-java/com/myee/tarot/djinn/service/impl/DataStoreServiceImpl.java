@@ -217,7 +217,7 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
             insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, metricCache.getTwoHourMetricInfoPointsCache(), list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_TWO_HOUR, Constants.INTERVAL_TWO_HOUR);
         } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(2))) { //四小时范围
             pointCount = Constants.FOUR_HOUR_POINT_COUNT;
-            Map<String, List<MetricInfo>> fourHourMetricInfoCache = metricCache.getTwoHourMetricInfoPointsCache();
+            Map<String, List<MetricInfo>> fourHourMetricInfoCache = metricCache.getFourHourMetricInfoPointsCache();
             if (fourHourMetricInfoCache != null) {
                 for (String key : fourHourMetricInfoCache.keySet()) {
                     if (key.startsWith(list.get(0).getBoardNo())) {
@@ -233,7 +233,7 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
             insertDataToRedisByRange(pointCount, list, now,lastUpdateTimeCache, metricCache.getFourHourMetricInfoPointsCache(), list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_FOUR_HOUR, Constants.INTERVAL_FOUR_HOUR);
         } else if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(3))) { //半天范围
             pointCount = Constants.HALF_DAY_POINT_COUNT;
-            Map<String, List<MetricInfo>> halfDayMetricInfoCache = metricCache.getTwoHourMetricInfoPointsCache();
+            Map<String, List<MetricInfo>> halfDayMetricInfoCache = metricCache.getHalfDayMetricInfoPointsCache();
             if (halfDayMetricInfoCache != null) {
                 for (String key : halfDayMetricInfoCache.keySet()) {
                     if (key.startsWith(list.get(0).getBoardNo())) {
