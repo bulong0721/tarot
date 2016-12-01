@@ -650,6 +650,7 @@ angular
             cancel:"取消",
             add:"新增",
             copy:"复制",
+            refresh:"刷新",
             download:"下载",
             bindProduct:"关联设备组",
             bindDevice:"关联设备",

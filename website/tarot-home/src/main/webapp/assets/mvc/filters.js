@@ -163,7 +163,7 @@ function getFileName(){
  */
 function toasterManage(toaster){
     return function(type, message,isSucc){
-        console.log(type)
+        //console.log(type)
         //var respMessage = response && response != undefined ? (response.statusMessage || '') : "" ;
         message = message || '';
         switch (type) {
