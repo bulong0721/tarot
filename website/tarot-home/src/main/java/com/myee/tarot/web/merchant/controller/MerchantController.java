@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,8 +43,6 @@ import java.util.*;
  * Created by Martin on 2016/4/21.
  */
 @Controller
-@EnableWebSecurity
-//@EnableGlobalMethodSecurity(jsr250Enabled=true)
 public class MerchantController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MerchantController.class);
 
@@ -119,6 +118,7 @@ public class MerchantController {
 
     @RequestMapping(value = "admin/merchant/get", method = RequestMethod.GET)
     @ResponseBody
+//    @PreAuthorize("hasAnyAuthority(['MERCHANT_MANAGE','MERCHANT_STORE_R'])")
     public AjaxResponse getMerchant(@RequestParam Long id, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
@@ -155,6 +155,7 @@ public class MerchantController {
 
     @RequestMapping(value = "admin/merchant/delete", method = RequestMethod.POST)
     @ResponseBody
+//    @PreAuthorize("hasAnyAuthority('MERCHANT_MANAGE','MERCHANT_STORE_D')")
     public AjaxResponse deleteMerchant(@Valid @RequestBody Merchant merchantDelete, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
@@ -194,7 +195,7 @@ public class MerchantController {
 
     @RequestMapping(value = "admin/merchant/list", method = RequestMethod.GET)
     @ResponseBody
-//    @PreAuthorize("MERCHANT_MANAGE_R")
+//    @PreAuthorize("hasAnyAuthority('MERCHANT_MANAGE','MERCHANT_STORE_R')")
     public AjaxResponse listMerchant(HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
@@ -212,6 +213,7 @@ public class MerchantController {
 
     @RequestMapping(value = "admin/merchant/paging", method = RequestMethod.GET)
     @ResponseBody
+//    @PreAuthorize("hasAnyAuthority('MERCHANT_MANAGE','MERCHANT_STORE_R')")
     public AjaxPageableResponse pageMerchant(HttpServletRequest request, PageRequest pageRequest) throws Exception {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
@@ -342,13 +344,15 @@ public class MerchantController {
             merchantStore = merchantStoreService.update(merchantStore);//新建或更新
 
             //引流关系维护
-            SaleCorpMerchant saleCorpMerchant = saleCorpMerchantService.findByMerchantId(merchantStore.getId());
-            List<MerchantStore> bindStores = Lists.newArrayList();
-            if (saleCorpMerchant != null && !StringUtil.isBlank(saleCorpMerchant.getRelatedMerchants())) {
-                List<Long> bindStore = JSON.parseArray(saleCorpMerchant.getRelatedMerchants(), Long.class);
-                for (Long storeId : bindStore) {
-                    MerchantStore store = merchantStoreService.findById(storeId);
-                    bindStores.add(store);
+            List<MerchantStore> bindStores = Lists.newArrayList();;
+            if(merchantStore.getId() != null && !("").equals(merchantStore.getId())){
+                SaleCorpMerchant saleCorpMerchant = saleCorpMerchantService.findByMerchantId(merchantStore.getId());
+                if (saleCorpMerchant != null && !StringUtil.isBlank(saleCorpMerchant.getRelatedMerchants())) {
+                    List<Long> bindStore = JSON.parseArray(saleCorpMerchant.getRelatedMerchants(), Long.class);
+                    for (Long storeId : bindStore) {
+                        MerchantStore store = merchantStoreService.findById(storeId);
+                        bindStores.add(store);
+                    }
                 }
             }
             resp = AjaxResponse.success();
