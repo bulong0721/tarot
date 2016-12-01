@@ -8,4 +8,5 @@ import com.myee.tarot.core.dao.GenericEntityDao;
  */
 public interface AdminRoleDao extends GenericEntityDao<Long, AdminRole> {
 
+    AdminRole getByName(String name);
 }

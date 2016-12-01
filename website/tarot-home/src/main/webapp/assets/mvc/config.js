@@ -568,6 +568,22 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 }
             }
         })
+        .state('user.adminRole', {
+            url: "/adminRole",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'adminRoleMgrCtrl',
+            data: {
+                pageTitle: '账号管理',
+                subTitle: '管理员角色',
+                datatable: 'assets/mvc/user/view/admin_role_datatable.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'user', 'adminRoleCtrl.js')
+                }
+            }
+        })
+
         .state('user.customer', {
             url: "/customer",
             templateUrl: "assets/mvc/desktop/view/manager.html",
@@ -590,7 +606,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             controller: 'roleMgrCtrl',
             data: {
                 pageTitle: '账号管理',
-                subTitle: '角色管理',
+                subTitle: '普通用户角色',
                 datatable: 'assets/mvc/user/view/role_datatable.html'
             },
             resolve: {
@@ -599,6 +615,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 }
             }
         })
+
         .state('remote', {
             abstract: true,
             url: "/remote",

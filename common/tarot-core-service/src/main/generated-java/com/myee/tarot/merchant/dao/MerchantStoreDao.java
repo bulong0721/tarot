@@ -3,8 +3,10 @@ package com.myee.tarot.merchant.dao;
 import com.myee.tarot.core.dao.GenericEntityDao;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.merchant.domain.MerchantStore;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -16,7 +18,7 @@ public interface MerchantStoreDao extends GenericEntityDao<Long, MerchantStore> 
 
 //    List<MerchantStore> listByMerchant(Long id);
 
-    PageResult<MerchantStore> pageListByMerchant(Long id ,PageRequest pageRequest);
+    PageResult<MerchantStore> pageListByMerchant(Long id ,WhereRequest whereRequest) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException;
 
     Long getCountById(Long merchantStoreId, Long merchantId);
 

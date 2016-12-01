@@ -1,7 +1,9 @@
 package com.myee.tarot.web.admin.controller;
 
 import com.google.common.collect.Maps;
+import com.myee.tarot.admin.domain.AdminRole;
 import com.myee.tarot.admin.domain.AdminUser;
+import com.myee.tarot.admin.service.AdminRoleService;
 import com.myee.tarot.admin.service.AdminUserService;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.ListSortUtil;
@@ -10,9 +12,9 @@ import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.customer.domain.Customer;
+import com.myee.tarot.customer.service.CustomerRoleService;
 import com.myee.tarot.customer.service.CustomerService;
 import com.myee.tarot.merchant.domain.MerchantStore;
-import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.profile.domain.Role;
 import com.myee.tarot.profile.service.RoleService;
 import org.slf4j.Logger;
@@ -47,6 +49,12 @@ public class AdminUserController {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private AdminRoleService adminRoleService;
+
+    @Autowired
+    private CustomerRoleService customerRoleService;
 
     @RequestMapping(value = "admin/users/paging", method = RequestMethod.GET)
     public
@@ -289,6 +297,64 @@ public class AdminUserController {
             return resp;
         }
         roleService.delete(roleFound);
+        return resp;
+    }
+
+    ////////////////////////////////////////////////////////////////////
+
+    @RequestMapping(value = "admin/adminRoles/paging", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    AjaxPageableResponse pageAdminRoles(Model model, HttpServletRequest request) {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
+        List<AdminRole> roleList = adminRoleService.list();
+        ListSortUtil<AdminRole> sortList = new ListSortUtil<AdminRole>();
+        sortList.sort(roleList, "name", "asc");
+        for (AdminRole adminRole : roleList) {
+            Map entry = new HashMap();
+            entry.put("id", adminRole.getId());
+            entry.put("name", adminRole.getName());
+            entry.put("description", adminRole.getDescription());
+            resp.addDataEntry(entry);
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "admin/adminRoles/save", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse mergeAdminRole(@Valid @RequestBody AdminRole role, HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
+        //校验角色名不能重复
+        AdminRole role1 = adminRoleService.getByName(role.getName());
+        if (role1 != null && !role1.getId().equals(role.getId())) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("错误:重复的角色名，请修改后重新提交");
+            return resp;
+        }
+        role = adminRoleService.update(role);
+        resp = AjaxResponse.success();
+        resp.addEntry("updateResult", role);
+        return resp;
+    }
+
+    @RequestMapping(value = "admin/adminRoles/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse deleteAdminRole(@Valid @RequestBody AdminRole role, HttpServletRequest request) throws Exception {
+        AjaxResponse resp = new AjaxResponse();
+
+        MerchantStore thisSwitchMerchantStore = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
+        if (thisSwitchMerchantStore == null) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("请先切换门店");
+            return resp;
+        }
+        AdminRole roleFound = adminRoleService.findById(role.getId());
+        if (roleFound == null) {
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("错误:该角色不存在，无法被删除");
+            return resp;
+        }
+        adminRoleService.delete(roleFound);
         return resp;
     }
 

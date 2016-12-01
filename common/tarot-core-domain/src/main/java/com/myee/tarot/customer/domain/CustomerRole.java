@@ -12,8 +12,8 @@ import javax.persistence.*;
 @Table(name = "C_CUSTOMER_ROLE")
 public class CustomerRole extends GenericEntity<Long, CustomerRole> {
     @Id
-    @Column(name = "ADDRESS_ID", unique = true, nullable = false)
-    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "ADDRESS_SEQ_NEXT_VAL",allocationSize=1)
+    @Column(name = "CUSTOMER_ROLE_ID", unique = true, nullable = false)
+    @TableGenerator(name = "TABLE_GEN", table = "C_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "CUSTOMER_ROLE_SEQ_NEXT_VAL",allocationSize=1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     protected Long id;
 

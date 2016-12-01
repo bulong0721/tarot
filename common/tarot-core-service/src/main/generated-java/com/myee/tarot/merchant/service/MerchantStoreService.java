@@ -3,8 +3,10 @@ package com.myee.tarot.merchant.service;
 import com.myee.tarot.core.service.GenericEntityService;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.merchant.domain.MerchantStore;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -18,7 +20,7 @@ public interface MerchantStoreService extends GenericEntityService<Long, Merchan
 
 //    List<MerchantStore> listByMerchant(Long id);
 
-    PageResult<MerchantStore> pageListByMerchant(Long id,PageRequest pageRequest );
+    PageResult<MerchantStore> pageListByMerchant(Long id,WhereRequest whereRequest ) throws InvocationTargetException, NoSuchMethodException, NoSuchFieldException, IllegalAccessException;
 
     Long getCountById(Long merchantStoreId, Long merchantId);
 

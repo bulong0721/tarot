@@ -6,6 +6,7 @@ import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.catalog.dao.DeviceDao;
 import com.myee.tarot.catalog.service.DeviceService;
+import com.myee.tarot.core.util.WhereRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class DeviceServiceImpl extends GenericEntityServiceImpl<Long, Device>imp
     }
 
     @Override
-    public PageResult<Device> pageList(PageRequest pageRequest) {
-        return deviceDao.pageList(pageRequest);
+    public PageResult<Device> pageList(WhereRequest whereRequest) {
+        return deviceDao.pageList(whereRequest);
     }
 }

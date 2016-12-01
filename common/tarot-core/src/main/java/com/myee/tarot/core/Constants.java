@@ -327,4 +327,53 @@ public class Constants {
 	public static final int INTERVAL_ONE_YEAR = 3600 * 24 * 1000;
 
 	public static final int METRIC_EXPORT_BUFFER_SIZE = 1000;
+
+	public static final String SEARCH_OPTION_NAME = "name";
+
+	public static final String SEARCH_OPTION_CODE = "code";
+
+	public static final String SEARCH_OPTION_PHONE = "phone";
+
+	public static final String SEARCH_OPTION_ADDRESS = "address.address";
+
+	public static final String SEARCH_OPTION_ADDRESS_PROVINCE = "address.province.id";
+
+	public static final String SEARCH_OPTION_ADDRESS_CITY = "address.city.id";
+
+	public static final String SEARCH_OPTION_BUSINESS_TYPE = "businessType";
+
+	public static final String SEARCH_OPTION_CUISINE_TYPE = "cuisineType";
+
+	public static final String SEARCH_OPTION_DESCRIPTION = "description";
+
+	public static final String SEARCH_OPTION_TYPE = "type";
+
+	public static final String SEARCH_OPTION_PHONE_PRIZE_TYPE = "phonePrizeType";
+
+	public static final String SEARCH_OPTION_TABLE_TYPE = "tableType.id";
+
+	public static final String SEARCH_OPTION_TABLE_ZONE = "tableZone.id";
+
+	public static final String SEARCH_OPTION_SCAN_CODE = "scanCode";
+
+	public static final String SEARCH_OPTION_TEXT_ID = "textId";
+
+	public static final String SEARCH_OPTION_VERSION_NUM = "versionNum";
+
+	public static final String SEARCH_OPTION_STORE_NAME = "store.name";
+
+	public static final String SEARCH_OPTION_BOARD_NO = "boardNo";
+
+	public static final String SEARCH_OPTION_DEVICE_NUM = "deviceNum";
+
+	public static final String SEARCH_OPTION_PRODUCT_NUM = "productNum";
+
+	public static final String SEARCH_OPTION_LOGIN = "login";
+
+	public static final String SEARCH_OPTION_PHONE_NUMBER = "phoneNumber";
+
+	public static final String SEARCH_OPTION_EMAIL = "email";
+
+
+
 }

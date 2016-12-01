@@ -11,4 +11,6 @@ import java.util.List;
 public interface CustomerRoleService extends GenericEntityService<Long, CustomerRole> {
 
     List<CustomerRole> listByCustomerId(Long customerId);
+
+    CustomerRole getByName(String roleName);
 }

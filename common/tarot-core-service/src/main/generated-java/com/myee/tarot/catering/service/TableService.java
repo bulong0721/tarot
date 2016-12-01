@@ -4,6 +4,7 @@ import com.myee.tarot.catering.domain.Table;
 import com.myee.tarot.core.service.GenericEntityService;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.WhereRequest;
 
 import java.util.List;
 
@@ -14,5 +15,5 @@ public interface TableService extends GenericEntityService<Long, Table> {
 
     List<Table> listByStore(long storeId);
 
-    PageResult<Table> pageByStore(Long id, PageRequest pageRequest);
+    PageResult<Table> pageByStore(Long id, WhereRequest whereRequest);
 }
