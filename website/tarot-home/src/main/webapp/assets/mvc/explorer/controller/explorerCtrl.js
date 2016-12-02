@@ -124,11 +124,13 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
         var data = $scope.treeData;
         recursionTree(data, arraySelected);
         if (arraySelected.length == 0) {
-            toaster.warning({body: "请选择文件！"});
+            $filter('toasterManage')(5, "请选择文件！",false);
+            //toaster.warning({body: "请选择文件！"});
             return;
         }
         if (arraySelected.length > 100) {
-            toaster.warning({body: "请选择不超过100个文件！"});
+            $filter('toasterManage')(5, "请选择不超过100个文件！",false);
+            //toaster.warning({body: "请选择不超过100个文件！"});
             return;
         }
         $scope.activeTab = iPush;
@@ -388,10 +390,12 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
             cResource.save(mgrDataPusher.api.push,{}, formly.model).then(function(resp){
                 $scope.disableSubmit = false;
                 if (resp != null && resp.status == 0) {
-                    toaster.success({body: resp.statusMessage});
+                    $filter('toasterManage')(5, resp.statusMessage,true);
+                    //toaster.success({body: resp.statusMessage});
                     $scope.goDataTable();
                 } else {
-                    toaster.error({body: resp.statusMessage});
+                    $filter('toasterManage')(5, resp.statusMessage,false);
+                    //toaster.error({body: resp.statusMessage});
                 }
             });
         }
@@ -408,10 +412,12 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
             }, {}).then(function(resp){
                 if (resp != null && resp.status == 0) {
                     $scope.deleteDom(parentNode.children, data.uid);
-                    toaster.success({body: "删除成功"});
+                    $filter('toasterManage')(5, "删除成功",true);
+                    //toaster.success({body: "删除成功"});
                     $scope.goDataTable();
                 } else {
-                    toaster.error({body: resp.statusMessage});
+                    $filter('toasterManage')(5, resp.statusMessage,false);
+                    //toaster.error({body: resp.statusMessage});
                 }
             });
         });
@@ -440,11 +446,13 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
             var newFileName = $scope.formData.model.name;
             var newFilePath = $scope.formData.model.currPath;
             if(newFilePath != "" && newFilePath != undefined && (newFilePath.indexOf("/") >= 0 || newFilePath.indexOf("\\") >= 0)){
-                toaster.error({body: "文件路径不能包含/、\\！"});
+                $filter('toasterManage')(5, "文件名称不能包含/、\\！",false);
+                //toaster.error({body: "文件路径不能包含/、\\！"});
                 return;
             }
             if(newFileName != "" && newFileName != undefined && (newFileName.indexOf("/") >= 0 || newFileName.indexOf("\\") >= 0)){
-                toaster.error({body: "文件名称不能包含/、\\！"});
+                $filter('toasterManage')(5, "文件名称不能包含/、\\！",false);
+                //toaster.error({body: "文件名称不能包含/、\\！"});
                 return;
             }
             if ($scope.formData.model.type == 0) { //新增文件夹
@@ -465,7 +473,8 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
                 } else {
                     createDir();
                 }
-                toaster.success({body: "创建成功！"});
+                $filter('toasterManage')(5, "创建成功！",true);
+                //toaster.success({body: "创建成功！"});
             } else { //新增文件
                 //添加同文件夹下同名检测
                 var childrenArray = $scope.current.children;
@@ -581,7 +590,8 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
                 $scope.disableSubmit = false;
             } else {
                 $scope.disableSubmit = true;
-                toaster.error({body: resp.statusMessage});
+                $filter('toasterManage')(5, resp.statusMessage,false);
+                //toaster.error({body: resp.statusMessage});
             }
         });
     }
@@ -667,7 +677,8 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
         //是XML的从XML解析成JSON
         cResource.get(mgrData.api.getContent,{data: data}).then(function(resp){
             if (!resp || resp.status != 0) {
-                toaster.error({body: code + failMessage + resp.statusMessage});
+                $filter('toasterManage')(5, code + failMessage + resp.statusMessage,false);
+                //toaster.error({body: code + failMessage + resp.statusMessage});
             }
             else {
                 var obj = JSON.parse(resp.rows[0].message);
@@ -759,7 +770,8 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
     //校验是否选择了设备组
     function checkProductUsedCodeOK(code) {
         if (!code || code == '') {
-            toaster.error({body: "请先选择要升级的设备组!"});
+            $filter('toasterManage')(5, "请先选择要升级的设备组!",false);
+            //toaster.error({body: "请先选择要升级的设备组!"});
             return false;
         }
         return true;
@@ -788,7 +800,8 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
             }
             if($filter('isNullOrEmptyString')(indexData.editing) || indexData.editing == true){
                 $timeout(function () {
-                    toaster.error({body: "有未保存的行，请点击√保存!"})
+                    $filter('toasterManage')(5, "有未保存的行，请点击√保存!",false);
+                    //toaster.error({body: "有未保存的行，请点击√保存!"})
                 }, 0);
                 initialParams();
                 checkAllRowOK = false;
@@ -797,7 +810,8 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
 
             if (indexData.show && (indexData.md5 == null || indexData.web == null || indexData.md5 == "" || indexData.web == "")) {
                 $timeout(function () {
-                    toaster.error({body: indexData.name + "请上传文件并保存!"})
+                    $filter('toasterManage')(5, indexData.name + "请上传文件并保存!",false);
+                    //toaster.error({body: indexData.name + "请上传文件并保存!"})
                 }, 0);
                 initialParams();
                 checkAllRowOK = false;
@@ -896,11 +910,13 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
             angular.forEach(respArray, function (indexData, index, array) {
                 //indexData等价于array[index]
                 if (0 != indexData.status) {
-                    toaster.error({body: "保存配置文件失败!"})
+                    $filter('toasterManage')(5, "保存配置文件失败!",false);
+                    //toaster.error({body: "保存配置文件失败!"})
                     return;
                 }
             });
-            toaster.success({body: "保存配置文件成功!"});
+            $filter('toasterManage')(5, "保存配置文件成功!",true);
+            //toaster.success({body: "保存配置文件成功!"});
             $scope.goDataTable();
         });
     };
@@ -974,7 +990,8 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
     $scope.deleteAttr = function (model, attr) {
         cAlerts.confirm('确定删除?', function () {
             //点击确定回调
-            toaster.success({body: "操作成功!"});
+            $filter('toasterManage')(5, "操作成功!",true);
+            //toaster.success({body: "操作成功!"});
             var index = model.attributes.indexOf(attr);
             //model.attributes.splice(index, 1);
             //为了文件假删除一行
@@ -994,13 +1011,15 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
         var _file = $scope.fileList[index];
         if (!_file) {
             $timeout(function () {
-                toaster.error({body: "请选择升级包文件!"})
+                $filter('toasterManage')(5, "请选择升级包文件!",false);
+                //toaster.error({body: "请选择升级包文件!"})
             }, 0);
             return;
         }
         if (thisRow.name != $filter('getFileName')(_file.name, $scope.mgrUpdateConfigData.constant.FILE_NAME_NO_EXTERN)) {
             $timeout(function () {
-                toaster.error({body: "上传的文件名与模块名不匹配!"})
+                $filter('toasterManage')(5, "上传的文件名与模块名不匹配!",false);
+                //toaster.error({body: "上传的文件名与模块名不匹配!"})
             }, 0);
             return false;
         }
@@ -1020,20 +1039,23 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
             path = $scope.mgrUpdateConfigData.constant.BASE_PATH_AGENT_PATCH;
         }
         else {
-            toaster.error({body: "类型设置不正确，保存失败!"});
+            $filter('toasterManage')(5, "类型设置不正确，保存失败!",false);
+            //toaster.error({body: "类型设置不正确，保存失败!"});
             return;
         }
         fd.append('file', _file);
         cResource.upload($scope.mgrUpdateConfigData.api.uploadFile,{'type': 'file', path: path}, fd).then(function(res){
             if (0 != res.status) {
                 $timeout(function () {
-                    toaster.error({body: _file.name + "上传失败!"})
+                    $filter('toasterManage')(5, _file.name + "上传失败!",false);
+                    //toaster.error({body: _file.name + "上传失败!"})
                 }, 0);
                 $scope.formDataUpdateConfig.model.attributes[index].uploadState = false;
                 return;
             } else {
                 $timeout(function () {
-                    toaster.success({body: _file.name + "上传成功!"})
+                    $filter('toasterManage')(5, _file.name + "上传成功!",true);
+                    //toaster.success({body: _file.name + "上传成功!"})
                 }, 0);
                 $scope.formDataUpdateConfig.model.attributes[index].md5 = res.dataMap.tree.md5;
                 $scope.formDataUpdateConfig.model.attributes[index].web = baseUrl.pushUrl + res.dataMap.tree.downloadPath;
@@ -1052,13 +1074,15 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
             || $filter('isNullOrEmptyString')(thisRow.type)
             || ($filter('isNullOrEmptyString')(thisRow.force_update) && !(thisRow.type == $scope.mgrUpdateConfigData.constant.TYPE_AGENT || thisRow.type == $scope.mgrUpdateConfigData.constant.TYPE_AGENT_PATCH ))) {
             $timeout(function () {
-                toaster.error({body: "请填写完整信息!"})
+                $filter('toasterManage')(5,"请填写完整信息!",false);
+                //toaster.error({body: "请填写完整信息!"})
             }, 0);
             return false;
         }
         if (thisRow.type == $scope.mgrUpdateConfigData.constant.TYPE_APK && (typeof thisRow.version != 'number')) {
             $timeout(function () {
-                toaster.error({body: "类型为“应用”的请填写纯数字版本信息!"})
+                $filter('toasterManage')(5,"类型为“应用”的请填写纯数字版本信息!",false);
+                //toaster.error({body: "类型为“应用”的请填写纯数字版本信息!"})
             }, 0);
             return false;
         }
@@ -1097,10 +1121,12 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
         if ($scope.mgrUpdateConfigData.constant.FILE_NAME_MODULE != file_name
             && $scope.mgrUpdateConfigData.constant.FILE_NAME_APK != file_name) {
             $timeout(function () {
-                toaster.error({
-                    body: "请选择" + $scope.mgrUpdateConfigData.constant.FILE_NAME_APK
-                    + "或" + $scope.mgrUpdateConfigData.constant.FILE_NAME_MODULE + "文件!"
-                })
+                $filter('toasterManage')(5,"请选择" + $scope.mgrUpdateConfigData.constant.FILE_NAME_APK
+                    + "或" + $scope.mgrUpdateConfigData.constant.FILE_NAME_MODULE + "文件!",false);
+                //toaster.error({
+                //    body: "请选择" + $scope.mgrUpdateConfigData.constant.FILE_NAME_APK
+                //    + "或" + $scope.mgrUpdateConfigData.constant.FILE_NAME_MODULE + "文件!"
+                //})
             }, 0);
             return;
         }
@@ -1151,7 +1177,8 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
         //支持IE 7 8 9
         else if (typeof window.ActiveXObject != 'undefined') {
             $timeout(function () {
-                toaster.error({body: "浏览器版本过低，请使用IE10以上或火狐或谷歌浏览器!"});
+                $filter('toasterManage')(5,"浏览器版本过低，请使用IE10以上或火狐或谷歌浏览器!",false);
+                //toaster.error({body: "浏览器版本过低，请使用IE10以上或火狐或谷歌浏览器!"});
             }, 0);
             return;
         }
@@ -1176,6 +1203,10 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
     }
 
     $scope.insertAttr = function (model) {
+        //校验是否选择了设备组
+        if (!checkProductUsedCodeOK($scope.formDataUpdateConfig.model.code)) {
+            return '';
+        }
         if (!model.attributes) {
             model.attributes = [];
         }
@@ -1221,7 +1252,8 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
         $scope.fileList[index] = _file;
         if (thisRow.name != $filter('getFileName')(_file.name, $scope.mgrUpdateConfigData.constant.FILE_NAME_NO_EXTERN)) {
             $timeout(function () {
-                toaster.error({body: "上传的文件名与模块或应用名不一致!"})
+                $filter('toasterManage')(5,"上传的文件名与模块或应用名不一致!",false);
+                //toaster.error({body: "上传的文件名与模块或应用名不一致!"})
             }, 0);
             return;
         }

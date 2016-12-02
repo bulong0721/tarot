@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,15 +34,12 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
  * Created by Martin on 2016/4/21.
  */
 @Controller
-@EnableWebSecurity
-//@EnableGlobalMethodSecurity(jsr250Enabled=true)
 public class MerchantController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MerchantController.class);
 
@@ -117,6 +115,7 @@ public class MerchantController {
 
     @RequestMapping(value = "admin/merchant/get", method = RequestMethod.GET)
     @ResponseBody
+//    @PreAuthorize("hasAnyAuthority(['MERCHANT_MANAGE','MERCHANT_STORE_R'])")
     public AjaxResponse getMerchant(@RequestParam Long id, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
@@ -153,6 +152,7 @@ public class MerchantController {
 
     @RequestMapping(value = "admin/merchant/delete", method = RequestMethod.POST)
     @ResponseBody
+//    @PreAuthorize("hasAnyAuthority('MERCHANT_MANAGE','MERCHANT_STORE_D')")
     public AjaxResponse deleteMerchant(@Valid @RequestBody Merchant merchantDelete, HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
@@ -192,7 +192,7 @@ public class MerchantController {
 
     @RequestMapping(value = "admin/merchant/list", method = RequestMethod.GET)
     @ResponseBody
-//    @PreAuthorize("MERCHANT_MANAGE_R")
+//    @PreAuthorize("hasAnyAuthority('MERCHANT_MANAGE','MERCHANT_STORE_R')")
     public AjaxResponse listMerchant(HttpServletRequest request) throws Exception {
         AjaxResponse resp = new AjaxResponse();
         try {
@@ -210,6 +210,7 @@ public class MerchantController {
 
     @RequestMapping(value = "admin/merchant/paging", method = RequestMethod.GET)
     @ResponseBody
+//    @PreAuthorize("hasAnyAuthority('MERCHANT_MANAGE','MERCHANT_STORE_R')")
     public AjaxPageableResponse pageMerchant(HttpServletRequest request, WhereRequest whereRequest) throws Exception {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
@@ -340,13 +341,15 @@ public class MerchantController {
             merchantStore = merchantStoreService.update(merchantStore);//新建或更新
 
             //引流关系维护
-            SaleCorpMerchant saleCorpMerchant = saleCorpMerchantService.findByMerchantId(merchantStore.getId());
-            List<MerchantStore> bindStores = Lists.newArrayList();
-            if (saleCorpMerchant != null && !StringUtil.isBlank(saleCorpMerchant.getRelatedMerchants())) {
-                List<Long> bindStore = JSON.parseArray(saleCorpMerchant.getRelatedMerchants(), Long.class);
-                for (Long storeId : bindStore) {
-                    MerchantStore store = merchantStoreService.findById(storeId);
-                    bindStores.add(store);
+            List<MerchantStore> bindStores = Lists.newArrayList();;
+            if(merchantStore.getId() != null && !("").equals(merchantStore.getId())){
+                SaleCorpMerchant saleCorpMerchant = saleCorpMerchantService.findByMerchantId(merchantStore.getId());
+                if (saleCorpMerchant != null && !StringUtil.isBlank(saleCorpMerchant.getRelatedMerchants())) {
+                    List<Long> bindStore = JSON.parseArray(saleCorpMerchant.getRelatedMerchants(), Long.class);
+                    for (Long storeId : bindStore) {
+                        MerchantStore store = merchantStoreService.findById(storeId);
+                        bindStores.add(store);
+                    }
                 }
             }
             resp = AjaxResponse.success();
@@ -431,20 +434,7 @@ public class MerchantController {
             } else if (path.contains("/shop/")) {
                 resp.setRecordsTotal(0);
             }
-        }
-        catch (InvocationTargetException e) {
-            e.printStackTrace();
-            resp.setErrorString("出错");
-        }
-        catch (NoSuchFieldException e) {
-            e.printStackTrace();
-            resp.setErrorString("出错");
-        }
-        catch (IllegalAccessException e) {
-            e.printStackTrace();
-            resp.setErrorString("出错");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             resp.setErrorString("出错");
         }
@@ -490,7 +480,7 @@ public class MerchantController {
 
             Merchant merchant = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
 
-            PageResult<MerchantStore> pageList = merchantStoreService.pageListByMerchant(merchant.getId(), whereRequest);
+            PageResult<MerchantStore> pageList = merchantStoreService.pageListByMerchant(merchant.getId(), pageRequest);
 
             List<MerchantStore> merchantStoreList = pageList.getList();
             for (MerchantStore merchantStore : merchantStoreList) {
@@ -529,7 +519,7 @@ public class MerchantController {
             }
 
             Merchant merchant = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
-            List<MerchantStore> merchantStoreList = merchantStoreService.pageListByMerchant(merchant.getId(), new WhereRequest()).getList();
+            List<MerchantStore> merchantStoreList = merchantStoreService.pageListByMerchant(merchant.getId(), new PageRequest()).getList();
             for (MerchantStore merchantStore : merchantStoreList) {
                 Map entry = new HashMap();
                 entry.put("name", merchantStore.getName());

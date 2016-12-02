@@ -154,28 +154,39 @@ function getFileName(){
 
 /**
  * 弹提示
+ * 0://错误
+ * 1://操作成功
+ * 2://删除成功
+ * 3://查询成功
+ * 4://上传成功
+ * 5://自定义
  */
 function toasterManage(toaster){
-    return function(type, response){
-        var respMessage = response && response != undefined ? (response.statusMessage || '') : "" ;
+    return function(type, message,isSucc){
+        //console.log(type)
+        //var respMessage = response && response != undefined ? (response.statusMessage || '') : "" ;
+        message = message || '';
         switch (type) {
             case 0://错误
-                toaster.error({body: "出错啦!" + respMessage});
+                toaster.error({body: "出错啦!" + message});
                 break;
             case 1://操作成功
-                toaster.success({body: "操作成功!"+ respMessage});
+                toaster.success({body: "操作成功!"+ message});
                 break;
             case 2://删除成功
-                toaster.success({body: "删除成功!"+ respMessage});
+                toaster.success({body: "删除成功!"+ message});
                 break;
             case 3://查询成功
-                toaster.success({body: "查询成功!"+ respMessage});
+                toaster.success({body: "查询成功!"+ message});
                 break;
-            case 4://查询成功
-                toaster.success({body: "上传成功!"+ respMessage});
+            case 4://上传成功
+                toaster.success({body: "上传成功!"+ message});
+                break;
+            case 5://自定义
+                isSucc?toaster.success({body: message}):toaster.error({body: message});
                 break;
             default :
-                toaster.error({body: '出错啦'+ respMessage});
+                toaster.error({body: message});
         }
     }
 }

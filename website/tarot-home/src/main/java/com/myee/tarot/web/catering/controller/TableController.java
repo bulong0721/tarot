@@ -326,9 +326,12 @@ public class TableController {
                     updateResult.add(objectToEntry(tableResult));
                 }
             } else {//单个新增或修改
-                Table tableOld = tableService.findById(table.getId());
-                if(tableOld != null){
-                    table.setDeviceUsed(tableOld.getDeviceUsed());
+                //如果是修改，获取连带的绑定关系
+                if(table.getId() != null && !("").equals(table.getId()) ){
+                    Table tableOld = tableService.findById(table.getId());
+                    if(tableOld != null){
+                        table.setDeviceUsed(tableOld.getDeviceUsed());
+                    }
                 }
                 table = tableService.update(table);
                 updateResult.add(objectToEntry(table));

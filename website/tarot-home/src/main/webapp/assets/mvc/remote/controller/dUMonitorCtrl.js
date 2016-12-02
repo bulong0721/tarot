@@ -12,10 +12,12 @@ dUMonitorMgrCtrl.$inject = ['$scope','cResource','$uibModal','$interval'];
 function dUMonitorMgrCtrl($scope,cResource,$uibModal,$interval) {
     var ms = 3600000,
         vm = $scope.vm = {
+            oldOrNow:'0',
             listByStoreId:[],
             summaryVal:'',
             metricVal:'',
             period:[{ts:ms,name:'1 小时'}, {ts:ms*2,name:'2 小时'}, {ts:ms*4,name:'4 小时'}, {ts:ms*12,name:'12 小时'}, {ts:ms*24,name:'24 小时'}, {ts:ms*168,name:'1 周'}, {ts:ms*720,name:'1 月'}, {ts:ms*8760,name:'1 年'}],
+            //periodSelect:'',
             gets:{
                 deviceUsedId:'',
                 period:ms,
@@ -24,8 +26,15 @@ function dUMonitorMgrCtrl($scope,cResource,$uibModal,$interval) {
             },
             getMetrics:function(gets,call){
                 //type == 1 大图
-                cResource.get('../admin/remoteMonitor/deviceUsed/queryMetricPointsByRange',gets).then(function(resp){
-                    if(resp.rows && resp.rows.length>0) {
+                var url = this.oldOrNow=='0'?
+                    '../admin/remoteMonitor/deviceUsed/queryMetricPointsByRange':
+                    '../admin/remoteMonitor/deviceUsed/metrics';
+
+                cResource.get(url,gets).then(function(resp){
+                    if(!resp){//如果获取失败则情况绘图
+                        vm.metricVal = '';
+                    }
+                    else if(resp.rows && resp.rows.length>0) {
                         var r = resp.rows[0];
                         call(
                             vm.gets.type == 1?
@@ -72,15 +81,20 @@ function dUMonitorMgrCtrl($scope,cResource,$uibModal,$interval) {
                     }
                 });
             },
-            periodNow:function(val,byStore){
+            refresh:function(){ vm.metrics()},
+            periodNow:function(val,type){
                 //切换当前的机器或时间段 byStore(店铺机器)
-                if(byStore){
+                if(type ===2){
                     //当前机器
                     this.gets.deviceUsedId = val;
                     vm.summarys();
-                }else{
+                }else if(type ===1){
                     //时间段
                     this.gets.period = val;
+                }else if(type ===3){
+                    //快照或实时
+                    this.oldOrNow = val;
+                    this.gets.period = vm.period[0].ts;
                 }
                 vm.metrics();
             },
@@ -128,7 +142,7 @@ function dUMonitorMgrCtrl($scope,cResource,$uibModal,$interval) {
 
     //初始化
     vm.listByStoreId();
-    /*$interval(function () {
-        vm.metrics();
-    }, 60000);*/
+    //$interval(function () {
+    //    vm.metrics();
+    //}, 60000);
 }

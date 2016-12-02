@@ -96,9 +96,10 @@ function constServiceCtor(cResource, $q,$rootScope) {
  * */
 function cTablesService(NgTableParams, cAlerts,$timeout,cResource) {
     var vm = this, iDatatable = 0, iEditor = 1;
+
     //处理toaster
     vm.toasterManage = function(type,res){
-        $filter('toasterManage')(type,res != undefined ? res : '');
+        $filter('toasterManage')(type,res != undefined ? res.statusMessage : '');
     }
     //属性操作
     vm.initAttrNgMgr = function(mgrData,scope){
@@ -137,7 +138,7 @@ function cTablesService(NgTableParams, cAlerts,$timeout,cResource) {
 
     //通用fromly 通用ngtable的操作
     vm.initNgMgrCtrl = function (mgrOpts, scope) {
-        scope.toastError = 0, scope.toastOperationSucc = 1, scope.toastDeleteSucc = 2, scope.toastSearchSucc = 3, scope.toastUploadSucc = 4;
+        scope.toastError = 0, scope.toastOperationSucc = 1, scope.toastDeleteSucc = 2, scope.toastSearchSucc = 3, scope.toastUploadSucc = 4,scope.customDefined = 5;
         //初始化搜索配置
         scope.where = {};
         scope.disableSubmit = false;//防止二次提交
@@ -627,7 +628,7 @@ function cResource($resource,$filter,$q){
     //处理数据
     function dataFilter(data,type,state){
         if (data.status != 0) {
-            $filter('toasterManage')(toastError, data);
+            $filter('toasterManage')(toastError, data.statusMessage);
             return false;
         }
         state && $filter('toasterManage')(type);

@@ -5,7 +5,7 @@
                 <h5><i class="fa fa-line-chart m-r-sm"></i>Summary</h5>
                 <div class="ibox-tools">
                     <span>切换设备：</span>
-                    <select class="form-control" onchange="angular.element(this).scope().vm.periodNow(this.options[this.options.selectedIndex].value,true)">
+                    <select class="form-control" onchange="angular.element(this).scope().vm.periodNow(this.options[this.options.selectedIndex].value,2)">
                         <option ng-repeat="l in vm.listByStoreId" value="{{l.id}}">{{l.name}}</option>
                     </select>
                     <span ng-if="vm.summaryVal" ng-click="vm.metricInfoListApp('已安装的程序',vm.summaryVal.appInfoList.apps,true)" class="btn btn-primary btn-sm dropdown-toggle">已安装的程序</span>
@@ -35,9 +35,14 @@
             <div class="ibox-title">
                 <h5><i class="fa fa-area-chart m-r-sm"></i>Metrics</h5>
                 <div class="ibox-tools">
-                    过去：
-                    <select class="form-control" onchange="angular.element(this).scope().vm.periodNow(this.options[this.options.selectedIndex].value)">
-                        <option ng-repeat="p in vm.period" value="{{p.ts}}">{{p.name}}</option>
+                    <a tooltip-placement="top" uib-tooltip="{{lang_zh.refresh}}" class="fa fa-refresh m-r-sm" ng-click="vm.refresh()"></a>
+                    切换时间：
+                    <select class="form-control" onchange="angular.element(this).scope().vm.periodNow(this.options[this.options.selectedIndex].value,3)">
+                        <option value="0">快照</option>
+                        <option value="1">实时</option>
+                    </select>
+                    <select class="form-control" onchange="angular.element(this).scope().vm.periodNow(this.options[this.options.selectedIndex].value,1)">
+                        <option ng-repeat="p in vm.period" ng-if="vm.oldOrNow == '0' || (vm.oldOrNow=='1' && $index<2)" value="{{p.ts}}">{{p.name}}</option>
                     </select>
                     <span ng-click="vm.metricInfoListApp('运行的服务',vm.metricVal.appInfoList.services,false)" class="btn btn-primary btn-sm dropdown-toggle">服务</span>
                     <span ng-click="vm.metricInfoListApp('运行的进程',vm.metricVal.appInfoList.processes,false)" class="btn btn-primary btn-sm dropdown-toggle">进程</span>
@@ -93,7 +98,7 @@
     <div class="modal-header metricsBig">
         <h3 class="modal-title">{{metricBigVal.name}}</h3>
         <div class="ibox-tools">
-            <select class="form-control" onchange="angular.element(this).scope().periodNow(this.options[this.options.selectedIndex].value)">
+            <select class="form-control" onchange="angular.element(this).scope().periodNow(this.options[this.options.selectedIndex].value,1)">
                 <option ng-repeat="p in periods" value="{{p.ts}}">{{p.name}}</option>
             </select>
         </div>

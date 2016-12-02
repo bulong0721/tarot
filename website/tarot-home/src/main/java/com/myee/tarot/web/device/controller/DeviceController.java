@@ -343,9 +343,12 @@ public class DeviceController {
                     }
                 }
             } else {//单个新增或修改
-                DeviceUsed deviceUsedOld = deviceUsedService.findById(deviceUsed.getId());
-                if (deviceUsedOld != null) {
-                    deviceUsed.setProductUsed(deviceUsedOld.getProductUsed());
+                //如果是修改，获取连带的绑定关系
+                if(deviceUsed.getId() != null && !("").equals(deviceUsed.getId())){
+                    DeviceUsed deviceUsedOld = deviceUsedService.findById(deviceUsed.getId());
+                    if (deviceUsedOld != null) {
+                        deviceUsed.setProductUsed(deviceUsedOld.getProductUsed());
+                    }
                 }
                 deviceUsed = deviceUsedService.update(deviceUsed);
                 updateResult.add(objectToEntry(deviceUsed));
@@ -675,9 +678,12 @@ public class DeviceController {
                     }
                 }
             } else {//单个新增或修改
-                ProductUsed productUsedOld = productUsedService.findById(productUsed.getId());
-                if (productUsedOld != null) {
-                    productUsed.setDeviceUsed(productUsedOld.getDeviceUsed());
+                //如果是修改，获取连带的绑定关系
+                if(productUsed.getId() != null && !("").equals(productUsed.getId())){
+                    ProductUsed productUsedOld = productUsedService.findById(productUsed.getId());
+                    if (productUsedOld != null) {
+                        productUsed.setDeviceUsed(productUsedOld.getDeviceUsed());
+                    }
                 }
                 productUsed = productUsedService.update(productUsed);
                 updateResult.add(objectToEntry(productUsed));
