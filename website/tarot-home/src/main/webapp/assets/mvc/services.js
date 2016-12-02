@@ -189,7 +189,9 @@ function cTablesService(NgTableParams, cAlerts,$timeout,cResource) {
                 //点击确定回调
                 if (mgrOpts.api.delete && rowIndex > -1) {
                     cResource.remove(mgrOpts.api.delete,{},scope.tableOpts.data[rowIndex]).then(function(response){
-                        scope.tableOpts.data.splice(rowIndex, 1);//更新数据表
+                        if(response){
+                            scope.tableOpts.data.splice(rowIndex, 1);//更新数据表
+                        }
                     });
                 }
             }, function () {
