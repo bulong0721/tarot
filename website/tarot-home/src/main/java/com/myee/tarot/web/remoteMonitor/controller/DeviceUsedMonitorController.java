@@ -65,7 +65,7 @@ public class DeviceUsedMonitorController {
 
             //从缓存中查询数据，如果缓存无数据，则从数据库查数据，并将结果存入缓存
             //因为redis是key-value存储，没办法实现数据库式的查询操作。
-            SystemMetrics systemMetrics = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_SUMMARY);
+            SystemMetrics systemMetrics = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_SUMMARY, null, null);
             if (systemMetrics == null) {
                 return AjaxResponse.failed(-1, "无可用概览数据");
             }
@@ -104,7 +104,7 @@ public class DeviceUsedMonitorController {
         return resp;
     }
 
-    /**
+    /**实时指标获取接口
      * @param deviceUsedId     设备ID
      * @param period           要查询数据的时间跨度
      * @param metricsKeyString 要显示的指标key列表
@@ -148,19 +148,18 @@ public class DeviceUsedMonitorController {
                 metricsKeyList = JSON.parseArray(metricsKeyString, String.class);
                 metricsKeyMap = sortMetricsKeyByNeedTime(metricsKeyList);
             }
+            Long now = System.currentTimeMillis();
+            //处理显示时间长度参数
+            period = decidePeriod(period);
 
             //获取最新的一条动态指标
-            SystemMetrics systemMetrics = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_METRICS);
+            SystemMetrics systemMetrics = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_METRICS,period,now);
             if (systemMetrics == null) {
                 return AjaxResponse.failed(-1, "无可用指标数据");
             }
 
-            //处理显示时间长度参数
-            period = decidePeriod(period);
-
             List<Map> metricInfoList = null;
             //根据展示时间段、指标keyList和设备ID去查找数据，一次性取出所有需要展示值随时间变化的数据
-            Long now = System.currentTimeMillis();
             List<MetricInfo> metricInfoListDB = metricInfoService.listByBoardNoPeriod(deviceUsed.getBoardNo(), now, period, com.myee.djinn.constants.Constants.PATH_METRICS_METRICSINFO, metricsKeyMap.get(Constants.METRICS_NEED_TIME_KEY_LIST_NAME));
             List<MetricInfo> metricInfoNoTimeListDB = metricInfoService.listBySystemMetricsId(systemMetrics.getId(),metricsKeyMap.get(Constants.METRICS_NO_TIME_KEY_LIST_NAME));
             if(metricInfoNoTimeListDB != null && metricInfoNoTimeListDB.size() > 0){
@@ -212,7 +211,7 @@ public class DeviceUsedMonitorController {
             systemMetrics.setAppList(appInfoService.listBySystemMetricsId(systemMetrics.getId()));
 
             //获取最新的一条静态指标，为了取出已安装的应用列表
-            SystemMetrics systemMetricsSummary = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_SUMMARY);
+            SystemMetrics systemMetricsSummary = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_SUMMARY, period, now);
             List<AppInfo> installedAppInfoList = null;
             List<MetricInfo> metricInfoList4Summary = null;
             if (systemMetricsSummary != null && systemMetricsSummary.getId() != null) {
@@ -238,7 +237,7 @@ public class DeviceUsedMonitorController {
         return resp;
     }
 
-    /**
+    /**快照数据获取接口：快照不按照所选时间段去限制，只取最后一条数据，以备查看设备离线前最后的数据
      * @param deviceUsedId     设备ID
      * @param period           要查询数据的时间跨度
      * @param metricsKeyString 要显示的指标key列表
@@ -281,19 +280,18 @@ public class DeviceUsedMonitorController {
                 metricsKeyList = JSON.parseArray(metricsKeyString, String.class);
                 metricsKeyMap = sortMetricsKeyByNeedTime(metricsKeyList);
             }
+            Long now = System.currentTimeMillis();
+            //处理显示时间长度参数
+            period = decidePeriod(period);
 
-            //获取最新的一条动态指标
-            SystemMetrics systemMetrics = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_METRICS);
+            //获取最新的一条动态指标,快照不按照所选时间段去限制，只取最后一条数据，以备查看设备离线前最后的数据
+            SystemMetrics systemMetrics = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_METRICS, null, null);
             if (systemMetrics == null) {
                 return AjaxResponse.failed(-1, "无可用指标数据");
             }
 
-            //处理显示时间长度参数
-            period = decidePeriod(period);
-
             List<Map> metricInfoList = null;
             //根据展示时间段、指标keyList和设备ID去查找数据，一次性取出所有需要展示值随时间变化的数据
-            Long now = System.currentTimeMillis();
             List<MetricInfo> metricInfoListDB = MetricsUtil.listMetricsInfoPointsByPeriod(metricsKeyMap.get(Constants.METRICS_NEED_TIME_KEY_LIST_NAME), metricInfoService, period, deviceUsed.getBoardNo());
             List<MetricInfo> metricInfoNoTimeListDB = metricInfoService.listBySystemMetricsId(systemMetrics.getId(),metricsKeyMap.get(Constants.METRICS_NO_TIME_KEY_LIST_NAME));
             if(metricInfoNoTimeListDB != null && metricInfoNoTimeListDB.size() > 0){
@@ -345,7 +343,7 @@ public class DeviceUsedMonitorController {
             systemMetrics.setAppList(appInfoService.listBySystemMetricsId(systemMetrics.getId()));
 
             //获取最新的一条静态指标，为了取出已安装的应用列表
-            SystemMetrics systemMetricsSummary = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_SUMMARY);
+            SystemMetrics systemMetricsSummary = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_SUMMARY, period, now);
             List<AppInfo> installedAppInfoList = null;
             List<MetricInfo> metricInfoList4Summary = null;
             if (systemMetricsSummary != null && systemMetricsSummary.getId() != null) {
