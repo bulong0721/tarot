@@ -1,20 +1,25 @@
 package com.myee.tarot.merchant.dao.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
-import com.myee.tarot.core.util.PageRequest;
-import com.myee.tarot.core.util.PageResult;
-import com.myee.tarot.core.util.StringUtil;
+import com.myee.tarot.core.util.*;
 import com.myee.tarot.merchant.dao.MerchantStoreDao;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.domain.QMerchantStore;
+import com.myee.tarot.profile.domain.Address;
+import com.myee.tarot.profile.domain.GeoZone;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Martin on 2016/4/21.
@@ -110,24 +115,44 @@ public class MerchantStoreDaoImpl extends GenericEntityDaoImpl<Long, MerchantSto
 //    }
 
     @Override
-    public PageResult<MerchantStore> pageListByMerchant(Long id, PageRequest pageRequest) {
+    public PageResult<MerchantStore> pageListByMerchant(Long id, WhereRequest whereRequest) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
         PageResult<MerchantStore> pageList = new PageResult<MerchantStore>();
         QMerchantStore qMerchantStore = QMerchantStore.merchantStore;
         JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
-
-        if (!StringUtil.isBlank(pageRequest.getQueryName())) {
-            query.where(qMerchantStore.name.like("%" + pageRequest.getQueryName() + "%"));
+        if (whereRequest.getQueryObj() != null) {
+            JSONObject map = JSON.parseObject(whereRequest.getQueryObj());
+            if (map.get(Constants.SEARCH_OPTION_NAME) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_NAME).toString())) {
+                query.where(qMerchantStore.name.like("%" + map.get(Constants.SEARCH_OPTION_NAME) + "%"));
+            }
+            if (map.get(Constants.SEARCH_OPTION_ADDRESS) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_ADDRESS).toString())) {
+                query.where(qMerchantStore.address.address.like("%" + map.get(Constants.SEARCH_OPTION_ADDRESS) + "%"));
+            }
+            if (map.get(Constants.SEARCH_OPTION_ADDRESS_PROVINCE) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_ADDRESS_PROVINCE).toString())) {
+                query.where(qMerchantStore.address.province.id.eq(Long.valueOf(map.get(Constants.SEARCH_OPTION_ADDRESS_PROVINCE).toString())));
+            }
+            if (map.get(Constants.SEARCH_OPTION_ADDRESS_CITY) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_ADDRESS_CITY).toString())) {
+                query.where(qMerchantStore.address.city.id.eq(Long.valueOf(map.get(Constants.SEARCH_OPTION_ADDRESS_CITY) + "%")));
+            }
+            if (map.get(Constants.SEARCH_OPTION_CODE) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_CODE).toString())) {
+                query.where(qMerchantStore.code.like("%" + map.get(Constants.SEARCH_OPTION_CODE) + "%"));
+            }
+            if (map.get(Constants.SEARCH_OPTION_PHONE) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_PHONE).toString())) {
+                query.where(qMerchantStore.phone.like("%" + map.get(Constants.SEARCH_OPTION_PHONE) + "%"));
+            }
+        } else {
+            if (!StringUtil.isBlank(whereRequest.getQueryName())) {
+                query.where(qMerchantStore.name.like("%" + whereRequest.getQueryName() + "%"));
+            }
         }
         if (id != null) {
             query.where(qMerchantStore.merchant.id.eq(id));
         }
         pageList.setRecordsTotal(query.from(qMerchantStore).fetchCount());
-        if (pageRequest.getCount() > Constants.COUNT_PAGING_MARK) {
-            query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
+        if (whereRequest.getCount() > Constants.COUNT_PAGING_MARK) {
+            query.offset(whereRequest.getOffset()).limit(whereRequest.getCount());
         }
         query.orderBy(qMerchantStore.merchantStore.name.asc());
         pageList.setList(query.fetch());
         return pageList;
     }
-
 }

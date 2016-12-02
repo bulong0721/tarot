@@ -6,6 +6,7 @@ import com.myee.tarot.catering.service.TableService;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.WhereRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +32,7 @@ public class TableServiceImpl extends GenericEntityServiceImpl<Long, Table> impl
     }
 
     @Override
-    public PageResult<Table> pageByStore(Long id, PageRequest pageRequest){
-        return tableDao.pageByStore(id, pageRequest);
+    public PageResult<Table> pageByStore(Long id, WhereRequest whereRequest){
+        return tableDao.pageByStore(id, whereRequest);
     }
 }

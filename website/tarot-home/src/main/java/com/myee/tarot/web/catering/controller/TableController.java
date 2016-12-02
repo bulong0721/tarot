@@ -14,16 +14,13 @@ import com.myee.tarot.catering.service.TableService;
 import com.myee.tarot.catering.service.TableTypeService;
 import com.myee.tarot.catering.service.TableZoneService;
 import com.myee.tarot.core.Constants;
-import com.myee.tarot.core.util.PageRequest;
-import com.myee.tarot.core.util.PageResult;
-import com.myee.tarot.core.util.StringUtil;
+import com.myee.tarot.core.util.*;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.catalog.service.DeviceService;
 import com.myee.tarot.catalog.service.DeviceUsedService;
 import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
-import com.myee.tarot.core.util.ValidatorUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -426,7 +423,7 @@ public class TableController {
     @RequestMapping(value = {"admin/catering/table/paging", "shop/catering/table/paging"}, method = RequestMethod.GET)
     public
     @ResponseBody
-    AjaxPageableResponse pageTables(Model model, HttpServletRequest request, PageRequest pageRequest) {
+    AjaxPageableResponse pageTables(Model model, HttpServletRequest request, WhereRequest whereRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
             Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
@@ -435,7 +432,7 @@ public class TableController {
                 return resp;
             }
             MerchantStore merchantStore1 = (MerchantStore) o;
-            PageResult<Table> pageList = tableService.pageByStore(merchantStore1.getId(), pageRequest);
+            PageResult<Table> pageList = tableService.pageByStore(merchantStore1.getId(), whereRequest);
 
             List<Table> typeList = pageList.getList();
             for (Table table : typeList) {

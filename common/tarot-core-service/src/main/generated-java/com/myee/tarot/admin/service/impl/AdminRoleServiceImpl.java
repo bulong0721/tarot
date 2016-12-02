@@ -19,5 +19,9 @@ public class AdminRoleServiceImpl extends GenericEntityServiceImpl<java.lang.Lon
         this.dao = dao;
     }
 
+    @Override
+    public AdminRole getByName(String name) {
+        return dao.getByName(name);
+    }
 }
 

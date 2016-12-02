@@ -5,6 +5,7 @@ import com.myee.tarot.catalog.domain.ProductUsed;
 import com.myee.tarot.core.dao.GenericEntityDao;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.WhereRequest;
 
 import java.util.List;
 import java.util.Set;
@@ -16,7 +17,7 @@ public interface ProductUsedDao extends GenericEntityDao<Long, ProductUsed> {
 
     PageResult<ProductUsed> pageList(PageRequest pageRequest);
 
-    PageResult<ProductUsed> pageByStore(Long id, PageRequest pageRequest);
+    PageResult<ProductUsed> pageByStore(Long id, WhereRequest whereRequest);
 
     List<ProductUsed> listByIDs(List<Long>idList);
 

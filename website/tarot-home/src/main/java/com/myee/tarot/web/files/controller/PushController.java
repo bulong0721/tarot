@@ -14,9 +14,9 @@ import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catalog.service.DeviceUsedService;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
-import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.StringUtil;
+import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
@@ -253,12 +253,12 @@ public class PushController {
      * 根据切换的门店获取推送日志
      * @param model
      * @param request
-     * @param pageRequest
+     * @param whereRequest
      * @return
      */
     @RequestMapping(value = "admin/pushLog/paging", method = RequestMethod.GET)
     @ResponseBody
-	public AjaxPageableResponse pageLogs(Model model, HttpServletRequest request, PageRequest pageRequest) {
+	public AjaxPageableResponse pageLogs(Model model, HttpServletRequest request, WhereRequest whereRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
             Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
@@ -267,11 +267,11 @@ public class PushController {
                 return resp;
             }
             MerchantStore merchantStore1 = (MerchantStore) o;
-            PageRequest pageRequestTemp = new PageRequest();
-            pageRequestTemp.setCount(Constants.COUNT_NOPAGING);
-            List<DeviceUsed> deviceUsedList = deviceUsedService.pageByStore(merchantStore1.getId(),pageRequestTemp ).getList();
+            WhereRequest whereRequestTemp = new WhereRequest();
+            whereRequestTemp.setCount(Constants.COUNT_NOPAGING);
+            List<DeviceUsed> deviceUsedList = deviceUsedService.pageByStore(merchantStore1.getId(),whereRequestTemp ).getList();
             Map<String,DeviceUsed> deviceUsedMap = deviceUsedListToBoardNoMap(deviceUsedList);
-            PageResult<Notification> pageList = notificationService.pageByStore(merchantStore1.getId(), pageRequest);
+            PageResult<Notification> pageList = notificationService.pageByStore(merchantStore1.getId(), whereRequest);
             List<Notification> notificationList = pageList.getList();
             for (Notification notification : notificationList) {
                 Map entry = new HashMap();

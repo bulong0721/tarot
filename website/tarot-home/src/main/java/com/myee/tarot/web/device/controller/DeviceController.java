@@ -7,9 +7,7 @@ import com.myee.tarot.catalog.domain.*;
 import com.myee.tarot.catalog.type.ProductType;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.exception.ServiceException;
-import com.myee.tarot.core.util.PageRequest;
-import com.myee.tarot.core.util.PageResult;
-import com.myee.tarot.core.util.StringUtil;
+import com.myee.tarot.core.util.*;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.catalog.service.DeviceAttributeService;
@@ -19,7 +17,6 @@ import com.myee.tarot.catalog.service.DeviceUsedService;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.catalog.service.ProductUsedAttributeService;
 import com.myee.tarot.catalog.service.ProductUsedService;
-import com.myee.tarot.core.util.ValidatorUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Administrator on 2016/5/31.
@@ -59,10 +53,10 @@ public class DeviceController {
 
     @RequestMapping(value = {"admin/device/paging", "shop/device/paging"}, method = RequestMethod.GET)
     @ResponseBody
-    public AjaxPageableResponse pageDevice(Model model, HttpServletRequest request, PageRequest pageRequest) {
+    public AjaxPageableResponse pageDevice(Model model, HttpServletRequest request, WhereRequest whereRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
-            PageResult<Device> pageList = deviceService.pageList(pageRequest);
+            PageResult<Device> pageList = deviceService.pageList(whereRequest);
             List<Device> deviceList = pageList.getList();
             for (Device device : deviceList) {
                 resp.addDataEntry(objectToEntry(device));
@@ -195,7 +189,7 @@ public class DeviceController {
      */
     @RequestMapping(value = {"admin/device/used/paging", "shop/device/used/paging"}, method = RequestMethod.GET)
     @ResponseBody
-    public AjaxPageableResponse pageDeviceUsed(Model model, HttpServletRequest request, PageRequest pageRequest) {
+    public AjaxPageableResponse pageDeviceUsed(Model model, HttpServletRequest request, WhereRequest whereRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
             Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
@@ -205,7 +199,7 @@ public class DeviceController {
             }
             MerchantStore merchantStore1 = (MerchantStore) o;
 
-            PageResult<DeviceUsed> pageResult = deviceUsedService.pageByStore(merchantStore1.getId(), pageRequest);
+            PageResult<DeviceUsed> pageResult = deviceUsedService.pageByStore(merchantStore1.getId(), whereRequest);
             List<DeviceUsed> deviceUsedList = pageResult.getList();
             for (DeviceUsed deviceUsed : deviceUsedList) {
                 resp.addDataEntry(objectToEntry(deviceUsed));
@@ -221,7 +215,7 @@ public class DeviceController {
     @RequestMapping(value = {"admin/device/used/listByStoreId", "shop/device/used/listByStoreId"}, method = RequestMethod.GET)
     public
     @ResponseBody
-    AjaxPageableResponse deviceUsedListByStoreId(HttpServletRequest request, PageRequest pageRequest) {
+    AjaxPageableResponse deviceUsedListByStoreId(HttpServletRequest request, WhereRequest whereRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
             Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
@@ -231,8 +225,8 @@ public class DeviceController {
             }
             MerchantStore merchantStore1 = (MerchantStore) o;
 
-            pageRequest.setCount(-1);//不分页，查询所有结果
-            PageResult<DeviceUsed> pageList = deviceUsedService.pageByStore(merchantStore1.getId(), pageRequest);
+            whereRequest.setCount(-1);//不分页，查询所有结果
+            PageResult<DeviceUsed> pageList = deviceUsedService.pageByStore(merchantStore1.getId(), whereRequest);
             List<DeviceUsed> deviceUsedList = pageList.getList();
             for (DeviceUsed deviceUsed : deviceUsedList) {
                 resp.addDataEntry(objectToEntry(deviceUsed));
@@ -258,9 +252,9 @@ public class DeviceController {
             }
             MerchantStore merchantStore1 = (MerchantStore) o;
 
-            PageRequest pageRequest = new PageRequest();
-            pageRequest.setCount(-1);//不分页，查询所有结果
-            PageResult<DeviceUsed> pageList = deviceUsedService.pageByStore(merchantStore1.getId(), pageRequest);
+            WhereRequest whereRequest = new WhereRequest();
+            whereRequest.setCount(-1);//不分页，查询所有结果
+            PageResult<DeviceUsed> pageList = deviceUsedService.pageByStore(merchantStore1.getId(), whereRequest);
             List<DeviceUsed> deviceUsedList = pageList.getList();
             for (DeviceUsed deviceUsed : deviceUsedList) {
                 Map entry = new HashMap();
@@ -551,7 +545,7 @@ public class DeviceController {
     @RequestMapping(value = {"admin/product/used/paging", "shop/product/used/paging"}, method = RequestMethod.GET)
     public
     @ResponseBody
-    AjaxPageableResponse pageUsers(Model model, HttpServletRequest request, PageRequest pageRequest) {
+    AjaxPageableResponse pageUsers(Model model, HttpServletRequest request, WhereRequest whereRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         String currentUser = request.getRemoteUser();
         try {
@@ -562,7 +556,7 @@ public class DeviceController {
             }
             MerchantStore merchantStore1 = (MerchantStore) o;
 
-            PageResult<ProductUsed> pageList = productUsedService.pageByStore(merchantStore1.getId(), pageRequest);
+            PageResult<ProductUsed> pageList = productUsedService.pageByStore(merchantStore1.getId(), whereRequest);
             List<ProductUsed> productUsedList = pageList.getList();
             for (ProductUsed productUsed : productUsedList) {
                 resp.addDataEntry(objectToEntry(productUsed));
@@ -579,7 +573,7 @@ public class DeviceController {
     @RequestMapping(value = {"admin/product/used/listByStoreId", "shop/product/used/listByStoreId"}, method = RequestMethod.GET)
     public
     @ResponseBody
-    AjaxPageableResponse productUsedlistByStoreId(HttpServletRequest request, PageRequest pageRequest) {
+    AjaxPageableResponse productUsedlistByStoreId(HttpServletRequest request, WhereRequest whereRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         String currentUser = request.getRemoteUser();
         try {
@@ -590,8 +584,8 @@ public class DeviceController {
             }
             MerchantStore merchantStore1 = (MerchantStore) o;
 
-            pageRequest.setCount(-1);//不分页，查询所有结果
-            PageResult<ProductUsed> pageList = productUsedService.pageByStore(merchantStore1.getId(), pageRequest);
+            whereRequest.setCount(-1);//不分页，查询所有结果
+            PageResult<ProductUsed> pageList = productUsedService.pageByStore(merchantStore1.getId(), whereRequest);
             List<ProductUsed> productUsedList = pageList.getList();
             for (ProductUsed productUsed : productUsedList) {
                 resp.addDataEntry(objectToEntry(productUsed));
@@ -616,9 +610,9 @@ public class DeviceController {
             }
             MerchantStore merchantStore1 = (MerchantStore) o;
 
-            PageRequest pageRequest = new PageRequest();
-            pageRequest.setCount(-1);//不分页，查询所有结果
-            PageResult<ProductUsed> pageList = productUsedService.pageByStore(merchantStore1.getId(), pageRequest);
+            WhereRequest whereRequest = new WhereRequest();
+            whereRequest.setCount(-1);//不分页，查询所有结果
+            PageResult<ProductUsed> pageList = productUsedService.pageByStore(merchantStore1.getId(), whereRequest);
             List<ProductUsed> productUsedList = pageList.getList();
             for (ProductUsed productUsed : productUsedList) {
                 Map entry = new HashMap();

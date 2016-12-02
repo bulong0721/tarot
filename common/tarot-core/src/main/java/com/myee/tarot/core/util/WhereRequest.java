@@ -1,6 +1,8 @@
 package com.myee.tarot.core.util;
 
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +39,8 @@ public class WhereRequest extends PageRequest {
     private Long merchantId;
 
     private List<Integer> inList;
+
+    private String queryObj;
 
     public String getEventLevel() {
         return eventLevel;
@@ -156,5 +160,13 @@ public class WhereRequest extends PageRequest {
 
     public void setInList(List<Integer> inList) {
         this.inList = inList;
+    }
+
+    public String getQueryObj() {
+        return queryObj;
+    }
+
+    public void setQueryObj(String queryObj) {
+        this.queryObj = queryObj;
     }
 }

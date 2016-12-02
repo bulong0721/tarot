@@ -3,9 +3,7 @@ package com.myee.tarot.web.merchant.controller;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.myee.tarot.core.Constants;
-import com.myee.tarot.core.util.DateTimeUtils;
-import com.myee.tarot.core.util.PageRequest;
-import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.*;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.Merchant;
@@ -19,7 +17,6 @@ import com.myee.tarot.merchant.type.CuisineType;
 import com.myee.tarot.profile.domain.Address;
 import com.myee.tarot.profile.domain.GeoZone;
 import com.myee.tarot.profile.service.GeoZoneService;
-import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.web.apiold.util.CommonLoginParam;
 import com.myee.tarot.web.apiold.util.FileValidCreateUtil;
 import org.slf4j.Logger;
@@ -214,10 +211,10 @@ public class MerchantController {
     @RequestMapping(value = "admin/merchant/paging", method = RequestMethod.GET)
     @ResponseBody
 //    @PreAuthorize("hasAnyAuthority('MERCHANT_MANAGE','MERCHANT_STORE_R')")
-    public AjaxPageableResponse pageMerchant(HttpServletRequest request, PageRequest pageRequest) throws Exception {
+    public AjaxPageableResponse pageMerchant(HttpServletRequest request, WhereRequest whereRequest) throws Exception {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
-            PageResult<Merchant> pageList = merchantService.pageList(pageRequest);
+            PageResult<Merchant> pageList = merchantService.pageList(whereRequest);
 
             List<Merchant> merchantList = pageList.getList();
             for (Merchant merchant : merchantList) {
@@ -423,12 +420,12 @@ public class MerchantController {
 
     @RequestMapping(value = {"admin/merchantStore/list", "shop/merchantStore/list"}, method = RequestMethod.GET)
     @ResponseBody
-    public AjaxPageableResponse listMerchantStore(PageRequest pageRequest, HttpServletRequest request) throws Exception {
+    public AjaxPageableResponse listMerchantStore(WhereRequest whereRequest, HttpServletRequest request) throws Exception {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
             String path = request.getServletPath();
             if (path.contains("/admin/")) {
-                PageResult<MerchantStore> pageList = merchantStoreService.pageListByMerchant(null, pageRequest);
+                PageResult<MerchantStore> pageList = merchantStoreService.pageListByMerchant(null, whereRequest);
                 List<MerchantStore> merchantStoreList = pageList.getList();
                 for (MerchantStore merchantStore : merchantStoreList) {
                     resp.addDataEntry(objectToEntry(merchantStore));
@@ -458,7 +455,7 @@ public class MerchantController {
 
             Merchant merchant = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
 
-            List<MerchantStore> merchantStoreList = merchantStoreService.pageListByMerchant(merchant.getId(), new PageRequest()).getList();
+            List<MerchantStore> merchantStoreList = merchantStoreService.pageListByMerchant(merchant.getId(), new WhereRequest()).getList();
             for (MerchantStore merchantStore : merchantStoreList) {
                 resp.addDataEntry(objectToEntry(merchantStore));
             }
@@ -472,7 +469,7 @@ public class MerchantController {
 
     @RequestMapping(value = "admin/merchantStore/pagingByMerchant", method = RequestMethod.GET)
     @ResponseBody
-    public AjaxPageableResponse pagingMerchantStoreByMerchant(HttpServletRequest request, PageRequest pageRequest) throws Exception {
+    public AjaxPageableResponse pagingMerchantStoreByMerchant(HttpServletRequest request, WhereRequest whereRequest) throws Exception {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
             //从session中取账号关联的商户信息

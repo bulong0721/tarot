@@ -11,4 +11,6 @@ import java.util.List;
 public interface CustomerRoleDao extends GenericEntityDao<Long, CustomerRole> {
 
     List<CustomerRole> listByCustomerId(Long customerId);
+
+    CustomerRole getByName(String roleName);
 }

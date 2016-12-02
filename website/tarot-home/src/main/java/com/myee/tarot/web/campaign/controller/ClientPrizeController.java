@@ -119,7 +119,7 @@ public class ClientPrizeController extends BaseController {
      * @return
      */
     @RequestMapping(value = {"admin/clientPrize/pagingList", "shop/clientPrize/pagingList"}, method = RequestMethod.GET)
-    public AjaxPageableResponse pageListOfPrize(HttpServletRequest request, PageRequest pageRequest) {
+    public AjaxPageableResponse pageListOfPrize(HttpServletRequest request, WhereRequest whereRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
             String sessionName = CommonLoginParam.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
@@ -130,7 +130,7 @@ public class ClientPrizeController extends BaseController {
                 return resp;
             }
             MerchantStore store = (MerchantStore) request.getSession().getAttribute(sessionName);
-            PageResult<ClientPrize> pageClientPrizes = clientPrizeService.pageList(pageRequest, store.getId());
+            PageResult<ClientPrize> pageClientPrizes = clientPrizeService.pageList(whereRequest, store.getId());
             List<ClientPrize> clientPrizeList = pageClientPrizes.getList();
             for (ClientPrize clientPrize : clientPrizeList) {
                 resp.addDataEntry(objectToEntry(clientPrize));

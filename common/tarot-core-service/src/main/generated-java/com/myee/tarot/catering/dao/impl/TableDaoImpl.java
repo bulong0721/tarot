@@ -1,5 +1,7 @@
 package com.myee.tarot.catering.dao.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.myee.tarot.catering.dao.TableDao;
 import com.myee.tarot.catering.domain.QTable;
 import com.myee.tarot.catering.domain.Table;
@@ -8,6 +10,7 @@ import com.myee.tarot.core.dao.GenericEntityDaoImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.StringUtil;
+import com.myee.tarot.core.util.WhereRequest;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;
@@ -33,7 +36,7 @@ public class TableDaoImpl extends GenericEntityDaoImpl<Long, Table> implements T
     }
 
     @Override
-    public PageResult<Table> pageByStore(Long id, PageRequest pageRequest) {
+    public PageResult<Table> pageByStore(Long id, WhereRequest whereRequest) {
         PageResult<Table> pageList = new PageResult<Table>();
         QTable qTable = QTable.table;
         JPQLQuery<Table> query = new JPAQuery(getEntityManager());
@@ -43,14 +46,31 @@ public class TableDaoImpl extends GenericEntityDaoImpl<Long, Table> implements T
                 .fetchJoin()
                 .leftJoin(qTable.tableZone)
                 .fetchJoin();
-        if (!StringUtil.isBlank(pageRequest.getQueryName())) {
-            query.where(qTable.name.like("%" + pageRequest.getQueryName() + "%"));
+        if (whereRequest.getQueryObj() != null) {
+            JSONObject map = JSON.parseObject(whereRequest.getQueryObj());
+            if (map.get(Constants.SEARCH_OPTION_TABLE_TYPE) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_TABLE_TYPE).toString())) {
+                query.where(qTable.tableType.id.eq(Long.valueOf(map.get(Constants.SEARCH_OPTION_TABLE_TYPE).toString())));
+            }
+            if (map.get(Constants.SEARCH_OPTION_TABLE_ZONE) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_TABLE_ZONE).toString())) {
+                query.where(qTable.tableZone.id.eq(Long.valueOf(map.get(Constants.SEARCH_OPTION_TABLE_ZONE).toString())));
+            }
+            if (map.get(Constants.SEARCH_OPTION_SCAN_CODE) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_SCAN_CODE).toString())) {
+                query.where(qTable.scanCode.like("%" + map.get(Constants.SEARCH_OPTION_SCAN_CODE).toString() + "%"));
+            }
+            if (map.get(Constants.SEARCH_OPTION_TEXT_ID) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_TEXT_ID).toString())) {
+                query.where(qTable.textId.like("%" + map.get(Constants.SEARCH_OPTION_TEXT_ID).toString() + "%"));
+            }
+            if (map.get(Constants.SEARCH_OPTION_NAME) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_NAME).toString())) {
+                query.where(qTable.name.like("%" + map.get(Constants.SEARCH_OPTION_NAME).toString() + "%"));
+            }
+        } else if (!StringUtil.isBlank(whereRequest.getQueryName())) {
+                query.where(qTable.name.like("%" + whereRequest.getQueryName() + "%"));
         }
         query.where(qTable.store.id.eq(id));
         pageList.setRecordsTotal(query.fetchCount());
         query.orderBy(qTable.name.asc());
-        if (pageRequest.getCount() > Constants.COUNT_PAGING_MARK) {
-            query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
+        if (whereRequest.getCount() > Constants.COUNT_PAGING_MARK) {
+            query.offset(whereRequest.getOffset()).limit(whereRequest.getCount());
         }
         pageList.setList(query.fetch());
         return pageList;

@@ -8,6 +8,7 @@ import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.WhereRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,8 +30,8 @@ public class ClientPrizeServiceImpl extends GenericEntityServiceImpl<Long, Clien
     }
 
     @Override
-    public PageResult<ClientPrize> pageList(PageRequest pageRequest, Long storeId) {
-        return clientPrizeDao.pageList(pageRequest, storeId);
+    public PageResult<ClientPrize> pageList(WhereRequest whereRequest, Long storeId) {
+        return clientPrizeDao.pageList(whereRequest, storeId);
     }
 
     @Override
