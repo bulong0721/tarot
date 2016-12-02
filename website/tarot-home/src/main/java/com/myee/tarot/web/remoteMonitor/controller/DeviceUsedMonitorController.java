@@ -1,6 +1,10 @@
 package com.myee.tarot.web.remoteMonitor.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.myee.djinn.dto.control.CommandInfo;
+import com.myee.djinn.endpoint.EndpointInterface;
+import com.myee.djinn.rpc.RemoteException;
+import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catalog.service.DeviceUsedService;
 import com.myee.tarot.core.Constants;
@@ -19,12 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -45,6 +47,8 @@ public class DeviceUsedMonitorController {
     private AppInfoService appInfoService;
     @Autowired
     private MetricInfoService metricInfoService;
+    @Autowired
+    private ServerBootstrap serverBootstrap;
 
     @RequestMapping(value = {"admin/remoteMonitor/deviceUsed/summary"}, method = RequestMethod.GET)
     @ResponseBody
@@ -632,4 +636,29 @@ public class DeviceUsedMonitorController {
         return appName;
     }
 
+    @RequestMapping(value = "admin/remoteMonitor/deviceUsed/remoteControl", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse remoteControl(@Valid @RequestBody CommandInfo commandInfo, HttpServletRequest request) {
+        EndpointInterface endpointInterface = null;
+        if (commandInfo == null
+                || StringUtil.isNullOrEmpty(commandInfo.getOperationName())
+                || commandInfo.getCommandContent() == null) {
+            return AjaxResponse.failed(-1, "数据有误");
+        }
+        try {
+            endpointInterface = serverBootstrap.getClient(EndpointInterface.class, commandInfo.getOperationName());
+        } catch (Exception e) {
+            return AjaxResponse.failed(-2, "连接客户端错误");
+        }
+        if (endpointInterface == null) {
+            return AjaxResponse.failed(-3, "获取接口出错");
+        }
+        boolean isSuccess = false;
+        try {
+            isSuccess = endpointInterface.commandSend(commandInfo);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -5,6 +5,7 @@ import com.myee.tarot.core.service.GenericEntityService;
 import com.myee.tarot.core.service.GenericResponse;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.WhereRequest;
 
 /**
  * Created by Martin on 2016/4/11.
@@ -17,5 +18,5 @@ public interface AdminUserService extends GenericEntityService<Long, AdminUser> 
 
     AdminUser getByLogin(String username);
 
-    PageResult<AdminUser> pageList(PageRequest pageRequest);
+    PageResult<AdminUser> pageList(WhereRequest whereRequest);
 }

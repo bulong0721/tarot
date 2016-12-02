@@ -1,10 +1,12 @@
 package com.myee.tarot.customer.dao.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
-import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.StringUtil;
+import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.customer.dao.CustomerDao;
 import com.myee.tarot.customer.domain.Customer;
 import com.myee.tarot.customer.domain.QCustomer;
@@ -57,22 +59,29 @@ public class CustomerDaoImpl extends GenericEntityDaoImpl<Long, Customer> implem
     }
 
     @Override
-    public PageResult<Customer> pageByStore(Long storeId, PageRequest pageRequest){
+    public PageResult<Customer> pageByStore(Long storeId, WhereRequest whereRequest){
         PageResult<Customer> pageList = new PageResult<Customer>();
         QCustomer qCustomer = QCustomer.customer;
         JPQLQuery<Customer> query = new JPAQuery(getEntityManager());
         query.from(qCustomer);
         query.where(qCustomer.merchantStore.id.eq(storeId));
-
-        if (!StringUtil.isBlank(pageRequest.getQueryName())) {
-            query.where( (qCustomer.firstName.like("%" + pageRequest.getQueryName() + "%"))
-                    .or(qCustomer.lastName.like("%" + pageRequest.getQueryName() + "%"))
-                    .or(qCustomer.username.like("%" + pageRequest.getQueryName() + "%")) );
+        if (whereRequest.getQueryObj() != null) {
+            JSONObject map = JSON.parseObject(whereRequest.getQueryObj());
+            if (map.get(Constants.SEARCH_USER_NAME) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_USER_NAME).toString())) {
+                query.where((qCustomer.username.like("%" + map.get(Constants.SEARCH_USER_NAME) + "%")));
+            }
+            if (map.get(Constants.SEARCH_EMAIL_ADDRESS) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_EMAIL_ADDRESS).toString())) {
+                query.where((qCustomer.emailAddress.like("%" + map.get(Constants.SEARCH_EMAIL_ADDRESS) + "%")));
+            }
+        } else if (!StringUtil.isBlank(whereRequest.getQueryName())) {
+            query.where( (qCustomer.firstName.like("%" + whereRequest.getQueryName() + "%"))
+                    .or(qCustomer.lastName.like("%" + whereRequest.getQueryName() + "%"))
+                    .or(qCustomer.username.like("%" + whereRequest.getQueryName() + "%")) );
         }
         pageList.setRecordsTotal(query.fetchCount());
         query.orderBy(qCustomer.username.asc());
-        if( pageRequest.getCount() > Constants.COUNT_PAGING_MARK){
-            query.offset(pageRequest.getOffset()).limit(pageRequest.getCount());
+        if( whereRequest.getCount() > Constants.COUNT_PAGING_MARK){
+            query.offset(whereRequest.getOffset()).limit(whereRequest.getCount());
         }
         pageList.setList(query.fetch());
         return pageList;

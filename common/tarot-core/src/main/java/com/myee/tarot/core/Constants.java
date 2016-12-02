@@ -374,6 +374,10 @@ public class Constants {
 
 	public static final String SEARCH_OPTION_EMAIL = "email";
 
+	public static final String SEARCH_USER_NAME = "username";
+
+	public static final String SEARCH_EMAIL_ADDRESS = "emailAddress";
+
 
 
 }

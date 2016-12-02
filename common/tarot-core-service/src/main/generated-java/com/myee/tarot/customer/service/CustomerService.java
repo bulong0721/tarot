@@ -3,6 +3,7 @@ package com.myee.tarot.customer.service;
 import com.myee.tarot.core.service.GenericEntityService;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.customer.domain.Customer;
 
 /**
@@ -12,5 +13,5 @@ public interface CustomerService extends GenericEntityService<Long, Customer> {
 
     Customer getByUsername(String username);
 
-    PageResult<Customer> pageByStore(Long storeId, PageRequest pageRequest);
+    PageResult<Customer> pageByStore(Long storeId, WhereRequest whereRequest);
 }

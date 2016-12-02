@@ -3,6 +3,7 @@ package com.myee.tarot.customer.service.impl;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.customer.dao.CustomerDao;
 import com.myee.tarot.customer.domain.Customer;
 import com.myee.tarot.customer.service.CustomerService;
@@ -29,7 +30,7 @@ public class CustomerServiceImpl extends GenericEntityServiceImpl<Long, Customer
     }
 
     @Override
-    public PageResult<Customer> pageByStore(Long storeId, PageRequest pageRequest){
-        return customerDao.pageByStore(storeId,  pageRequest);
+    public PageResult<Customer> pageByStore(Long storeId, WhereRequest whereRequest){
+        return customerDao.pageByStore(storeId,  whereRequest);
     }
 }

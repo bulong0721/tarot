@@ -9,6 +9,7 @@ import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.ListSortUtil;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.customer.domain.Customer;
@@ -59,9 +60,9 @@ public class AdminUserController {
     @RequestMapping(value = "admin/users/paging", method = RequestMethod.GET)
     public
     @ResponseBody
-    AjaxPageableResponse pageUsers(Model model, HttpServletRequest request, PageRequest pageRequest) {
+    AjaxPageableResponse pageUsers(Model model, HttpServletRequest request, WhereRequest whereRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
-        PageResult<AdminUser> pageList = userService.pageList(pageRequest);
+        PageResult<AdminUser> pageList = userService.pageList(whereRequest);
         List<AdminUser> userList = pageList.getList();
         for (AdminUser user : userList) {
             resp.addDataEntry(objectToEntry(user));
@@ -192,7 +193,7 @@ public class AdminUserController {
     @RequestMapping(value = "admin/customers/paging", method = RequestMethod.GET)
     public
     @ResponseBody
-    AjaxPageableResponse pageCustomer(Model model, HttpServletRequest request, PageRequest pageRequest) {
+    AjaxPageableResponse pageCustomer(Model model, HttpServletRequest request, WhereRequest whereRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
         if (o == null) {
@@ -201,7 +202,7 @@ public class AdminUserController {
         }
         MerchantStore merchantStore1 = (MerchantStore) o;
 
-        PageResult<Customer> pageList = customerService.pageByStore(merchantStore1.getId(), pageRequest);
+        PageResult<Customer> pageList = customerService.pageByStore(merchantStore1.getId(), whereRequest);
         List<Customer> customerList = pageList.getList();
         for (Customer customer : customerList) {
             resp.addDataEntry(objectToEntry(customer));

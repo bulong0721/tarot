@@ -31,6 +31,7 @@ public class SecurityCodeController {
 	@ResponseBody
 	public boolean validateSecurityCode(HttpServletRequest request, HttpServletResponse response){
 		String securityCode = request.getParameter(Constants.REQUEST_SECURITY_CODE);
+		System.out.println("验证码--->"+securityCode);
 		String sessionCode = (String) request.getSession().getAttribute(Constants.SESSION_SECURITY_CODE);
 		if(StringUtil.isNullOrEmpty(sessionCode) || !sessionCode.equalsIgnoreCase(securityCode)){
 			request.getSession().removeAttribute(Constants.SESSION_SECURITY_CODE);
@@ -51,7 +52,7 @@ public class SecurityCodeController {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private String drawImg(ByteArrayOutputStream output){
 		String code = "";
 		for(int i=0; i<4; i++){
@@ -82,7 +83,7 @@ public class SecurityCodeController {
 		}
 		return code;
 	}
-	
+
 	private char randomChar(){
 		Random r = new Random();
 		String s = "ABCDEFGHJKLMNPRSTUVWXYZ0123456789";
