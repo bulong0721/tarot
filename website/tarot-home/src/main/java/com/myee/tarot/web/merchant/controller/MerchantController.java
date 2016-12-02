@@ -480,7 +480,7 @@ public class MerchantController {
 
             Merchant merchant = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
 
-            PageResult<MerchantStore> pageList = merchantStoreService.pageListByMerchant(merchant.getId(), pageRequest);
+            PageResult<MerchantStore> pageList = merchantStoreService.pageListByMerchant(merchant.getId(), whereRequest);
 
             List<MerchantStore> merchantStoreList = pageList.getList();
             for (MerchantStore merchantStore : merchantStoreList) {
@@ -519,7 +519,7 @@ public class MerchantController {
             }
 
             Merchant merchant = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
-            List<MerchantStore> merchantStoreList = merchantStoreService.pageListByMerchant(merchant.getId(), new PageRequest()).getList();
+            List<MerchantStore> merchantStoreList = merchantStoreService.pageListByMerchant(merchant.getId(), new WhereRequest()).getList();
             for (MerchantStore merchantStore : merchantStoreList) {
                 Map entry = new HashMap();
                 entry.put("name", merchantStore.getName());
