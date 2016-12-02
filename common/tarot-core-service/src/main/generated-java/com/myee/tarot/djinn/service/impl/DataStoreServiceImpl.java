@@ -116,21 +116,21 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
             return false;
         }
 
+        final List<SystemMetrics> list1 = JSON.parseArray(JSON.toJSONString(list), SystemMetrics.class);
         //异步插入数据库
         //用线程池代替原来的new Thread方法
-        /*taskExecutor.submit(new Runnable() {
+        taskExecutor.submit(new Runnable() {
             @Override
 			public void run() {
-				List<SystemMetrics> list1 = JSON.parseArray(JSON.toJSONString(list), SystemMetrics.class);
 				MetricsUtil.updateSystemMetrics(list1, deviceUsedService, appInfoService, metricInfoService, metricDetailService, systemMetricsService);
 			}
-		});*/
+		});
         LOG.info("------开始执行-----");
         //新线程跑前台展示用的数据
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
-                List<SystemMetrics> list1 = JSON.parseArray(JSON.toJSONString(list), SystemMetrics.class);
+//                List<SystemMetrics> list1 = JSON.parseArray(JSON.toJSONString(list), SystemMetrics.class);
                 long now = System.currentTimeMillis();
                 for (Long range : Constants.METRICS_SELECT_RANGE_LIST) {
                     insertReportTable(now, range, list1);

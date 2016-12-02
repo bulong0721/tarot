@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * merchantCtrl - controller
  */
-merchantCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', 'cResource','$filter','$timeout'];
-function merchantCtrl($scope, Constants, cTables, cfromly, cResource,$filter,$timeout) {
+merchantCtrl.$inject = ['$scope', 'Constants', 'cTables', 'cfromly', 'cResource','$filter','$timeout', 'cAlerts'];
+function merchantCtrl($scope, Constants, cTables, cfromly, cResource,$filter,$timeout, cAlerts) {
     var mgrData = $scope.mgrData =  {
         fields: [
             {
@@ -86,6 +86,23 @@ function merchantCtrl($scope, Constants, cTables, cfromly, cResource,$filter,$ti
     $scope.thisMerchantId = Constants.thisMerchantStore.merchant.id;
 
     var iEditor = 1;
+
+    //点击删除
+    $scope.doDelete = function (rowIndex) {
+        cAlerts.confirm('确定删除?商户关联的所有门店也将删除!', function () {
+            //点击确定回调
+            if (mgrData.api.delete && rowIndex > -1) {
+                cResource.remove(mgrData.api.delete,{},$scope.tableOpts.data[rowIndex]).then(function(response){
+                    if(response){
+                        $scope.tableOpts.data.splice(rowIndex, 1);//更新数据表
+                    }
+                });
+            }
+        }, function () {
+            //点击取消回调
+        });
+
+    };
 
     //formly提交
     $scope.processSubmit = function () {
