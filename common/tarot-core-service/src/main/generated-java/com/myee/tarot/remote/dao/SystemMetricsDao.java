@@ -10,7 +10,7 @@ import java.util.List;
  * Created by Chay on 2016/8/10.
  */
 public interface SystemMetricsDao extends GenericEntityDao<Long, SystemMetrics> {
-    SystemMetrics getLatestByBoardNo(String boardNo, String nodeName);
+    SystemMetrics getLatestByBoardNo(String boardNo, String nodeName, Long period, Long now);
 
     List<SystemMetrics> listByBoardNoPeriod(String boardNo, Long now, Long period, String nodeName);
 

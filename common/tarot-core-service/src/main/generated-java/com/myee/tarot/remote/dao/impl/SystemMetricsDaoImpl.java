@@ -18,7 +18,7 @@ import java.util.List;
 @Repository
 public class SystemMetricsDaoImpl extends GenericEntityDaoImpl<Long, SystemMetrics> implements SystemMetricsDao {
 
-    public SystemMetrics getLatestByBoardNo(String boardNo, String nodeName){
+    public SystemMetrics getLatestByBoardNo(String boardNo, String nodeName, Long period, Long now){
         QSystemMetrics qSystemMetrics = QSystemMetrics.systemMetrics;
         JPQLQuery<SystemMetrics> query = new JPAQuery(getEntityManager());
         query.from(qSystemMetrics);
@@ -27,6 +27,10 @@ public class SystemMetricsDaoImpl extends GenericEntityDaoImpl<Long, SystemMetri
         }
         if (boardNo != null) {
             query.where(qSystemMetrics.boardNo.eq(boardNo));
+        }
+        if(period != null){
+            Long from = now - period;
+            query.where(qSystemMetrics.logTime.between(new Date(from), new Date(now)));
         }
         query.orderBy(qSystemMetrics.logTime.desc());
         return query.fetchFirst();
