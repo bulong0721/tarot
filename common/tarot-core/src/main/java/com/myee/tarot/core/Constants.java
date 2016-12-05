@@ -107,6 +107,10 @@ public class Constants {
 
 	public final static String VOICELOG_BAK = "voicelogbak"; //存放语音日志备份
 
+	public final static String METRICS_BAK = "metricsbak"; //存放采集日志备份
+
+	public final static String METRICS_REOCRDS = "metricsrecords"; //存放采集日志备份
+
 	public final static String VOICELOG = "voicelog"; //存放所有语音日志
 
 	public final static String ADMIN_PACK = "100";//店铺100
