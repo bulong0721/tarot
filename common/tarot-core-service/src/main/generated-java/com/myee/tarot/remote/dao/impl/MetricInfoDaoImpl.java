@@ -48,7 +48,7 @@ public class MetricInfoDaoImpl extends GenericEntityDaoImpl<Long, MetricInfo> im
         if(metricsKeyList != null){
             query.where(qMetricInfo.keyName.in(metricsKeyList));
         }
-        query.orderBy(qMetricInfo.logTime.desc());
+        query.orderBy(qMetricInfo.logTime.asc());//前端显示指标详细图需要时间从小到大排序
         return query.fetch();
     }
 
