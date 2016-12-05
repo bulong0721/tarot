@@ -14,12 +14,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import java.io.*;
 import java.util.List;
 
 /**
  * Created by Ray.Fu on 2016/10/13.
+ * 系统监控，解析csv文件并入库的定时任务
  */
 @Component
 public class QuartzForSystemMetric {
@@ -44,10 +46,10 @@ public class QuartzForSystemMetric {
     @Autowired
     private MetricDetailService metricDetailService;
 
-//    @Scheduled(cron = "0 */5 * * * ?")  //每隔5分钟跑一次
+//    @Scheduled(cron = "0 30 2 * * ?")  //每天2:30跑一次
     public void parseFileToDb() {
         //获取路径下所有的csv文件
-        File[] fileArr = getFiles(new File(DOWNLOAD_HOME + File.separator + "temp_metric"));
+        File[] fileArr = getFiles(new File(DOWNLOAD_HOME + File.separator + Constants.ADMIN_PACK + File.separator + Constants.METRICS_REOCRDS));
         //解析文件List入库
         importCsvDataToMySql(fileArr);
     }
@@ -111,7 +113,7 @@ public class QuartzForSystemMetric {
     }
 
     /**
-     * 将文件移动到每个店铺下的voicelogbak路径下
+     * 将文件移动到每个店铺下的metricsbak路径下
      *
      * @param file
      * @return
@@ -120,7 +122,7 @@ public class QuartzForSystemMetric {
         if (file.exists() && file.isFile()) {
             String storeId = file.getName().substring(0, file.getName().indexOf("_"));
             // Destination directory
-            File dirNew = new File(DOWNLOAD_HOME + File.separator + storeId + File.separator + Constants.VOICELOG_BAK + File.separator + file.getName().substring(file.getName().indexOf("_")+1));
+            File dirNew = new File(DOWNLOAD_HOME + File.separator + storeId + File.separator + Constants.METRICS_BAK + File.separator + file.getName().substring(file.getName().indexOf("_")+1));
             if (!dirNew.getParentFile().exists()) {
                 dirNew.getParentFile().mkdirs();
             }
