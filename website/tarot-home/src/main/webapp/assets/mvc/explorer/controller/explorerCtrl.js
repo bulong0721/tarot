@@ -54,7 +54,7 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
             cellTemplate: '<span>{{cellTemplateScope.format(row.branch)}}</span>',
             cellTemplateScope: {
                 format: function (data) {
-                    if (!data.size) return '-';
+                    if (!data.size || data.type == 0) return '-';
                     return $filter('sizeFormatter')(data.size)
                 }
             }
