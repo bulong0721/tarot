@@ -218,7 +218,7 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
                         attribute: 'maxlength'
                     }
                 },
-                templateOptions: {label: '终端存储路径', placeholder: '终端存储路径(长度小于50)', maxlen: 50}
+                templateOptions: {label: '终端存储路径', placeholder: '长度小于50，若不输入，则推送至终端设备的根目录下', maxlen: 50}
             },
             {
                 key: 'content',
@@ -284,7 +284,7 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
                         attribute: 'maxlength'
                     }
                 },
-                templateOptions: {label: '文件路径', placeholder: '文件路径(长度小于50)', maxlen: 50},
+                templateOptions: {label: '文件路径', placeholder: '长度小于50，若不输入，则存放于绝对路径下', maxlen: 50},
                 hideExpression: function ($viewValue, $modelValue, scope) {
                     return scope.model.type == 0 ? true : false;//true新增文件夹时隐藏文件路径，默认路径和名称相同
                 },
@@ -387,6 +387,11 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
         if (formly.form.$valid) {
             $scope.disableSubmit = true;
             formly.options.updateInitialValue();
+            var storagePath = formly.model.storagePath;
+            if(storagePath != "" && storagePath != undefined && storagePath.indexOf("\\") >= 0) {
+                $filter('toasterManage')(5, "文件路径不能包含\\!",false);
+                return;
+            }
             cResource.save(mgrDataPusher.api.push,{}, formly.model).then(function(resp){
                 $scope.disableSubmit = false;
                 if (resp != null && resp.status == 0) {
@@ -446,12 +451,12 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
             var newFileName = $scope.formData.model.name;
             var newFilePath = $scope.formData.model.currPath;
             if(newFilePath != "" && newFilePath != undefined && (newFilePath.indexOf("/") >= 0 || newFilePath.indexOf("\\") >= 0)){
-                $filter('toasterManage')(5, "文件名称不能包含/、\\！",false);
+                $filter('toasterManage')(5, "文件路径不能包含/和\\！",false);
                 //toaster.error({body: "文件路径不能包含/、\\！"});
                 return;
             }
             if(newFileName != "" && newFileName != undefined && (newFileName.indexOf("/") >= 0 || newFileName.indexOf("\\") >= 0)){
-                $filter('toasterManage')(5, "文件名称不能包含/、\\！",false);
+                $filter('toasterManage')(5, "文件名称不能包含/和\\！",false);
                 //toaster.error({body: "文件名称不能包含/、\\！"});
                 return;
             }
