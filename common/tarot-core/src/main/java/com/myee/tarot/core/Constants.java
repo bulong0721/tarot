@@ -382,6 +382,7 @@ public class Constants {
 
 	public static final String SEARCH_EMAIL_ADDRESS = "emailAddress";
 
+	public static final String STATIC_METRICS = "staticMetrics";
 
-
+	public static final String SUMMARY_NODE = "/monitor/summary/";
 }

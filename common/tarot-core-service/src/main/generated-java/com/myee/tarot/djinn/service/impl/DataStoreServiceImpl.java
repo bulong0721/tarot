@@ -153,7 +153,6 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
     private void insertReportTable(long now, Long type, List<SystemMetrics> list) {
         int pointCount = 0;
         MetricCache metricCache = redissonUtil.metricCache();
-        LOG.info("{}", metricCache);
         boolean ifContainKey = false;
         try {
             Map<String, Long> map = metricCache.getLastUpdateTimeCache();
@@ -182,6 +181,17 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
         }
         ifContainKey = false;
         Map<String, Long> lastUpdateTimeCache = metricCache.getLastUpdateTimeCache();
+        Map<String, com.myee.tarot.metric.domain.SystemMetrics> metricStaticInfoCache = metricCache.getMetricStaticInfoCache();
+        //Redis快照存总览指标和appInfo
+        if (metricStaticInfoCache == null) {
+            metricStaticInfoCache = Maps.newHashMap();
+        }
+        for (SystemMetrics systemMetrics : list) {
+            if (systemMetrics.getNode().equals(Constants.SUMMARY_NODE)) {
+                metricStaticInfoCache.put(systemMetrics.getBoardNo() + "_" + Constants.STATIC_METRICS, MetricsUtil.djinnSystemMetricToTarot(systemMetrics, deviceUsedService, metricDetailService));
+                metricCache.setMetricStaticInfoCache(metricStaticInfoCache);
+            }
+        }
         if (type.equals(Constants.METRICS_SELECT_RANGE_LIST.get(0))) { //一小时范围,每30秒1个点
             pointCount = Constants.ONE_HOUR_POINT_COUNT;
             Map<String, List<MetricInfo>> oneHourMetricInfoCache = metricCache.getOneHourMetricInfoPointsCache();
@@ -195,7 +205,6 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
             }
             if (oneHourMetricInfoCache == null || (oneHourMetricInfoCache != null && !ifContainKey)) {
                 oneHourMetricInfoCache = Maps.newConcurrentMap();
-
                 metricCache.setOneHourMetricInfoPointsCache(oneHourMetricInfoCache);
             }
             insertDataToRedisByRange(pointCount, list, now, lastUpdateTimeCache, metricCache.getOneHourMetricInfoPointsCache(), list.get(0).getBoardNo() + "_" + MetricCache.LAST_UPDATE_TIME_KEY_ONE_HOUR, Constants.INTERVAL_ONE_HOUR);

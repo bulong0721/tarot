@@ -1,10 +1,13 @@
 package com.myee.tarot.web.remoteMonitor.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
 import com.myee.djinn.dto.control.CommandInfo;
 import com.myee.djinn.endpoint.EndpointInterface;
 import com.myee.djinn.rpc.RemoteException;
 import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
+import com.myee.tarot.cache.entity.MetricCache;
+import com.myee.tarot.cache.util.RedissonUtil;
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catalog.service.DeviceUsedService;
 import com.myee.tarot.core.Constants;
@@ -47,8 +50,12 @@ public class DeviceUsedMonitorController {
     private AppInfoService appInfoService;
     @Autowired
     private MetricInfoService metricInfoService;
+
     @Autowired
-    private ServerBootstrap serverBootstrap;
+    private RedissonUtil redissonUtil;
+
+//    @Autowired
+//    private ServerBootstrap serverBootstrap;
 
     @RequestMapping(value = {"admin/remoteMonitor/deviceUsed/summary"}, method = RequestMethod.GET)
     @ResponseBody
@@ -69,12 +76,25 @@ public class DeviceUsedMonitorController {
 
             //从缓存中查询数据，如果缓存无数据，则从数据库查数据，并将结果存入缓存
             //因为redis是key-value存储，没办法实现数据库式的查询操作。
-            SystemMetrics systemMetrics = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_SUMMARY, null, null);
+            //从Redis里拿summary数据，若没有则从数据库里取，同时redis放一份
+            MetricCache metricCache = redissonUtil.metricCache();
+            Map<String, SystemMetrics> metricStaticInfoCache = metricCache.getMetricStaticInfoCache();
+            SystemMetrics systemMetrics = null;
+            if (metricStaticInfoCache != null) {
+                systemMetrics = metricStaticInfoCache.get(deviceUsed.getBoardNo() + "_" + Constants.STATIC_METRICS );
+                if (systemMetrics == null) {
+                    systemMetrics = systemMetricsService.getLatestByBoardNo(deviceUsed.getBoardNo(), com.myee.djinn.constants.Constants.PATH_SUMMARY, null, null);
+                }
+            }
             if (systemMetrics == null) {
                 return AjaxResponse.failed(-1, "无可用概览数据");
             }
-            systemMetrics.setAppList(appInfoService.listBySystemMetricsId(systemMetrics.getId()));
-            systemMetrics.setMetricInfoList(metricInfoService.listBySystemMetricsId(systemMetrics.getId(), null));
+            if (systemMetrics.getId() != null) {
+                systemMetrics.setAppList(appInfoService.listBySystemMetricsId(systemMetrics.getId()));
+                systemMetrics.setMetricInfoList(metricInfoService.listBySystemMetricsId(systemMetrics.getId(), null));
+                metricStaticInfoCache.put(deviceUsed.getBoardNo() + "_" + Constants.STATIC_METRICS, systemMetrics);
+                metricCache.setMetricStaticInfoCache(metricStaticInfoCache);
+            }
             Map entry = commonMetricsToMap(systemMetrics, deviceUsed, null);
             entry.put("logTime", systemMetrics.getLogTime());
             //metricInfoList
@@ -636,7 +656,7 @@ public class DeviceUsedMonitorController {
         return appName;
     }
 
-    @RequestMapping(value = "admin/remoteMonitor/deviceUsed/remoteControl", method = RequestMethod.POST)
+    /*@RequestMapping(value = "admin/remoteMonitor/deviceUsed/remoteControl", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse remoteControl(@Valid @RequestBody CommandInfo commandInfo, HttpServletRequest request) {
         EndpointInterface endpointInterface = null;
@@ -660,5 +680,5 @@ public class DeviceUsedMonitorController {
             e.printStackTrace();
         }
         return null;
-    }
+    }*/
 }

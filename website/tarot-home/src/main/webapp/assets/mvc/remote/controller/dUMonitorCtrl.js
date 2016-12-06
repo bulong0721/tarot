@@ -50,6 +50,7 @@ function dUMonitorMgrCtrl($scope,cResource,$uibModal,$interval) {
                 });
             },
             metrics:function(){
+                vm.metricVal = {};
                 //Metrics 获取动态指标
                 vm.gets.type = 0;
                 vm.gets.metricsKeyString = '';
@@ -58,6 +59,7 @@ function dUMonitorMgrCtrl($scope,cResource,$uibModal,$interval) {
                 });
             },
             summarys:function(){
+                vm.summaryVal = '';
                 //Summary 获取静态指标
                 cResource.get('../admin/remoteMonitor/deviceUsed/summary',{deviceUsedId:vm.gets.deviceUsedId}).then(function(resp){
                     if(resp.rows && resp.rows.length>0) {

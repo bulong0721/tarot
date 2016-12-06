@@ -1,5 +1,6 @@
 package com.myee.tarot.remote.util;
 
+import com.google.common.collect.Lists;
 import com.myee.djinn.dto.metrics.AppInfo;
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catalog.service.DeviceUsedService;
@@ -105,20 +106,7 @@ public class MetricsUtil {
         String boardNo = deviceUsed.getBoardNo();
         Long systemMetricsId = systemMetricsDB.getId();
         for (com.myee.djinn.dto.metrics.MetricInfo metricInfo : metricInfoList) {
-            MetricInfo metricInfoDB = new MetricInfo();
-            MetricDetail metricDetail = metricDetailMap.get(metricInfo.getName());
-            if (metricDetail == null) {
-                continue;
-            }
-            metricInfoDB.setKeyName(metricInfo.getName());
-            metricInfoDB.setCreated(now);
-            metricInfoDB.setBoardNo(boardNo);
-            metricInfoDB.setDescription(metricInfo.getDescription());
-            metricInfoDB.setLogTime(DateTimeUtils.toMillis(systemMetrics.getLogTime()));
-            metricInfoDB.setNode(metricInfo.getNode());
-            metricInfoDB.setSystemMetricsId(systemMetricsId);
-            metricInfoDB.setValue(metricInfo.getValue());
-            metricInfoDB = metricInfoService.update(metricInfoDB);
+            MetricInfo metricInfoDB = metricInfoService.update(djinnMetricInfoToTarot(metricInfo, now, boardNo, systemMetrics, systemMetricsId, metricDetailMap));
             result.add(metricInfoDB);
         }
         return result;
@@ -148,26 +136,94 @@ public class MetricsUtil {
         String boardNo = deviceUsed.getBoardNo();
         Long systemMetricsId = systemMetricsDB.getId();
         for (AppInfo appInfo : appLists) {
-            com.myee.tarot.metric.domain.AppInfo appInfoDB = new com.myee.tarot.metric.domain.AppInfo();
-            appInfoDB.setAppName(appInfo.getAppName());
-            appInfoDB.setNode(appInfo.getNode());
-            appInfoDB.setCreated(now);
-            appInfoDB.setBoardNo(boardNo);
-            appInfoDB.setInstallDate(DateTimeUtils.toMillis(appInfo.getInstallDate()));
-            appInfoDB.setLastUpdateTime(DateTimeUtils.toMillis(appInfo.getLastUpdateTime()));
-            appInfoDB.setLogTime(DateTimeUtils.toMillis(systemMetrics.getLogTime()));
-            appInfoDB.setPackageName(appInfo.getPackageName());
-            appInfoDB.setState(appInfo.getState());
-            appInfoDB.setType(appInfo.getType());
-            appInfoDB.setSystemMetricsId(systemMetricsId);
-            appInfoDB.setVersionCode(appInfo.getVersionCode());
-            appInfoDB.setVersionName(appInfo.getVersionName());
-            appInfoDB = appInfoService.update(appInfoDB);
+            com.myee.tarot.metric.domain.AppInfo appInfoDB = appInfoService.update(djinnAppInfoToTarot(appInfo, now, boardNo, systemMetrics, systemMetricsId));
             result.add(appInfoDB);
         }
         return result;
     }
 
+    private static com.myee.tarot.metric.domain.AppInfo djinnAppInfoToTarot(AppInfo appInfo, Date now, String boardNo, com.myee.djinn.dto.metrics.SystemMetrics systemMetrics, Long systemMetricsId) {
+        com.myee.tarot.metric.domain.AppInfo appInfoDB = new com.myee.tarot.metric.domain.AppInfo();
+        appInfoDB.setAppName(appInfo.getAppName());
+        appInfoDB.setNode(appInfo.getNode());
+        appInfoDB.setCreated(now);
+        appInfoDB.setBoardNo(boardNo);
+        appInfoDB.setInstallDate(DateTimeUtils.toMillis(appInfo.getInstallDate()));
+        appInfoDB.setLastUpdateTime(DateTimeUtils.toMillis(appInfo.getLastUpdateTime()));
+        appInfoDB.setLogTime(DateTimeUtils.toMillis(systemMetrics.getLogTime()));
+        appInfoDB.setPackageName(appInfo.getPackageName());
+        appInfoDB.setState(appInfo.getState());
+        appInfoDB.setType(appInfo.getType());
+        appInfoDB.setSystemMetricsId(systemMetricsId);
+        appInfoDB.setVersionCode(appInfo.getVersionCode());
+        appInfoDB.setVersionName(appInfo.getVersionName());
+        return appInfoDB;
+    }
+
+    /**
+     * djinn的MetricInfo转成Tarot的MetricInfo
+     * @param metricInfo
+     * @param now
+     * @param boardNo
+     * @param systemMetrics
+     * @param systemMetricsId
+     * @param metricDetailMap
+     * @return
+     */
+    private static MetricInfo djinnMetricInfoToTarot(com.myee.djinn.dto.metrics.MetricInfo metricInfo, Date now, String boardNo, com.myee.djinn.dto.metrics.SystemMetrics systemMetrics, Long systemMetricsId, Map<String, MetricDetail> metricDetailMap) {
+        MetricDetail metricDetail = metricDetailMap.get(metricInfo.getName());
+        MetricInfo metricInfoTarot = new MetricInfo();
+        if (metricDetail != null) {
+            metricInfoTarot.setKeyName(metricInfo.getName());
+            metricInfoTarot.setCreated(now);
+            metricInfoTarot.setBoardNo(boardNo);
+            metricInfoTarot.setDescription(metricInfo.getDescription());
+            metricInfoTarot.setLogTime(DateTimeUtils.toMillis(systemMetrics.getLogTime()));
+            metricInfoTarot.setNode(metricInfo.getNode());
+            metricInfoTarot.setSystemMetricsId(systemMetricsId);
+            metricInfoTarot.setValue(metricInfo.getValue());
+        }
+        return metricInfoTarot;
+    }
+
+    /**
+     * djinn的systemMetrics转成Tarot的systemMetrics
+     * @param systemMetrics
+     * @param deviceUsedService
+     * @param metricDetailService
+     * @return
+     */
+    public static SystemMetrics djinnSystemMetricToTarot(com.myee.djinn.dto.metrics.SystemMetrics systemMetrics, DeviceUsedService deviceUsedService, MetricDetailService metricDetailService) {
+        SystemMetrics systemMetricsDB = new SystemMetrics();
+        try {
+            Date now = new Date();
+            //一次查询出所有指标详细作为缓存
+            List<MetricDetail> metricDetailList = metricDetailService.list();
+            Map<String, MetricDetail> metricDetailMap = metricDetailListToKeyNameMap(metricDetailList);
+            if (systemMetrics.getBoardNo() != null && !StringUtil.isBlank(systemMetrics.getBoardNo())) {
+                DeviceUsed deviceUsed = deviceUsedService.getByBoardNo(systemMetrics.getBoardNo());
+                if (deviceUsed != null) {
+                    systemMetricsDB.setBoardNo(systemMetrics.getBoardNo());
+                    systemMetricsDB.setCreated(now);
+                    systemMetricsDB.setNode(systemMetrics.getNode());
+                    systemMetricsDB.setLogTime(DateTimeUtils.toMillis(systemMetrics.getLogTime()));
+                    List appList = Lists.newArrayList();
+                    List metricInfoList = Lists.newArrayList();
+                    for (AppInfo appInfo : systemMetrics.getAppLists()) {
+                        appList.add(djinnAppInfoToTarot(appInfo, now, systemMetrics.getBoardNo(), systemMetrics, null));
+                    }
+                    for (com.myee.djinn.dto.metrics.MetricInfo metricInfo : systemMetrics.getMetricInfoList()) {
+                        metricInfoList.add(djinnMetricInfoToTarot(metricInfo, now, systemMetrics.getBoardNo(), systemMetrics, null, metricDetailMap));
+                    }
+                    systemMetricsDB.setAppList(appList);
+                    systemMetricsDB.setMetricInfoList(metricInfoList);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return systemMetricsDB;
+    }
 
     /**
      * 把metricDetail查询出来的list转为map，以便快速使用。键名是指标KeyName
@@ -206,11 +262,11 @@ public class MetricsUtil {
     }
 
     public static Map<String, List<MetricInfo>> mapMetricInfoListByKeyName(int pointCount,
-                                                                            Map<String, List<MetricInfo>> map,
-                                                                            Map<String, MetricDetail> metricDetailMap,
-                                                                            List<com.myee.djinn.dto.metrics.MetricInfo> metricInfoList,
-                                                                            DeviceUsedService deviceUsedService,
-                                                                            com.myee.djinn.dto.metrics.SystemMetrics systemMetrics) {
+                                                                           Map<String, List<MetricInfo>> map,
+                                                                           Map<String, MetricDetail> metricDetailMap,
+                                                                           List<com.myee.djinn.dto.metrics.MetricInfo> metricInfoList,
+                                                                           DeviceUsedService deviceUsedService,
+                                                                           com.myee.djinn.dto.metrics.SystemMetrics systemMetrics) {
         boolean ifContainsKey = false;
         if (map != null) {
             for (String key : map.keySet()) {
@@ -222,7 +278,7 @@ public class MetricsUtil {
         }
         if (map != null && map.size() == 0 || !ifContainsKey) {
             for (String keyName : Constants.METRICS_NEED_TIME_KEY_LIST) {
-                map.put(systemMetrics.getBoardNo() + "_"+ keyName, new ArrayList<MetricInfo>());
+                map.put(systemMetrics.getBoardNo() + "_" + keyName, new ArrayList<MetricInfo>());
             }
         }
         for (com.myee.djinn.dto.metrics.MetricInfo metricInfo : metricInfoList) {
@@ -241,7 +297,7 @@ public class MetricsUtil {
                     tempList = new ArrayList<MetricInfo>();
                 }
                 MetricInfo metricInfoTarot = transformDijnnMetricInfo(metricInfo, deviceUsed, systemMetrics);
-                LOGGER.info("本轮获取到的指标名称->{}-{}",metricInfoTarot.getBoardNo(), metricInfoTarot.getKeyName());
+                LOGGER.info("本轮获取到的指标名称->{}-{}", metricInfoTarot.getBoardNo(), metricInfoTarot.getKeyName());
                 LOGGER.info("本轮获取到的日志时间->{}-{}", metricInfoTarot.getBoardNo(), metricInfoTarot.getLogTime());
                 LOGGER.info("本轮获取到的值->{}-{}", metricInfoTarot.getBoardNo(), metricInfoTarot.getValue());
                 tempList.add(metricInfoTarot);

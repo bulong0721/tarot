@@ -1,6 +1,7 @@
 package com.myee.tarot.cache.entity;
 
 import com.myee.tarot.metric.domain.MetricInfo;
+import com.myee.tarot.metric.domain.SystemMetrics;
 import org.redisson.api.annotation.REntity;
 import org.redisson.api.annotation.RId;
 
@@ -34,6 +35,8 @@ public class MetricCache implements Serializable {
 
     private Map<String, List<MetricInfo>> oneYearMetricInfoPointsCache;
 
+    private Map<String, SystemMetrics> metricStaticInfoCache;
+
     public static final String LAST_UPDATE_TIME_KEY_ONE_HOUR = "oneHourLastUpdateTime"; //一小时的查询范围的时刻更新
 
     public static final String LAST_UPDATE_TIME_KEY_TWO_HOUR = "twoHourLastUpdateTime"; //两小时的查询范围的时刻更新
@@ -49,22 +52,6 @@ public class MetricCache implements Serializable {
     public static final String LAST_UPDATE_TIME_KEY_ONE_MONTH = "oneMonthLastUpdateTime"; //一个月的查询范围的时刻更新
 
     public static final String LAST_UPDATE_TIME_KEY_ONE_YEAR = "oneYearLastUpdateTime"; //一年的查询范围的时刻更新
-
-    public static final String ONE_HOUR_METRICINFO_KEY = "oneHourMetricInfo"; //一小时的查询范围的数据
-
-    public static final String TWO_HOUR_METRICINFO_KEY = "twoHourMetricInfo"; //两小时的查询范围的数据
-
-    public static final String FOUR_HOUR_METRICINFO_KEY = "fourHourMetricInfo";
-
-    public static final String HALF_DAY_METRICINFO_KEY = "halfDayMetricInfo";
-
-    public static final String ONE_DAY_METRICINFO_KEY = "oneDayMetricInfo";
-
-    public static final String ONE_WEEK_METRICINFO_KEY = "oneWeekMetricInfo";
-
-    public static final String ONE_MONTH_METRICINFO_KEY = "oneMonthMetricInfo";
-
-    public static final String ONE_YEAR_METRICINFO_KEY = "oneYearMetricInfo";
 
     public String getEnvName() {
         return envName;
@@ -144,5 +131,13 @@ public class MetricCache implements Serializable {
 
     public void setOneYearMetricInfoPointsCache(Map<String, List<MetricInfo>> oneYearMetricInfoPointsCache) {
         this.oneYearMetricInfoPointsCache = oneYearMetricInfoPointsCache;
+    }
+
+    public Map<String, SystemMetrics> getMetricStaticInfoCache() {
+        return metricStaticInfoCache;
+    }
+
+    public void setMetricStaticInfoCache(Map<String, SystemMetrics> metricStaticInfoCache) {
+        this.metricStaticInfoCache = metricStaticInfoCache;
     }
 }
