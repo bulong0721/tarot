@@ -44,17 +44,21 @@ public class MerchantDaoImpl extends GenericEntityDaoImpl<Long, Merchant> implem
         query.from(qMerchant);
         if (whereRequest.getQueryObj() != null) {
             JSONObject map = JSON.parseObject(whereRequest.getQueryObj());
-            if (map.get(Constants.SEARCH_OPTION_NAME) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_NAME).toString())) {
-                query.where(qMerchant.name.like("%" + map.get(Constants.SEARCH_OPTION_NAME) + "%"));
+            Object optionName = map.get(Constants.SEARCH_OPTION_NAME);
+            Object businessType = map.get(Constants.SEARCH_OPTION_BUSINESS_TYPE);
+            Object cuisineType = map.get(Constants.SEARCH_OPTION_CUISINE_TYPE);
+            Object description = map.get(Constants.SEARCH_OPTION_DESCRIPTION);
+            if (optionName != null && !StringUtil.isBlank(optionName.toString())) {
+                query.where(qMerchant.name.like("%" + optionName + "%"));
             }
-            if (map.get(Constants.SEARCH_OPTION_BUSINESS_TYPE) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_BUSINESS_TYPE).toString())) {
-                query.where(qMerchant.businessType.eq(map.get(Constants.SEARCH_OPTION_BUSINESS_TYPE).toString()));
+            if (businessType != null && !StringUtil.isBlank(businessType.toString())) {
+                query.where(qMerchant.businessType.eq(businessType.toString()));
             }
-            if (map.get(Constants.SEARCH_OPTION_CUISINE_TYPE) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_CUISINE_TYPE).toString())) {
-                query.where(qMerchant.cuisineType.eq(map.get(Constants.SEARCH_OPTION_CUISINE_TYPE).toString()));
+            if (cuisineType != null && !StringUtil.isBlank(cuisineType.toString())) {
+                query.where(qMerchant.cuisineType.eq(cuisineType.toString()));
             }
-            if (map.get(Constants.SEARCH_OPTION_DESCRIPTION) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_DESCRIPTION).toString())) {
-                query.where(qMerchant.description.like("%" + map.get(Constants.SEARCH_OPTION_DESCRIPTION) + "%"));
+            if (description != null && !StringUtil.isBlank(description.toString())) {
+                query.where(qMerchant.description.like("%" + description + "%"));
             }
         } else {
             if(!StringUtil.isBlank(whereRequest.getQueryName())){

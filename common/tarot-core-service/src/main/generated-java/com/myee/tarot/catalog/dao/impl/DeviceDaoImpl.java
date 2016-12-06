@@ -28,11 +28,13 @@ public class DeviceDaoImpl extends GenericEntityDaoImpl<Long, Device> implements
         query.from(qDevice);
         if (whereRequest.getQueryObj() != null) {
             JSONObject map = JSON.parseObject(whereRequest.getQueryObj());
-            if (map.get(Constants.SEARCH_OPTION_NAME) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_NAME).toString())) {
-                query.where(qDevice.name.like("%" + map.get(Constants.SEARCH_OPTION_NAME).toString() + "%"));
+            Object optionName = map.get(Constants.SEARCH_OPTION_NAME);
+            Object versionNum = map.get(Constants.SEARCH_OPTION_VERSION_NUM);
+            if (optionName != null && !StringUtil.isBlank(optionName.toString())) {
+                query.where(qDevice.name.like("%" + optionName.toString() + "%"));
             }
-            if (map.get(Constants.SEARCH_OPTION_VERSION_NUM) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_VERSION_NUM).toString())) {
-                query.where(qDevice.versionNum.like("%" + map.get(Constants.SEARCH_OPTION_VERSION_NUM).toString() + "%"));
+            if (versionNum != null && !StringUtil.isBlank(versionNum.toString())) {
+                query.where(qDevice.versionNum.like("%" + versionNum.toString() + "%"));
             }
         } else if(!StringUtil.isBlank(whereRequest.getQueryName())){
             query.where(qDevice.name.like("%" + whereRequest.getQueryName() + "%"));

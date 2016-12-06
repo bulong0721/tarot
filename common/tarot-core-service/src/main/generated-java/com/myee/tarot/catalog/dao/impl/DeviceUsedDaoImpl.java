@@ -38,17 +38,21 @@ public class DeviceUsedDaoImpl extends GenericEntityDaoImpl<Long, DeviceUsed> im
         }
         if (whereRequest.getQueryObj() != null) {
             JSONObject map = JSON.parseObject(whereRequest.getQueryObj());
-            if (map.get(Constants.SEARCH_OPTION_NAME) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_NAME).toString())) {
-                query.where(qDeviceUsed.name.like("%" + map.get(Constants.SEARCH_OPTION_NAME).toString() + "%"));
+            Object optionName = map.get(Constants.SEARCH_OPTION_NAME);
+            Object storeName = map.get(Constants.SEARCH_OPTION_STORE_NAME);
+            Object boardNo = map.get(Constants.SEARCH_OPTION_BOARD_NO);
+            Object deviceNum = map.get(Constants.SEARCH_OPTION_DEVICE_NUM);
+            if (optionName != null && !StringUtil.isBlank(optionName.toString())) {
+                query.where(qDeviceUsed.name.like("%" + optionName.toString() + "%"));
             }
-            if (map.get(Constants.SEARCH_OPTION_STORE_NAME) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_STORE_NAME).toString())) {
-                query.where(qDeviceUsed.store.name.like("%" + map.get(Constants.SEARCH_OPTION_STORE_NAME).toString() + "%"));
+            if (storeName != null && !StringUtil.isBlank(storeName.toString())) {
+                query.where(qDeviceUsed.store.name.like("%" + storeName.toString() + "%"));
             }
-            if (map.get(Constants.SEARCH_OPTION_BOARD_NO) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_BOARD_NO).toString())) {
-                query.where(qDeviceUsed.boardNo.like("%" + map.get(Constants.SEARCH_OPTION_BOARD_NO).toString() + "%"));
+            if (boardNo != null && !StringUtil.isBlank(boardNo.toString())) {
+                query.where(qDeviceUsed.boardNo.like("%" + boardNo.toString() + "%"));
             }
-            if (map.get(Constants.SEARCH_OPTION_DEVICE_NUM) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_DEVICE_NUM).toString())) {
-                query.where(qDeviceUsed.deviceNum.like("%" + map.get(Constants.SEARCH_OPTION_DEVICE_NUM).toString() + "%"));
+            if (deviceNum != null && !StringUtil.isBlank(deviceNum.toString())) {
+                query.where(qDeviceUsed.deviceNum.like("%" + deviceNum.toString() + "%"));
             }
         } else if(!StringUtil.isBlank(whereRequest.getQueryName())){
             query.where(qDeviceUsed.name.like("%" + whereRequest.getQueryName() + "%"));

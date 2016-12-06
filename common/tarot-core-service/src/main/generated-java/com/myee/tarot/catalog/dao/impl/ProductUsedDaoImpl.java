@@ -49,17 +49,21 @@ public class ProductUsedDaoImpl extends GenericEntityDaoImpl<Long, ProductUsed> 
         query.where(qProductUsed.store.id.eq(id));
         if (whereRequest.getQueryObj() != null) {
             JSONObject map = JSON.parseObject(whereRequest.getQueryObj());
-            if (map.get(Constants.SEARCH_OPTION_TYPE) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_TYPE).toString())) {
-                query.where(qProductUsed.type.eq(map.get(Constants.SEARCH_OPTION_TYPE).toString()));
+            Object optionType = map.get(Constants.SEARCH_OPTION_TYPE);
+            Object productNum = map.get(Constants.SEARCH_OPTION_PRODUCT_NUM);
+            Object storeName = map.get(Constants.SEARCH_OPTION_STORE_NAME);
+            Object optionCode = map.get(Constants.SEARCH_OPTION_CODE);
+            if (optionType != null && !StringUtil.isBlank(optionType.toString())) {
+                query.where(qProductUsed.type.eq(optionType.toString()));
             }
-            if (map.get(Constants.SEARCH_OPTION_PRODUCT_NUM) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_PRODUCT_NUM).toString())) {
-                query.where(qProductUsed.productNum.like("%" + map.get(Constants.SEARCH_OPTION_PRODUCT_NUM).toString() + "%"));
+            if (productNum != null && !StringUtil.isBlank(productNum.toString())) {
+                query.where(qProductUsed.productNum.like("%" + productNum.toString() + "%"));
             }
-            if (map.get(Constants.SEARCH_OPTION_STORE_NAME) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_STORE_NAME).toString())) {
-                query.where(qProductUsed.store.name.like("%" + map.get(Constants.SEARCH_OPTION_STORE_NAME).toString() + "%"));
+            if (storeName != null && !StringUtil.isBlank(storeName.toString())) {
+                query.where(qProductUsed.store.name.like("%" + storeName.toString() + "%"));
             }
-            if (map.get(Constants.SEARCH_OPTION_CODE) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_CODE).toString())) {
-                query.where(qProductUsed.code.like("%" + map.get(Constants.SEARCH_OPTION_CODE).toString() + "%"));
+            if (optionCode != null && !StringUtil.isBlank(optionCode.toString())) {
+                query.where(qProductUsed.code.like("%" + optionCode.toString() + "%"));
             }
         } else if (!StringUtil.isBlank(whereRequest.getQueryName())) {
             query.where(qProductUsed.code.like("%" + whereRequest.getQueryName() + "%"));

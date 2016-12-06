@@ -67,11 +67,13 @@ public class CustomerDaoImpl extends GenericEntityDaoImpl<Long, Customer> implem
         query.where(qCustomer.merchantStore.id.eq(storeId));
         if (whereRequest.getQueryObj() != null) {
             JSONObject map = JSON.parseObject(whereRequest.getQueryObj());
-            if (map.get(Constants.SEARCH_USER_NAME) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_USER_NAME).toString())) {
-                query.where((qCustomer.username.like("%" + map.get(Constants.SEARCH_USER_NAME) + "%")));
+            Object searchUserName = map.get(Constants.SEARCH_USER_NAME);
+            Object emailAddress = map.get(Constants.SEARCH_EMAIL_ADDRESS);
+            if (searchUserName != null && !StringUtil.isBlank(searchUserName.toString())) {
+                query.where((qCustomer.username.like("%" + searchUserName + "%")));
             }
-            if (map.get(Constants.SEARCH_EMAIL_ADDRESS) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_EMAIL_ADDRESS).toString())) {
-                query.where((qCustomer.emailAddress.like("%" + map.get(Constants.SEARCH_EMAIL_ADDRESS) + "%")));
+            if (emailAddress != null && !StringUtil.isBlank(emailAddress.toString())) {
+                query.where((qCustomer.emailAddress.like("%" + emailAddress + "%")));
             }
         } else if (!StringUtil.isBlank(whereRequest.getQueryName())) {
             query.where( (qCustomer.firstName.like("%" + whereRequest.getQueryName() + "%"))

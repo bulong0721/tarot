@@ -121,23 +121,29 @@ public class MerchantStoreDaoImpl extends GenericEntityDaoImpl<Long, MerchantSto
         JPQLQuery<MerchantStore> query = new JPAQuery(getEntityManager());
         if (whereRequest.getQueryObj() != null) {
             JSONObject map = JSON.parseObject(whereRequest.getQueryObj());
-            if (map.get(Constants.SEARCH_OPTION_NAME) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_NAME).toString())) {
-                query.where(qMerchantStore.name.like("%" + map.get(Constants.SEARCH_OPTION_NAME) + "%"));
+            Object optionName = map.get(Constants.SEARCH_OPTION_NAME);
+            Object optionAddress = map.get(Constants.SEARCH_OPTION_ADDRESS);
+            Object addressProvince = map.get(Constants.SEARCH_OPTION_ADDRESS_PROVINCE);
+            Object addressCity = map.get(Constants.SEARCH_OPTION_ADDRESS_CITY);
+            Object optionCode = map.get(Constants.SEARCH_OPTION_CODE);
+            Object optionPhone = map.get(Constants.SEARCH_OPTION_PHONE);
+            if (optionName != null && !StringUtil.isBlank(optionName.toString())) {
+                query.where(qMerchantStore.name.like("%" + optionName + "%"));
             }
-            if (map.get(Constants.SEARCH_OPTION_ADDRESS) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_ADDRESS).toString())) {
-                query.where(qMerchantStore.address.address.like("%" + map.get(Constants.SEARCH_OPTION_ADDRESS) + "%"));
+            if (optionAddress != null && !StringUtil.isBlank(optionAddress.toString())) {
+                query.where(qMerchantStore.address.address.like("%" + optionAddress + "%"));
             }
-            if (map.get(Constants.SEARCH_OPTION_ADDRESS_PROVINCE) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_ADDRESS_PROVINCE).toString())) {
-                query.where(qMerchantStore.address.province.id.eq(Long.valueOf(map.get(Constants.SEARCH_OPTION_ADDRESS_PROVINCE).toString())));
+            if (addressProvince != null && !StringUtil.isBlank(addressProvince.toString())) {
+                query.where(qMerchantStore.address.province.id.eq(Long.valueOf(addressProvince.toString())));
             }
-            if (map.get(Constants.SEARCH_OPTION_ADDRESS_CITY) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_ADDRESS_CITY).toString())) {
-                query.where(qMerchantStore.address.city.id.eq(Long.valueOf(map.get(Constants.SEARCH_OPTION_ADDRESS_CITY) + "%")));
+            if (addressCity != null && !StringUtil.isBlank(addressCity.toString())) {
+                query.where(qMerchantStore.address.city.id.eq(Long.valueOf(addressCity + "%")));
             }
-            if (map.get(Constants.SEARCH_OPTION_CODE) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_CODE).toString())) {
-                query.where(qMerchantStore.code.like("%" + map.get(Constants.SEARCH_OPTION_CODE) + "%"));
+            if (optionCode != null && !StringUtil.isBlank(optionCode.toString())) {
+                query.where(qMerchantStore.code.like("%" + optionCode + "%"));
             }
-            if (map.get(Constants.SEARCH_OPTION_PHONE) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_PHONE).toString())) {
-                query.where(qMerchantStore.phone.like("%" + map.get(Constants.SEARCH_OPTION_PHONE) + "%"));
+            if (optionPhone != null && !StringUtil.isBlank(optionPhone.toString())) {
+                query.where(qMerchantStore.phone.like("%" + optionPhone + "%"));
             }
         } else {
             if (!StringUtil.isBlank(whereRequest.getQueryName())) {

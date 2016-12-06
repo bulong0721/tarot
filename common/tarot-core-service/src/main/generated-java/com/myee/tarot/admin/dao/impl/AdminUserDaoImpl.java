@@ -74,17 +74,21 @@ public class AdminUserDaoImpl extends GenericEntityDaoImpl<Long, AdminUser> impl
         query.from(qAdminUser);
         if (whereRequest.getQueryObj() != null) {
             JSONObject map = JSON.parseObject(whereRequest.getQueryObj());
-            if (map.get(Constants.SEARCH_OPTION_NAME) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_NAME).toString())) {
-                query.where(qAdminUser.name.like("%" + map.get(Constants.SEARCH_OPTION_NAME) + "%").or(qAdminUser.login.like("%" + map.get(Constants.SEARCH_OPTION_NAME) + "%")));
+            Object optionName = map.get(Constants.SEARCH_OPTION_NAME);
+            Object optionLogin = map.get(Constants.SEARCH_OPTION_LOGIN);
+            Object optionPhoneNum = map.get(Constants.SEARCH_OPTION_PHONE_NUMBER);
+            Object optionEmail = map.get(Constants.SEARCH_OPTION_EMAIL);
+            if (optionName != null && !StringUtil.isBlank(optionName.toString())) {
+                query.where(qAdminUser.name.like("%" + optionName + "%").or(qAdminUser.login.like("%" + optionName + "%")));
             }
-            if (map.get(Constants.SEARCH_OPTION_LOGIN) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_LOGIN).toString())) {
-                query.where(qAdminUser.login.like("%" + map.get(Constants.SEARCH_OPTION_LOGIN) + "%"));
+            if (optionLogin != null && !StringUtil.isBlank(optionLogin.toString())) {
+                query.where(qAdminUser.login.like("%" + optionLogin + "%"));
             }
-            if (map.get(Constants.SEARCH_OPTION_PHONE_NUMBER) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_PHONE_NUMBER).toString())) {
-                query.where(qAdminUser.phoneNumber.like("%" + map.get(Constants.SEARCH_OPTION_PHONE_NUMBER) + "%"));
+            if (optionPhoneNum != null && !StringUtil.isBlank(optionPhoneNum.toString())) {
+                query.where(qAdminUser.phoneNumber.like("%" + optionPhoneNum + "%"));
             }
-            if (map.get(Constants.SEARCH_OPTION_EMAIL) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_EMAIL).toString())) {
-                query.where(qAdminUser.email.like("%" + map.get(Constants.SEARCH_OPTION_EMAIL) + "%"));
+            if (optionEmail != null && !StringUtil.isBlank(optionEmail.toString())) {
+                query.where(qAdminUser.email.like("%" + optionEmail + "%"));
             }
         } else if(!StringUtil.isBlank(whereRequest.getQueryName())){
             query.where(qAdminUser.name.like("%" + whereRequest.getQueryName() + "%")

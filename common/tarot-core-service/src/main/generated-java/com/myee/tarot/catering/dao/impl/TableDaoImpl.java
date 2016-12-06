@@ -48,20 +48,25 @@ public class TableDaoImpl extends GenericEntityDaoImpl<Long, Table> implements T
                 .fetchJoin();
         if (whereRequest.getQueryObj() != null) {
             JSONObject map = JSON.parseObject(whereRequest.getQueryObj());
-            if (map.get(Constants.SEARCH_OPTION_TABLE_TYPE) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_TABLE_TYPE).toString())) {
-                query.where(qTable.tableType.id.eq(Long.valueOf(map.get(Constants.SEARCH_OPTION_TABLE_TYPE).toString())));
+            Object tableType = map.get(Constants.SEARCH_OPTION_TABLE_TYPE);
+            Object tableZone = map.get(Constants.SEARCH_OPTION_TABLE_ZONE);
+            Object scanCode = map.get(Constants.SEARCH_OPTION_SCAN_CODE);
+            Object textId = map.get(Constants.SEARCH_OPTION_TEXT_ID);
+            Object optionName = map.get(Constants.SEARCH_OPTION_NAME);
+            if (tableType != null && !StringUtil.isBlank(tableType.toString())) {
+                query.where(qTable.tableType.id.eq(Long.valueOf(tableType.toString())));
             }
-            if (map.get(Constants.SEARCH_OPTION_TABLE_ZONE) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_TABLE_ZONE).toString())) {
-                query.where(qTable.tableZone.id.eq(Long.valueOf(map.get(Constants.SEARCH_OPTION_TABLE_ZONE).toString())));
+            if (tableZone != null && !StringUtil.isBlank(tableZone.toString())) {
+                query.where(qTable.tableZone.id.eq(Long.valueOf(tableZone.toString())));
             }
-            if (map.get(Constants.SEARCH_OPTION_SCAN_CODE) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_SCAN_CODE).toString())) {
-                query.where(qTable.scanCode.like("%" + map.get(Constants.SEARCH_OPTION_SCAN_CODE).toString() + "%"));
+            if (scanCode != null && !StringUtil.isBlank(scanCode.toString())) {
+                query.where(qTable.scanCode.like("%" + scanCode.toString() + "%"));
             }
-            if (map.get(Constants.SEARCH_OPTION_TEXT_ID) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_TEXT_ID).toString())) {
-                query.where(qTable.textId.like("%" + map.get(Constants.SEARCH_OPTION_TEXT_ID).toString() + "%"));
+            if (textId != null && !StringUtil.isBlank(textId.toString())) {
+                query.where(qTable.textId.like("%" + textId.toString() + "%"));
             }
-            if (map.get(Constants.SEARCH_OPTION_NAME) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_NAME).toString())) {
-                query.where(qTable.name.like("%" + map.get(Constants.SEARCH_OPTION_NAME).toString() + "%"));
+            if (optionName != null && !StringUtil.isBlank(optionName.toString())) {
+                query.where(qTable.name.like("%" + optionName.toString() + "%"));
             }
         } else if (!StringUtil.isBlank(whereRequest.getQueryName())) {
                 query.where(qTable.name.like("%" + whereRequest.getQueryName() + "%"));

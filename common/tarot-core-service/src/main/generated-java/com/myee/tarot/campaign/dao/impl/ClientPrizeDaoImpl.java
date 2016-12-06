@@ -30,14 +30,17 @@ public class ClientPrizeDaoImpl extends GenericEntityDaoImpl<Long, ClientPrize> 
         query.from(qClientPrize).where(qClientPrize.deleteStatus.eq(Constants.CLIENT_PRIZE_DELETE_YES));
         if (whereRequest.getQueryObj() != null) {
             JSONObject map = JSON.parseObject(whereRequest.getQueryObj());
-            if (map.get(Constants.SEARCH_OPTION_NAME) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_NAME).toString())) {
-                query.where(qClientPrize.name.like("%" + map.get(Constants.SEARCH_OPTION_NAME) + "%"));
+            Object optionName = map.get(Constants.SEARCH_OPTION_NAME);
+            Object optionType = map.get(Constants.SEARCH_OPTION_TYPE);
+            Object phonePrizeType = map.get(Constants.SEARCH_OPTION_PHONE_PRIZE_TYPE);
+            if (optionName != null && !StringUtil.isBlank(optionName.toString())) {
+                query.where(qClientPrize.name.like("%" + optionName + "%"));
             }
-            if (map.get(Constants.SEARCH_OPTION_TYPE) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_TYPE).toString())) {
-                query.where(qClientPrize.type.eq(Integer.valueOf(map.get(Constants.SEARCH_OPTION_TYPE).toString())));
+            if (optionType != null && !StringUtil.isBlank(optionType.toString())) {
+                query.where(qClientPrize.type.eq(Integer.valueOf(optionType.toString())));
             }
-            if (map.get(Constants.SEARCH_OPTION_PHONE_PRIZE_TYPE) != null && !StringUtil.isBlank(map.get(Constants.SEARCH_OPTION_PHONE_PRIZE_TYPE).toString())) {
-                query.where(qClientPrize.phonePrizeType.eq(Integer.valueOf(map.get(Constants.SEARCH_OPTION_PHONE_PRIZE_TYPE).toString())));
+            if (phonePrizeType != null && !StringUtil.isBlank(phonePrizeType.toString())) {
+                query.where(qClientPrize.phonePrizeType.eq(Integer.valueOf(phonePrizeType.toString())));
             }
         } else {
             if(!StringUtil.isBlank(whereRequest.getQueryName())){
