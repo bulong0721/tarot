@@ -124,6 +124,7 @@ function cTablesService(NgTableParams, cAlerts,$timeout,cResource) {
 
         scope.updateAttr = function (product, attr) {
             cResource.save(mgrData.api.updateAttr,{id: product.id},attr).then(function(result){
+                attr.id = result.dataMap.updateResult.id;
                 attr.editing = false;
             });
         };
@@ -639,7 +640,8 @@ function cResource($resource,$filter,$q){
     //
     function transformResponse(data, headers,state){
         if(state == 200 && headers('content-type') != 'application/json;charset=UTF-8'){
-            window.location.href="/admin/login.html";
+            //window.location.href="/admin/login.html";
+            console.log(2234);
             return false;
         }else if(state == 500){
             console.log('联系管理员');
