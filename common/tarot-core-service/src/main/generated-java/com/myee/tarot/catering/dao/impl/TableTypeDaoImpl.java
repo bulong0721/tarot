@@ -55,4 +55,18 @@ public class TableTypeDaoImpl extends GenericEntityDaoImpl<Long, TableType> impl
     public List<TableType> listByMerchantStoreId(Long merchantStoreId) {
         return null;
     }
+
+    @Override
+    public TableType findByStoreIdAndName(Long id, String name) {
+        QTableType qTableType = QTableType.tableType;
+        JPQLQuery<TableType> query = new JPAQuery(getEntityManager());
+        query.from(qTableType);
+        if (id != null) {
+            query.where(qTableType.store.id.eq(id));
+        }
+        if (!StringUtil.isNullOrEmpty(name)) {
+            query.where(qTableType.name.eq(name));
+        }
+        return query.fetchOne();
+    }
 }

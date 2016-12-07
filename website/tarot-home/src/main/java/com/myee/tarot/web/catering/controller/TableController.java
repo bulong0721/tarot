@@ -76,6 +76,15 @@ public class TableController {
                 return resp;
             }
             MerchantStore merchantStore1 = (MerchantStore) o;
+            Long storeId = merchantStore1.getId();
+            String typeName = type.getName();
+            TableType tableType = typeService.findByStoreIdAndName(storeId, typeName);
+            if (tableType != null && !tableType.getId().equals(type.getId())) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("餐桌类型名称不能重复");
+                return resp;
+            }
+
             type.setStore(merchantStore1);
             type = typeService.update(type);
 
@@ -166,6 +175,14 @@ public class TableController {
                 return resp;
             }
             MerchantStore merchantStore1 = (MerchantStore) o;
+
+            Long storeId = merchantStore1.getId();
+            TableZone tableZone = zoneService.findByStoreIdAndName(storeId, zone.getName());
+            if (tableZone != null && !tableZone.getId().equals(zone.getId())) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("餐桌区域名称不能重复");
+                return resp;
+            }
             zone.setStore(merchantStore1);
             zone = zoneService.update(zone);
 
@@ -267,6 +284,14 @@ public class TableController {
                 return resp;
             }
             MerchantStore merchantStore1 = (MerchantStore) o;
+            Long storeId = merchantStore1.getId();
+            String tableName = table.getName();
+            Table tableDB = tableService.findByStoreIdAndName(storeId, tableName);
+            if (tableDB != null && !tableDB.getId().equals(table.getId())) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("餐桌名称不能重复");
+                return resp;
+            }
             DeviceUsed deviceUsed = null;
             String dUCommonName = null;
             String commonBoardNo = null;

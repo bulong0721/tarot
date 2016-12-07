@@ -15,4 +15,6 @@ public interface TableZoneService extends GenericEntityService<Long, TableZone> 
     List<TableZone> listByStore(long storeId);
 
     PageResult<TableZone> pageByStore(Long id, PageRequest pageRequest);
+
+    TableZone findByStoreIdAndName(Long storeId, String zoneName);
 }

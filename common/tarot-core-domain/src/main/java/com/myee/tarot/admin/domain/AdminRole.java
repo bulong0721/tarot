@@ -19,7 +19,7 @@ public class AdminRole extends GenericEntity<Long, AdminRole> {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     private Long id;
 
-    @Column(name = "NAME", nullable = false)
+    @Column(name = "NAME", unique = true, nullable = false)
     protected String name;
 
     @Column(name = "DESCRIPTION", nullable = false)

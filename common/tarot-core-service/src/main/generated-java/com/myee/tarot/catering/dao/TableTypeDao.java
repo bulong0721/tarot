@@ -17,4 +17,6 @@ public interface TableTypeDao extends GenericEntityDao<Long, TableType> {
     PageResult<TableType> pageByStore(Long id, PageRequest pageRequest);
 
     public List<TableType> listByMerchantStoreId(Long merchantStoreId);
+
+    TableType findByStoreIdAndName(Long id, String name);
 }
