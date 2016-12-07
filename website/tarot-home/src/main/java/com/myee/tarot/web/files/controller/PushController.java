@@ -266,20 +266,15 @@ public class PushController {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) o;
-            WhereRequest whereRequestTemp = new WhereRequest();
-            whereRequestTemp.setCount(Constants.COUNT_NOPAGING);
-            List<DeviceUsed> deviceUsedList = deviceUsedService.pageByStore(merchantStore1.getId(),whereRequestTemp ).getList();
-            Map<String,DeviceUsed> deviceUsedMap = deviceUsedListToBoardNoMap(deviceUsedList);
-            PageResult<Notification> pageList = notificationService.pageByStore(merchantStore1.getId(), whereRequest);
+			MerchantStore merchantStore1 = (MerchantStore)o;
+			PageResult<Notification> pageList = notificationService.pageByStore(merchantStore1.getId(), whereRequest);
             List<Notification> notificationList = pageList.getList();
             for (Notification notification : notificationList) {
                 Map entry = new HashMap();
                 entry.put("userName", notification.getAdminUser().getLogin());
-                String boardNo = notification.getUniqueNo();
-                entry.put("deviceUsedName", ( StringUtil.isBlank(boardNo)?"":deviceUsedMap.get(boardNo).getName() ));
+                entry.put("deviceUsedName", notification.getDeviceUsedName());
                 entry.put("content", notification.getContent());
-                entry.put("created", notification.getCreateTime());
+                entry.put("createTime", notification.getCreateTime());
                 entry.put("timeOut", notification.getTimeout());
                 entry.put("comment", notification.getComment());
 				entry.put("success", notification.getSuccess());
@@ -341,6 +336,11 @@ public class PushController {
         try {
             MerchantStore merchantStore = (MerchantStore)request.getSession().getAttribute(Constants.ADMIN_STORE);
 			AdminUser adminUser = (AdminUser) request.getSession().getAttribute(Constants.ADMIN_USER);
+
+			WhereRequest whereRequestTemp = new WhereRequest();
+			whereRequestTemp.setCount(Constants.COUNT_NOPAGING);
+			List<DeviceUsed> deviceUsedList = deviceUsedService.pageByStore(merchantStore.getId(),whereRequestTemp ).getList();
+			Map<String,DeviceUsed> deviceUsedMap = deviceUsedListToBoardNoMap(deviceUsedList);
             //入库
 			String notificationUUID = UUID.randomUUID().toString();
 			pushResourceDTO.setNotificationUUID(notificationUUID);
@@ -351,6 +351,7 @@ public class PushController {
             notification.setContent(JSONArray.toJSONString(pushResourceDTO.getContent()));
             notification.setStoragePath(pushResourceDTO.getStoragePath());
             notification.setTimeout(pushResourceDTO.getTimeout());
+			notification.setDeviceUsedName(deviceUsedMap.get(pushResourceDTO.getUniqueNo()).getName());
             notification.setUniqueNo(pushResourceDTO.getUniqueNo());
             notification.setAdminUser(adminUser);
             notification.setStore(merchantStore);

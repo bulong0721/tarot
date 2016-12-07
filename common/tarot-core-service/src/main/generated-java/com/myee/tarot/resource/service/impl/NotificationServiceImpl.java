@@ -4,11 +4,14 @@ import com.myee.djinn.dto.NotificationDTO;
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.resource.dao.NotificationDao;
 import com.myee.tarot.resource.domain.Notification;
 import com.myee.tarot.resource.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.text.ParseException;
 
 /**
  * Created by Ray.Fu on 2016/8/10.
@@ -24,7 +27,7 @@ public class NotificationServiceImpl extends GenericEntityServiceImpl<Long, com.
         this.notificationDao = notificationDao;
     }
 
-    public PageResult<Notification> pageByStore(Long id, PageRequest pageRequest){
-        return notificationDao.pageByStore( id,  pageRequest);
+    public PageResult<Notification> pageByStore(Long id, WhereRequest whereRequest) throws ParseException {
+        return notificationDao.pageByStore( id,  whereRequest);
     }
 }

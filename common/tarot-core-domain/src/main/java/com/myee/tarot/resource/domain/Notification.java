@@ -19,6 +19,9 @@ public class Notification extends GenericEntity<Long, Notification> {
     @Column(name = "UNIQUE_NO")
     private String uniqueNo;
 
+	@Column(name = "DEVICE_USED_NAME")
+	private String deviceUsedName;
+
     @Column(name = "APP_ID")
     private Integer appId;//推送应用
 
@@ -180,5 +183,13 @@ public class Notification extends GenericEntity<Long, Notification> {
 
 	public void setOperationType(String operationType) {
 		this.operationType = operationType;
+	}
+
+	public String getDeviceUsedName() {
+		return deviceUsedName;
+	}
+
+	public void setDeviceUsedName(String deviceUsedName) {
+		this.deviceUsedName = deviceUsedName;
 	}
 }
