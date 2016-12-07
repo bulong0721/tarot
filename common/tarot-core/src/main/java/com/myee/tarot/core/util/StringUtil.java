@@ -2,6 +2,8 @@ package com.myee.tarot.core.util;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -16,6 +18,7 @@ import java.util.zip.CheckedInputStream;
  * Created by Martin on 2016/4/18.
  */
 public class StringUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger(StringUtil.class);
 
     public static long getChecksum(String test) {
         try {
@@ -44,7 +47,7 @@ public class StringUtil {
             return encodedUrl == null ? null : URLDecoder.decode(encodedUrl, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             // this should not happen
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             return encodedUrl;
         }
     }

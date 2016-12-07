@@ -177,7 +177,7 @@ public class DataStoreServiceImpl implements DataStoreService, TransactionalAspe
                 metricCache.setLastUpdateTimeCache(lastUpdateTimeCache);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(),e);
         }
         ifContainKey = false;
         Map<String, Long> lastUpdateTimeCache = metricCache.getLastUpdateTimeCache();

@@ -1,6 +1,8 @@
 package com.myee.tarot.merchant.type;
 
 import com.myee.tarot.core.GenericEnumType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.*;
@@ -9,6 +11,7 @@ import java.util.*;
  * Created by Martin on 2016/5/23.
  */
 public class BusinessType implements GenericEnumType, Comparable<BusinessType>, Serializable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BusinessType.class);
 
     private static final Map<String, BusinessType> TYPES = new LinkedHashMap<String, BusinessType>();
 
@@ -84,7 +87,7 @@ public class BusinessType implements GenericEnumType, Comparable<BusinessType>, 
             String key = String.valueOf((TYPES.get(businessType)).getFriendlyType());
             return key == null || key.equals("null") ? "" : key;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             return "";
         }
     }

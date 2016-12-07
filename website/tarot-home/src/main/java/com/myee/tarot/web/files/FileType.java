@@ -1,5 +1,7 @@
 package com.myee.tarot.web.files;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.FileInputStream;
@@ -14,6 +16,7 @@ import java.util.Map;
  * Created by enva on 2016/2/22.
  */
 public class FileType {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileType.class);
     public final static Map<String, String> FILE_TYPE_MAP = new HashMap<String, String>();
 
     private FileType(){}
@@ -132,9 +135,9 @@ public class FileType {
                 }
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
         }
         return res;
     }
@@ -166,9 +169,9 @@ public class FileType {
                 }
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
         return res;
     }

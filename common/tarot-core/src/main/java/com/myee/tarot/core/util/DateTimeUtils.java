@@ -20,8 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * History: <p>如果有修改过程，请记录</P>
  */
 public class DateTimeUtils {
-    private final static
-    Logger logger = LoggerFactory.getLogger(DateTimeUtils.class);
+    private final static Logger logger = LoggerFactory.getLogger(DateTimeUtils.class);
 
     public static final String DEFAULT_DATE_FORMAT_PATTERN_SHORT = "yyyy-MM-dd";
 
@@ -93,7 +92,7 @@ public class DateTimeUtils {
                sdf = DateTimeFormat.forPattern(pattern);
                dateFormatCache.put(pattern, sdf);
            } catch (Exception e) {
-               e.printStackTrace();
+                logger.error(e.getMessage(), e);
                 sdf = DateTimeFormat.forPattern(DEFAULT_DATE_FORMAT_PATTERN_FULL);
            }
         }
@@ -119,7 +118,7 @@ public class DateTimeUtils {
                 sdf = DateTimeFormat.forPattern(pattern);
                 dateFormatCache.put(pattern, sdf);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(),e);
                 sdf = DateTimeFormat.forPattern(DEFAULT_DATE_FORMAT_PATTERN_FULL);
             }
         }
@@ -149,7 +148,7 @@ public class DateTimeUtils {
                 return DateTime.parse(dateTimeString,sdf).toDate();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         return null;
     }
@@ -188,7 +187,7 @@ public class DateTimeUtils {
         try {
             date = format.parse(dateStr.replace("Z", " UTC"));
         } catch (ParseException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         return date;
     }
@@ -396,7 +395,7 @@ public class DateTimeUtils {
             return d;
         } catch (Exception e) {
             logger.error("toDate(String dateTime) error...");
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
         }
         return null;
     }

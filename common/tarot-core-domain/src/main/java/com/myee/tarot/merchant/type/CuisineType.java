@@ -1,6 +1,8 @@
 package com.myee.tarot.merchant.type;
 
 import com.myee.tarot.core.GenericEnumType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.*;
@@ -9,6 +11,7 @@ import java.util.*;
  * Created by Martin on 2016/5/23.
  */
 public class CuisineType implements GenericEnumType, Comparable<CuisineType>, Serializable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CuisineType.class);
 
     private static final Map<String, CuisineType> TYPES = new LinkedHashMap<String, CuisineType>();
 
@@ -99,7 +102,7 @@ public class CuisineType implements GenericEnumType, Comparable<CuisineType>, Se
             String key = String.valueOf((TYPES.get(cuisineType)).getFriendlyType());
             return key == null || key.equals("null") ? "" : key;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             return "";
         }
     }

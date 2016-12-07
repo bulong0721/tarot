@@ -118,7 +118,7 @@ public class PictureManageController extends BaseController {
             resp = AjaxResponse.success();
             resp.addEntry("updateResult", picture);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
@@ -161,7 +161,7 @@ public class PictureManageController extends BaseController {
             pictureService.update(picture1);
             return AjaxResponse.success();
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "出错");
         }
     }
@@ -197,7 +197,7 @@ public class PictureManageController extends BaseController {
             resp.addDataEntry(objectToEntry(picture1));
             return resp;
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "出错");
         }
     }

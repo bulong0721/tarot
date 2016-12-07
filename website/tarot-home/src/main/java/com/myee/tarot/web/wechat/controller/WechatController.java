@@ -110,7 +110,7 @@ public class WechatController {
             Long time = endTime - startTime;
             logger.info("生成二维码接口时间消耗:{}毫秒", time);
         } catch (WxErrorException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
         }
         return ticket;
     }
@@ -126,7 +126,7 @@ public class WechatController {
             Long time = endTime - startTime;
             logger.info("生成二维码接口时间消耗:{}毫秒", time);
         } catch (WxErrorException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
         }
         return ticket;
     }

@@ -2,6 +2,8 @@ package com.myee.tarot.datacenter.domain;
 
 
 import com.myee.tarot.core.GenericEnumType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.*;
@@ -10,6 +12,8 @@ import java.util.*;
  * Created by Martin on 2016/1/18.
  */
 public class EventLevel implements GenericEnumType, Comparable<EventLevel>, Serializable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventLevel.class);
+
     private static final Map<String, EventLevel> TYPES = new LinkedHashMap<String, EventLevel>();
 
     private static final EventLevel ERROR = new EventLevel("0", "error");
@@ -83,7 +87,7 @@ public class EventLevel implements GenericEnumType, Comparable<EventLevel>, Seri
             String key = String.valueOf(((EventLevel) TYPES.get(businessType)).getFriendlyType());
             return key == null || key.equals("null") ? "" : key;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             return "";
         }
     }

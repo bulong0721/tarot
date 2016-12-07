@@ -83,7 +83,7 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 				info = JSON.parseObject(str,VersionInfo.class);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 			LOG.info("Error Message {} " + e.getMessage());
 		}
 		return info;
@@ -164,7 +164,7 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 			}
 			versionInfo = JSON.parseObject(object.toJSONString(),VersionInfo.class);
 		} catch (DocumentException e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(),e);
 		}
 		return versionInfo;
 	}

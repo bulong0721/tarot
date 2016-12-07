@@ -82,7 +82,7 @@ public class TableController {
             resp = AjaxResponse.success();
             resp.addEntry("updateResult", type);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
@@ -121,7 +121,7 @@ public class TableController {
             typeService.delete(tableType);
             return AjaxResponse.success();
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
@@ -172,7 +172,7 @@ public class TableController {
             resp = AjaxResponse.success();
             resp.addEntry("updateResult", zone);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
@@ -202,7 +202,7 @@ public class TableController {
             zoneService.delete(tableZone);
             return AjaxResponse.success();
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
@@ -236,7 +236,7 @@ public class TableController {
 
             return resp;
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             return resp;
         }
     }
@@ -342,7 +342,7 @@ public class TableController {
 
 
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
@@ -367,7 +367,7 @@ public class TableController {
                 return false;
             }
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             return false;
         }
     }
@@ -386,7 +386,7 @@ public class TableController {
                 return "";
             }
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             return "";
         }
     }
@@ -413,7 +413,7 @@ public class TableController {
             tableService.delete(table1);
             return AjaxResponse.success();
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
@@ -441,7 +441,7 @@ public class TableController {
             resp.setRecordsTotal(pageList.getRecordsTotal());
             return resp;
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             return resp;
         }
     }
@@ -465,7 +465,7 @@ public class TableController {
             resp.addEntry("updateResult", objectToEntry(table));
             return resp;
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
         }
         return AjaxResponse.failed(-1);
     }
@@ -522,7 +522,7 @@ public class TableController {
             resp = AjaxResponse.success();
             resp.addEntry("updateResult", menuInfo);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
@@ -561,7 +561,7 @@ public class TableController {
             menuService.delete(menuInfo1);
             return AjaxResponse.success();
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
@@ -678,8 +678,8 @@ public class TableController {
                     LOGGER.info( (finalTime - startTime) +"");
 
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    LOGGER.error("上传出错:"+e.getMessage());
+                    LOGGER.error(e.getMessage(),e);
+                    LOGGER.error("上传出错:"+e.getMessage(),e);
                 }
             }
         }

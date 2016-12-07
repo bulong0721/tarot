@@ -231,7 +231,7 @@ public class PushController {
                 }
             }
             catch (Exception e){
-                LOGGER.error(e.getMessage());
+                LOGGER.error(e.getMessage(),e);
             }
             resMap.put(file.getName(), fileItem);
         }
@@ -296,7 +296,7 @@ public class PushController {
 
             return resp;
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             return resp;
         }
     }
@@ -369,9 +369,9 @@ public class PushController {
                 return AjaxResponse.failed(-6, "发送失败，客户端出错");
             }
         } catch (ServiceException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             return AjaxResponse.failed(-5, "客户端不存在或网络无法连接");
         }
         return null;
@@ -420,7 +420,7 @@ public class PushController {
                 return false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             LOGGER.info("unable to delete the folder!");
         }
         return false;
@@ -487,7 +487,7 @@ public class PushController {
 			}
 			return resp.getRows();
 		}catch (Exception e){
-			e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -505,7 +505,7 @@ public class PushController {
             }
             return resp.getRows();
         }catch (Exception e){
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
         }
         return null;
     }

@@ -96,7 +96,7 @@ public class DeviceController {
             resp.addEntry("updateResult", objectToEntry(device));
             return resp;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             return AjaxResponse.failed(-1, "失败");
         }
 
@@ -116,7 +116,7 @@ public class DeviceController {
             }
             return resp.getRows();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
@@ -139,7 +139,7 @@ public class DeviceController {
             deviceService.delete(deviceUsed1);
             return AjaxResponse.success();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             return AjaxResponse.failed(-1, "在其他地方被使用，无法删除");
         }
 
@@ -175,7 +175,6 @@ public class DeviceController {
             }
             return AjaxResponse.success();
         } catch (Exception e) {
-            e.printStackTrace();
             resp.setErrorString("删除设备类型属性异常");
             LOGGER.error("Error delete productAttributes", e);
         }
@@ -233,7 +232,6 @@ public class DeviceController {
             }
             resp.setRecordsTotal(pageList.getRecordsTotal());
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.error("Error while paging products", e);
         }
         return resp;
@@ -264,7 +262,7 @@ public class DeviceController {
             }
             return resp.getRows();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
         }
         return null;
     }
@@ -357,7 +355,7 @@ public class DeviceController {
             resp = AjaxResponse.success("批量添加将跳过重复主板编号设备");
             resp.addEntry("updateResult", updateResult);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(-1, "失败");
         }
         return resp;
@@ -383,7 +381,7 @@ public class DeviceController {
             resp.addEntry("updateResult", objectToEntry(deviceUsed));
             return resp;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
             return AjaxResponse.failed(-1, "失败");
         }
 
@@ -411,7 +409,7 @@ public class DeviceController {
             deviceUsedService.delete(deviceUsed1);
             return AjaxResponse.success();
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             return AjaxResponse.failed(-1, "在其他地方被使用，无法删除");
         }
     }
@@ -493,7 +491,6 @@ public class DeviceController {
             }
             return AjaxResponse.success();
         } catch (Exception e) {
-            e.printStackTrace();
             resp.setErrorString("删除设备属性异常");
             LOGGER.error("Error delete productAttributes", e);
         }
@@ -563,7 +560,6 @@ public class DeviceController {
             }
             resp.setRecordsTotal(pageList.getRecordsTotal());
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.error("Error while paging products", e);
             resp.setErrorString("出错");
         }
@@ -592,7 +588,6 @@ public class DeviceController {
             }
             resp.setRecordsTotal(pageList.getRecordsTotal());
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.error("Error while paging products", e);
         }
         return resp;
@@ -622,7 +617,7 @@ public class DeviceController {
             }
             return resp.getRows();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
         }
         return null;
     }
@@ -692,7 +687,7 @@ public class DeviceController {
             resp = AjaxResponse.success("批量添加将跳过重复编号设备组");
             resp.addEntry("updateResult", updateResult);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(-1, "失败");
         }
         return resp;
@@ -718,7 +713,7 @@ public class DeviceController {
             resp.addEntry("updateResult", objectToEntry(productUsed));
             return resp;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
             return AjaxResponse.failed(-1, "失败");
         }
 
@@ -747,7 +742,7 @@ public class DeviceController {
             productUsedService.delete(productUsed1);
             return AjaxResponse.success();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             return AjaxResponse.failed(-1, "在其他地方被使用，无法删除");
         }
 
@@ -813,7 +808,6 @@ public class DeviceController {
             }
             return AjaxResponse.success();
         } catch (Exception e) {
-            e.printStackTrace();
             resp.setErrorString("删除设备组属性异常");
             LOGGER.error("Error delete productAttributes", e);
         }

@@ -22,6 +22,8 @@ package com.myee.tarot.core.audit;
 import com.myee.tarot.core.time.SystemTime;
 import com.myee.tarot.core.web.RequestContext;
 import com.myee.tarot.core.web.RequestCustomerResolverImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -31,6 +33,7 @@ import java.lang.reflect.Field;
 import java.util.Calendar;
 
 public class AuditableListener {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuditableListener.class);
 
     @PrePersist
     public void setAuditCreatedBy(Object entity) throws Exception {
@@ -96,7 +99,7 @@ public class AuditableListener {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
         field.setAccessible(true);
         field.set(entity, customerId);

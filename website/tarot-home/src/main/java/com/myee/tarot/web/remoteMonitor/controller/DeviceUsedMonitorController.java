@@ -121,7 +121,7 @@ public class DeviceUsedMonitorController {
             resp.addDataEntry(entry);
 
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             resp.setErrorString("出错");
         }
 
@@ -255,7 +255,7 @@ public class DeviceUsedMonitorController {
 
             resp.addDataEntry(entry);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             resp.setErrorString("出错");
         }
         return resp;
@@ -385,8 +385,7 @@ public class DeviceUsedMonitorController {
             entry.putAll(systemMetrics4SummaryToMap(metricInfoList4Summary));
             resp.addDataEntry(entry);
         } catch (Exception e) {
-            e.printStackTrace();
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             resp.setErrorString("出错");
         }
         return resp;
@@ -534,7 +533,7 @@ public class DeviceUsedMonitorController {
                 return Constants.METRIC_STATE_ALERT;
             }
         } catch (Exception e) {
-            LOGGER.error("指标值不是数字：" + e.getMessage());
+            LOGGER.error("指标值不是数字：" + e.getMessage(),e);
         }
 
         return Constants.METRIC_STATE_OK;
@@ -677,7 +676,7 @@ public class DeviceUsedMonitorController {
         try {
             isSuccess = endpointInterface.commandSend(commandInfo);
         } catch (RemoteException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
         }
         return null;
     }*/

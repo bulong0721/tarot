@@ -1,5 +1,8 @@
 package com.myee.tarot.core.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -10,7 +13,7 @@ import java.util.*;
  */
 
 public class TypeConverter {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(TypeConverter.class);
 	// private final static Logger log = Logger.getLogger(TypeConverter.class);
 
 	public static Timestamp toTimestamp(String time) {
@@ -34,7 +37,7 @@ public class TypeConverter {
 				s = new Timestamp(d.getTime());
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 		return s;
 	}

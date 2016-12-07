@@ -200,7 +200,6 @@ public class RollManageController extends BaseController {
 //            DetailText text = (DetailText)detailTextManageService.getEntity(new DetailText(orgId, rollMainId));
 //            return ClientAjaxResult.success(text);
 //        }  catch (Exception e) {
-//            e.printStackTrace();
 //            logger.error(e.getMessage(), e);
 //            return ClientAjaxResult.failed("糟了...系统出错了...");
 //        }
@@ -255,7 +254,7 @@ public class RollManageController extends BaseController {
             resp = AjaxResponse.success();
             resp.addEntry("updateResult", rollMain);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;

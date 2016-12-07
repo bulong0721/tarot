@@ -2,6 +2,8 @@ package com.myee.tarot.wechat.domain;
 
 
 import com.myee.tarot.core.GenericEnumType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.*;
@@ -10,6 +12,8 @@ import java.util.*;
  * Created by Martin on 2016/1/18.
  */
 public class WxWaitTokenState implements GenericEnumType, Comparable<WxWaitTokenState>, Serializable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(WxWaitTokenState.class);
+
     private static final Map<String, WxWaitTokenState> TYPES = new LinkedHashMap<String, WxWaitTokenState>();
 
     private static final WxWaitTokenState TAKE = new WxWaitTokenState("1", "等待");
@@ -83,7 +87,7 @@ public class WxWaitTokenState implements GenericEnumType, Comparable<WxWaitToken
             String key = String.valueOf(((WxWaitTokenState) TYPES.get(businessType)).getFriendlyType());
             return key == null || key.equals("null") ? "" : key;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             return "";
         }
     }

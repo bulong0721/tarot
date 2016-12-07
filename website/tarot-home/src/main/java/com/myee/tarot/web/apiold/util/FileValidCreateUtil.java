@@ -72,7 +72,7 @@ public class FileValidCreateUtil {
 
             return true;
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             return false;
         }
     }
@@ -106,20 +106,20 @@ public class FileValidCreateUtil {
             LOGGER.info("文件"+ inputFile +"的md5:" + md5);
             return md5;
         } catch (NoSuchAlgorithmException e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             return null;
         } finally {
             try {
                 if(digestInputStream != null)
                     digestInputStream.close();
             } catch (Exception e) {
-                LOGGER.error(e.getMessage());
+                LOGGER.error(e.getMessage(),e);
             }
             try {
                 if(fileInputStream != null)
                     fileInputStream.close();
             } catch (Exception e) {
-                LOGGER.error(e.getMessage());
+                LOGGER.error(e.getMessage(),e);
             }
         }
     }

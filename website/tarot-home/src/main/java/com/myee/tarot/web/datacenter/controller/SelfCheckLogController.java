@@ -87,7 +87,7 @@ public class SelfCheckLogController {
                 resp.add(entry);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
         }
         return resp;
     }
@@ -105,7 +105,7 @@ public class SelfCheckLogController {
                 resp.add(entry);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
         }
         return resp;
     }
