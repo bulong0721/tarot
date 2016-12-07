@@ -313,7 +313,7 @@ public class DeviceController {
                 DeviceUsed dU = deviceUsedService.getByBoardNo(deviceUsed.getBoardNo());
                 if (dU != null && !dU.getId().equals(deviceUsed.getId())) { //编辑时排除当前设备
                     resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-                    resp.setErrorString("已存在的主板编号");
+                    resp.setErrorString("门店" + dU.getStore().getName() + "已存在此主板编号，请更换主板编号");
                     return resp;
                 }
             }
@@ -667,7 +667,7 @@ public class DeviceController {
                 ProductUsed pU = productUsedService.getByCode(productUsed.getCode());
                 if (pU != null && !pU.getId().equals(productUsed.getId())) { //编辑时排除当前设备
                     resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-                    resp.setErrorString("重复的设备组编号，请更换编号");
+                    resp.setErrorString("门店" + pU.getStore().getName() + "已存在此设备组编号，请更换编号");
                     return resp;
                 }
             }
