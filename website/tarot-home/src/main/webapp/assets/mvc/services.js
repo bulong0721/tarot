@@ -648,7 +648,7 @@ function cResource($resource,$filter,$q){
             return false;
         }
         var respData = angular.fromJson(data);
-        if(respData.status && respData.status == 410){
+        if(respData.status && respData.status == baseUrl.accessDeni){
             window.location.href=respData.rows[0].accessDeni;
             return false;
         }
