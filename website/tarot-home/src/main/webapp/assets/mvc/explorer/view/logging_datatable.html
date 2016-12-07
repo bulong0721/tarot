@@ -1,7 +1,20 @@
 <div class="alert alert-info">
     <div class="form-inline" ng-keyup="search($event)">
         <div class="form-group">
-            <input placeholder="内容" ng-model="where.queryName" type="text" class="form-control" style="width:200px;"/>
+            <select class="form-control" style="width:150px;" ng-model="where.queryObj.noticeType">
+                <option value="">通知类型</option>
+                <option value="source">资源信息</option>
+                <option value="tinker_patch">agent补丁包</option>
+                <option value="metrics_frequency">系统指标收集频率</option>
+            </select>
+        </div>
+        <div class="form-group m-l">
+            <c-Datepicker placeholder="开始日期" odel="where.queryObj.beginDate" style="width:150px;"></c-Datepicker>
+            <i class="fa fa-exchange"></i>
+            <c-Datepicker placeholder="结束日期" model="where.queryObj.endDate" style="width:150px;"></c-Datepicker>
+        </div>
+        <div class="form-group">
+            <input placeholder="内容" ng-model="where.queryObj.content" type="text" class="form-control" style="width:200px;"/>
         </div>
         <button class="btn btn-sm btn-danger m-l" type="button" ng-click="search()"><i class="fa fa-search"></i><span class="bold">搜索</span></button>
     </div>
@@ -26,7 +39,7 @@
                             <th width="10%" class="center">操作时间</th>
                             <th width="10%" class="center">过期时间</th>
                             <th class="center">备注</th>
-                            <th width="100px" class="center">操作</th>
+                            <th width="100px" class="center">详细内容</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -43,7 +56,7 @@
                             <td>{{::row.operationType}}</td>
                             <td>{{::row.uuid}}</td>
                            <!-- <td><div class="cropLongString-120">{{::row.content}}</div></td>-->
-                            <td class="center">{{::row.created | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                            <td class="center">{{::row.createTime | date:'yyyy-MM-dd HH:mm:ss'}}</td>
                             <td class="center">{{::row.timeOut | date:'yyyy-MM-dd HH:mm:ss'}}</td>
                             <td>{{::row.comment}}</td>
                             <td class="center"><a ng-click="row.showDetail=!row.showDetail" tooltip-placement="top" uib-tooltip="{{lang_zh.contentDetail}}"><i class="btn-icon fa fa-bars"></i></a></td>

@@ -138,6 +138,7 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 		AdminUser adminUser = adminUserService.findById(notificationDTO.getUserId());
 		notification.setAdminUser(adminUser);
 		notification.setSuccess(notificationDTO.getSuccess());
+		notification.setDeviceUsedName(deviceUsedService.getByBoardNo(notificationDTO.getUniqueNo()).getName());
 		notification.setUniqueNo(notificationDTO.getUniqueNo());
 		notification.setUuid(notificationDTO.getUuid());
         return notification;
