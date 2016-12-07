@@ -1,8 +1,7 @@
 //package com.myee.tarot.admin.web.handler;
 //
 //import com.myee.tarot.core.util.StringUtil;
-//import org.apache.commons.lang.BooleanUtils;
-//import org.apache.commons.lang.StringUtils;
+//import org.apache.commons.lang3.BooleanUtils;
 //import org.springframework.security.core.AuthenticationException;
 //import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 //
@@ -33,7 +32,7 @@
 //        String failureUrl = failureUrlParam == null ? null : failureUrlParam.trim();
 //        Boolean sessionTimeout = (Boolean) request.getAttribute("sessionTimeout");
 //
-//        if (StringUtils.isEmpty(failureUrl) && BooleanUtils.isNotTrue(sessionTimeout)) {
+//        if (StringUtil.isEmpty(failureUrl) && BooleanUtils.isNotTrue(sessionTimeout)) {
 //            failureUrl = defaultFailureUrl;
 //        }
 //
@@ -41,13 +40,13 @@
 //            failureUrl = "?sessionTimeout=true";
 //        }
 //
-//        if (StringUtils.isEmpty(successUrlParam)) {
+//        if (StringUtil.isEmpty(successUrlParam)) {
 //            //Grab url the user, was redirected from
 //            successUrlParam = request.getHeader("referer");
 //        }
 //
 //        if (failureUrl != null) {
-//            if (!StringUtils.isEmpty(successUrlParam)) {
+//            if (!StringUtil.isEmpty(successUrlParam)) {
 //                //Preserve the original successUrl from the referer.  If there is one, it must be the last url segment
 //                int successUrlPos = successUrlParam.indexOf("successUrl");
 //                if (successUrlPos >= 0) {
@@ -67,7 +66,7 @@
 //
 //            saveException(request, exception);
 //            getRedirectStrategy().sendRedirect(request, response, failureUrl);
-//        } else {
+//        } else {  //上面的参数都是null，一直都会走这个else
 //            super.onAuthenticationFailure(request, response, exception);
 //        }
 //    }

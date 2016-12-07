@@ -639,12 +639,17 @@ function cResource($resource,$filter,$q){
     }
     //
     function transformResponse(data, headers,state){
-        if(state == 200 && headers('content-type') != 'application/json;charset=UTF-8'){
-            //window.location.href="/admin/login.html";
-            console.log(2234);
+        //if(state == 200 && headers('content-type') !== 'application/json;charset=UTF-8' && headers('content-type') !== 'application/json;charset=utf-8'){
+        if(state == 200 && headers('content-type') == 'text/html;charset=UTF-8'){
+            window.location.href="/admin/login.html";
             return false;
         }else if(state == 500){
             console.log('联系管理员');
+            return false;
+        }
+        var respData = angular.fromJson(data);
+        if(respData.status && respData.status == 410){
+            window.location.href=respData.rows[0].accessDeni;
             return false;
         }
         return angular.fromJson(data);
