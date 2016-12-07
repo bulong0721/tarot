@@ -26,7 +26,7 @@ public class AdminPermission extends GenericEntity<Long, AdminPermission> {
     protected String name;
 
     @Column(name = "PERMISSION_TYPE", nullable = false)
-    protected String type;
+    protected String type; //权限所属菜单等级
 
     @Column(name = "DESCRIPTION", nullable = false)
     protected String description;
@@ -52,7 +52,7 @@ public class AdminPermission extends GenericEntity<Long, AdminPermission> {
     protected List<AdminPermission> allParentPermissions = new ArrayList<AdminPermission>();
 
     @Column(name = "IS_FRIENDLY")
-    protected boolean isFriendly = false;
+    protected boolean isFriendly = false; //是否是管理员权限，true管理员权限，false普通权限和管理员都可有
 
     @Override
     public Long getId() {
