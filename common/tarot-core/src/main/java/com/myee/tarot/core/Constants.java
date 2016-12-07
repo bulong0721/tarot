@@ -383,6 +383,15 @@ public class Constants {
 	public static final String SEARCH_EMAIL_ADDRESS = "emailAddress";
 
 	public static final String STATIC_METRICS = "staticMetrics";
+	public static final String SEARCH_CREATE_TIME = "createTime";
 
 	public static final String SUMMARY_NODE = "/monitor/summary/";
+	public static final String SEARCH_NOTICE_TYPE = "noticeType";
+
+	public static final String SEARCH_CONTENT = "content";
+
+	public static final String SEARCH_BEGIN_DATE = "beginDate";
+
+	public static final String SEARCH_END_DATE = "endDate";
+
 }

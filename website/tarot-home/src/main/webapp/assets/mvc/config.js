@@ -650,6 +650,21 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'remote', 'camera.js')
                 }
             }
+        })
+        .state('remote.onlineDevice', {
+            url: "/onlineDevice",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'onlineDevice',
+            data: {
+                pageTitle: '远程监控',
+                subTitle: '在线设备',
+                datatable: 'assets/mvc/remote/view/onlineDevice.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'remote', 'onlineDevice.js')
+                }
+            }
         });
 
 }

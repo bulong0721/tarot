@@ -1,8 +1,11 @@
 package com.myee.tarot.web.device.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.myee.djinn.remoting.common.RemotingHelper;
+import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
 import com.myee.tarot.catalog.domain.*;
 import com.myee.tarot.catalog.type.ProductType;
 import com.myee.tarot.core.Constants;
@@ -17,6 +20,7 @@ import com.myee.tarot.catalog.service.DeviceUsedService;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.catalog.service.ProductUsedAttributeService;
 import com.myee.tarot.catalog.service.ProductUsedService;
+import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,7 @@ import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.*;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Created by Administrator on 2016/5/31.
@@ -50,6 +55,8 @@ public class DeviceController {
     private ProductUsedService productUsedService;
     @Autowired
     private ProductUsedAttributeService productUsedAttributeService;
+	@Autowired
+	private ServerBootstrap serverBootstrap;
 
     @RequestMapping(value = {"admin/device/paging", "shop/device/paging"}, method = RequestMethod.GET)
     @ResponseBody
@@ -430,6 +437,56 @@ public class DeviceController {
             return AjaxResponse.failed(-1, "在其他地方被使用，无法删除");
         }
     }
+
+	@RequestMapping(value = {"admin/device/used/listOnlineDevice"}, method = RequestMethod.GET)
+	@ResponseBody
+	public AjaxPageableResponse listOnlineDevice( HttpServletRequest request, WhereRequest whereRequest) {
+		try {
+			AjaxPageableResponse resp = new AjaxPageableResponse();
+			if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+				resp = AjaxPageableResponse.failed(-1,"请先切换门店");
+				return resp;
+			}
+
+			String deviceNameCondition = null;
+			if (whereRequest.getQueryObj() != null) {
+				JSONObject object = JSON.parseObject(whereRequest.getQueryObj());
+				Object obj = object.get("deviceName");
+				deviceNameCondition = null == obj ? null : obj.toString();
+			}
+			ConcurrentMap<String, Channel> map = serverBootstrap.getAllChannels();
+			DeviceUsed deviceUsed;
+			for (Map.Entry<String, Channel> entry : map.entrySet()) {
+				String boardNo = entry.getKey();
+				Channel channel = entry.getValue();
+				deviceUsed = deviceUsedService.getByBoardNo(boardNo);
+				if(null != deviceUsed && null != channel){
+					String deviceName = deviceUsed.getName();
+					if(StringUtil.isNullOrEmpty(deviceNameCondition) ){
+						resp.addDataEntry(objectToEntry(deviceUsed,channel));
+					}else if(deviceName.indexOf(deviceNameCondition) >= 0){
+						resp.addDataEntry(objectToEntry(deviceUsed,channel));
+					}
+				}
+			}
+			return resp;
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return AjaxPageableResponse.failed(-1, "查询设备出错");
+		}
+	}
+
+	//把类转换成entry返回给前端，解耦和
+	private Map objectToEntry(DeviceUsed deviceUsed, Channel channel) {
+		Map entry = new HashMap();
+		entry.put("boardNo", deviceUsed.getBoardNo());
+		entry.put("deviceUsedName", deviceUsed.getName());
+		entry.put("merchantName", deviceUsed.getStore().getMerchant().getName());
+		entry.put("storeName", deviceUsed.getStore().getName());
+		entry.put("IP", RemotingHelper.parseChannelRemoteAddr(channel));
+		entry.put("comment", "");
+		return entry;
+	}
 
     //把类转换成entry返回给前端，解耦和
     private Map objectToEntry(DeviceUsed deviceUsed) {
