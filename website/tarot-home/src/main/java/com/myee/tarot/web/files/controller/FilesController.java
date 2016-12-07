@@ -205,7 +205,7 @@ public class FilesController {
                     return new TreeFileItem(file.getPath());
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage(), e);
             }
         }
         if (operation.equals(RESOURCE_OPERATION_DELETE)) {
@@ -228,7 +228,7 @@ public class FilesController {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage(), e);
             }
         }
         if (operation.equals(RESOURCE_OPERATION_RENAME)) {
@@ -248,7 +248,7 @@ public class FilesController {
                     return new TreeFileItem(newFile.getPath());
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return null;
@@ -312,7 +312,7 @@ public class FilesController {
 //            FileUtils.writeStringToFile(dest, vo.getContent());
 //        }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             resp = AjaxResponse.failed(-1);
             resp.setErrorString("出错");
         }
@@ -440,7 +440,7 @@ public class FilesController {
                 return false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
             LOGGER.error("unable to delete the folder!");
         }
         return false;
@@ -492,7 +492,7 @@ public class FilesController {
             LOGGER.info("文件下载url:" + downloadUrl);
             return resp;
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             return AjaxResponse.failed(-1, "出错");
         }
 

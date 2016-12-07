@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/code")
 public class SecurityCodeController {
+	private static final Logger LOGGER = LoggerFactory.getLogger(SecurityCodeController.class);
 
 	@RequestMapping(value = {"/validate"}, method = {RequestMethod.GET, RequestMethod.POST})
 	@ResponseBody
@@ -48,7 +51,7 @@ public class SecurityCodeController {
 			ServletOutputStream out = response.getOutputStream();
 			output.writeTo(out);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(),e);
 		}
 	}
 
@@ -78,7 +81,7 @@ public class SecurityCodeController {
 		try {
 			ImageIO.write(bi, "jpg", output);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(),e);
 		}
 		return code;
 	}

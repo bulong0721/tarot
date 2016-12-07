@@ -104,7 +104,7 @@ public class ClientPrizeController extends BaseController {
             resp.addEntry("updateResult", objectToEntry(updatePrize));
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
         }
@@ -137,7 +137,7 @@ public class ClientPrizeController extends BaseController {
             }
             resp.setRecordsTotal(pageClientPrizes.getRecordsTotal());
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
             resp.setErrorString("出错");
         }
         return resp;
@@ -168,7 +168,7 @@ public class ClientPrizeController extends BaseController {
                 resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
         }
@@ -201,7 +201,7 @@ public class ClientPrizeController extends BaseController {
             }
             resp.setRecordsTotal(pageClientGetPrizes.getRecordsTotal());
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
             resp.setErrorString("出错");
         }
         return resp;
@@ -259,7 +259,7 @@ public class ClientPrizeController extends BaseController {
                 return resp;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
         }
         return AjaxResponse.failed(-1);
 
@@ -314,8 +314,7 @@ public class ClientPrizeController extends BaseController {
                     LOGGER.info( (finalTime - startTime) +"");
 
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    LOGGER.error("上传出错:"+e.getMessage());
+                    LOGGER.error("上传出错:"+e.getMessage(),e);
                     return AjaxResponse.failed(-1, "糟糕,服务器出错了");
                 }
             }
@@ -399,7 +398,6 @@ public class ClientPrizeController extends BaseController {
                 return ClientAjaxResult.failed("该商户未设置有效奖券");
             }
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.error(e.getMessage(), e);
             return ClientAjaxResult.failed("糟了...系统出错了...");
         }
@@ -458,7 +456,7 @@ public class ClientPrizeController extends BaseController {
                 return ClientAjaxResult.failed("该店奖券已被抽完");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
             return ClientAjaxResult.failed("糟了...系统出错了...");
         }
         return ClientAjaxResult.failed("已无奖券");
@@ -534,7 +532,7 @@ public class ClientPrizeController extends BaseController {
                 return ClientAjaxResult.success("领奖成功");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
             return ClientAjaxResult.failed("糟了...系统出错了...");
         }
         return ClientAjaxResult.failed("领奖失败");
@@ -560,7 +558,7 @@ public class ClientPrizeController extends BaseController {
                 return ClientAjaxResult.success("撤回奖池成功");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
             return ClientAjaxResult.failed("糟了...系统出错了...");
         }
         return ClientAjaxResult.failed("撤回奖池失败");

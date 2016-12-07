@@ -74,7 +74,7 @@ public class MetricsUtil {
             }
             return true;
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(),e);
             return false;
         }
     }
@@ -220,7 +220,7 @@ public class MetricsUtil {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
         }
         return systemMetricsDB;
     }

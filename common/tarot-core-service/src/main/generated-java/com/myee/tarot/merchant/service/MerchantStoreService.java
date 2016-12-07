@@ -5,6 +5,7 @@ import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.merchant.domain.MerchantStore;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -22,6 +23,7 @@ public interface MerchantStoreService extends GenericEntityService<Long, Merchan
 
     PageResult<MerchantStore> pageListByMerchant(Long id,WhereRequest whereRequest ) throws InvocationTargetException, NoSuchMethodException, NoSuchFieldException, IllegalAccessException;
 
+    //@PreAuthorize("#merchantId < 1")//测试security，确实在方法上有效
     Long getCountById(Long merchantStoreId, Long merchantId);
 
     MerchantStore getByMerchantStoreName(String name);
