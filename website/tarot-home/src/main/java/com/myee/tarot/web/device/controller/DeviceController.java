@@ -91,6 +91,12 @@ public class DeviceController {
     public AjaxResponse updateDevice(@Valid @RequestBody Device device, HttpServletRequest request) {
         try {
             AjaxResponse resp;
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                resp.setErrorString("请先切换门店");
+                return resp;
+            }
             device = deviceService.update(device);
             resp = AjaxResponse.success();
             resp.addEntry("updateResult", objectToEntry(device));
@@ -317,6 +323,17 @@ public class DeviceController {
             }
 
             MerchantStore merchantStore1 = (MerchantStore) o;
+
+            Long storeId = merchantStore1.getId();
+            String deviceUsedName = deviceUsed.getName();
+            if (storeId != null && !StringUtil.isNullOrEmpty(deviceUsedName)) {
+                DeviceUsed deviceUsedDB = deviceUsedService.findByStoreIdAndName(storeId, deviceUsedName);
+                if (deviceUsedDB != null && !deviceUsedDB.getId().equals(deviceUsed.getId())) {
+                    resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+                    resp.setErrorString("设备名称不能重复");
+                    return resp;
+                }
+            }
             List<Object> updateResult = new ArrayList<Object>();
             deviceUsed.setStore(merchantStore1);
 

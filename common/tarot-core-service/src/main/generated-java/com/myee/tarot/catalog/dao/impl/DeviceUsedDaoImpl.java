@@ -99,4 +99,18 @@ public class DeviceUsedDaoImpl extends GenericEntityDaoImpl<Long, DeviceUsed> im
         }
         return deviceUsed;
     }
+
+    @Override
+    public DeviceUsed findByStoreIdAndName(Long storeId, String deviceUsedName) {
+        QDeviceUsed qDeviceUsed = QDeviceUsed.deviceUsed;
+        JPQLQuery<DeviceUsed> query = new JPAQuery(getEntityManager());
+        query.from(qDeviceUsed);
+        if (storeId != null) {
+            query.where(qDeviceUsed.store.id.eq(storeId));
+        }
+        if (!StringUtil.isNullOrEmpty(deviceUsedName)) {
+            query.where(qDeviceUsed.name.eq(deviceUsedName));
+        }
+        return query.fetchOne();
+    }
 }

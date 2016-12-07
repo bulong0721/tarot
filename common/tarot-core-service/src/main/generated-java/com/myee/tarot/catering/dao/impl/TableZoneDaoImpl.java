@@ -50,4 +50,18 @@ public class TableZoneDaoImpl extends GenericEntityDaoImpl<Long, TableZone> impl
         pageList.setList(query.fetch());
         return pageList;
     }
+
+    @Override
+    public TableZone findByStoreIdAndName(Long storeId, String zoneName) {
+        QTableZone qTableZone = QTableZone.tableZone;
+        JPQLQuery<TableZone> query = new JPAQuery(getEntityManager());
+        query.from(qTableZone);
+        if (storeId != null) {
+            query.where(qTableZone.store.id.eq(storeId));
+        }
+        if (!StringUtil.isNullOrEmpty(zoneName)) {
+            query.where(qTableZone.name.eq(zoneName));
+        }
+        return query.fetchOne();
+    }
 }

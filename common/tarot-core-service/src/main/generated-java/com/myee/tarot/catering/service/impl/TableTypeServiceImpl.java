@@ -34,4 +34,9 @@ public class TableTypeServiceImpl extends GenericEntityServiceImpl<Long, TableTy
     public PageResult<TableType> pageByStore(Long id, PageRequest pageRequest){
         return tableTypeDao.pageByStore(id, pageRequest);
     }
+
+    @Override
+    public TableType findByStoreIdAndName(Long id, String name) {
+        return tableTypeDao.findByStoreIdAndName(id, name);
+    }
 }

@@ -35,4 +35,9 @@ public class TableServiceImpl extends GenericEntityServiceImpl<Long, Table> impl
     public PageResult<Table> pageByStore(Long id, WhereRequest whereRequest){
         return tableDao.pageByStore(id, whereRequest);
     }
+
+    @Override
+    public Table findByStoreIdAndName(Long storeId, String tableName) {
+        return tableDao.findByStoreIdAndName(storeId, tableName);
+    }
 }

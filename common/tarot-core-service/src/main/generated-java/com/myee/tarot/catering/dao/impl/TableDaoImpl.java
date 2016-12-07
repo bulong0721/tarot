@@ -80,4 +80,18 @@ public class TableDaoImpl extends GenericEntityDaoImpl<Long, Table> implements T
         pageList.setList(query.fetch());
         return pageList;
     }
+
+    @Override
+    public Table findByStoreIdAndName(Long storeId, String tableName) {
+        QTable qTable = QTable.table;
+        JPQLQuery<Table> query = new JPAQuery(getEntityManager());
+        query.from(qTable);
+        if (storeId != null) {
+            query.where(qTable.store.id.eq(storeId));
+        }
+        if (!StringUtil.isNullOrEmpty(tableName)) {
+            query.where(qTable.name.eq(tableName));
+        }
+        return query.fetchOne();
+    }
 }
