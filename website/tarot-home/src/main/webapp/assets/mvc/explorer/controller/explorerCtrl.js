@@ -798,7 +798,7 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
                 return;
             }
             //校验信息填写是否完整,只校验没有假删除的
-            if (indexData.show && !checkThisRowOK(indexData)) {
+            if (indexData.show && !checkThisRowOK(indexData,index,$scope.formDataUpdateConfig.model.attributes)) {
                 initialParams();
                 checkAllRowOK = false;
                 return;
@@ -1010,7 +1010,7 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
 
     $scope.updateAttr = function (model, thisRow, index) {
         //console.log(thisRow)
-        if (!checkThisRowOK(thisRow)) {
+        if (!checkThisRowOK(thisRow,index,$scope.formDataUpdateConfig.model.attributes)) {
             return;
         }
         var _file = $scope.fileList[index];
@@ -1070,9 +1070,10 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
         });
     };
 
-    function checkThisRowOK(thisRow) {
+    function checkThisRowOK(thisRow,index,attrs) {
         //console.log(thisRow.type)
         //console.log(!(thisRow.type == $scope.mgrUpdateConfigData.constant.TYPE_AGENT || thisRow.type == $scope.mgrUpdateConfigData.constant.TYPE_AGENT_PATCH ));
+        var checkOK = true;
         if ($filter('isNullOrEmptyString')(thisRow)
             || $filter('isNullOrEmptyString')(thisRow.name)
             || $filter('isNullOrEmptyString')(thisRow.version)
@@ -1082,17 +1083,29 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
                 $filter('toasterManage')(5,"请填写完整信息!",false);
                 //toaster.error({body: "请填写完整信息!"})
             }, 0);
-            return false;
+            checkOK = false;
+            return checkOK;
         }
         if (thisRow.type == $scope.mgrUpdateConfigData.constant.TYPE_APK && (typeof thisRow.version != 'number')) {
             $timeout(function () {
                 $filter('toasterManage')(5,"类型为“应用”的请填写纯数字版本信息!",false);
                 //toaster.error({body: "类型为“应用”的请填写纯数字版本信息!"})
             }, 0);
-            return false;
+            checkOK = false;
+            return checkOK;
         }
-
-        return true;
+        angular.forEach(attrs, function (indexData, attrsIndex, array) {
+            //indexData等价于array[index]
+            //for循环终止条件，只要有一条数据校验不通过，就停止循环
+            if (checkOK == false) {
+                return checkOK;
+            }
+            if (indexData.show && indexData.type == thisRow.type && index != attrsIndex && indexData.name == thisRow.name ) {
+                $filter('toasterManage')(5, "同一类型下不允许有重复的名称!",false);
+                checkOK = false;
+            }
+        });
+        return checkOK;
     }
 
     //下载配置文件函数
@@ -1241,9 +1254,9 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
         angular.forEach(attrs, function (indexData, index, array) {
             //indexData等价于array[index]
             if (isOne == true) {
-                return;
+                return false;
             }
-            if (typeName == indexData.type) {
+            if (indexData.show && typeName == indexData.type) {
                 isOne = true;
             }
         });
