@@ -26,6 +26,10 @@ public class AdminController {
     private String qiniuCdn;
 	@Value("${maxUploadSize}")
 	private String maxUploadSize;
+    @Value("${response.accessDeni}")
+    private int RESPONSE_ACCESS_DENI;
+    @Value("${response.accessDeniName}")
+    private String RESPONSE_ACCESS_DENI_NAME;
 
     @RequestMapping(value = {"admin/home.html", "admin/", "admin","admin/home"}, method = RequestMethod.GET)
     public ModelAndView displayDashboard(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -35,6 +39,7 @@ public class AdminController {
         entry.put("qiniuCdn",qiniuCdn);
 		entry.put("maxUploadSize",maxUploadSize);
         entry.put("userName",((AdminUser)request.getSession().getAttribute(Constants.ADMIN_USER)).getLogin());
+        entry.put(RESPONSE_ACCESS_DENI_NAME,RESPONSE_ACCESS_DENI);
         mv.addObject("downloadBase", JSON.toJSON(entry));
         return mv;
     }
