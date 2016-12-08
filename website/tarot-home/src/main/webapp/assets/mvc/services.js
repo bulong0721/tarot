@@ -502,7 +502,7 @@ function cfromlyService(formlyConfig, $window,$q, toaster, $filter,$timeout,form
                     }
                 }else{
                     scope.fc.$setViewValue(undefined);
-                    $timeout(function () {toaster.error({body: "不能上传空文件或文件大小限制(100M)！"})}, 0);
+                    $timeout(function () {toaster.error({body: "不能上传空文件或文件大小限制(500M)！"})}, 0);
                     angular.element('#file')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
                 }
 
