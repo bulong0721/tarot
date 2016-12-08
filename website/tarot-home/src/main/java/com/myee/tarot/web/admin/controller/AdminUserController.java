@@ -6,6 +6,7 @@ import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.admin.service.AdminRoleService;
 import com.myee.tarot.admin.service.AdminUserService;
 import com.myee.tarot.core.Constants;
+import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.ListSortUtil;
 import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
@@ -116,7 +117,7 @@ public class AdminUserController {
 
     @RequestMapping(value = "admin/users/delete", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse deleteUser(@Valid @RequestBody AdminUser adminUser, HttpServletRequest request) throws Exception {
+    public AjaxResponse deleteUser(@Valid @RequestBody AdminUser adminUser, HttpServletRequest request) {
         AjaxResponse resp = new AjaxResponse();
         MerchantStore thisSwitchMerchantStore = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
         AdminUser loggedUser = (AdminUser) request.getSession().getAttribute(Constants.ADMIN_USER);
@@ -136,7 +137,13 @@ public class AdminUserController {
             resp.setErrorString("要删除的用户是当前登录的账号，不能删除");
             return resp;
         }
-        userService.delete(adminUserFound);
+        try {
+            userService.delete(adminUserFound);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(),e);
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("有其他模块关联使用该账号，不能删除！比如资源日志。");
+        }
         return resp;
     }
 
@@ -228,7 +235,13 @@ public class AdminUserController {
             resp.setErrorString("错误:该用户不存在，无法被删除");
             return resp;
         }
-        customerService.delete(customerFound);
+        try {
+            customerService.delete(customerFound);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(),e);
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("有其他模块关联使用该账号，不能删除！比如资源日志。");
+        }
         return resp;
     }
 
@@ -297,7 +310,14 @@ public class AdminUserController {
             resp.setErrorString("错误:该角色不存在，无法被删除");
             return resp;
         }
-        roleService.delete(roleFound);
+        try {
+            roleService.delete(roleFound);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(),e);
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("有其他模块关联使用该角色，不能删除！");
+        }
+
         return resp;
     }
 
@@ -355,7 +375,13 @@ public class AdminUserController {
             resp.setErrorString("错误:该角色不存在，无法被删除");
             return resp;
         }
-        adminRoleService.delete(roleFound);
+        try {
+            adminRoleService.delete(roleFound);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(),e);
+            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
+            resp.setErrorString("有其他模块关联使用该角色，不能删除！");
+        }
         return resp;
     }
 
