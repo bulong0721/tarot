@@ -682,7 +682,7 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
         //是XML的从XML解析成JSON
         cResource.get(mgrData.api.getContent,{data: data}).then(function(resp){
             if (!resp || resp.status != 0) {
-                $filter('toasterManage')(5, code + failMessage + resp.statusMessage,false);
+                $filter('toasterManage')(5, code + failMessage + (resp.statusMessage?resp.statusMessage:''),false);
                 //toaster.error({body: code + failMessage + resp.statusMessage});
             }
             else {
@@ -1229,7 +1229,7 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
             model.attributes = [];
         }
         var length = model.attributes.length - 1;
-        if (!checkThisRowOK(model.attributes[length])) {
+        if (length >=0 && !checkThisRowOK(model.attributes[length])) {
             return false;
         }
         checkAgentORPatch(model);
