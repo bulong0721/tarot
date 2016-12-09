@@ -227,7 +227,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 datatable: 'assets/mvc/explorer/view/explorer_datatable.html',
                 editor: 'assets/mvc/explorer/view/explorer_editor.html',
                 other1: 'assets/mvc/explorer/view/explorer_push.html',
-                other2: 'assets/mvc/explorer/view/explorer_updateConfig.html'
+                other2: 'assets/mvc/explorer/view/explorer_updateConfig.html',
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
@@ -560,7 +560,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 pageTitle: '账号管理',
                 subTitle: '管理员用户',
                 datatable: 'assets/mvc/user/view/user_datatable.html',
-                editor: 'assets/mvc/user/view/user_editor.html'
+                editor: 'assets/mvc/user/view/user_editor.html',
+                other1: 'assets/mvc/user/view/bind_store.html'
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
@@ -593,7 +594,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 subTitle: '普通用户',
                 datatable: 'assets/mvc/user/view/customer_datatable.html',
                 editor: 'assets/mvc/user/view/customer_editor.html',
-                other1: 'assets/mvc/user/view/customer_bind_store.html'
+                other1: 'assets/mvc/user/view/bind_store.html'
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
@@ -700,7 +701,8 @@ angular
             noAuthDelete:"没有权限删除",
             noAddFile:"文件不能新增",
             noDownloadFolder:"文件夹不能下载",
-            addResource:"添加"
+            addResource:"添加",
+            assignPermission:"分配权限"
         };
     })
     .constant('baseConstant',{

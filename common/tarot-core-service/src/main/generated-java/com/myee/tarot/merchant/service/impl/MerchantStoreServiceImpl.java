@@ -1,7 +1,6 @@
 package com.myee.tarot.merchant.service.impl;
 
 import com.myee.tarot.core.service.GenericEntityServiceImpl;
-import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.merchant.dao.MerchantStoreDao;
@@ -9,7 +8,6 @@ import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -45,6 +43,11 @@ public class MerchantStoreServiceImpl extends GenericEntityServiceImpl<Long, Mer
     @Override
     public List<MerchantStore> listByMerchantId(Long id) {
         return storeDao.listByMerchantId(id);
+    }
+
+    @Override
+    public List<MerchantStore> listByIds(List<Long> bindList) {
+        return storeDao.listByIds(bindList);
     }
 
 

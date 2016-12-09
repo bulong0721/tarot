@@ -115,7 +115,7 @@ public class ClientPrizeController extends BaseController {
      * 分页查询
      *
      * @param request
-     * @param pageRequest
+     * @param whereRequest
      * @return
      */
     @RequestMapping(value = {"admin/clientPrize/pagingList", "shop/clientPrize/pagingList"}, method = RequestMethod.GET)
@@ -161,6 +161,7 @@ public class ClientPrizeController extends BaseController {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
+
             ClientPrize existPrize = clientPrizeService.findById(clientPrize.getId());
             if (existPrize != null) {
                 existPrize.setDeleteStatus(Constants.CLIENT_PRIZE_DELETE_NO);

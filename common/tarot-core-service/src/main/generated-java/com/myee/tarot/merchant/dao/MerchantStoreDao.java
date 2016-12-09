@@ -1,11 +1,9 @@
 package com.myee.tarot.merchant.dao;
 
 import com.myee.tarot.core.dao.GenericEntityDao;
-import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.merchant.domain.MerchantStore;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -29,4 +27,6 @@ public interface MerchantStoreDao extends GenericEntityDao<Long, MerchantStore> 
     MerchantStore getByCode(String storeCode);
 
     MerchantStore getByMerchantStoreName(String name);
+
+    List<MerchantStore> listByIds(List<Long> bindList);
 }

@@ -6,7 +6,6 @@ import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import org.springframework.security.access.prepost.PreAuthorize;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -29,4 +28,6 @@ public interface MerchantStoreService extends GenericEntityService<Long, Merchan
     MerchantStore getByMerchantStoreName(String name);
 
     List<MerchantStore> listByMerchantId(Long id);
+
+    List<MerchantStore> listByIds(List<Long> bindList);
 }

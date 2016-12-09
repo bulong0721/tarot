@@ -140,7 +140,8 @@ public class DeviceController {
     public AjaxResponse deleteDevice(@Valid @RequestBody Device device, HttpServletRequest request) {
         try {
             AjaxResponse resp;
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
                 return resp;
@@ -416,9 +417,15 @@ public class DeviceController {
     public AjaxResponse deleteDeviceUsed(@Valid @RequestBody DeviceUsed deviceUsed, HttpServletRequest request) {
         try {
             AjaxResponse resp;
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
+                return resp;
+            }
+            MerchantStore merchantStore1 = (MerchantStore) o;
+            if (!merchantStore1.getId().equals(deviceUsed.getStore().getId())) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "要删除的设备不属于与当前切换的门店");
                 return resp;
             }
             DeviceUsed deviceUsed1 = deviceUsedService.findById(deviceUsed.getId());
@@ -798,12 +805,17 @@ public class DeviceController {
     public AjaxResponse deleteProductUsed(@Valid @RequestBody ProductUsed productUsed, HttpServletRequest request) {
         try {
             AjaxResponse resp;
-            if (request.getSession().getAttribute(Constants.ADMIN_STORE) == null) {
+            Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
+            if (o == null) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-
+            MerchantStore merchantStore1 = (MerchantStore) o;
+            if (!merchantStore1.getId().equals(productUsed.getStore().getId())) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "要删除的设备组不属于与当前切换的门店");
+                return resp;
+            }
             ProductUsed productUsed1 = productUsedService.findById(productUsed.getId());
             if (productUsed1.getDeviceUsed() != null && productUsed1.getDeviceUsed().size() > 0) {
                 return AjaxResponse.failed(-1, "已有关联设备，无法删除！请取消关联后重试。");

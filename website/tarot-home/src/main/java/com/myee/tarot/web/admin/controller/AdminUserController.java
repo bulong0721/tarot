@@ -1,24 +1,27 @@
 package com.myee.tarot.web.admin.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.myee.tarot.admin.domain.AdminPermission;
 import com.myee.tarot.admin.domain.AdminRole;
 import com.myee.tarot.admin.domain.AdminUser;
+import com.myee.tarot.admin.service.AdminPermissionService;
 import com.myee.tarot.admin.service.AdminRoleService;
 import com.myee.tarot.admin.service.AdminUserService;
 import com.myee.tarot.core.Constants;
-import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.ListSortUtil;
-import com.myee.tarot.core.util.PageRequest;
 import com.myee.tarot.core.util.PageResult;
 import com.myee.tarot.core.util.WhereRequest;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.customer.domain.Customer;
-import com.myee.tarot.customer.service.CustomerRoleService;
 import com.myee.tarot.customer.service.CustomerService;
 import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.profile.domain.Role;
 import com.myee.tarot.profile.service.RoleService;
+import org.aspectj.weaver.loadtime.Aj;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Martin on 2016/4/21.
@@ -56,7 +57,10 @@ public class AdminUserController {
     private AdminRoleService adminRoleService;
 
     @Autowired
-    private CustomerRoleService customerRoleService;
+    private AdminPermissionService adminPermissionService;
+
+    @Autowired
+    private MerchantStoreService merchantStoreService;
 
     @RequestMapping(value = "admin/users/paging", method = RequestMethod.GET)
     public
@@ -388,5 +392,87 @@ public class AdminUserController {
     @ExceptionHandler({SQLException.class, Exception.class})
     protected void handleException(Exception ex, HttpServletResponse resp) {
         LOGGER.error(ex.getMessage(), ex);
+    }
+
+    @RequestMapping(value = "listPermission/list", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse listAllPermissions(@RequestParam(value = "isFriendly")Boolean isFriendly, HttpServletRequest request) {
+        AjaxResponse resp = new AjaxResponse();
+        List<AdminPermission> adminPermissionList = adminPermissionService.listAllPermissions(isFriendly);
+        for (AdminPermission permission : adminPermissionList) {
+            resp.addDataEntry(objectToEntry(permission));
+        }
+        return resp;
+    }
+
+    //把类转换成entry返回给前端，解耦和
+    private Map objectToEntry(AdminPermission adminPermission) {
+        Map entry = new HashMap();
+        entry.put("id", adminPermission.getId());
+        entry.put("name", adminPermission.getDescription());
+        entry.put("isFriendly", adminPermission.isFriendly());
+        entry.put("eName", adminPermission.getName());
+        entry.put("permissionType", adminPermission.getType());
+        if (adminPermission.getAllChildPermissions() == null || adminPermission.getAllChildPermissions().size() == 0) {
+            entry.put("type", Constants.PERMISSION_TREE_LEAF);
+        } else {
+            entry.put("type", Constants.PERMISSION_TREE_PARENT);
+        }
+        List<AdminPermission> adminPermissionListChild = adminPermission.getAllChildPermissions();
+        List<Map> permissionChildListResult = null;
+        if(adminPermissionListChild != null && adminPermissionListChild.size() >0) {
+            permissionChildListResult = new ArrayList<Map>();
+            for( AdminPermission permission : adminPermissionListChild ) {
+                permissionChildListResult.add(objectToEntry(permission));
+            }
+        }
+        entry.put("children",permissionChildListResult);
+        return entry;
+    }
+
+    @RequestMapping(value = "admin/customers/bindMerchantStore", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse bindCustomerAndMerchantStore(@RequestParam(value = "bindString")String bingString, @RequestParam(value = "userId")Long userId, HttpServletRequest request) {
+        AjaxResponse resp;
+        try {
+            Customer customer = customerService.findById(userId);
+            List<Long> bindList = JSON.parseArray(bingString, Long.class);
+            List<MerchantStore> merchantStores = merchantStoreService.listByIds(bindList);
+            Set<MerchantStore> merchantStoreSet = null;
+            if (merchantStores != null) {
+                merchantStoreSet = Sets.newHashSet(merchantStores);
+            }
+            customer.setAllMerchantStores(merchantStoreSet);
+            customer = customerService.update(customer);
+            resp = AjaxResponse.success();
+            resp.addEntry("updateResult", objectToEntry(customer));
+            return resp;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return AjaxResponse.failed(-1, "绑定失败");
+        }
+    }
+
+    @RequestMapping(value = "admin/users/bindMerchantStore", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse bindAdminAndMerchantStore(@RequestParam(value = "bindString")String bingString, @RequestParam(value = "userId")Long userId, HttpServletRequest request) {
+        AjaxResponse resp;
+        try {
+            AdminUser adminUser = userService.findById(userId);
+            List<Long> bindList = JSON.parseArray(bingString, Long.class);
+            List<MerchantStore> merchantStores = merchantStoreService.listByIds(bindList);
+            Set<MerchantStore> merchantStoreSet = null;
+            if (merchantStores != null) {
+                merchantStoreSet = Sets.newHashSet(merchantStores);
+            }
+            adminUser.setAllMerchantStores(merchantStoreSet);
+            adminUser = userService.update(adminUser);
+            resp = AjaxResponse.success();
+            resp.addEntry("updateResult", objectToEntry(adminUser));
+            return resp;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return AjaxResponse.failed(-1, "绑定失败");
+        }
     }
 }

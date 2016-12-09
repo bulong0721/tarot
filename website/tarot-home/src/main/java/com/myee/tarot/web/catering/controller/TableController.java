@@ -209,6 +209,10 @@ public class TableController {
                 return resp;
             }
             MerchantStore merchantStore1 = (MerchantStore) o;
+            if (!merchantStore1.getId().equals(zone.getStore().getId())) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "要删除的区域不属于与当前切换的门店");
+                return resp;
+            }
             if (zone.getId() == null || StringUtil.isNullOrEmpty(zone.getId().toString())) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("参数错误");
@@ -428,6 +432,10 @@ public class TableController {
                 return resp;
             }
             MerchantStore merchantStore1 = (MerchantStore) o;
+            if (!merchantStore1.getId().equals(table.getStore().getId())) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "要删除的餐桌不属于与当前切换的门店");
+                return resp;
+            }
             if (table.getId() == null || StringUtil.isNullOrEmpty(table.getId().toString())) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("参数错误");

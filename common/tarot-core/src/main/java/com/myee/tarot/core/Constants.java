@@ -82,6 +82,14 @@ public class Constants {
 	public final static Boolean CLIENT_PRIZE_DELETE_YES = true;
 	public final static Boolean CLIENT_PRIZE_DELETE_NO = false;
 
+	public final static Boolean PERMISSION_ONLY_ADMIN = true;
+	public final static Boolean PERMISSION_ALL = false;
+	public final static String PERMISSION_TYPE_ALL = "1";
+    public final static int PERMISSION_TREE_LEAF = 1;
+    public final static int PERMISSION_TREE_PARENT = 0;
+
+
+
 	public final static int CLIENT_PRIZE_TICKET_YES = 1;
 	public final static int CLIENT_PRIZE_TICKET_NO = 0;
 	public final static int CLIENT_PRIZE_TICKET_EXPIRE = 2;

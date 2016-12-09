@@ -144,4 +144,45 @@ function customerMgrCtrl($scope, cTables, cResource,$filter,$q,cfromly,NgTablePa
             });
         });
     }
+
+    /**
+     * 提交用户门店绑定
+     */
+    $scope.processBindSubmit = function () {
+            var result = [];
+
+            angular.forEach($scope.showCase.selected, function (data, index, array) {
+                //data等价于array[index]
+                if (data == true) {
+                    result.push(index);
+                }
+            });
+
+            cResource.save('./customers/bindMerchantStore',{
+                'bindString': JSON.stringify(result),
+                'userId': $scope.formBindData.model.id
+            }, {}).then(function(respSucc){
+                //用js离线刷新表格数据
+                $scope.tableOpts.data[$scope.showCase.currentRowIndex].productUsedList = [];//先清空
+                angular.forEach($scope.showCase.selected, function (data, index, array) {
+                    //data等价于array[index]
+                    if (data == true) {
+                        var length = $scope.initalBindProductList.length;
+                        for (i = 0; i < length; i++) {
+                            var data2 = $scope.initalBindProductList[i];
+                            if (data2.id == index) {
+                                $scope.tableOpts.data[$scope.showCase.currentRowIndex].productUsedList.push({
+                                    id: index,
+                                    code: data2.code,
+                                    name: data2.name,
+                                    productNum: data2.productNum
+                                });
+                                break;
+                            }
+                        }
+                    }
+                });
+                $scope.goDataTable();
+            });
+    };
 }
