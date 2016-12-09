@@ -15,7 +15,10 @@ import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;
 
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,13 +43,21 @@ public class NotificationDaoImpl extends GenericEntityDaoImpl<Long, Notification
 			if (obj != null && !StringUtil.isBlank(obj.toString())) {
 				query.where(qNotification.content.like("%" + obj.toString() + "%"));
 			}
+			//TODO  临时处理，前端未找到好的处理方式
+			DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			obj = map.get(Constants.SEARCH_BEGIN_DATE);
 			if (obj != null && !StringUtil.isBlank(obj.toString())) {
-				query.where(qNotification.createTime.before(DateTimeUtils.getDateByString(obj.toString())));
+				String dateString = obj.toString();
+				dateString = dateString.replace("T", " ");
+				dateString = dateString.replace("Z", " ");
+				query.where(qNotification.createTime.after(format.parse(dateString)));
 			}
 			obj = map.get(Constants.SEARCH_END_DATE);
 			if (obj != null && !StringUtil.isBlank(obj.toString())) {
-				query.where(qNotification.createTime.after(DateTimeUtils.getDateByString(obj.toString())));
+				String dateString = obj.toString();
+				dateString = dateString.replace("T", " ");
+				dateString = dateString.replace("Z", " ");
+				query.where(qNotification.createTime.before(format.parse(dateString)));
 			}
 		}
         query.where(qNotification.store.id.eq(id));

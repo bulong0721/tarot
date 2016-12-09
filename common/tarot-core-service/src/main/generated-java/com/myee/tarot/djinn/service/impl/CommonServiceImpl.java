@@ -76,7 +76,7 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 				if (file.exists()) {
 					info = readfile(file);
 				}
-			}else if("tinker".equals(type)){
+			}else if(type.indexOf("tinker") >= 0){
 				sb.append(DOWNLOAD_HOME).append(File.separator).append(orgId).append(File.separator).append(type).append(File.separator).append(name).append(File.separator).append("VersionInfo.txt");
 				LOG.info("========File path {} " + sb.toString());
 				String str  = readTXT(sb.toString());
