@@ -54,6 +54,10 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
     @Column(name = "LOGIN_IP", length = 20)
     protected String loginIP;
 
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = MerchantStore.class)
+    @JoinTable(name = "C_ADMIN_USER_MERCHANT_STORE_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "STORE_ID", referencedColumnName = "STORE_ID"))
+    protected Set<MerchantStore> allMerchantStores = new HashSet<MerchantStore>();
+
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminRole.class)
     @JoinTable(name = "C_ADMIN_USER_ROLE_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"))
     protected Set<AdminRole> allRoles = new HashSet<AdminRole>();
@@ -148,5 +152,21 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
 
     public void setLastLogin(Date lastLogin) {
         this.lastLogin = lastLogin;
+    }
+
+    public Set<MerchantStore> getAllMerchantStores() {
+        return allMerchantStores;
+    }
+
+    public void setAllMerchantStores(Set<MerchantStore> allMerchantStores) {
+        this.allMerchantStores = allMerchantStores;
+    }
+
+    public void setAllRoles(Set<AdminRole> allRoles) {
+        this.allRoles = allRoles;
+    }
+
+    public void setAllPermissions(Set<AdminPermission> allPermissions) {
+        this.allPermissions = allPermissions;
     }
 }
