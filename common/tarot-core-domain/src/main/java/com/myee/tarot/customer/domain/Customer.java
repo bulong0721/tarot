@@ -8,10 +8,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Martin on 2016/4/14.
@@ -83,6 +80,10 @@ public class Customer extends GenericEntity<Long, Customer> {
     @OneToMany(mappedBy = "customer", targetEntity = CustomerPhone.class, cascade = {CascadeType.ALL})
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     protected List<CustomerPhone> customerPhones = new ArrayList<CustomerPhone>();
+
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = MerchantStore.class)
+    @JoinTable(name = "C_CUSTOMER_MERCHANT_STORE_XREF", joinColumns = @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "CUSTOMER_ID"), inverseJoinColumns = @JoinColumn(name = "STORE_ID", referencedColumnName = "STORE_ID"))
+    protected Set<MerchantStore> allMerchantStores = new HashSet<MerchantStore>();
 
     @Column(name = "TAX_EXEMPTION_CODE")
     protected String taxExemptionCode;
@@ -331,5 +332,13 @@ public class Customer extends GenericEntity<Long, Customer> {
         int result = super.hashCode();
         result = 31 * result + (username != null ? username.hashCode() : 0);
         return result;
+    }
+
+    public Set<MerchantStore> getAllMerchantStores() {
+        return allMerchantStores;
+    }
+
+    public void setAllMerchantStores(Set<MerchantStore> allMerchantStores) {
+        this.allMerchantStores = allMerchantStores;
     }
 }

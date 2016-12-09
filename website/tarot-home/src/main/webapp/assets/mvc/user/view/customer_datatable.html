@@ -53,6 +53,8 @@
                             <td class="center"><span ng-class="{true: 'label label-primary', false: 'label label-danger'}[row.receiveEmail]">{{row.receiveEmail?'接收':'不接收'}}</span></td>
                             <td class="center"><span ng-class="{true: 'label label-danger', false: 'label label-primary'}[row.deactivated]">{{row.deactivated?'冻结':'激活'}}</span></td>
                             <td class="center">
+                                <a ng-click="goBindStorePermit($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.bindStorePermit}}"><i class="btn-icon fa fa-link"></i></a>
+                                <span class="divider"></span>
                                 <a ng-click="goEditor($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
                                 <span class="divider"></span>
                                 <a ng-click="doDelete($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>

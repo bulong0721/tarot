@@ -66,7 +66,7 @@ function deviceUsedCtrl($scope, cResource, Constants, cTables, cfromly, NgTableP
         //tables获取数据,获取该门店下可绑定的所有设备
         $scope.tableBindOpts = new NgTableParams({}, {
             counts: [],
-            dataset: $filter('filter')($scope.initalBindProductList, $scope.showCase.nameFilter || "")
+            dataset: $filter('filter')($scope.initalBindProductList, $scope.showCase.nameFilter || "")//根据搜索字段过滤数组中数据
         });
         $scope.loadByInit = true;
         $scope.tableOpts.page(1);
