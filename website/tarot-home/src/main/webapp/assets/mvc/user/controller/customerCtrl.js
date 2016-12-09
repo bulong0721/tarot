@@ -7,9 +7,10 @@ angular.module('myee', [])
 /**
  * roleCtrl - controller
  */
-customerMgrCtrl.$inject = ['$scope', 'cTables', 'cfromly'];
+customerMgrCtrl.$inject = ['$scope', 'cTables', 'cResource','$filter','$q','cfromly','NgTableParams'];
 
-function customerMgrCtrl($scope, cTables, cfromly) {
+function customerMgrCtrl($scope, cTables, cResource,$filter,$q,cfromly,NgTableParams) {
+    var iDatatable = 0, iEditor = 1, iBindStore = 2;
     var mgrData = $scope.mgrData = {
         fields: [
             {key: 'firstName', type: 'c_input', templateOptions: {label: '姓氏', required: false, placeholder: '20字以内', maxlength: 20}},
@@ -47,4 +48,100 @@ function customerMgrCtrl($scope, cTables, cfromly) {
     cTables.initNgMgrCtrl(mgrData, $scope);
 
     $scope.tips = "*请切换不同门店，来管理不同门店的普通用户账号";
+
+    //设置可操作门店相关-----------------------------------------------------------------------------------------
+    //绑定相关参数
+    var vm = $scope.showCase = {};
+    vm.selected = [];
+    vm.selectAll = false;
+    vm.toggleAll = toggleAll;
+    vm.toggleOne = toggleOne;
+
+    function initalBindProduct() {
+        if ($scope.initalBindProductList) {//如果已经从后台读取过数据了，则不再访问后台获取列表
+            var deferred = $q.defer();
+            deferred.resolve($scope.initalBindProductList);
+            return deferred.promise;
+        } else {//第一次需要从后台读取列表，且只返回前10个数据
+            return cResource.get('./merchantStore/getAllStoreExceptSelf').then(function(data){
+                //初始化showCase.selected数组，给全选框用，让它知道应该全选哪些
+                angular.forEach(data.rows, function (indexData, index, array) {
+                    //indexData等价于array[index]
+                    $scope.showCase.selected[indexData.id] = false;
+                });
+                $scope.initalBindProductList = data.rows;
+
+                return data.rows;
+            });
+        }
+    }
+
+    function toggleAll(selectAll, selectedItems) {
+        for (var id in selectedItems) {
+            if (selectedItems.hasOwnProperty(id)) {
+                selectedItems[id] = selectAll;
+            }
+        }
+    }
+
+    function toggleOne(selectedItems) {
+        for (var id in selectedItems) {
+            if (selectedItems.hasOwnProperty(id)) {
+                if (!selectedItems[id]) {
+                    vm.selectAll = false;
+                    return;
+                }
+            }
+        }
+        vm.selectAll = true;
+    }
+
+    $scope.formBindData = {};
+    $scope.showCase.currentRowIndex = 0;
+
+    $scope.filterBindOptions = function () {
+        var deferred = $q.defer();
+        //tables获取数据,获取可绑定的所有门店
+        $scope.tableBindOpts = new NgTableParams({}, {
+            counts: [],
+            dataset: $filter('filter')($scope.initalBindProductList, $scope.showCase.nameFilter || "")//根据搜索字段过滤数组中数据
+        });
+        $scope.loadByInit = true;
+        $scope.tableOpts.page(1);
+        $scope.tableBindOpts.reload();
+        deferred.resolve($scope.tableBindOpts);
+        return deferred.promise;
+    }
+
+    $scope.goBindStorePermit = function(rowIndex){
+        initalBindProduct().then(function () {
+            $scope.filterBindOptions().then(function () {
+                $scope.addNew = true;
+
+                if ($scope.tableOpts && rowIndex > -1) {
+                    $scope.showCase.currentRowIndex = rowIndex;//记录当前选择的行，以备后续更新该行数据
+
+                    var data = $scope.tableOpts.data[rowIndex];
+                    $scope.formBindData.model = data;
+                    $scope.formBindData.model.bindShowName = '登录名:' + (data.username || "") + ' | 姓氏:' + (data.firstName || "") + ' | 名字:' + (data.lastName || "");
+
+                    //根据已关联的产品去勾选对应的checkbox
+                    $scope.showCase.selectAll = false;
+                    $scope.showCase.toggleAll(false, $scope.showCase.selected);//先取消所有checkbox的勾选状态
+                    for (var value in data.productUsedList) {
+                        //console.log("value"+value)
+                        var productId = data.productUsedList[value].id;
+                        $scope.showCase.selected[productId] = true;
+                        $scope.showCase.toggleOne($scope.showCase.selected);//判断全选框是否要被checked
+                    }
+
+                    $scope.addNew = false;
+                    $scope.rowIndex = rowIndex;
+                } else {
+                    $scope.formBindData.model = {};
+                }
+                $scope.activeTab = iBindStore;
+            });
+        });
+    }
 }

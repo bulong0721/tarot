@@ -574,7 +574,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             controller: 'adminRoleMgrCtrl',
             data: {
                 pageTitle: '账号管理',
-                subTitle: '管理员角色',
+                subTitle: '管理员用户角色',
                 datatable: 'assets/mvc/user/view/admin_role_datatable.html'
             },
             resolve: {
@@ -592,7 +592,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 pageTitle: '账号管理',
                 subTitle: '普通用户',
                 datatable: 'assets/mvc/user/view/customer_datatable.html',
-                editor: 'assets/mvc/user/view/customer_editor.html'
+                editor: 'assets/mvc/user/view/customer_editor.html',
+                other1: 'assets/mvc/user/view/customer_bind_store.html'
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
@@ -687,6 +688,7 @@ angular
             bindProduct:"关联设备组",
             bindDevice:"关联设备",
             bindDeviceDetail:"关联设备详细",
+            bindStorePermit:"设置账号可操作门店",
             attrDetail:"详细属性",
             contentDetail:"内容详细",
             flowDetail:"引流详细",
