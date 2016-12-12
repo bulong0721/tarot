@@ -320,6 +320,43 @@ public class FilesController {
     }
 
     /**
+     * 判断资源文件是否存在
+     * @param path
+     * @param storeId
+     * @param request
+     * @return
+     * @throws IllegalStateException
+     * @throws IOException
+     */
+    @RequestMapping(value = {"admin/files/exist"})
+    @ResponseBody
+    public AjaxResponse isResourceExist(String path, @RequestParam(value = "storeId", required = false) Long storeId, HttpServletRequest request) throws IllegalStateException, IOException {
+        AjaxResponse resp = AjaxResponse.success();
+        String storeIdStr;
+        if (storeId == null) {
+            String requestPath = request.getServletPath();
+            String sessionName = CommonLoginParam.getRequestInfo(request).get(Constants.REQUEST_INFO_SESSION).toString();
+            MerchantStore merchantStore = (MerchantStore) request.getSession().getAttribute(sessionName);
+            storeIdStr = String.valueOf(merchantStore.getId());
+        } else {
+            storeIdStr = String.valueOf(storeId);
+        }
+        if (StringUtil.isNullOrEmpty(storeIdStr) || StringUtil.equals("null", StringUtil.toLowerCase(storeIdStr))) {
+            return AjaxResponse.failed(-1, "店铺ID不能为空");
+        }
+        File dest = FileUtils.getFile(DOWNLOAD_HOME, storeIdStr, File.separator + path);
+        Map entry = new HashMap();
+        if( dest.exists() ){
+            entry.put(Constants.FILE_IS_EXIST,true);
+        }
+        else {
+            entry.put(Constants.FILE_IS_EXIST,false);
+        }
+        resp.addDataEntry(entry);
+        return resp;
+    }
+
+    /**
      * 用zip压缩文件，源文件的文件名不能包含空格
      *
      * @param pushRes

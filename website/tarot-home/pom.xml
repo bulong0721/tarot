@@ -50,14 +50,14 @@
             <artifactId>qiniu-java-sdk</artifactId>
         </dependency>
         <!--<dependency>-->
-        <!--<groupId>org.apache.commons</groupId>-->
-        <!--<artifactId>commons-lang3</artifactId>-->
+            <!--<groupId>org.apache.commons</groupId>-->
+            <!--<artifactId>commons-lang3</artifactId>-->
         <!--</dependency>-->
         <!-- 暂时引用下excel包，给点点笔老的接口用，以后更新掉接口后可以删除，要关注是不是会内存泄漏-->
         <!--<dependency>-->
-        <!--<groupId>org.apache.poi</groupId>-->
-        <!--<artifactId>poi</artifactId>-->
-        <!--<version>3.11</version>-->
+            <!--<groupId>org.apache.poi</groupId>-->
+            <!--<artifactId>poi</artifactId>-->
+            <!--<version>3.11</version>-->
         <!--</dependency>-->
     </dependencies>
     <build>
@@ -111,6 +111,13 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+        </profile>
+        <profile>
+            <id>devtest</id>
+            <properties>
+                <runtime.env>src/main/profiles/devtest</runtime.env>
+                <final.name>tarot</final.name>
+            </properties>
         </profile>
         <profile>
             <id>prd</id>

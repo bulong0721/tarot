@@ -27,6 +27,8 @@ public class Constants {
 	public final static String CUSTOMER_USER = "CUSTOMER_USER";
 	public final static String CUSTOMER_MERCHANT = "CUSTOMER_MERCHANT";//管理员切换商户
 
+	public final static String FILE_IS_EXIST = "fileIsExist";//文件是否存在
+
 	public final static String EMAIL_CONFIG    = "EMAIL_CONFIG";
 	public final static String MERCHANT_CONFIG = "MERCHANT_CONFIG";
 

@@ -163,9 +163,9 @@ function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTabl
                     //根据已关联的产品去勾选对应的checkbox
                     $scope.showCase.selectAll = false;
                     $scope.showCase.toggleAll(false, $scope.showCase.selected);//先取消所有checkbox的勾选状态
-                    for (var value in data.productUsedList) {
+                    for (var value in data.storeList) {
                         //console.log("value"+value)
-                        var productId = data.productUsedList[value].id;
+                        var productId = data.storeList[value].id;
                         $scope.showCase.selected[productId] = true;
                         $scope.showCase.toggleOne($scope.showCase.selected);//判断全选框是否要被checked
                     }
@@ -199,7 +199,7 @@ function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTabl
             'userId': $scope.formBindData.model.id
         }, {}).then(function(respSucc){
             //用js离线刷新表格数据
-            $scope.tableOpts.data[$scope.showCase.currentRowIndex].productUsedList = [];//先清空
+            $scope.tableOpts.data[$scope.showCase.currentRowIndex].storeList = [];//先清空
             angular.forEach($scope.showCase.selected, function (data, index, array) {
                 //data等价于array[index]
                 if (data == true) {
@@ -207,7 +207,7 @@ function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTabl
                     for (i = 0; i < length; i++) {
                         var data2 = $scope.initalBindProductList[i];
                         if (data2.id == index) {
-                            $scope.tableOpts.data[$scope.showCase.currentRowIndex].productUsedList.push({
+                            $scope.tableOpts.data[$scope.showCase.currentRowIndex].storeList.push({
                                 id: index,
                                 code: data2.code,
                                 name: data2.name,
