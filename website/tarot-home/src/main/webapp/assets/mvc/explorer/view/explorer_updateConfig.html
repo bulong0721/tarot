@@ -47,7 +47,8 @@
                                     <td>
                                         <span ng-switch-default>{{::attr.name}}</span>
                                         <div class="controls" ng-switch-when="true">
-                                            <input type="text" name="attrName" ng-model="attr.name" value="{{attr.name}}" placeholder="名称" class="editable-input form-control input-sm" required/>
+                                            {{attr.name?attr.name:"自动生成"}}
+                                            <!--<input type="text" disabled="disabled" name="attrName" ng-model="attr.name" value="{{attr.name}}" placeholder="自动生成" class="editable-input form-control input-sm" required/>-->
                                         </div>
                                     </td>
                                     <td>
@@ -75,12 +76,13 @@
                                     <td class="center">
                                         <span ng-switch-default>{{::attr.type}}</span>
                                         <div class="controls" ng-switch-when="true">
-                                            <select ng-model="attr.type">
+                                            <select ng-model="attr.type" ng-show="!attr.typeDisabled">
                                                 <option value="module">模块</option>
                                                 <option value="apk">应用</option>
                                                 <option ng-if="mgrUpdateConfigData.constant.SWITCH_MERCHANT_STORE == 100 && showTypeAgent" value="agent">Agent</option>
                                                 <option ng-if="mgrUpdateConfigData.constant.SWITCH_MERCHANT_STORE == 100 && showTypeAgentPatch" value="agentPatch">AgentPatch</option>
                                             </select>
+                                            <div ng-show="attr.typeDisabled">{{::attr.type}}</div>
                                         </div>
                                     </td>
                                     <td>
@@ -117,12 +119,12 @@
                                         <div class="controls" ng-switch-when="true">
                                             <span class="btn btn-sm btn-success upMenuBut">
                                                 <i class="fa fa-upload bigger-120"></i><span>请选择</span>
-                                                <input ng-model="attr.file" type="file" data-attr="{{attr}}" data-index="{{$index}}" onchange="angular.element(this).scope().checkUpdate(this, JSON.parse(this.getAttribute('data-attr')),this.getAttribute('data-index'))"/>
+                                                <input ng-model="attr.file" id="file{{$index}}" type="file" data-attr="{{attr}}" data-index="{{$index}}" onchange="angular.element(this).scope().checkUpdate(this, JSON.parse(this.getAttribute('data-attr')),this.getAttribute('data-index'))"/>
                                             </span>
                                         </div>
                                     </td>
                                     <td class="center">
-                                        <a ng-switch-default ng-click="attr.editing=true" tooltip-placement="top" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
+                                        <a ng-switch-default ng-click="goEditAttr(formDataUpdateConfig.model, attr,$index)" tooltip-placement="top" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
                                         <a ng-switch-when="true" ng-click="updateAttr(formDataUpdateConfig.model, attr,$index)" tooltip-placement="top" uib-tooltip="{{lang_zh.update}}"><i class="btn-icon fa fa-check"></i></a>
                                         <span class="divider"></span>
                                         <a ng-switch-default ng-click="deleteAttr(formDataUpdateConfig.model, attr)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>

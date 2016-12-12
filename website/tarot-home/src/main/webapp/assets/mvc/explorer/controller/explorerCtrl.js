@@ -653,6 +653,7 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
         ],
         api: {
             uploadFile: './files/create',
+            isFileExist: './files/exist',
         },
         constant: {
             FILE_NAME_NO_EXTERN: 4,
@@ -666,6 +667,8 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
             FILE_NAME_AGENT: 'VersionInfo.txt',
             BASE_PATH_AGENT_PATCH: 'tinker/agentPatch/',
             FILE_NAME_AGENT_PATCH: 'VersionInfo.txt',
+            BASE_PATH_BOARD_UPDATE: 'version/boardUpdate/',
+            FILE_NAME_EXAMPLE_BOARD_UPDATE: 'Cooky-C001M01A001-RK3288_v2-20160804ota.zip',
             TYPE_MODULE: 'module',
             TYPE_APK: 'apk',
             TYPE_AGENT: 'agent',
@@ -787,7 +790,7 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
         var code = $scope.formDataUpdateConfig.model.code;
         //校验是否选择了设备组
         if (!checkProductUsedCodeOK(code)) {
-            return;
+            return false;
         }
 
         var attr = {};
@@ -795,13 +798,13 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
         angular.forEach($scope.formDataUpdateConfig.model.attributes, function (indexData, index, array) {
             //for循环终止条件，只要有一条数据校验不通过，就停止循环
             if (checkAllRowOK == false) {
-                return;
+                return false;
             }
             //校验信息填写是否完整,只校验没有假删除的
             if (indexData.show && !checkThisRowOK(indexData,index,$scope.formDataUpdateConfig.model.attributes)) {
                 initialParams();
                 checkAllRowOK = false;
-                return;
+                return false;
             }
             if($filter('isNullOrEmptyString')(indexData.editing) || indexData.editing == true){
                 $timeout(function () {
@@ -820,7 +823,7 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
                 }, 0);
                 initialParams();
                 checkAllRowOK = false;
-                return;
+                return false;
             }
 
             if (indexData.show) {//只把没假删除的结果写入最终数据
@@ -851,7 +854,7 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
         //console.log($scope.submitApkResult);
         //若有检测不通过，则不提交
         if (!checkAllRowOK) {
-            return;
+            return false;
         }
 
         var promises = [];
@@ -959,22 +962,6 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
         return obj;
     }
 
-    //json转换成agent的xml格式
-    //function changeToVersionInfoXML(content){
-    //    var XMLContent = '<?xml version="1.0" encoding="utf-8"?><versionInfo>';
-    //    console.log(content)
-    //    angular.forEach(content, function (indexData, index, array) {
-    //        //indexData等价于array[index]
-    //        for(var p in indexData){
-    //            console.log(p);
-    //            console.log(indexData[p]?indexData[p]:"")
-    //            XMLContent += '<' + p + '>' + (indexData[p]?indexData[p]:"") + '</' + p + '>';
-    //        }
-    //    });
-    //    XMLContent += '</versionInfo>';
-    //    return XMLContent;
-    //}
-
     //formly返回
     $scope.configGoDataTable = function () {
         //cAlerts.confirm('未保存的修改将丢失，确认返回?', function () {
@@ -1008,6 +995,13 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
 
     };
 
+    //编辑一行
+    $scope.goEditAttr = function (model, thisRow, index) {
+        $scope.formDataUpdateConfig.model.attributes[index].editing=true;
+        $scope.formDataUpdateConfig.model.attributes[index].typeDisabled = true;//禁止修改类型
+    }
+
+    //提交一行
     $scope.updateAttr = function (model, thisRow, index) {
         //console.log(thisRow)
         if (!checkThisRowOK(thisRow,index,$scope.formDataUpdateConfig.model.attributes)) {
@@ -1021,7 +1015,8 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
             }, 0);
             return;
         }
-        if (thisRow.name != $filter('getFileName')(_file.name, $scope.mgrUpdateConfigData.constant.FILE_NAME_NO_EXTERN)) {
+        //if (thisRow.name != $filter('getFileName')(_file.name, $scope.mgrUpdateConfigData.constant.FILE_NAME_NO_EXTERN)) {
+        if (thisRow.name != calNameByFileName(_file.name,thisRow,index) ) {
             $timeout(function () {
                 $filter('toasterManage')(5, "上传的文件名与模块名不匹配!",false);
                 //toaster.error({body: "上传的文件名与模块名不匹配!"})
@@ -1141,10 +1136,6 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
             $timeout(function () {
                 $filter('toasterManage')(5,"请选择" + $scope.mgrUpdateConfigData.constant.FILE_NAME_APK
                     + "或" + $scope.mgrUpdateConfigData.constant.FILE_NAME_MODULE + "文件!",false);
-                //toaster.error({
-                //    body: "请选择" + $scope.mgrUpdateConfigData.constant.FILE_NAME_APK
-                //    + "或" + $scope.mgrUpdateConfigData.constant.FILE_NAME_MODULE + "文件!"
-                //})
             }, 0);
             return;
         }
@@ -1186,7 +1177,6 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
                 //手动渲染。。。可以研究有什么更好的
                 $scope.$apply(function () {
                     $scope.formDataUpdateConfig.model.attributes = $scope.formDataUpdateConfig.model.attributes.concat(attr);
-                    console.log($scope.formDataUpdateConfig.model.attributes)
                 });
 
                 reader.close();
@@ -1196,7 +1186,6 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
         else if (typeof window.ActiveXObject != 'undefined') {
             $timeout(function () {
                 $filter('toasterManage')(5,"浏览器版本过低，请使用IE10以上或火狐或谷歌浏览器!",false);
-                //toaster.error({body: "浏览器版本过低，请使用IE10以上或火狐或谷歌浏览器!"});
             }, 0);
             return;
         }
@@ -1228,11 +1217,23 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
         if (!model.attributes) {
             model.attributes = [];
         }
-        var length = model.attributes.length - 1;
-        if (length >=0 && !checkThisRowOK(model.attributes[length])) {
-            return false;
+
+        //倒序遍历判断是否有未填写完整的行，如果有，则报错；如果没有，再新增一行
+        var totalLength = model.attributes.length;
+        for ( var i=0;i< totalLength;i++ ) {
+            var length = totalLength - i - 1;
+            if (length >= 0){
+                var thisRow = model.attributes[length];
+                if( thisRow.show && !checkThisRowOK(thisRow,length,$scope.formDataUpdateConfig.model.attributes)) {
+                    return false;
+                }
+            }
         }
+
+        //判断是不是要显示agent和agentPatch类型
         checkAgentORPatch(model);
+
+        //校验通过新增一行
         model.attributes.push({
             name: '',
             version: '',
@@ -1268,13 +1269,146 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
     $scope.checkUpdate = function (file, thisRow, index) {
         var _file = file.files[0];
         $scope.fileList[index] = _file;
-        if (thisRow.name != $filter('getFileName')(_file.name, $scope.mgrUpdateConfigData.constant.FILE_NAME_NO_EXTERN)) {
-            $timeout(function () {
+
+        var fileName = $filter('getFileName')(_file.name, $scope.mgrUpdateConfigData.constant.FILE_NAME_NO_EXTERN);
+        var autoName = calNameByFileName(fileName,thisRow,index);
+        $timeout(function () {
+            //第一次读取文件时，按对照表对名称进行赋值
+            if( !thisRow.name || thisRow.name == '' ){
+                $scope.formDataUpdateConfig.model.attributes[index].name = thisRow.name = autoName;
+                $scope.formDataUpdateConfig.model.attributes[index].typeDisabled = true;
+            }
+            //按对照表查询名称与文件是否一致
+            if (thisRow.name != autoName) {
                 $filter('toasterManage')(5,"上传的文件名与模块或应用名不一致!",false);
-                //toaster.error({body: "上传的文件名与模块或应用名不一致!"})
-            }, 0);
-            return;
-        }
+                angular.element('#file'+index)[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
+                return false;
+            }
+        }, 0);
     }
 
+    //根据文件名从对照表查出模块名称
+    function calNameByFileName(fileName,thisRow,index) {
+        var resultName = undefined;
+        var positionFind = -1;
+        angular.forEach(autoNameCheckList, function (indexData, index, array) {
+            //resultName有值了，就停止循环
+            if( resultName && resultName != ''){
+                return false;
+            }
+            positionFind = fileName.toLowerCase().indexOf( indexData.key.toLowerCase() );//变小写然后查找
+            //indexData等价于array[index]
+            if ( positionFind != -1 && thisRow.type == indexData.type) {
+                if( ( (indexData.type == $scope.mgrUpdateConfigData.constant.TYPE_APK  //应用命名规则Artemis_**
+                        || indexData.type == $scope.mgrUpdateConfigData.constant.TYPE_AGENT
+                        || indexData.type == $scope.mgrUpdateConfigData.constant.TYPE_AGENT_PATCH)  && positionFind == 0)
+                    || (indexData.type == $scope.mgrUpdateConfigData.constant.TYPE_MODULE && positionFind == 4)//模块命名规则C001M08**
+                ) {
+                    resultName = indexData.name;
+                }
+            }
+
+        });
+        if( !resultName ) {
+            $timeout(function () {
+                $filter('toasterManage')(5,"不符合对照表规则的文件!请更换!",false);
+                angular.element('#file'+index)[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
+            }, 0);
+        }
+        return resultName;
+    }
+
+    //对照表
+    var autoNameCheckList = [
+        {key:'artemis',name:'Artemis',type:$scope.mgrUpdateConfigData.constant.TYPE_APK},
+        {key:'gaea',name:'Gaea',type:$scope.mgrUpdateConfigData.constant.TYPE_APK},
+        {key:'odin',name:'Odin',type:$scope.mgrUpdateConfigData.constant.TYPE_APK},
+        {key:'M03',name:'starline',type:$scope.mgrUpdateConfigData.constant.TYPE_MODULE},
+        {key:'M04',name:'sensor',type:$scope.mgrUpdateConfigData.constant.TYPE_MODULE},
+        {key:'M06',name:'move',type:$scope.mgrUpdateConfigData.constant.TYPE_MODULE},
+        {key:'M07',name:'power',type:$scope.mgrUpdateConfigData.constant.TYPE_MODULE},
+        {key:'patch_signed_7zip',name:'agentPatch',type:$scope.mgrUpdateConfigData.constant.TYPE_AGENT_PATCH},
+        {key:'Djinn',name:'agent',type:$scope.mgrUpdateConfigData.constant.TYPE_AGENT},
+    ];
+
+    //自研平板升级文件上传-------------------------------------
+    $scope.boardUpdateFile = function (input) {
+        var _file = input.files[0];
+        var file_name = $filter('getFileName')(_file.name, $scope.mgrUpdateConfigData.constant.FILE_NAME_WITH_EXTERN);
+        if (!checkBoardUpdateFileNameOK(file_name)) {
+            $timeout(function () {
+                $filter('toasterManage')(5,"请选择自研平板升级文件！例如："
+                    + $scope.mgrUpdateConfigData.constant.FILE_NAME_EXAMPLE_BOARD_UPDATE
+                    ,false);
+            }, 0);
+            return false;
+        }
+
+        var versionSplit = file_name.split("-");
+        var projName = versionSplit[0];
+        var softVer = versionSplit[1];
+        var hardVer = versionSplit[2];
+
+        //上传升级文件
+        var fd = new FormData();
+        var path = $scope.mgrUpdateConfigData.constant.BASE_PATH_BOARD_UPDATE
+            + projName + "/" + hardVer + "/" + softVer + "/" + _file.name;
+        fd.append('file', _file);
+        console.log(path)
+        cResource.get($scope.mgrUpdateConfigData.api.isFileExist,{path: path,storeId:100}).then(function(res){
+            if (0 != res.status) {
+                $timeout(function () {
+                    $filter('toasterManage')(5, _file.name + "查询是否存在失败!",false);
+                }, 0);
+                return false;
+            } else {
+                if( res.rows[0].fileIsExist ) {
+                    $timeout(function () {
+                        $filter('toasterManage')(5, _file.name + "文件已存在，请先删除旧文件!",false);
+                    }, 0);
+                    angular.element('#boardUpdateFile')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
+                } else {
+                    cResource.upload($scope.mgrUpdateConfigData.api.uploadFile,{'type': 'file', path: path}, fd).then(function(res){
+                        if (0 != res.status) {
+                            $timeout(function () {
+                                $filter('toasterManage')(5, _file.name + "上传失败!",false);
+                            }, 0);
+                            return;
+                        } else {
+                            $timeout(function () {
+                                $filter('toasterManage')(5, _file.name + "上传成功!",true);
+                            }, 0);
+                        }
+                        angular.element('#boardUpdateFile')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
+                    });
+                }
+            }
+        });
+
+    }
+
+    //校验平板升级文件名，例如Cooky-C001M01A001-RK3288_v2-20160804ota.zip
+    function checkBoardUpdateFileNameOK(fileName){
+        var lowerFileName = fileName.toLowerCase();
+        var versionSplit = lowerFileName.split("-");
+        //console.log(versionSplit)
+        if (versionSplit.length != 4) {
+            return false;
+        }
+        var softVer = versionSplit[1];
+        var time = versionSplit[3];
+        if (softVer.indexOf('c') != 0) {
+            return false;
+        }
+        else if(softVer.indexOf('m') != 4) {
+            return false;
+        }
+        else if(softVer.indexOf('a') != 7) {
+            return false;
+        }
+        else if(time.indexOf('ota') != 8){
+            return false;
+        }
+        return true;
+    }
 }

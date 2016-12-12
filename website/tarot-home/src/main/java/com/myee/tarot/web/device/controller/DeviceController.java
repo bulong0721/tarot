@@ -394,9 +394,7 @@ public class DeviceController {
             List<Long> bindList = JSON.parseArray(bindString, Long.class);
             DeviceUsed deviceUsed = deviceUsedService.findById(deviceUsedId);
             if (deviceUsed == null) {
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-                resp.setErrorString("参数不正确");
-                return resp;
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"参数不正确");
             }
             List<ProductUsed> productUsedList = productUsedService.listByIDs(bindList);
             deviceUsed.setProductUsed(productUsedList);
