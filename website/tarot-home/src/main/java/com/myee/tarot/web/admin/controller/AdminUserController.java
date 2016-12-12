@@ -396,18 +396,25 @@ public class AdminUserController {
 
     @RequestMapping(value = "listPermission/list", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse listAllPermissions(@RequestParam(value = "isFriendly")Boolean isFriendly, HttpServletRequest request) {
+    public AjaxResponse listAllPermissions(@RequestParam(value = "isFriendly")Boolean isFriendly, @RequestParam(value = "userId")Long userId, HttpServletRequest request) {
         AjaxResponse resp = new AjaxResponse();
-        List<AdminPermission> adminPermissionList = adminPermissionService.listAllPermissions(isFriendly);
-        for (AdminPermission permission : adminPermissionList) {
-            resp.addDataEntry(objectToEntry(permission));
+        List<AdminPermission> permissionList = adminPermissionService.listAllPermissions(isFriendly);
+        AdminUser user = userService.findById(userId);
+        Set<AdminPermission> adminPermissions = user.getAllPermissions();
+        for (AdminPermission permission : permissionList) {
+            resp.addDataEntry(objectToEntry(permission, adminPermissions));
         }
         return resp;
     }
 
     //把类转换成entry返回给前端，解耦和
-    private Map objectToEntry(AdminPermission adminPermission) {
+    private Map objectToEntry(AdminPermission adminPermission, Set set) {
         Map entry = new HashMap();
+        if (set.contains(adminPermission)) {
+            entry.put("checked", true);
+        } else {
+            entry.put("checked", false);
+        }
         entry.put("id", adminPermission.getId());
         entry.put("name", adminPermission.getDescription());
         entry.put("isFriendly", adminPermission.isFriendly());
@@ -423,7 +430,7 @@ public class AdminUserController {
         if(adminPermissionListChild != null && adminPermissionListChild.size() >0) {
             permissionChildListResult = new ArrayList<Map>();
             for( AdminPermission permission : adminPermissionListChild ) {
-                permissionChildListResult.add(objectToEntry(permission));
+                permissionChildListResult.add(objectToEntry(permission, set));
             }
         }
         entry.put("children",permissionChildListResult);
@@ -475,4 +482,29 @@ public class AdminUserController {
             return AjaxResponse.failed(-1, "绑定失败");
         }
     }
+
+    @RequestMapping(value = "admin/users/bindPermissions", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse bindPermissions(@RequestParam(value = "bindString")String bingString, @RequestParam(value = "userId")Long userId, HttpServletRequest request) {
+        AjaxResponse resp;
+        try {
+            AdminUser adminUser = userService.findById(userId);
+            List<Long> bindList = JSON.parseArray(bingString, Long.class);
+            List<AdminPermission> permissionList = adminPermissionService.listByIds(bindList);
+            Set<AdminPermission> permissionSet = null;
+            if (permissionList != null) {
+                permissionSet = Sets.newHashSet(permissionList);
+            }
+            adminUser.setAllPermissions(permissionSet);
+            adminUser = userService.update(adminUser);
+            resp = AjaxResponse.success();
+            resp.addEntry("updateResult", objectToEntry(adminUser));
+            return resp;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return AjaxResponse.failed(-1, "绑定失败");
+        }
+    }
+
 }
+

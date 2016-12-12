@@ -2,6 +2,8 @@ package com.myee.tarot.admin.dao;
 
 import com.myee.tarot.admin.domain.AdminPermission;
 import com.myee.tarot.core.dao.GenericEntityDao;
+import com.myee.tarot.core.util.PageResult;
+
 import java.util.List;
 
 /**
@@ -14,4 +16,6 @@ public interface AdminPermissionDao extends GenericEntityDao<Long, AdminPermissi
     AdminPermission getByNameAndType(String name, String type);
 
     List<AdminPermission> listAllPermissions(Boolean isFriendly);
+
+    List<AdminPermission> listByIds(List<Long> bindList);
 }
