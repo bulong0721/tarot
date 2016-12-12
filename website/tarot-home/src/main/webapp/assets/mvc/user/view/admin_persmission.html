@@ -1,0 +1,24 @@
+<a class="btn btn-sm btn-danger" ng-click="submitPermission()"><i class="fa fa-send bigger-120"></i>&nbsp;分配权限</a>
+<a class="btn btn-sm btn-danger" ng-click="goDataTable()"><i class="fa fa-wrench bigger-120"></i>&nbsp;返回</a>
+
+<div class="space-6"></div>
+<div class="row">
+    <div class="col-xs-12">
+        <script type="text/ng-template" id="nodes_renderer1.html">
+
+        </script>
+        <div class="ibox float-e-margins">
+            <tree-grid
+                    tree-control="treeControl"
+                    tree-data="treeData"
+                    col_defs="treeColumns"
+                    on-select="toggleOne(branch)"
+                    expand-level="2"
+                    expand-on="expandField"
+                    icon-leaf="tree-icon fa fa-leaf"
+                    icon-expand="tree-icon fa fa-plus"
+                    icon-collapse="tree-icon fa fa-minus">
+            </tree-grid>
+        </div>
+    </div>
+</div>

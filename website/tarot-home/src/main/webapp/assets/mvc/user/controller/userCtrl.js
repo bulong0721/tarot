@@ -11,11 +11,11 @@ userMgrCtrl.$inject = ['$scope', 'cTables', 'cfromly','$rootScope','$q','cResour
 
 function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTableParams, $filter) {
     iBindStore = 2;
-    // $scope.treeControl = {};
-    // // $scope.treeData = [{id:1,name:'所有权限',define:'PERMIT_ALL'}];
-    // $scope.treeData = [];
-    // $scope.expandField = {field: 'name'};
-    // $scope.bindType = 0;
+    $scope.treeControl = {};
+    // $scope.treeData = [{id:1,name:'所有权限',define:'PERMIT_ALL'}];
+    $scope.treeData = [];
+    $scope.expandField = {field: 'name'};
+    $scope.bindType = 0;
 
     var mgrData = $scope.mgrData = {
         fields: [
@@ -61,27 +61,26 @@ function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTabl
     $scope.userName = $rootScope.baseUrl.userName;
 
     //点击编辑
-    // $scope.assignPermission = function (rowIndex) {
-    //     var data = $scope.treeData;
-    //     iEditor = 4;
-    //     if (rowIndex > -1) {
-    //         // var data = $scope.tableOpts.data[rowIndex];
-    //         // $scope.formData.model = angular.copy(data);
-    //         $scope.rowIndex = rowIndex;
-    //         cResource.save('../listPermission/list',{isFriendly: true}, {}).then(function(resp){
-    //             $scope.treeData = resp.rows;
-    //         });
-    //     } else {
-    //         $scope.formData.model = {};
-    //         $scope.rowIndex = -1;
-    //     }
-    //     $scope.activeTab = iEditor;
-    // };
-    //
-    // //分配权限
-    // $scope.submitPermission = function () {
-    //
-    // }
+    $scope.assignPermission = function (rowIndex) {
+        var data = $scope.treeData;
+        iEditor = 4;
+        if (rowIndex > -1) {
+            var data = $scope.tableOpts.data[rowIndex];
+            $scope.formBindData.model = data;
+            $scope.rowIndex = rowIndex;
+            cResource.save('../listPermission/list',{
+                isFriendly: true,
+                userId : $scope.formBindData.model.id
+            }, {}).then(function(resp){
+                $scope.treeData = resp.rows;
+                console.log( $scope.treeData)
+            });
+        } else {
+            $scope.formData.model = {};
+            $scope.rowIndex = -1;
+        }
+        $scope.activeTab = iEditor;
+    };
 
     //设置可操作门店相关-----------------------------------------------------------------------------------------
     //绑定相关参数
@@ -197,7 +196,7 @@ function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTabl
         cResource.save('./users/bindMerchantStore',{
             'bindString': JSON.stringify(result),
             'userId': $scope.formBindData.model.id
-        }, {}).then(function(respSucc){
+        }, {}).then(function(resp){
             //用js离线刷新表格数据
             $scope.tableOpts.data[$scope.showCase.currentRowIndex].storeList = [];//先清空
             angular.forEach($scope.showCase.selected, function (data, index, array) {
@@ -222,26 +221,34 @@ function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTabl
         });
     };
 
-    /*$scope.toggleOne = function(data) {
-        console.log(data)
-        //如果data被选中了，则
-        if(data.selected == true) {
-            //递归遍历其子权限
-            diguiSelected(data);
-        }
+    /* */
+    $scope.submitPermission = function () {
+        var arraySelected = [];
+        var data = $scope.treeData;
+        recursionTree(data, arraySelected);
+        cResource.save('./users/bindPermissions',{
+            'bindString': JSON.stringify(arraySelected),
+            'userId': $scope.formBindData.model.id
+        }, {}).then(function(resp){
+            if (0 != resp.status) {
+                $filter('toasterManage')(5, "绑定失败!",false);
+            } else {
+                $filter('toasterManage')(5, "绑定成功!",true);
+            }
+        });
     }
 
-    function diguiSelected(data) {
-        for (var id in data) {
-            if (data.hasOwnProperty(id)) {
-                if (!data[id]) {
-                    vm.selectAll = false;
-                    data.selected = true;
-                    return;
-                }
+    //递归出所有选中的文件
+    function recursionTree(data, arraySelected) {
+        angular.forEach(data, function (d) {
+            if (d.checked == true && d.children.length == 0) {
+                arraySelected.push(d.id);
             }
-        }
-        vm.selectAll = true;
-    }*/
+            if (d.children.length > 0) {
+                recursionTree(d.children, arraySelected);
+            }
+        });
+    }
+
 
 }
