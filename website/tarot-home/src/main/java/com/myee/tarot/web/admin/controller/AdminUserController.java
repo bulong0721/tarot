@@ -163,6 +163,7 @@ public class AdminUserController {
         entry.put("lastLogin", user.getLastLogin());
         entry.put("loginIP", user.getLoginIP());
         entry.put("storeName", user.getMerchantStore().getName());
+        entry.put("storeList",user.getAllMerchantStores());
         return entry;
     }
 
@@ -259,6 +260,7 @@ public class AdminUserController {
         entry.put("username", customer.getUsername());
         entry.put("receiveEmail", customer.isReceiveEmail());
         entry.put("deactivated", customer.isDeactivated());
+        entry.put("storeList",customer.getAllMerchantStores());
         return entry;
     }
 
@@ -436,6 +438,9 @@ public class AdminUserController {
         AjaxResponse resp;
         try {
             Customer customer = customerService.findById(userId);
+            if (customer == null) {
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"参数不正确");
+            }
             List<Long> bindList = JSON.parseArray(bingString, Long.class);
             List<MerchantStore> merchantStores = merchantStoreService.listByIds(bindList);
             Set<MerchantStore> merchantStoreSet = null;
@@ -459,6 +464,9 @@ public class AdminUserController {
         AjaxResponse resp;
         try {
             AdminUser adminUser = userService.findById(userId);
+            if (adminUser == null) {
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"参数不正确");
+            }
             List<Long> bindList = JSON.parseArray(bingString, Long.class);
             List<MerchantStore> merchantStores = merchantStoreService.listByIds(bindList);
             Set<MerchantStore> merchantStoreSet = null;

@@ -690,6 +690,7 @@ angular
             bindDevice:"关联设备",
             bindDeviceDetail:"关联设备详细",
             bindStorePermit:"设置账号可操作门店",
+            bindStoreDetail:"可操作门店详细",
             attrDetail:"详细属性",
             contentDetail:"内容详细",
             flowDetail:"引流详细",
