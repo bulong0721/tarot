@@ -10,7 +10,7 @@ angular.module('myee', [])
 userMgrCtrl.$inject = ['$scope', 'cTables', 'cfromly','$rootScope','$q','cResource','NgTableParams', '$filter'];
 
 function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTableParams, $filter) {
-    // iBindStore = 2;
+    iBindStore = 2;
     // $scope.treeControl = {};
     // // $scope.treeData = [{id:1,name:'所有权限',define:'PERMIT_ALL'}];
     // $scope.treeData = [];
@@ -221,4 +221,27 @@ function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTabl
             $scope.goDataTable();
         });
     };
+
+    /*$scope.toggleOne = function(data) {
+        console.log(data)
+        //如果data被选中了，则
+        if(data.selected == true) {
+            //递归遍历其子权限
+            diguiSelected(data);
+        }
+    }
+
+    function diguiSelected(data) {
+        for (var id in data) {
+            if (data.hasOwnProperty(id)) {
+                if (!data[id]) {
+                    vm.selectAll = false;
+                    data.selected = true;
+                    return;
+                }
+            }
+        }
+        vm.selectAll = true;
+    }*/
+
 }
