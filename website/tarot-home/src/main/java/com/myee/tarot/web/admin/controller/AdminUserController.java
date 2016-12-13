@@ -403,19 +403,24 @@ public class AdminUserController {
         List<AdminPermission> permissionList = adminPermissionService.listAllPermissions(isFriendly);
         AdminUser user = userService.findById(userId);
         Set<AdminPermission> adminPermissions = user.getAllPermissions();
+        Set<AdminPermission> checkedParentPermissionItems = Sets.newHashSet();
+        for (AdminPermission adminPermission : adminPermissions) {
+            getAllParentPermission(checkedParentPermissionItems, adminPermission);
+        }
         for (AdminPermission permission : permissionList) {
-            resp.addDataEntry(objectToEntry(permission, adminPermissions));
+            resp.addDataEntry(objectToEntry(permission, adminPermissions, checkedParentPermissionItems));
         }
         return resp;
     }
 
     //把类转换成entry返回给前端，解耦和
-    private Map objectToEntry(AdminPermission adminPermission, Set set) {
+    private Map objectToEntry(AdminPermission adminPermission, Set setChildChecked, Set parentChecked) {
         Map entry = new HashMap();
-        if (set.contains(adminPermission)) {
+        if (setChildChecked.contains(adminPermission)) {
             entry.put("checked", true);
-        } else {
-            entry.put("checked", false);
+        }
+        if (parentChecked.contains(adminPermission)) {
+            entry.put("checked", true);
         }
         entry.put("id", adminPermission.getId());
         entry.put("name", adminPermission.getDescription());
@@ -432,11 +437,24 @@ public class AdminUserController {
         if(adminPermissionListChild != null && adminPermissionListChild.size() >0) {
             permissionChildListResult = new ArrayList<Map>();
             for( AdminPermission permission : adminPermissionListChild ) {
-                permissionChildListResult.add(objectToEntry(permission, set));
+                permissionChildListResult.add(objectToEntry(permission, setChildChecked, parentChecked));
             }
         }
         entry.put("children",permissionChildListResult);
         return entry;
+    }
+
+    /**
+     * 获取所有父权限
+     * @param set
+     * @param adminPermissions
+     */
+    private void getAllParentPermission(Set<AdminPermission> set, AdminPermission adminPermissions) {
+        List<AdminPermission> adminPermissionList = adminPermissions.getAllParentPermissions();
+        set.addAll(adminPermissionList);
+        for (AdminPermission p : adminPermissionList) {
+            getAllParentPermission(set, p);
+        }
     }
 
     @RequestMapping(value = "admin/customers/bindMerchantStore", method = RequestMethod.POST)

@@ -73,7 +73,6 @@ function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTabl
                 userId : $scope.formBindData.model.id
             }, {}).then(function(resp){
                 $scope.treeData = resp.rows;
-                console.log( $scope.treeData)
             });
         } else {
             $scope.formData.model = {};
@@ -156,7 +155,6 @@ function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTabl
 
                     var data = $scope.tableOpts.data[rowIndex];
                     $scope.formBindData.model = data;
-                    console.log(data)
                     $scope.formBindData.model.bindShowName = '昵称:' + (data.name || "") + ' | 登录名:' + (data.login || "");
 
                     //根据已关联的产品去勾选对应的checkbox
@@ -236,6 +234,7 @@ function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTabl
                 $filter('toasterManage')(5, "绑定成功!",true);
             }
         });
+        $scope.goDataTable();
     }
 
     //递归出所有选中的文件

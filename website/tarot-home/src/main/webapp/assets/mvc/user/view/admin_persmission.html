@@ -1,6 +1,3 @@
-<a class="btn btn-sm btn-danger" ng-click="submitPermission()"><i class="fa fa-send bigger-120"></i>&nbsp;分配权限</a>
-<a class="btn btn-sm btn-danger" ng-click="goDataTable()"><i class="fa fa-wrench bigger-120"></i>&nbsp;返回</a>
-
 <div class="space-6"></div>
 <div class="row">
     <div class="col-xs-12">
@@ -12,13 +9,18 @@
                     tree-control="treeControl"
                     tree-data="treeData"
                     col_defs="treeColumns"
-                    on-select="toggleOne(branch)"
                     expand-level="2"
                     expand-on="expandField"
                     icon-leaf="tree-icon fa fa-leaf"
                     icon-expand="tree-icon fa fa-plus"
-                    icon-collapse="tree-icon fa fa-minus">
+                    icon-collapse="tree-icon fa fa-minus"
+                    treetype="permissionType"
+                    titles="权限名称">
             </tree-grid>
         </div>
     </div>
+</div>
+<div class="text-center col-xs-8">
+    <button class="btn btn-primary" ng-click="submitPermission()"><i class="fa fa-sm fa-check"></i>&nbsp;提交</button>
+    <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
 </div>
