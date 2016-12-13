@@ -132,14 +132,13 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 		notification.setNoticeType(notificationDTO.getNoticeType());
 		notification.setAppId(notificationDTO.getAppId());
 		notification.setCreateTime(notificationDTO.getCreateTime());
-		notification.setStoragePath(notificationDTO.getStoragePath());
-		MerchantStore store = merchantStoreService.findById(notificationDTO.getStoreId());
+		MerchantStore store = merchantStoreService.findById(notificationDTO.getOrgId());
 		notification.setStore(store);
 		AdminUser adminUser = adminUserService.findById(notificationDTO.getUserId());
 		notification.setAdminUser(adminUser);
-		notification.setSuccess(notificationDTO.getSuccess());
-		notification.setDeviceUsedName(deviceUsedService.getByBoardNo(notificationDTO.getUniqueNo()).getName());
-		notification.setUniqueNo(notificationDTO.getUniqueNo());
+		notification.setSuccess(notificationDTO.isSuccess());
+		notification.setDeviceUsedName(deviceUsedService.getByBoardNo(notificationDTO.getBoardNO()).getName());
+		notification.setUniqueNo(notificationDTO.getBoardNO());
 		notification.setUuid(notificationDTO.getUuid());
         return notification;
 	}
