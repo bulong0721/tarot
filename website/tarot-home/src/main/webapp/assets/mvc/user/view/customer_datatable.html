@@ -60,6 +60,8 @@
                                 <a ng-click="goEditor($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
                                 <span class="divider"></span>
                                 <a ng-click="doDelete($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
+                                <span class="divider"></span>
+                                <a ng-click="assignPermission($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.assignPermission}}"><i class="btn-icon fa fa-link"></i></a>
                             </td>
                         </tr>
                         <tr ng-repeat-end ng-if="row.showDetail">

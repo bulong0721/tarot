@@ -23,7 +23,7 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
     @Column(name = "NAME", length=60)
     protected String name;
 
-    @Column(name = "BOARD_NO",unique = true,length=60)
+    @Column(name = "BOARD_NO", unique = true,length=60)
     protected String boardNo;
 
     @Column(name = "DEVICE_NUM", length=60)
@@ -56,6 +56,17 @@ public class DeviceUsed extends GenericEntity<Long, DeviceUsed> {
 //    @OneToMany(mappedBy = "deviceUsed", targetEntity = DeviceUsedAttribute.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
 //    @MapKey(name = "name")
 //    protected Map<String, DeviceUsedAttribute> deviceUsedAttribute = new HashMap<String, DeviceUsedAttribute>();
+
+    @Transient
+    private String rtmpUrl;
+
+    public String getRtmpUrl() {
+        return rtmpUrl;
+    }
+
+    public void setRtmpUrl(String rtmpUrl) {
+        this.rtmpUrl = rtmpUrl;
+    }
 
     @Override
     public Long getId() {

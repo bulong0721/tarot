@@ -12,7 +12,6 @@ userMgrCtrl.$inject = ['$scope', 'cTables', 'cfromly','$rootScope','$q','cResour
 function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTableParams, $filter) {
     iBindStore = 2;
     $scope.treeControl = {};
-    // $scope.treeData = [{id:1,name:'所有权限',define:'PERMIT_ALL'}];
     $scope.treeData = [];
     $scope.expandField = {field: 'name'};
     $scope.bindType = 0;
@@ -60,7 +59,7 @@ function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTabl
     $scope.tips = "*新建的管理员账号将绑定当前所切换的门店";
     $scope.userName = $rootScope.baseUrl.userName;
 
-    //点击编辑
+    //打开分配权限界面
     $scope.assignPermission = function (rowIndex) {
         var data = $scope.treeData;
         iEditor = 4;
@@ -73,7 +72,6 @@ function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTabl
                 userId : $scope.formBindData.model.id
             }, {}).then(function(resp){
                 $scope.treeData = resp.rows;
-                console.log( $scope.treeData)
             });
         } else {
             $scope.formData.model = {};
@@ -156,7 +154,6 @@ function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTabl
 
                     var data = $scope.tableOpts.data[rowIndex];
                     $scope.formBindData.model = data;
-                    console.log(data)
                     $scope.formBindData.model.bindShowName = '昵称:' + (data.name || "") + ' | 登录名:' + (data.login || "");
 
                     //根据已关联的产品去勾选对应的checkbox
@@ -221,7 +218,7 @@ function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTabl
         });
     };
 
-    /* */
+    /* 提交权限绑定*/
     $scope.submitPermission = function () {
         var arraySelected = [];
         var data = $scope.treeData;
@@ -236,6 +233,7 @@ function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTabl
                 $filter('toasterManage')(5, "绑定成功!",true);
             }
         });
+        $scope.goDataTable();
     }
 
     //递归出所有选中的文件

@@ -3,26 +3,26 @@
         .module('template/treeGrid/treeGrid.html', [])
         .run([
             '$templateCache',
-            function ($templateCache) {
+            function ($templateCache){
                 $templateCache.put('template/treeGrid/treeGrid.html',
                     "<div class=\"table-responsive\">\n" +
                     " <table class=\"table tree-grid table-striped table-bordered\">\n" +
                     "   <thead>\n" +
                     "     <tr>\n" +
-                    "       <th class='center'><a ng-if=\"expandingProperty.sortable\" ng-click=\"sortBy(expandingProperty)\">{{expandingProperty.displayName || expandingProperty.field || expandingProperty}}</a><span ng-if=\"!expandingProperty.sortable\">资源路径</span><i ng-if=\"expandingProperty.sorted\" class=\"{{expandingProperty.sortingIcon}} pull-right\"></i></th>\n" +
+                    "       <th class='center'><a ng-if=\"expandingProperty.sortable\" ng-click=\"sortBy(expandingProperty)\">N</a><span ng-if=\"!expandingProperty.sortable\">{{titles}}</span><i ng-if=\"expandingProperty.sorted\" class=\"{{expandingProperty.sortingIcon}} pull-right\"></i></th>\n" +
                     "       <th class='center' ng-repeat=\"col in colDefinitions\"><a ng-if=\"col.sortable\" ng-click=\"sortBy(col)\">{{col.displayName || col.field}}</a><span ng-if=\"!col.sortable\">{{col.displayName || col.field}}</span><i ng-if=\"col.sorted\" class=\"{{col.sortingIcon}} pull-right\"></i></th>\n" +
                     "     </tr>\n" +
                     "   </thead>\n" +
                     "   <tbody>\n" +
                     "     <tr ng-repeat=\"row in tree_rows | searchFor:$parent.filterString:expandingProperty:colDefinitions track by row.branch.uid\"\n" +
                     "       ng-class=\"'level-' + {{ row.level }} + (row.branch.selected ? ' active':'')\" class=\"tree-grid-row\">\n" +
-                    "       <td><label class=\"tree-checkbox indented\"><input type='checkbox' ng-model=\"row.branch.checked\" ng-change=\"user_changes_branch(row.branch)\" class=\"indented\" /><span></span></label>" +
-                    "              <a ng-click=\"user_clicks_branch(row.branch)\"><i ng-class=\"row.tree_icon\"\n" +
+                    "       <td><label class=\"tree-checkbox indented\"><input type='checkbox' ng-checked=\"row.branch['checked']\"  ng-model=\"row.branch.checked\" ng-change=\"toggleOne(row.branch,treeType)\" class=\"indented\" /><span></span></label>" +
+                    "              <a ng-click=\"testChange(row.branch,treeType)\"><i ng-class=\"row.tree_icon\"\n" +
                     "              ng-click=\"row.branch.expanded = !row.branch.expanded\"\n" +
                     "              class=\"indented tree-icon\"></i></a><span ng-if=\"expandingProperty.cellTemplate\" class=\"indented tree-label\" " +
-                    "              ng-click=\"on_user_click(row.branch)\" compile=\"expandingProperty.cellTemplate\"></span>" +
-                    "              <span ng-if=\"!expandingProperty.cellTemplate\" class=\"indented tree-label\" ng-click=\"on_user_click(row.branch)\">\n" +
-                    "             {{row.branch[expandingProperty.field] || row.branch[expandingProperty]}}</span>\n" +
+                    "              ng-click=\"testChange1(row.branch, treeType)\" compile=\"expandingProperty.cellTemplate\"></span>" +
+                    "              <span ng-if=\"!expandingProperty.cellTemplate\" class=\"indented tree-label\" ng-click=\"testChange1(row.branch, treeType)\">\n" +
+                    "             {{row.branch[expandingProperty.field] || row.branch[expandingProperty]}} </span>\n" +
                     "       </td>\n" +
                     "       <td ng-repeat=\"col in colDefinitions\" align='center' width='{{col.columnWidth}}'>\n" +
                     "         <div ng-if=\"col.cellTemplate\" compile=\"col.cellTemplate\" cell-template-scope=\"col.cellTemplateScope\"></div>\n" +
@@ -89,9 +89,13 @@
                         onClick: '&',
                         initialSelection: '@',
                         treeControl: '=',
-                        expandTo: '='
+                        expandTo: '=',
+                        ifExplore:'='
                     },
                     link: function (scope, element, attrs) {
+                        scope.titles = attrs.titles || '资源路径';
+                        scope.treeType = attrs.treetype || 'permissionType';
+
                         var error, expandingProperty, expand_all_parents, expand_level, for_all_ancestors, for_each_branch, get_parent, n, on_treeData_change, select_branch, selected_branch, tree;
 
                         error = function (s) {
@@ -228,6 +232,68 @@
                                 }
                             }
                         };
+
+                        scope.testChange = function (branch, type) {
+                            if (type == "resourceType") {
+                                scope.user_clicks_branch(branch);
+                            }
+                        }
+
+                        scope.testChange1 = function (branch, type) {
+                            if (type == "resourceType") {
+                                scope.on_user_click(branch);
+                            }
+                        }
+
+                        //点击单个选择事件
+                        scope.toggleOne = function (branch, type) {
+                            if (type == "resourceType") {
+                                scope.user_changes_branch(branch);
+                            } else {
+                                //如果data被选中了，则
+                                if(branch.checked == true) {
+                                    //递归遍历选中其子权限
+                                    recursiveSelected(branch, true);
+                                } else {
+                                    //递归遍历取消其子权限
+                                    recursiveSelected(branch, false);
+                                }
+                            }
+                        }
+
+                        function recursiveSelected(branch, checkedFlag) {
+                            if (branch.children.length > 0) {
+                                branch.checked = checkedFlag;
+                                for(var index = 0, len = branch.children.length; index < len; index++) {
+                                    var child = branch.children[index];
+                                    child.checked = checkedFlag;
+                                    if (child.children.length > 0) {
+                                        recursiveSelected(child, checkedFlag);
+                                    }
+                                }
+                            } else {
+                                branch.checked = checkedFlag;
+                                recursiveParent(branch, checkedFlag);
+                            }
+                        }
+
+                        function recursiveParent(branch, checkedFlag) {
+                            var parent;
+                            parent = get_parent(branch);
+                            if (parent != undefined) {
+                                parent.checked = checkedFlag;
+                                for(var index = 0, len = parent.children.length; index < len; index++) {
+                                    if (parent.children[index].checked == true) {
+                                        parent.checked = true;
+                                        recursiveParent(parent, checkedFlag);
+                                    }
+                                }
+
+                                for(var index = 0, len = parent.children.length; index < len; index++) {
+                                    recursiveParent(parent, checkedFlag);
+                                }
+                            }
+                        }
 
                         /* sorting methods */
                         scope.sortBy = function (col) {
@@ -693,10 +759,10 @@
 
         .provider('treegridTemplate', function () {
             var templatePath = 'template/treeGrid/treeGrid.html';
-
             this.setPath = function (path) {
                 templatePath = path;
             };
+
 
             this.$get = function () {
                 return {

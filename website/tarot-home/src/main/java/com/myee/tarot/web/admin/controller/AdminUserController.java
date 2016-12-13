@@ -21,7 +21,6 @@ import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantStoreService;
 import com.myee.tarot.profile.domain.Role;
 import com.myee.tarot.profile.service.RoleService;
-import org.aspectj.weaver.loadtime.Aj;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -403,40 +402,91 @@ public class AdminUserController {
         List<AdminPermission> permissionList = adminPermissionService.listAllPermissions(isFriendly);
         AdminUser user = userService.findById(userId);
         Set<AdminPermission> adminPermissions = user.getAllPermissions();
+        Set<AdminPermission> checkedParentPermissionItems = Sets.newHashSet();
+        for (AdminPermission adminPermission : adminPermissions) {
+            getAllParentPermission(checkedParentPermissionItems, adminPermission);
+        }
         for (AdminPermission permission : permissionList) {
-            resp.addDataEntry(objectToEntry(permission, adminPermissions));
+            resp.addDataEntry(objectToEntry(permission, adminPermissions, checkedParentPermissionItems, isFriendly));
         }
         return resp;
     }
 
     //把类转换成entry返回给前端，解耦和
-    private Map objectToEntry(AdminPermission adminPermission, Set set) {
+    private Map objectToEntry(AdminPermission adminPermission, Set setChildChecked, Set parentChecked, Boolean isFriendly) {
         Map entry = new HashMap();
-        if (set.contains(adminPermission)) {
-            entry.put("checked", true);
+        if (isFriendly) {
+            if (setChildChecked.contains(adminPermission)) {
+                entry.put("checked", true);
+            }
+            if (parentChecked.contains(adminPermission)) {
+                entry.put("checked", true);
+            }
+            entry.put("id", adminPermission.getId());
+            entry.put("name", adminPermission.getDescription());
+            entry.put("isFriendly", adminPermission.isFriendly());
+            entry.put("eName", adminPermission.getName());
+            entry.put("permissionType", adminPermission.getType());
+            if (adminPermission.getAllChildPermissions() == null || adminPermission.getAllChildPermissions().size() == 0) {
+                entry.put("type", Constants.PERMISSION_TREE_LEAF);
+            } else {
+                entry.put("type", Constants.PERMISSION_TREE_PARENT);
+            }
+            List<AdminPermission> adminPermissionListChild = adminPermission.getAllChildPermissions();
+            List<Map> permissionChildListResult = null;
+            if(adminPermissionListChild != null && adminPermissionListChild.size() >0) {
+                permissionChildListResult = new ArrayList<Map>();
+                for( AdminPermission permission : adminPermissionListChild ) {
+                    permissionChildListResult.add(objectToEntry(permission, setChildChecked, parentChecked, isFriendly));
+                }
+            }
+            entry.put("children",permissionChildListResult);
         } else {
-            entry.put("checked", false);
-        }
-        entry.put("id", adminPermission.getId());
-        entry.put("name", adminPermission.getDescription());
-        entry.put("isFriendly", adminPermission.isFriendly());
-        entry.put("eName", adminPermission.getName());
-        entry.put("permissionType", adminPermission.getType());
-        if (adminPermission.getAllChildPermissions() == null || adminPermission.getAllChildPermissions().size() == 0) {
-            entry.put("type", Constants.PERMISSION_TREE_LEAF);
-        } else {
-            entry.put("type", Constants.PERMISSION_TREE_PARENT);
-        }
-        List<AdminPermission> adminPermissionListChild = adminPermission.getAllChildPermissions();
-        List<Map> permissionChildListResult = null;
-        if(adminPermissionListChild != null && adminPermissionListChild.size() >0) {
-            permissionChildListResult = new ArrayList<Map>();
-            for( AdminPermission permission : adminPermissionListChild ) {
-                permissionChildListResult.add(objectToEntry(permission, set));
+            if (adminPermission.isFriendly() == isFriendly) {
+                if (setChildChecked.contains(adminPermission)) {
+                    entry.put("checked", true);
+                }
+                if (parentChecked.contains(adminPermission)) {
+                    entry.put("checked", true);
+                }
+                entry.put("id", adminPermission.getId());
+                entry.put("name", adminPermission.getDescription());
+                entry.put("isFriendly", adminPermission.isFriendly());
+                entry.put("eName", adminPermission.getName());
+                entry.put("permissionType", adminPermission.getType());
+                if (adminPermission.getAllChildPermissions() == null || adminPermission.getAllChildPermissions().size() == 0) {
+                    entry.put("type", Constants.PERMISSION_TREE_LEAF);
+                } else {
+                    entry.put("type", Constants.PERMISSION_TREE_PARENT);
+                }
+                List<AdminPermission> adminPermissionListChild = adminPermission.getAllChildPermissions();
+                List<Map> permissionChildListResult = null;
+                if(adminPermissionListChild != null && adminPermissionListChild.size() >0) {
+                    permissionChildListResult = new ArrayList<Map>();
+                    for( AdminPermission permission : adminPermissionListChild ) {
+                        if (permission.isFriendly() != isFriendly) {
+                            continue;
+                        }
+                        permissionChildListResult.add(objectToEntry(permission, setChildChecked, parentChecked, isFriendly));
+                    }
+                }
+                entry.put("children",permissionChildListResult);
             }
         }
-        entry.put("children",permissionChildListResult);
         return entry;
+    }
+
+    /**
+     * 获取所有父权限
+     * @param set
+     * @param adminPermission
+     */
+    private void getAllParentPermission(Set<AdminPermission> set, AdminPermission adminPermission) {
+        List<AdminPermission> adminPermissionList = adminPermission.getAllParentPermissions();
+        set.addAll(adminPermissionList);
+        for (AdminPermission p : adminPermissionList) {
+            getAllParentPermission(set, p);
+        }
     }
 
     @RequestMapping(value = "admin/customers/bindMerchantStore", method = RequestMethod.POST)

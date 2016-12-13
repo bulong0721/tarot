@@ -11,6 +11,11 @@ customerMgrCtrl.$inject = ['$scope', 'cTables', 'cResource','$filter','$q','cfro
 
 function customerMgrCtrl($scope, cTables, cResource,$filter,$q,cfromly,NgTableParams) {
     var iDatatable = 0, iEditor = 1, iBindStore = 2;
+    $scope.treeControl = {};
+    $scope.treeData = [];
+    $scope.expandField = {field: 'name'};
+    $scope.bindType = 0;
+
     var mgrData = $scope.mgrData = {
         fields: [
             {key: 'firstName', type: 'c_input', templateOptions: {label: '姓氏', required: false, placeholder: '20字以内', maxlength: 20}},
@@ -48,6 +53,27 @@ function customerMgrCtrl($scope, cTables, cResource,$filter,$q,cfromly,NgTablePa
     cTables.initNgMgrCtrl(mgrData, $scope);
 
     $scope.tips = "*请切换不同门店，来管理不同门店的普通用户账号";
+
+    //打开分配权限界面
+    $scope.assignPermission = function (rowIndex) {
+        var data = $scope.treeData;
+        iEditor = 4;
+        if (rowIndex > -1) {
+            var data = $scope.tableOpts.data[rowIndex];
+            $scope.formBindData.model = data;
+            $scope.rowIndex = rowIndex;
+            cResource.save('../listPermission/list',{
+                isFriendly: false,
+                userId : $scope.formBindData.model.id
+            }, {}).then(function(resp){
+                $scope.treeData = resp.rows;
+            });
+        } else {
+            $scope.formData.model = {};
+            $scope.rowIndex = -1;
+        }
+        $scope.activeTab = iEditor;
+    };
 
     //设置可操作门店相关-----------------------------------------------------------------------------------------
     //绑定相关参数
@@ -185,4 +211,33 @@ function customerMgrCtrl($scope, cTables, cResource,$filter,$q,cfromly,NgTablePa
                 $scope.goDataTable();
             });
     };
+
+    $scope.submitPermission = function () {
+        var arraySelected = [];
+        var data = $scope.treeData;
+        recursionTree(data, arraySelected);
+        cResource.save('./users/bindPermissions',{
+            'bindString': JSON.stringify(arraySelected),
+            'userId': $scope.formBindData.model.id
+        }, {}).then(function(resp){
+            if (0 != resp.status) {
+                $filter('toasterManage')(5, "绑定失败!",false);
+            } else {
+                $filter('toasterManage')(5, "绑定成功!",true);
+            }
+        });
+        $scope.goDataTable();
+    }
+
+    //递归出所有选中的文件
+    function recursionTree(data, arraySelected) {
+        angular.forEach(data, function (d) {
+            if (d.checked == true && d.children.length == 0) {
+                arraySelected.push(d.id);
+            }
+            if (d.children.length > 0) {
+                recursionTree(d.children, arraySelected);
+            }
+        });
+    }
 }

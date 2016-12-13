@@ -73,6 +73,16 @@ public class Constants {
 	public final static int WECHAT_OPEN = 0; //开启
 	public final static int WECHAT_CLOSE = 1;  //关闭
 
+	//设备查找的类型名称
+	public final static String DEVICE_NAME_PAD = "平板";
+	//public final static String DEVICE_NAME_CAMERA = "摄像头";
+
+	//rtmp 处理
+	public final static Integer RTMP_START = 0;  //开启推流
+	public final static Integer RTMP_STOP = 1;   //关闭推流
+	public final static Integer RTMP_NOTICE = 2; //定时通知，依旧在推送
+
+
 	//ES查询模式 0:should  1:must
 	public final static int ES_QUERY_PATTERN_SHOULD = 0;
 	public final static int ES_QUERY_PATTERN_MUST = 1;
@@ -84,8 +94,8 @@ public class Constants {
 	public final static Boolean CLIENT_PRIZE_DELETE_YES = true;
 	public final static Boolean CLIENT_PRIZE_DELETE_NO = false;
 
-	public final static Boolean PERMISSION_ONLY_ADMIN = true;
-	public final static Boolean PERMISSION_ALL = false;
+	public final static Boolean PERMISSION_FOR_ADMIN = true;
+	public final static Boolean PERMISSION_FOR_CUSTOMER = false;
 	public final static String PERMISSION_TYPE_ALL = "1";
     public final static int PERMISSION_TREE_LEAF = 1;
     public final static int PERMISSION_TREE_PARENT = 0;
