@@ -23,7 +23,7 @@
         <class>com.myee.tarot.customer.domain.CustomerAddress</class>
         <class>com.myee.tarot.customer.domain.CustomerAttribute</class>
         <class>com.myee.tarot.customer.domain.CustomerPhone</class>
-        <class>com.myee.tarot.customer.domain.CustomerRole</class>
+        <!--<class>com.myee.tarot.customer.domain.CustomerRole</class>-->
         <class>com.myee.tarot.profile.domain.Phone</class>
         <class>com.myee.tarot.profile.domain.Role</class>
 

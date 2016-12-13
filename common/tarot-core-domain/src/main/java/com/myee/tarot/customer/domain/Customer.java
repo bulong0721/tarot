@@ -4,6 +4,7 @@ import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.core.audit.Auditable;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.profile.domain.Locale;
+import com.myee.tarot.profile.domain.Role;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
 
@@ -81,9 +82,13 @@ public class Customer extends GenericEntity<Long, Customer> {
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     protected List<CustomerPhone> customerPhones = new ArrayList<CustomerPhone>();
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = MerchantStore.class)
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = MerchantStore.class)
     @JoinTable(name = "C_CUSTOMER_MERCHANT_STORE_XREF", joinColumns = @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "CUSTOMER_ID"), inverseJoinColumns = @JoinColumn(name = "STORE_ID", referencedColumnName = "STORE_ID"))
     protected Set<MerchantStore> allMerchantStores = new HashSet<MerchantStore>();
+
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = Role.class)
+    @JoinTable(name = "C_CUSTOMER_ROLE_XREF", joinColumns = @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "CUSTOMER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID", referencedColumnName = "ROLE_ID"))
+    protected Set<Role> allRoles = new HashSet<Role>();
 
     @Column(name = "TAX_EXEMPTION_CODE")
     protected String taxExemptionCode;
@@ -213,6 +218,14 @@ public class Customer extends GenericEntity<Long, Customer> {
 
     public void setPasswordChangeRequired(boolean passwordChangeRequired) {
         this.passwordChangeRequired = passwordChangeRequired;
+    }
+
+    public Set<Role> getAllRoles() {
+        return allRoles;
+    }
+
+    public void setAllRoles(Set<Role> allRoles) {
+        this.allRoles = allRoles;
     }
 
     public boolean isReceiveEmail() {

@@ -3,6 +3,7 @@ package com.myee.tarot.web.admin.controller;
 import com.alibaba.fastjson.JSON;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.core.Constants;
+import com.myee.tarot.merchant.domain.MerchantStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +40,7 @@ public class AdminController {
         entry.put("qiniuCdn",qiniuCdn);
 		entry.put("maxUploadSize",maxUploadSize);
         entry.put("userName",((AdminUser)request.getSession().getAttribute(Constants.ADMIN_USER)).getLogin());
+        entry.put("thisStoreName", ((MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE)).getName());
         entry.put(RESPONSE_ACCESS_DENI_NAME,RESPONSE_ACCESS_DENI);
         mv.addObject("downloadBase", JSON.toJSON(entry));
         return mv;

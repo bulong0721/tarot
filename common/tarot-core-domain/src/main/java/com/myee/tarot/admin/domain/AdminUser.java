@@ -54,15 +54,15 @@ public class AdminUser extends GenericEntity<Long, AdminUser> {
     @Column(name = "LOGIN_IP", length = 20)
     protected String loginIP;
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = MerchantStore.class)
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = MerchantStore.class)
     @JoinTable(name = "C_ADMIN_USER_MERCHANT_STORE_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "STORE_ID", referencedColumnName = "STORE_ID"))
     protected Set<MerchantStore> allMerchantStores = new HashSet<MerchantStore>();
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminRole.class)
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = AdminRole.class)
     @JoinTable(name = "C_ADMIN_USER_ROLE_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"))
     protected Set<AdminRole> allRoles = new HashSet<AdminRole>();
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermission.class)
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = AdminPermission.class)
     @JoinTable(name = "C_ADMIN_USER_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
     protected Set<AdminPermission> allPermissions = new HashSet<AdminPermission>();
 

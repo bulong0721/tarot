@@ -678,7 +678,12 @@ angular
     .run(function ($rootScope, $state) {
         $rootScope.storeInfo = {};
         $rootScope.$state = $state;
-        $rootScope.baseUrl={pushUrl:baseUrl.pushUrl,qiniuCdn:baseUrl.qiniuCdn,userName:baseUrl.userName};
+        $rootScope.baseUrl={
+            pushUrl:baseUrl.pushUrl,
+            qiniuCdn:baseUrl.qiniuCdn,
+            userName:baseUrl.userName,
+            thisStoreName:baseUrl.thisStoreName
+        };
         $rootScope.lang_zh = {
             edit:"编辑",
             update:"保存",
@@ -697,6 +702,8 @@ angular
             contentDetail:"内容详细",
             flowDetail:"引流详细",
             flowSet:"设置引流",
+            thisShop:"当前切换的门店",
+            switch:"切换",
             noDeleteThisShop:"当前切换的门店，不能删除",
             noDeleteThisMerchant:"当前切换的门店所属的商户，不能删除",
             noDeleteThisUser:"当前登录的用户，不能删除",
