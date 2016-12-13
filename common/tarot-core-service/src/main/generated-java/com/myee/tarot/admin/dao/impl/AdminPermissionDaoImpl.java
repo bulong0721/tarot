@@ -28,10 +28,10 @@ public class AdminPermissionDaoImpl extends GenericEntityDaoImpl<Long, AdminPerm
         QAdminPermission qAdminPermission = QAdminPermission.adminPermission;
         JPQLQuery<AdminPermission> query = new JPAQuery(getEntityManager());
         query.from(qAdminPermission);
-        if (isFriendly != null && isFriendly.equals(Constants.PERMISSION_ONLY_ADMIN)) {
-            query.where(qAdminPermission.isFriendly.eq(true).or(qAdminPermission.isFriendly.eq(false)));
+        if (isFriendly != null && isFriendly.equals(Constants.PERMISSION_FOR_ADMIN)) {
+            query.where(qAdminPermission.isFriendly.eq(Constants.PERMISSION_FOR_ADMIN).or(qAdminPermission.isFriendly.eq(Constants.PERMISSION_FOR_CUSTOMER)));
         } else {
-            query.where(qAdminPermission.isFriendly.eq(true));
+            query.where(qAdminPermission.isFriendly.eq(Constants.PERMISSION_FOR_CUSTOMER));
         }
         query.where(qAdminPermission.type.eq(Constants.PERMISSION_TYPE_ALL));
         return query.fetch();

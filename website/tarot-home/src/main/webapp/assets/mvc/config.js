@@ -595,6 +595,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 subTitle: '普通用户',
                 datatable: 'assets/mvc/user/view/customer_datatable.html',
                 editor: 'assets/mvc/user/view/customer_editor.html',
+                other3: 'assets/mvc/user/view/admin_persmission.html',
                 other1: 'assets/mvc/user/view/bind_store.html'
             },
             resolve: {
