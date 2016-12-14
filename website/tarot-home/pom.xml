@@ -133,5 +133,12 @@
                 <final.name>tarot_test</final.name>
             </properties>
         </profile>
+        <profile>
+            <id>liantiao</id>
+            <properties>
+                <runtime.env>src/main/profiles/liantiao</runtime.env>
+                <final.name>tarot_test</final.name>
+            </properties>
+        </profile>
     </profiles>
 </project>
