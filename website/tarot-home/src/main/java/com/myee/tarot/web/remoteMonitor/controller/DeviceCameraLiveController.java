@@ -89,17 +89,17 @@ public class DeviceCameraLiveController {
                 if(LOGGER.isDebugEnabled()){
                     LOGGER.info("板号："+ boardNo + "正在开启推流");
                 }
-                bool = endpointInterface.liveNetwork(pushUrl, LiveNetworkEventType.CONNECT);
+//                bool = endpointInterface.liveNetwork(pushUrl, LiveNetworkEventType.CONNECT);
             }else if(action == Constants.RTMP_STOP) {
                 if(LOGGER.isDebugEnabled()){
                     LOGGER.info("板号："+ boardNo + "正在关闭推流");
                 }
-                bool = endpointInterface.liveNetwork(pushUrl, LiveNetworkEventType.CLOSE);
+//                bool = endpointInterface.liveNetwork(pushUrl, LiveNetworkEventType.CLOSE);
             }else {
                 if(LOGGER.isDebugEnabled()){
                     LOGGER.info("板号："+ boardNo + "正在更新推流time");
                 }
-                bool = endpointInterface.liveNetwork(pushUrl, LiveNetworkEventType.UPDATETIME);
+//                bool = endpointInterface.liveNetwork(pushUrl, LiveNetworkEventType.UPDATETIME);
             }
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
             System.out.print(bool);
