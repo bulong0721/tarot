@@ -116,7 +116,7 @@
             <id>devtest</id>
             <properties>
                 <runtime.env>src/main/profiles/devtest</runtime.env>
-                <final.name>tarot</final.name>
+                <final.name>tarot_test</final.name>
             </properties>
         </profile>
         <profile>
