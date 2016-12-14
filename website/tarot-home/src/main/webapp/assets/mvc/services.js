@@ -641,7 +641,7 @@ function cResource($resource,$filter,$q){
     function transformResponse(data, headers,state){
         //if(state == 200 && headers('content-type') !== 'application/json;charset=UTF-8' && headers('content-type') !== 'application/json;charset=utf-8'){
         if(state == 200 && headers('content-type') == 'text/html;charset=UTF-8'){
-            window.location.href="/admin/login.html";
+            window.location.href=baseUrl.sessionTimeoutUrl;
             return false;
         }else if(state == 500){
             console.log('联系管理员');
