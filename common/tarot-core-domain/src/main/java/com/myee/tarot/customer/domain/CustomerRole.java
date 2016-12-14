@@ -9,7 +9,7 @@ import javax.persistence.*;
  * Created by Martin on 2016/4/14.
  */
 @Entity
-@Table(name = "C_CUSTOMER_ROLE")
+@Table(name = "C_CUSTOMER_ROLE") //这个表用C_CUSTOMER_ROLE_XREF代替
 public class CustomerRole extends GenericEntity<Long, CustomerRole> {
     @Id
     @Column(name = "CUSTOMER_ROLE_ID", unique = true, nullable = false)

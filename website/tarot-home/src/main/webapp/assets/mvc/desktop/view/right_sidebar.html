@@ -11,8 +11,8 @@
             <div class="ibox-content">
                 <div class="form-group">
                     <div class="input-group col-md-9">
-                        <input type="text" class="form-control" ng-model="where.queryName" placeholder="输入门店名搜索" ng-keyup="search($event)">
-                        <span class="input-group-btn"> <button type="button" class="btn btn-primary" ng-click="search()">搜索</button> </span>
+                        <input type="text" class="form-control" ng-keyup="filterBindOptions()" ng-model="where.queryName" placeholder="输入门店名搜索">
+                        <!--<span class="input-group-btn"> <button type="button" class="btn btn-primary" ng-click="search()">搜索</button> </span>-->
                     </div>
                 </div>
                 <div class="fixed-table-container" ng-table="tableOpts">
@@ -32,12 +32,16 @@
                                     <td colspan="10" class="center" ng-if="$data.length<=0">没有查找到数据</td>
                                 </tr>
                                 <tr ng-repeat="row in $data">
-                                    <td><a ng-click="switch($index)">{{::row.name}}</a></td>
+                                    <td>
+                                        <a ng-click="switch($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.switch}}" ng-if="row.name != merchantStoreSelect.name">{{::row.name}}</a>
+                                        <span ng-if="row.name == merchantStoreSelect.name" tooltip-placement="top" uib-tooltip="{{lang_zh.thisShop}}">{{::row.name}}</span>
+                                    </td>
                                     <td>{{::row.code}}</td>
                                     <td>{{::row.address.city.name}}</td>
                                     <td><div class="cropLongString">{{::row.address.address}}</div></td>
                                     <td class="center">
-                                    <a ng-click="switch($index)"><i class="btn-icon fa fa-exchange "></i></a>
+                                        <a ng-click="switch($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.switch}}" ng-if="row.name != merchantStoreSelect.name"><i class="btn-icon fa fa-exchange "></i></a>
+                                        <i class="btn-icon fa fa-ban" tooltip-placement="top" uib-tooltip="{{lang_zh.thisShop}}" ng-if="row.name == merchantStoreSelect.name"></i>
                                     </td>
                                 </tr>
                             </tbody>

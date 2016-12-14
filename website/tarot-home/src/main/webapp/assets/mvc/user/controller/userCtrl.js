@@ -87,6 +87,7 @@ function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTabl
     vm.selectAll = false;
     vm.toggleAll = toggleAll;
     vm.toggleOne = toggleOne;
+    $scope.thisUserDefaultStoreName = '';//当前用户所属门店，绑定时排除
 
     function toggleAll(selectAll, selectedItems) {
         for (var id in selectedItems) {
@@ -130,29 +131,37 @@ function userMgrCtrl($scope, cTables, cfromly, $rootScope, $q, cResource, NgTabl
             var deferred = $q.defer();
             deferred.resolve($scope.initalBindProductList);
             return deferred.promise;
-        } else {//第一次需要从后台读取列表，且只返回前10个数据
+        } else {//第一次需要从后台读取列表
             return cResource.get('./merchantStore/getAllStoreExceptSelf').then(function(data){
                 //初始化showCase.selected数组，给全选框用，让它知道应该全选哪些
+                var result = []; //排除当前用户所属门店
                 angular.forEach(data.rows, function (indexData, index, array) {
                     //indexData等价于array[index]
                     $scope.showCase.selected[indexData.id] = false;
+                    if( indexData.name != $scope.thisUserDefaultStoreName ) {
+                        result.push(indexData);
+                    }
                 });
-                $scope.initalBindProductList = data.rows;
+                $scope.initalBindProductList = result;
 
-                return data.rows;
+                return result;
             });
         }
     }
 
     $scope.goBindStorePermit = function(rowIndex){
+        //进入绑定页面前，赋值用户所属门店
+        if ($scope.tableOpts && rowIndex > -1) {
+            var data = $scope.tableOpts.data[rowIndex];
+            $scope.thisUserDefaultStoreName = data.storeName;
+        }
+
         initalBindProduct().then(function () {
             $scope.filterBindOptions().then(function () {
                 $scope.addNew = true;
 
                 if ($scope.tableOpts && rowIndex > -1) {
                     $scope.showCase.currentRowIndex = rowIndex;//记录当前选择的行，以备后续更新该行数据
-
-                    var data = $scope.tableOpts.data[rowIndex];
                     $scope.formBindData.model = data;
                     $scope.formBindData.model.bindShowName = '昵称:' + (data.name || "") + ' | 登录名:' + (data.login || "");
 

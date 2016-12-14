@@ -259,6 +259,7 @@ public class AdminUserController {
         entry.put("username", customer.getUsername());
         entry.put("receiveEmail", customer.isReceiveEmail());
         entry.put("deactivated", customer.isDeactivated());
+        entry.put("storeName", customer.getMerchantStore().getName());
         entry.put("storeList",customer.getAllMerchantStores());
         return entry;
     }
@@ -499,11 +500,14 @@ public class AdminUserController {
                 return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"参数不正确");
             }
             List<Long> bindList = JSON.parseArray(bingString, Long.class);
-            List<MerchantStore> merchantStores = merchantStoreService.listByIds(bindList);
             Set<MerchantStore> merchantStoreSet = null;
-            if (merchantStores != null) {
-                merchantStoreSet = Sets.newHashSet(merchantStores);
+            if(bindList != null && bindList.size() > 0) {
+                List<MerchantStore> merchantStores = merchantStoreService.listByIds(bindList);
+                if (merchantStores != null) {
+                    merchantStoreSet = Sets.newHashSet(merchantStores);
+                }
             }
+
             customer.setAllMerchantStores(merchantStoreSet);
             customer = customerService.update(customer);
             resp = AjaxResponse.success();
@@ -525,11 +529,14 @@ public class AdminUserController {
                 return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"参数不正确");
             }
             List<Long> bindList = JSON.parseArray(bingString, Long.class);
-            List<MerchantStore> merchantStores = merchantStoreService.listByIds(bindList);
             Set<MerchantStore> merchantStoreSet = null;
-            if (merchantStores != null) {
-                merchantStoreSet = Sets.newHashSet(merchantStores);
+            if(bindList != null && bindList.size() > 0) {
+                List<MerchantStore> merchantStores = merchantStoreService.listByIds(bindList);
+                if (merchantStores != null) {
+                    merchantStoreSet = Sets.newHashSet(merchantStores);
+                }
             }
+
             adminUser.setAllMerchantStores(merchantStoreSet);
             adminUser = userService.update(adminUser);
             resp = AjaxResponse.success();

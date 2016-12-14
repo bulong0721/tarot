@@ -98,15 +98,17 @@ function showThisMerchant(Constants,$rootScope) {
 /**
  * switchMerchant
  */
-function switchMerchant(Constants,$resource,$state,$rootScope,NgTableParams,toaster,$q) {
+function switchMerchant(Constants,$resource,$state,$rootScope,NgTableParams,toaster,$q,$filter) {
     return {
         link:function($scope){
 
             $scope.mgrData = {
                 api: {
-                    read: 'merchantStore/list',
+                    read: 'merchantStore/listSwitch',
                 }
             };
+
+            $scope.merchantStoreSelect = {name:baseUrl.thisStoreName} ;
 
             //初始化搜索配置
             $scope.where = {};
@@ -133,51 +135,96 @@ function switchMerchant(Constants,$resource,$state,$rootScope,NgTableParams,toas
             };
 
             //tables获取数据
-            $scope.tableOpts = new NgTableParams({}, {
-                counts: [],
-                getData: function (params) {
-                    if (!$scope.loadByInit) {
-                        return [];
-                    }
-                    var xhr = $resource($scope.mgrData.api.read);
-                    var args = angular.extend(params.url(), $scope.where);
-
-                    return xhr.get(args).$promise.then(function (data) {
-                        if (0 != data.status) {
-                            toaster.error({ body:"出错啦！"+resp.statusMessage});
-                            return;
-                        }
-                        //console.log($rootScope.storeInfo.firstSwitch)
-                        if($rootScope.storeInfo.firstSwitch){//第一次不弹提示,把标记位改变
-                            $rootScope.storeInfo.firstSwitch = false;
-                        }
-                        else{
-                            toaster.success({ body:"查询成功"});
-                        }
-
-                        params.total(data.recordsTotal);
-                        return data.rows;
-                    });
-                }
-            });
-
-            //搜索tables的数据
-            $scope.search = function (e) {
-                //回车(enter)判断
-                if(e){if((window.event?e.keyCode:e.which)!=13){return false;}}
+            $scope.filterBindOptions = function () {
+                var deferred = $q.defer();
+                //tables获取数据,获取可绑定的所有门店
+                $scope.tableOpts = new NgTableParams({}, {
+                    counts: [],
+                    dataset: $filter('filter')($scope.initalBindProductList, $scope.where.queryName || "")//根据搜索字段过滤数组中数据
+                });
                 $scope.loadByInit = true;
                 $scope.tableOpts.page(1);
                 $scope.tableOpts.reload();
-            };
+                deferred.resolve($scope.tableOpts);
+                return deferred.promise;
+            }
+
+            function initalBindProduct() {
+                //if ($scope.initalBindProductList) {//如果已经从后台读取过数据了，则不再访问后台获取列表
+                //    var deferred = $q.defer();
+                //    deferred.resolve($scope.initalBindProductList);
+                //    return deferred.promise;
+                //} else {//第一次需要从后台读取列表
+                    return $resource($scope.mgrData.api.read).get().$promise.then(function(data){
+                        //初始化showCase.selected数组，给全选框用，让它知道应该全选哪些
+                        $scope.initalBindProductList = data.rows;
+                        return data.rows;
+                    });
+                //}
+            }
+
+            $scope.goSwitch = function() {
+                initalBindProduct().then(function () {
+                    $scope.filterBindOptions().then(function () {
+                        $scope.loadByInit = true;
+                        $scope.tableOpts.page(1);
+                        $scope.tableOpts.reload();
+                    });
+                });
+            }
+
+            //$scope.tableOpts = new NgTableParams({}, {
+            //    counts: [],
+            //    getData: function (params) {
+            //        if (!$scope.loadByInit) {
+            //            return [];
+            //        }
+            //        var xhr = $resource($scope.mgrData.api.read);
+            //        var args = angular.extend(params.url(), $scope.where);
+            //
+            //        return xhr.get(args).$promise.then(function (data) {
+            //            if (0 != data.status) {
+            //                toaster.error({ body:"出错啦！"+resp.statusMessage});
+            //                return;
+            //            }
+            //            //console.log($rootScope.storeInfo.firstSwitch)
+            //            if($rootScope.storeInfo.firstSwitch){//第一次不弹提示,把标记位改变
+            //                $rootScope.storeInfo.firstSwitch = false;
+            //            }
+            //            else{
+            //                toaster.success({ body:"查询成功"});
+            //            }
+            //
+            //            params.total(data.recordsTotal);
+            //            return data.rows;
+            //        });
+            //    }
+            //});
+
+            //搜索tables的数据
+            //$scope.search = function (e) {
+            //    //回车(enter)判断
+            //    if(e){if((window.event?e.keyCode:e.which)!=13){return false;}}
+            //    //$scope.loadByInit = true;
+            //    //$scope.tableOpts.page(1);
+            //    //$scope.tableOpts.reload();
+            //    $scope.goSwitch();
+            //};
 
             //监听第一次点击切换门店，执行初始化搜索一次，执行完销毁该函数
-            $scope.watchFirstSwitch = $scope.$watch('storeInfo.firstSwitch',function(newValue,oldValue){
+            //$scope.watchFirstSwitch = $scope.$watch('storeInfo.firstSwitch',function(newValue,oldValue){
+            //    if(newValue){
+            //        $scope.search();
+            //        $scope.watchFirstSwitch = null;
+            //    }
+            //});
+
+            //监听打开切换门店页面，每次打开就搜索一次
+            $scope.$watch('rightSidebar',function(newValue,oldValue){
                 if(newValue){
-                    $scope.search();
-                    $scope.watchFirstSwitch = null;
+                    $scope.goSwitch();
                 }
             });
-
         }
     };
 }
