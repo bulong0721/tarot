@@ -163,6 +163,16 @@ public class AdminUserController {
         entry.put("loginIP", user.getLoginIP());
         entry.put("storeName", user.getMerchantStore().getName());
         entry.put("storeList",user.getAllMerchantStores());
+        Set<AdminPermission> permissionSet = user.getAllPermissions();
+        if (permissionSet != null) {
+            for (AdminPermission adminPermission : permissionSet) {
+                adminPermission.setAllUsers(null);
+                adminPermission.setAllRoles(null);
+                adminPermission.setAllChildPermissions(null);
+                adminPermission.setAllParentPermissions(null);
+            }
+            entry.put("storePermissionList", permissionSet);
+        }
         return entry;
     }
 
@@ -396,33 +406,27 @@ public class AdminUserController {
         LOGGER.error(ex.getMessage(), ex);
     }
 
-    @RequestMapping(value = "listPermission/list", method = RequestMethod.POST)
+    @RequestMapping(value = "admin/listPermission/list", method = RequestMethod.GET)
     @ResponseBody
-    public AjaxResponse listAllPermissions(@RequestParam(value = "isFriendly")Boolean isFriendly, @RequestParam(value = "userId")Long userId, HttpServletRequest request) {
+    public AjaxResponse listAllPermissions(@RequestParam String isFriendly, HttpServletRequest request) {
         AjaxResponse resp = new AjaxResponse();
-        List<AdminPermission> permissionList = adminPermissionService.listAllPermissions(isFriendly);
-        AdminUser user = userService.findById(userId);
-        Set<AdminPermission> adminPermissions = user.getAllPermissions();
-        Set<AdminPermission> checkedParentPermissionItems = Sets.newHashSet();
-        for (AdminPermission adminPermission : adminPermissions) {
-            getAllParentPermission(checkedParentPermissionItems, adminPermission);
+        Boolean isFriendlyBoolean;
+        if (isFriendly.equals("true")) {
+            isFriendlyBoolean = true;
+        } else {
+            isFriendlyBoolean = false;
         }
+        List<AdminPermission> permissionList = adminPermissionService.listAllPermissions(isFriendlyBoolean);
         for (AdminPermission permission : permissionList) {
-            resp.addDataEntry(objectToEntry(permission, adminPermissions, checkedParentPermissionItems, isFriendly));
+            resp.addDataEntry(objectToEntry(permission,isFriendlyBoolean));
         }
         return resp;
     }
 
     //把类转换成entry返回给前端，解耦和
-    private Map objectToEntry(AdminPermission adminPermission, Set setChildChecked, Set parentChecked, Boolean isFriendly) {
+    private Map objectToEntry(AdminPermission adminPermission, Boolean isFriendly) {
         Map entry = new HashMap();
         if (isFriendly) {
-            if (setChildChecked.contains(adminPermission)) {
-                entry.put("checked", true);
-            }
-            if (parentChecked.contains(adminPermission)) {
-                entry.put("checked", true);
-            }
             entry.put("id", adminPermission.getId());
             entry.put("name", adminPermission.getDescription());
             entry.put("isFriendly", adminPermission.isFriendly());
@@ -438,18 +442,12 @@ public class AdminUserController {
             if(adminPermissionListChild != null && adminPermissionListChild.size() >0) {
                 permissionChildListResult = new ArrayList<Map>();
                 for( AdminPermission permission : adminPermissionListChild ) {
-                    permissionChildListResult.add(objectToEntry(permission, setChildChecked, parentChecked, isFriendly));
+                    permissionChildListResult.add(objectToEntry(permission, isFriendly));
                 }
             }
             entry.put("children",permissionChildListResult);
         } else {
             if (adminPermission.isFriendly() == isFriendly) {
-                if (setChildChecked.contains(adminPermission)) {
-                    entry.put("checked", true);
-                }
-                if (parentChecked.contains(adminPermission)) {
-                    entry.put("checked", true);
-                }
                 entry.put("id", adminPermission.getId());
                 entry.put("name", adminPermission.getDescription());
                 entry.put("isFriendly", adminPermission.isFriendly());
@@ -468,26 +466,13 @@ public class AdminUserController {
                         if (permission.isFriendly() != isFriendly) {
                             continue;
                         }
-                        permissionChildListResult.add(objectToEntry(permission, setChildChecked, parentChecked, isFriendly));
+                        permissionChildListResult.add(objectToEntry(permission, isFriendly));
                     }
                 }
                 entry.put("children",permissionChildListResult);
             }
         }
         return entry;
-    }
-
-    /**
-     * 获取所有父权限
-     * @param set
-     * @param adminPermission
-     */
-    private void getAllParentPermission(Set<AdminPermission> set, AdminPermission adminPermission) {
-        List<AdminPermission> adminPermissionList = adminPermission.getAllParentPermissions();
-        set.addAll(adminPermissionList);
-        for (AdminPermission p : adminPermissionList) {
-            getAllParentPermission(set, p);
-        }
     }
 
     @RequestMapping(value = "admin/customers/bindMerchantStore", method = RequestMethod.POST)
