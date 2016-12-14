@@ -680,6 +680,7 @@ angular
         $rootScope.$state = $state;
         $rootScope.baseUrl={
             pushUrl:baseUrl.pushUrl,
+            sessionTimeoutUrl:baseUrl.sessionTimeoutUrl,
             qiniuCdn:baseUrl.qiniuCdn,
             userName:baseUrl.userName,
             thisStoreName:baseUrl.thisStoreName

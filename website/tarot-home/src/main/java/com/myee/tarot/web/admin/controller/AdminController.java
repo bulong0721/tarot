@@ -31,18 +31,21 @@ public class AdminController {
     private int RESPONSE_ACCESS_DENI;
     @Value("${response.accessDeniName}")
     private String RESPONSE_ACCESS_DENI_NAME;
+    @Value("${response.sessionTimeOutUrlAdmin}")
+    private String RESPONSE_SESSION_TIMEOUT_URL_ADMIN;
 
     @RequestMapping(value = {"admin/home.html", "admin/", "admin","admin/home"}, method = RequestMethod.GET)
     public ModelAndView displayDashboard(HttpServletRequest request, HttpServletResponse response) throws Exception {
         ModelAndView mv = new ModelAndView("admin/home");
         Map<String,Object> entry = new HashMap<String ,Object>();
-        entry.put("pushUrl",pushUrl);
-        entry.put("qiniuCdn",qiniuCdn);
-		entry.put("maxUploadSize",maxUploadSize);
-        entry.put("userName",((AdminUser)request.getSession().getAttribute(Constants.ADMIN_USER)).getLogin());
-        entry.put("thisStoreName", ((MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE)).getName());
+        entry.put(Constants.RESPONSE_PUSH_URL,pushUrl);
+        entry.put(Constants.RESPONSE_QINIU_CDN,qiniuCdn);
+		entry.put(Constants.RESPONSE_MAX_UPLOAD_SIZE,maxUploadSize);
+        entry.put(Constants.RESPONSE_SESSION_TIMEOUT_URL,RESPONSE_SESSION_TIMEOUT_URL_ADMIN);
+        entry.put(Constants.RESPONSE_USERNAME,((AdminUser)request.getSession().getAttribute(Constants.ADMIN_USER)).getLogin());
+        entry.put(Constants.RESPONSE_THIS_STORE_NAME, ((MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE)).getName());
         entry.put(RESPONSE_ACCESS_DENI_NAME,RESPONSE_ACCESS_DENI);
-        mv.addObject("downloadBase", JSON.toJSON(entry));
+        mv.addObject(Constants.RESPONSE_DOWNLOAD_BASE, JSON.toJSON(entry));
         return mv;
     }
 

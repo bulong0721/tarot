@@ -14,6 +14,14 @@ public class Constants {
 	public final static String SHOP_URI               = "/shop";
 	public final static String ACCESS_DENI_MESSAGE    = "detailMessage";
 
+	public final static String RESPONSE_PUSH_URL    = "pushUrl";
+	public final static String RESPONSE_QINIU_CDN    = "qiniuCdn";
+	public final static String RESPONSE_MAX_UPLOAD_SIZE    = "maxUploadSize";
+	public final static String RESPONSE_USERNAME    = "userName";
+	public final static String RESPONSE_THIS_STORE_NAME    = "thisStoreName";
+	public final static String RESPONSE_SESSION_TIMEOUT_URL    = "sessionTimeoutUrl";
+	public final static String RESPONSE_DOWNLOAD_BASE    = "downloadBase";
+
 	public static final String ALL_REGIONS = "*";
 
 	public final static String DEFAULT_DATE_FORMAT      = "yyyy-MM-dd";
