@@ -119,4 +119,20 @@ public class AdminPermission extends GenericEntity<Long, AdminPermission> {
     public Set<AdminUser> getAllUsers() {
         return allUsers;
     }
+
+    public void setAllRoles(Set<AdminRole> allRoles) {
+        this.allRoles = allRoles;
+    }
+
+    public void setAllUsers(Set<AdminUser> allUsers) {
+        this.allUsers = allUsers;
+    }
+
+    public void setAllChildPermissions(List<AdminPermission> allChildPermissions) {
+        this.allChildPermissions = allChildPermissions;
+    }
+
+    public void setAllParentPermissions(List<AdminPermission> allParentPermissions) {
+        this.allParentPermissions = allParentPermissions;
+    }
 }

@@ -503,14 +503,14 @@ public class DeviceController {
         entry.put("deviceNum", deviceUsed.getDeviceNum());
         entry.put("description", deviceUsed.getDescription());
         entry.put("phone", deviceUsed.getPhone());
-
-        if (deviceUsed.getProductUsed() != null) {
-            for (ProductUsed productUsed : deviceUsed.getProductUsed()) {
+        List<ProductUsed> productUsedList = deviceUsed.getProductUsed();
+        if (productUsedList != null) {
+            for (ProductUsed productUsed : productUsedList) {
                 productUsed.setDeviceUsed(null);
                 productUsed.setAttributes(null);
             }
         }
-        entry.put("productUsedList", deviceUsed.getProductUsed());
+        entry.put("productUsedList", productUsedList);
 
         //把device的属性作为公共属性传到前端
 //        List<AttributeDTO> attributeDTOs = Lists.transform(deviceUsed.getDevice().getAttributes(), new Function<DeviceAttribute, AttributeDTO>() {
