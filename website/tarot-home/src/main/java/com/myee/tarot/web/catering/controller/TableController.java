@@ -208,18 +208,21 @@ public class TableController {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) o;
-            if (!merchantStore1.getId().equals(zone.getStore().getId())) {
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "要删除的区域不属于与当前切换的门店");
-                return resp;
-            }
+
             if (zone.getId() == null || StringUtil.isNullOrEmpty(zone.getId().toString())) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("参数错误");
                 return resp;
             }
             TableZone tableZone = zoneService.findById(zone.getId());
-
+            if(tableZone == null){
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "要删除的区域不存在");
+            }
+            MerchantStore merchantStore1 = (MerchantStore) o;
+            if (!merchantStore1.getId().equals(tableZone.getStore().getId())) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "要删除的区域不属于与当前切换的门店");
+                return resp;
+            }
             zoneService.delete(tableZone);
             return AjaxResponse.success();
         } catch (Exception e) {
@@ -257,7 +260,7 @@ public class TableController {
 
             return resp;
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(),e);
+            LOGGER.error(e.getMessage(), e);
             return resp;
         }
     }
@@ -415,7 +418,7 @@ public class TableController {
                 return "";
             }
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(),e);
+            LOGGER.error(e.getMessage(), e);
             return "";
         }
     }
@@ -431,18 +434,21 @@ public class TableController {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) o;
-            if (!merchantStore1.getId().equals(table.getStore().getId())) {
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "要删除的餐桌不属于与当前切换的门店");
-                return resp;
-            }
+
             if (table.getId() == null || StringUtil.isNullOrEmpty(table.getId().toString())) {
                 resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                 resp.setErrorString("参数错误");
                 return resp;
             }
             Table table1 = tableService.findById(table.getId());
-
+            if(table1 == null) {
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "要删除的餐桌不存在");
+            }
+            MerchantStore merchantStore1 = (MerchantStore) o;
+            if (!merchantStore1.getId().equals(table1.getStore().getId())) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "要删除的餐桌不属于与当前切换的门店");
+                return resp;
+            }
             tableService.delete(table1);
             return AjaxResponse.success();
         } catch (Exception e) {

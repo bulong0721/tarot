@@ -421,16 +421,17 @@ public class DeviceController {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) o;
-            if (!merchantStore1.getId().equals(deviceUsed.getStore().getId())) {
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "要删除的设备不属于与当前切换的门店");
-                return resp;
-            }
             DeviceUsed deviceUsed1 = deviceUsedService.findById(deviceUsed.getId());
 
             if (deviceUsed1.getProductUsed() != null && deviceUsed1.getProductUsed().size() > 0) {
                 return AjaxResponse.failed(-1, "已有关联设备组，无法删除！请取消关联后重试。");
             }
+            MerchantStore merchantStore1 = (MerchantStore) o;
+            if (!merchantStore1.getId().equals(deviceUsed1.getStore().getId())) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "要删除的设备不属于与当前切换的门店");
+                return resp;
+            }
+
 
             //先手动删除所有该对象关联的属性，再删除该对象。因为关联关系是属性多对一该对象，关联字段放在属性表里，不能通过删对象级联删除属性。
             deviceUsedAttributeService.deleteByDeviceUsedId(deviceUsed.getId());
@@ -809,19 +810,21 @@ public class DeviceController {
                 resp.setErrorString("请先切换门店");
                 return resp;
             }
-            MerchantStore merchantStore1 = (MerchantStore) o;
-            if (!merchantStore1.getId().equals(productUsed.getStore().getId())) {
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "要删除的设备组不属于与当前切换的门店");
-                return resp;
-            }
             ProductUsed productUsed1 = productUsedService.findById(productUsed.getId());
+            if(productUsed1 == null) {
+                return AjaxResponse.failed(-1, "设备组不存在。");
+            }
             if (productUsed1.getDeviceUsed() != null && productUsed1.getDeviceUsed().size() > 0) {
                 return AjaxResponse.failed(-1, "已有关联设备，无法删除！请取消关联后重试。");
+            }
+            MerchantStore merchantStore1 = (MerchantStore) o;
+            if (!merchantStore1.getId().equals(productUsed1.getStore().getId())) {
+                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE, "要删除的设备组不属于与当前切换的门店");
+                return resp;
             }
 
             //先手动删除所有该对象关联的属性，再删除该对象。因为关联关系是属性多对一该对象，关联字段放在属性表里，不能通过删对象级联删除属性。
             productUsedAttributeService.deleteByProductUsedId(productUsed.getId());
-
 
             productUsedService.delete(productUsed1);
             return AjaxResponse.success();
