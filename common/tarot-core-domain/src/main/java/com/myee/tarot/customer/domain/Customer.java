@@ -1,12 +1,12 @@
 package com.myee.tarot.customer.domain;
 
+import com.myee.tarot.admin.domain.AdminPermission;
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.core.audit.Auditable;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.profile.domain.Locale;
 import com.myee.tarot.profile.domain.Role;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.*;
@@ -89,6 +89,10 @@ public class Customer extends GenericEntity<Long, Customer> {
     @ManyToMany(fetch = FetchType.EAGER, targetEntity = Role.class)
     @JoinTable(name = "C_CUSTOMER_ROLE_XREF", joinColumns = @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "CUSTOMER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID", referencedColumnName = "ROLE_ID"))
     protected Set<Role> allRoles = new HashSet<Role>();
+
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = AdminPermission.class)
+    @JoinTable(name = "C_CUSTOMER_PERMISSION_XREF", joinColumns = @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "CUSTOMER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
+    protected Set<AdminPermission> allPermissions = new HashSet<AdminPermission>();
 
     @Column(name = "TAX_EXEMPTION_CODE")
     protected String taxExemptionCode;
@@ -326,6 +330,14 @@ public class Customer extends GenericEntity<Long, Customer> {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Set<AdminPermission> getAllPermissions() {
+        return allPermissions;
+    }
+
+    public void setAllPermissions(Set<AdminPermission> allPermissions) {
+        this.allPermissions = allPermissions;
     }
 
     @Override

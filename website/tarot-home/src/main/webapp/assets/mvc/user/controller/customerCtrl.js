@@ -46,7 +46,8 @@ function customerMgrCtrl($scope, cTables, cResource,$filter,$q,cfromly,NgTablePa
         ],
         api: {
             read: '../admin/customers/paging',
-            update: '../admin/customers/save'
+            update: '../admin/customers/save',
+            delete: '../admin/customers/delete'
         }
     };
 
@@ -57,23 +58,63 @@ function customerMgrCtrl($scope, cTables, cResource,$filter,$q,cfromly,NgTablePa
     //打开分配权限界面
     $scope.assignPermission = function (rowIndex) {
         var data = $scope.treeData;
-        iEditor = 4;
+        iPermission = 4;
         if (rowIndex > -1) {
             var data = $scope.tableOpts.data[rowIndex];
             $scope.formBindData.model = data;
-            $scope.rowIndex = rowIndex;
-            cResource.save('../listPermission/list',{
-                isFriendly: false,
-                userId : $scope.formBindData.model.id
-            }, {}).then(function(resp){
-                $scope.treeData = resp.rows;
+            initalBindPermissions().then(function (resp) {
+                var idsArr = [];
+                $scope.showCase.currentRowIndex = rowIndex;
+                data = $scope.tableOpts.data[$scope.showCase.currentRowIndex];
+                if (data.storePermissionList != undefined) {
+                    for (var i = 0; i < data.storePermissionList.length; i++) {
+                        idsArr.push(data.storePermissionList[i].id);
+                    }
+                    recursionPermissionList(resp[0], idsArr);
+                } else {
+                    data = $scope.initalBindPermissionList;
+                    recursionAllUnchecked(data[0]);
+                }
             });
-        } else {
-            $scope.formData.model = {};
-            $scope.rowIndex = -1;
         }
-        $scope.activeTab = iEditor;
+        $scope.activeTab = iPermission;
     };
+
+    /* 递归遍历所有权限置为未选中 */
+    function recursionAllUnchecked(branch) {
+        branch.checked = false;
+        if (branch.children != undefined) {
+            for (var ele = 0; ele < branch.children.length; ele++) {
+                recursionAllUnchecked(branch.children[ele]);
+            }
+        }
+    }
+
+    /* 递归所有权限节点，如果在后台传过来的选中list里，就置为选中*/
+    function recursionPermissionList(branch, arrayId) {
+        if ($.inArray(branch.id, arrayId) != -1) {
+            branch.checked = true;
+        } else {
+            branch.checked = false;
+        }
+        if (branch.children != undefined) {
+            for (var ele = 0; ele < branch.children.length; ele++) {
+                recursionPermissionList(branch.children[ele], arrayId);
+            }
+        }
+    }
+
+    /* 递归遍历将选中的权限放array*/
+    function recursionAllCheckedPermission(branch, list) {
+        if (branch.checked == true) {
+            list.push(branch);
+        }
+        if (branch.children != undefined) {
+            for (var ele = 0; ele < branch.children.length; ele++) {
+                recursionAllCheckedPermission(branch.children[ele], list);
+            }
+        }
+    }
 
     //设置可操作门店相关-----------------------------------------------------------------------------------------
     //绑定相关参数
@@ -221,14 +262,20 @@ function customerMgrCtrl($scope, cTables, cResource,$filter,$q,cfromly,NgTablePa
             });
     };
 
+    /* 提交权限绑定*/
     $scope.submitPermission = function () {
         var arraySelected = [];
         var data = $scope.treeData;
         recursionTree(data, arraySelected);
-        cResource.save('./users/bindPermissions',{
+        cResource.save('./customer/bindPermissions',{
             'bindString': JSON.stringify(arraySelected),
-            'userId': $scope.formBindData.model.id
+            'customerId': $scope.formBindData.model.id
         }, {}).then(function(resp){
+            //用js离线刷新表格数据
+            $scope.tableOpts.data[$scope.showCase.currentRowIndex].storePermissionList = [];//先清空
+            var checkedArr = [];
+            recursionAllCheckedPermission($scope.treeData[0], checkedArr);
+            $scope.tableOpts.data[$scope.showCase.currentRowIndex].storePermissionList = checkedArr;
             if (0 != resp.status) {
                 $filter('toasterManage')(5, "绑定失败!",false);
             } else {
@@ -248,5 +295,22 @@ function customerMgrCtrl($scope, cTables, cResource,$filter,$q,cfromly,NgTablePa
                 recursionTree(d.children, arraySelected);
             }
         });
+    }
+
+    /* 初始化绑定权限 */
+    function initalBindPermissions() {
+        if ($scope.initalBindPermissionList) {//如果已经从后台读取过数据了，则不再访问后台获取列表
+            var deferred = $q.defer();
+            deferred.resolve($scope.initalBindPermissionList);
+            return deferred.promise;
+        } else {//第一次需要从后台读取列表，且只返回前10个数据
+            return cResource.get('./listPermission/list',{
+                isFriendly: true
+            }).then(function(data){
+                $scope.treeData = data.rows;
+                $scope.initalBindPermissionList = data.rows;
+                return data.rows;
+            });
+        }
     }
 }

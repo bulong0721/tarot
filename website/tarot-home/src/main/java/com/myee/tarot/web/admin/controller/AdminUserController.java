@@ -83,8 +83,8 @@ public class AdminUserController {
     @RequestMapping(value = "admin/users/save", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse addUser(@RequestBody AdminUser user, HttpServletRequest request) throws Exception {
-        AjaxResponse resp = new AjaxResponse();
-        MerchantStore merchantStore1 = null;
+        AjaxResponse resp;
+        MerchantStore merchantStore1;
         if (null != user.getId()) {
             AdminUser dbUser = userService.findById(user.getId());
             dbUser.setName(user.getName());
@@ -105,14 +105,17 @@ public class AdminUserController {
         }
 
         //校验登录名不能重复
-        AdminUser adminUser = userService.getByUserName(user.getLogin());
+        AdminUser adminUser = userService.getByLogin(user.getLogin());
         if (adminUser != null && !adminUser.getId().equals(user.getId())) {
-            resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-            resp.setErrorString("错误:重复的登录名，请修改后重新提交");
-            return resp;
+            return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"错误:重复的登录名，请修改后重新提交");
         }
 
-        user = userService.update(user);
+        try {
+            user = userService.update(user);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"错误");
+        }
         resp = AjaxResponse.success();
         resp.addEntry("updateResult", objectToEntry(user));
         return resp;
@@ -161,16 +164,18 @@ public class AdminUserController {
         entry.put("activeStatusFlag", user.getActiveStatusFlag());
         entry.put("lastLogin", user.getLastLogin());
         entry.put("loginIP", user.getLoginIP());
-        entry.put("storeName", user.getMerchantStore().getName());
+        entry.put("storeName", user.getMerchantStore() == null ? null : user.getMerchantStore().getName());
         entry.put("storeList",user.getAllMerchantStores());
         Set<AdminPermission> permissionSet = user.getAllPermissions();
-        if (permissionSet != null) {
+        Set<AdminPermission> tempPermission = Sets.newHashSet();
+        if (permissionSet != null && permissionSet.size() > 0) {
             for (AdminPermission adminPermission : permissionSet) {
+                putAllParentInSet(adminPermission, tempPermission);
                 adminPermission.setAllUsers(null);
                 adminPermission.setAllRoles(null);
                 adminPermission.setAllChildPermissions(null);
-                adminPermission.setAllParentPermissions(null);
             }
+            permissionSet.addAll(tempPermission);
             entry.put("storePermissionList", permissionSet);
         }
         return entry;
@@ -269,8 +274,22 @@ public class AdminUserController {
         entry.put("username", customer.getUsername());
         entry.put("receiveEmail", customer.isReceiveEmail());
         entry.put("deactivated", customer.isDeactivated());
-        entry.put("storeName", customer.getMerchantStore().getName());
+        entry.put("storeName", customer.getMerchantStore() == null ? null : customer.getMerchantStore().getName());
         entry.put("storeList",customer.getAllMerchantStores());
+        Set<AdminPermission> permissionSet = customer.getAllPermissions();
+        Set<AdminPermission> tempPermission = Sets.newHashSet();
+        if (permissionSet != null && permissionSet.size() > 0) {
+            for (AdminPermission adminPermission : permissionSet) {
+                putAllParentInSet(adminPermission, tempPermission);
+                adminPermission.setAllUsers(null);
+                adminPermission.setAllRoles(null);
+                adminPermission.setAllChildPermissions(null);
+            }
+            permissionSet.addAll(tempPermission);
+            entry.put("storePermissionList", permissionSet);
+        } else {
+            entry.put("storePermissionList", null);
+        }
         return entry;
     }
 
@@ -535,7 +554,7 @@ public class AdminUserController {
 
     @RequestMapping(value = "admin/users/bindPermissions", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResponse bindPermissions(@RequestParam(value = "bindString")String bingString, @RequestParam(value = "userId")Long userId, HttpServletRequest request) {
+    public AjaxResponse bindAdminUserPermissions(@RequestParam(value = "bindString")String bingString, @RequestParam(value = "userId")Long userId, HttpServletRequest request) {
         AjaxResponse resp;
         try {
             AdminUser adminUser = userService.findById(userId);
@@ -556,5 +575,45 @@ public class AdminUserController {
         }
     }
 
+    @RequestMapping(value = "admin/customer/bindPermissions", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse bindCustomerPermissions(@RequestParam(value = "bindString")String bingString, @RequestParam(value = "customerId")Long customerId, HttpServletRequest request) {
+        AjaxResponse resp;
+        try {
+            Customer customer = customerService.findById(customerId);
+            List<Long> bindList = JSON.parseArray(bingString, Long.class);
+            List<AdminPermission> permissionList = adminPermissionService.listByIds(bindList);
+            Set<AdminPermission> permissionSet = null;
+            if (permissionList != null) {
+                permissionSet = Sets.newHashSet(permissionList);
+            }
+            customer.setAllPermissions(permissionSet);
+            customer = customerService.update(customer);
+            resp = AjaxResponse.success();
+            resp.addEntry("updateResult", objectToEntry(customer));
+            return resp;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return AjaxResponse.failed(-1, "绑定失败");
+        }
+    }
+
+    /**
+     * 将某个权限的所有递归父权限放入set
+     * @param adminPermission
+     * @param set
+     */
+    private void putAllParentInSet(AdminPermission adminPermission, Set<AdminPermission> set) {
+        List<AdminPermission> listParentPermission = adminPermission.getAllParentPermissions();
+        if (listParentPermission != null) {
+            for (AdminPermission adminPermission1 : listParentPermission) {
+                adminPermission1.setAllUsers(null);
+                adminPermission1.setAllRoles(null);
+                adminPermission1.setAllChildPermissions(null);
+                set.add(adminPermission1);
+                putAllParentInSet(adminPermission1, set);
+            }
+        }
+    }
 }
 

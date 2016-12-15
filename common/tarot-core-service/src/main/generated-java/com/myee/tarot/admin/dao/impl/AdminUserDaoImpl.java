@@ -33,7 +33,7 @@ public class AdminUserDaoImpl extends GenericEntityDaoImpl<Long, AdminUser> impl
         query.from(qUser)
                 .leftJoin(qUser.merchantStore)
                 .fetchJoin();
-        query.where(qUser.name.eq(userName));
+        query.where(qUser.login.eq(userName));
 
         AdminUser user = query.fetchFirst();
 
