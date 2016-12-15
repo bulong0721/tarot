@@ -1,8 +1,15 @@
 package com.myee.tarot.profile.domain;
 
+import com.myee.tarot.admin.domain.AdminPermission;
+import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.core.GenericEntity;
+import com.myee.tarot.customer.domain.Customer;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Martin on 2016/4/14.
@@ -21,6 +28,10 @@ public class Role extends GenericEntity<Long, Role> {
 
     @Column(name = "DESCRIPTION", length = 255)
     protected String description;
+
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermission.class)
+    @JoinTable(name = "C_CUSTOMER_ROLE_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ROLE_ID", referencedColumnName = "ROLE_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
+    protected Set<AdminPermission> allPermissions = new HashSet<AdminPermission>();
 
     @Override
     public Long getId() {
@@ -46,6 +57,14 @@ public class Role extends GenericEntity<Long, Role> {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Set<AdminPermission> getAllPermissions() {
+        return allPermissions;
+    }
+
+    public void setAllPermissions(Set<AdminPermission> allPermissions) {
+        this.allPermissions = allPermissions;
     }
 
     @Override
