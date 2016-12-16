@@ -28,6 +28,7 @@
         <version.guava>18.0</version.guava>
         <version.motan>0.2.0</version.motan>
         <version.ignite>1.7.0</version.ignite>
+        <version.djinn.snapshot>0.8-SNAPSHOT</version.djinn.snapshot>
         <!--<metrics.version>3.1.3</metrics.version>-->
     </properties>
 
@@ -218,22 +219,22 @@
             <dependency>
                 <groupId>com.myee.djinn</groupId>
                 <artifactId>rpc-shared</artifactId>
-                <version>0.7-SNAPSHOT</version>
+                <version>${version.djinn.snapshot}</version>
             </dependency>
             <dependency>
                 <groupId>com.myee.djinn</groupId>
                 <artifactId>itf-server</artifactId>
-                <version>0.7-SNAPSHOT</version>
+                <version>${version.djinn.snapshot}</version>
             </dependency>
             <dependency>
                 <groupId>com.myee.djinn</groupId>
                 <artifactId>itf-shared</artifactId>
-                <version>0.7-SNAPSHOT</version>
+                <version>${version.djinn.snapshot}</version>
             </dependency>
             <dependency>
                 <groupId>com.myee.djinn</groupId>
                 <artifactId>itf-endpoint</artifactId>
-                <version>0.7-SNAPSHOT</version>
+                <version>${version.djinn.snapshot}</version>
             </dependency>
             <dependency>
                 <groupId>c3p0</groupId>

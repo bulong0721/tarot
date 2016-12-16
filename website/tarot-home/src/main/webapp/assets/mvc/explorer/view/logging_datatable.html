@@ -2,9 +2,13 @@
     <div class="form-inline" ng-keyup="search($event)">
         <div class="form-group">
             <select class="form-control" style="width:150px;" ng-model="where.queryObj.noticeType">
-                <option value="">通知类型</option>
+                <option value="">类型</option>
+                <option value="apk">应用</option>
+                <option value="module">模块</option>
+                <option value="agent">agent</option>
+                <option value="agent_patch">agent补丁包</option>
+                <option value="self_design_pad">自研平板</option>
                 <option value="source">资源信息</option>
-                <option value="tinker_patch">agent补丁包</option>
                 <option value="metrics_frequency">系统指标收集频率</option>
             </select>
         </div>
