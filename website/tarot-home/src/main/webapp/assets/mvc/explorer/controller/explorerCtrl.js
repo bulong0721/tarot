@@ -191,14 +191,14 @@ function explorerCtrl($scope,$resource, cResource, $filter, cfromly, Constants, 
                 key: 'noticeType',
                 type: 'c_select',
                 className: 'c_select',
-                templateOptions: {label: '通知类型', required: true, options: getNoticeType()}
+                templateOptions: {label: '类型', required: true, options: getNoticeType()}
             },
-            {
-                key: 'appId',
-                type: 'c_select',
-                className: 'c_select',
-                templateOptions: {label: '推送应用', required: true, options: getAppList()}
-            },
+            //{
+            //    key: 'appId',
+            //    type: 'c_select',
+            //    className: 'c_select',
+            //    templateOptions: {label: '推送应用', required: true, options: getAppList()}
+            //},
             {
                 key: 'timeout',
                 type: 'datepicker',

@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 import com.myee.djinn.dto.AppType;
 import com.myee.djinn.dto.NoticeType;
 import com.myee.djinn.dto.PushResourceDTO;
-import com.myee.djinn.endpoint.EndpointInterface;
+import com.myee.djinn.endpoint.TrunkingInterface;
 import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.catalog.domain.DeviceUsed;
@@ -313,15 +313,19 @@ public class PushController {
     @RequestMapping(value = "admin/file/push", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse pushResource(@Valid @RequestBody PushResourceDTO pushResourceDTO, HttpServletRequest request) {
-        EndpointInterface endpointInterface = null;
-        if (pushResourceDTO == null
-                || StringUtil.isNullOrEmpty(pushResourceDTO.getUniqueNo())
-                || pushResourceDTO.getAppId() == null
-                || pushResourceDTO.getAppId() == 0) {
+        TrunkingInterface endpointInterface = null;
+//        if (pushResourceDTO == null
+//                || StringUtil.isNullOrEmpty(pushResourceDTO.getUniqueNo())
+//                || pushResourceDTO.getAppId() == null
+//                || pushResourceDTO.getAppId() == 0) {
+//            return AjaxResponse.failed(-1, "数据有误");
+//        }
+		if (pushResourceDTO == null
+                || StringUtil.isNullOrEmpty(pushResourceDTO.getUniqueNo())) {
             return AjaxResponse.failed(-1, "数据有误");
         }
         try {
-            endpointInterface = serverBootstrap.getClient(EndpointInterface.class, pushResourceDTO.getUniqueNo());
+            endpointInterface = serverBootstrap.getClient(TrunkingInterface.class, pushResourceDTO.getUniqueNo());
         } catch (Exception e) {
             return AjaxResponse.failed(-2, "连接客户端错误");
         }
