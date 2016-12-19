@@ -42,7 +42,7 @@ public class UpdateConfig extends GenericEntity<Long, UpdateConfig> {
     protected String path;//配置文件下载路径
 
     @Column(name = "DEVICE_GROUP_NO_LIST",columnDefinition = "TEXT")
-    private String deviceGroupNOList;//勾选设备列表
+    private String deviceGroupNOList;//勾选设备列表,作为历史记录
 
     @Override
     public Long getId() {
