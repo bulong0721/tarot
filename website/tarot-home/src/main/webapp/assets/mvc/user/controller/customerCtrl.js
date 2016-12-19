@@ -10,7 +10,7 @@ angular.module('myee', [])
 customerMgrCtrl.$inject = ['$scope', 'cTables', 'cResource','$filter','$q','cfromly','NgTableParams'];
 
 function customerMgrCtrl($scope, cTables, cResource,$filter,$q,cfromly,NgTableParams) {
-    var iDatatable = 0, iEditor = 1, iBindStore = 2;
+    var iDatatable = 0, iEditor = 1, iBindStore = 2, iBindRole = 5;
     $scope.treeControl = {};
     $scope.treeData = [];
     $scope.expandField = {field: 'name'};
@@ -56,7 +56,7 @@ function customerMgrCtrl($scope, cTables, cResource,$filter,$q,cfromly,NgTablePa
     $scope.tips = "*请切换不同门店，来管理不同门店的普通用户账号";
 
     //打开分配权限界面
-    $scope.assignPermission = function (rowIndex) {
+    $scope.goAssignPermission = function (rowIndex) {
         var data = $scope.treeData;
         iPermission = 4;
         if (rowIndex > -1) {
@@ -66,9 +66,9 @@ function customerMgrCtrl($scope, cTables, cResource,$filter,$q,cfromly,NgTablePa
                 var idsArr = [];
                 $scope.showCase.currentRowIndex = rowIndex;
                 data = $scope.tableOpts.data[$scope.showCase.currentRowIndex];
-                if (data.storePermissionList != undefined) {
-                    for (var i = 0; i < data.storePermissionList.length; i++) {
-                        idsArr.push(data.storePermissionList[i].id);
+                if (data.checkedPermissionList != undefined) {
+                    for (var i = 0; i < data.checkedPermissionList.length; i++) {
+                        idsArr.push(data.checkedPermissionList[i].id);
                     }
                     recursionPermissionList(resp[0], idsArr);
                 } else {
@@ -272,10 +272,10 @@ function customerMgrCtrl($scope, cTables, cResource,$filter,$q,cfromly,NgTablePa
             'customerId': $scope.formBindData.model.id
         }, {}).then(function(resp){
             //用js离线刷新表格数据
-            $scope.tableOpts.data[$scope.showCase.currentRowIndex].storePermissionList = [];//先清空
+            $scope.tableOpts.data[$scope.showCase.currentRowIndex].checkedPermissionList = [];//先清空
             var checkedArr = [];
             recursionAllCheckedPermission($scope.treeData[0], checkedArr);
-            $scope.tableOpts.data[$scope.showCase.currentRowIndex].storePermissionList = checkedArr;
+            $scope.tableOpts.data[$scope.showCase.currentRowIndex].checkedPermissionList = checkedArr;
             if (0 != resp.status) {
                 $filter('toasterManage')(5, "绑定失败!",false);
             } else {
@@ -313,4 +313,116 @@ function customerMgrCtrl($scope, cTables, cResource,$filter,$q,cfromly,NgTablePa
             });
         }
     }
+
+    //打开分配角色界面
+    $scope.goAssignRole = function (rowIndex) {
+        //进入绑定页面前，赋值用户所属角色
+        if ($scope.tableOpts && rowIndex > -1) {
+            var data = $scope.tableOpts.data[rowIndex];
+            $scope.thisUserDefaultRoleName = data.roleName;
+        }
+        initalBindRole().then(function () {
+            $scope.filterRoleBindOptions().then(function () {
+                $scope.addNew = true;
+
+                if ($scope.tableOpts && rowIndex > -1) {
+                    $scope.showCase.currentRowIndex = rowIndex;//记录当前选择的行，以备后续更新该行数据
+                    $scope.formBindData.model = data;
+                    $scope.formBindData.model.bindShowName = '登录名:' + (data.username || "") + ' | 姓氏:' + (data.firstName || "") + ' | 名字:' + (data.lastName || "");
+                    //根据已关联的产品去勾选对应的checkbox
+                    $scope.showCase.selectAll = false;
+                    $scope.showCase.toggleAll(false, $scope.showCase.selected);//先取消所有checkbox的勾选状态
+                    for (var value in data.roleList) {
+                        //console.log("value"+value)
+                        var roleId = data.roleList[value].id;
+                        $scope.showCase.selected[roleId] = true;
+                        $scope.showCase.toggleOne($scope.showCase.selected);//判断全选框是否要被checked
+                    }
+
+                    $scope.addNew = false;
+                    $scope.rowIndex = rowIndex;
+                } else {
+                    $scope.formBindData.model = {};
+                }
+                $scope.activeTab = iBindRole;
+            });
+        });
+    }
+
+    function initalBindRole() {
+        if ($scope.initalBindRoleList) {//如果已经从后台读取过数据了，则不再访问后台获取列表
+            var deferred = $q.defer();
+            deferred.resolve($scope.initalBindRoleList);
+            return deferred.promise;
+        } else {//第一次需要从后台读取列表
+            return cResource.get('./role/listCustomerRole').then(function(data){
+                //初始化showCase.selected数组，给全选框用，让它知道应该全选哪些
+                var result = []; //排除当前用户所属门店
+                angular.forEach(data.rows, function (indexData, index, array) {
+                    //indexData等价于array[index]
+                    $scope.showCase.selected[indexData.id] = false;
+                    if( indexData.roleName != $scope.thisUserDefaultRoleName ) {
+                        result.push(indexData);
+                    }
+                });
+                $scope.initalBindRoleList = result;
+                return result;
+            });
+        }
+    }
+
+    $scope.filterRoleBindOptions = function () {
+        var deferred = $q.defer();
+        //tables获取数据,获取可绑定的所有门店
+        $scope.tableBindOpts = new NgTableParams({}, {
+            counts: [],
+            dataset: $filter('filter')($scope.initalBindRoleList, $scope.showCase.nameFilter || "")//根据搜索字段过滤数组中数据
+        });
+        $scope.loadByInit = true;
+        $scope.tableOpts.page(1);
+        $scope.tableBindOpts.reload();
+        deferred.resolve($scope.tableBindOpts);
+        return deferred.promise;
+    }
+
+    /**
+     * 提交用户角色绑定
+     * @param type 区分管理员绑定还是普通用户type =1 普通用户，type=0 管理员
+     */
+    $scope.processBindRoleSubmit = function () {
+        var result = [];
+
+        angular.forEach($scope.showCase.selected, function (data, index, array) {
+            //data等价于array[index]
+            if (data == true) {
+                result.push(index);
+            }
+        });
+
+        cResource.save('./customers/bindRole',{
+            'bindString': JSON.stringify(result),
+            'userId': $scope.formBindData.model.id
+        }, {}).then(function(resp){
+            //用js离线刷新表格数据
+            $scope.tableOpts.data[$scope.showCase.currentRowIndex].roleList = [];//先清空
+            angular.forEach($scope.showCase.selected, function (data, index, array) {
+                //data等价于array[index]
+                if (data == true) {
+                    var length = $scope.initalBindRoleList.length;
+                    for (i = 0; i < length; i++) {
+                        var data2 = $scope.initalBindRoleList[i];
+                        if (data2.id == index) {
+                            $scope.tableOpts.data[$scope.showCase.currentRowIndex].roleList.push({
+                                id: index,
+                                description: data2.description,
+                                name: data2.name
+                            });
+                            break;
+                        }
+                    }
+                }
+            });
+            $scope.goDataTable();
+        });
+    };
 }

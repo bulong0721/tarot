@@ -64,7 +64,9 @@
                                     <a ng-if="row.login != userName" ng-click="doDelete($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
                                     <a ng-if="row.login == userName" tooltip-placement="top" uib-tooltip="{{lang_zh.noDeleteThisUser}}"><i class="btn-icon fa fa-ban"></i></a>
                                     <span class="divider"></span>
-                                    <a ng-click="assignPermission($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.assignPermission}}"><i class="btn-icon fa fa-link"></i></a>
+                                    <a ng-click="goAssignPermission($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.assignPermission}}"><i class="btn-icon fa fa-star"></i></a>
+                                    <span class="divider"></span>
+                                    <a ng-click="goAssignRole($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.assignRole}}"><i class="btn-icon fa fa-user-plus"></i></a>
                                 </td>
                             </tr>
                             <tr ng-repeat-end ng-if="row.showDetail">

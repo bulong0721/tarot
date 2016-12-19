@@ -6,9 +6,7 @@ import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.customer.domain.Customer;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -32,6 +30,11 @@ public class Role extends GenericEntity<Long, Role> {
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermission.class)
     @JoinTable(name = "C_CUSTOMER_ROLE_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ROLE_ID", referencedColumnName = "ROLE_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
     protected Set<AdminPermission> allPermissions = new HashSet<AdminPermission>();
+
+    /** All users that have this role */
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = Customer.class)
+    @JoinTable(name = "C_CUSTOMER_ROLE_XREF", joinColumns = @JoinColumn(name = "ROLE_ID", referencedColumnName = "ROLE_ID"), inverseJoinColumns = @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "CUSTOMER_ID"))
+    protected Set<Customer> allCustomers = new HashSet<Customer>();
 
     @Override
     public Long getId() {
@@ -59,14 +62,6 @@ public class Role extends GenericEntity<Long, Role> {
         this.description = description;
     }
 
-    public Set<AdminPermission> getAllPermissions() {
-        return allPermissions;
-    }
-
-    public void setAllPermissions(Set<AdminPermission> allPermissions) {
-        this.allPermissions = allPermissions;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -83,5 +78,21 @@ public class Role extends GenericEntity<Long, Role> {
         int result = super.hashCode();
         result = 31 * result + (roleName != null ? roleName.hashCode() : 0);
         return result;
+    }
+
+    public Set<AdminPermission> getAllPermissions() {
+        return allPermissions;
+    }
+
+    public void setAllPermissions(Set<AdminPermission> allPermissions) {
+        this.allPermissions = allPermissions;
+    }
+
+    public Set<Customer> getAllCustomers() {
+        return allCustomers;
+    }
+
+    public void setAllCustomers(Set<Customer> allCustomers) {
+        this.allCustomers = allCustomers;
     }
 }
