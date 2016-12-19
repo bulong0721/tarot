@@ -562,7 +562,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 datatable: 'assets/mvc/user/view/user_datatable.html',
                 editor: 'assets/mvc/user/view/user_editor.html',
                 other3: 'assets/mvc/user/view/admin_persmission.html',
-                other1: 'assets/mvc/user/view/bind_store.html'
+                other1: 'assets/mvc/user/view/bind_store.html',
+                other4: 'assets/mvc/user/view/bind_role.html'
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
@@ -577,6 +578,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             data: {
                 pageTitle: '账号管理',
                 subTitle: '管理员用户角色',
+                other3: 'assets/mvc/user/view/admin_persmission.html',
                 datatable: 'assets/mvc/user/view/admin_role_datatable.html'
             },
             resolve: {
@@ -596,7 +598,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                 datatable: 'assets/mvc/user/view/customer_datatable.html',
                 editor: 'assets/mvc/user/view/customer_editor.html',
                 other3: 'assets/mvc/user/view/admin_persmission.html',
-                other1: 'assets/mvc/user/view/bind_store.html'
+                other1: 'assets/mvc/user/view/bind_store.html',
+                other4: 'assets/mvc/user/view/bind_role.html'
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
@@ -611,6 +614,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             data: {
                 pageTitle: '账号管理',
                 subTitle: '普通用户角色',
+                other3: 'assets/mvc/user/view/admin_persmission.html',
                 datatable: 'assets/mvc/user/view/role_datatable.html'
             },
             resolve: {
@@ -713,7 +717,8 @@ angular
             noAddFile:"文件不能新增",
             noDownloadFolder:"文件夹不能下载",
             addResource:"添加",
-            assignPermission:"分配权限"
+            assignPermission:"分配权限",
+            assignRole:"分配角色"
         };
     })
     .constant('baseConstant',{

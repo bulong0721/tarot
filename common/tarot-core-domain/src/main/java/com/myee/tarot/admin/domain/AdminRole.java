@@ -67,4 +67,12 @@ public class AdminRole extends GenericEntity<Long, AdminRole> {
     public Set<AdminUser> getAllUsers() {
         return allUsers;
     }
+
+    public void setAllPermissions(Set<AdminPermission> allPermissions) {
+        this.allPermissions = allPermissions;
+    }
+
+    public void setAllUsers(Set<AdminUser> allUsers) {
+        this.allUsers = allUsers;
+    }
 }

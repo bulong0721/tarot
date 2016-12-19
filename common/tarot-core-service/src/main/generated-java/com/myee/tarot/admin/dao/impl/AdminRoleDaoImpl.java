@@ -5,15 +5,17 @@ import com.myee.tarot.admin.dao.AdminRoleDao;
 import com.myee.tarot.admin.domain.QAdminRole;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import com.myee.tarot.core.dao.GenericEntityDaoImpl;
+
+import java.util.List;
 
 @Repository
 public class AdminRoleDaoImpl extends GenericEntityDaoImpl<java.lang.Long, AdminRole> implements AdminRoleDao {
 
-    public static Log log = LogFactory.getLog(AdminRoleDaoImpl.class);
+    public final static Logger LOGGER = LoggerFactory.getLogger(AdminRoleDaoImpl.class);
 
     @Override
     public AdminRole getByName(String name) {
@@ -21,8 +23,16 @@ public class AdminRoleDaoImpl extends GenericEntityDaoImpl<java.lang.Long, Admin
         JPQLQuery<AdminRole> query = new JPAQuery(getEntityManager());
         query.from(qAdminRole)
                 .where(qAdminRole.name.eq(name));
-        log.info(query.fetchCount());
+        LOGGER.info("获取总条数{}",query.fetchCount());
         return query.fetchFirst();
+    }
+
+    @Override
+    public List<AdminRole> listByIds(List<Long> bindList) {
+        QAdminRole qAdminRole = QAdminRole.adminRole;
+        JPQLQuery<AdminRole> query = new JPAQuery(getEntityManager());
+        query.from(qAdminRole).where(qAdminRole.id.in(bindList));
+        return query.fetch();
     }
 }
 

@@ -26,5 +26,10 @@ public class RoleServiceImpl extends GenericEntityServiceImpl<java.lang.Long, Ro
     public Role getByName(String name) {
         return dao.getByName(name);
     }
+
+    @Override
+    public List<Role> listByIds(List<Long> bindList) {
+        return dao.listByIds(bindList);
+    }
 }
 

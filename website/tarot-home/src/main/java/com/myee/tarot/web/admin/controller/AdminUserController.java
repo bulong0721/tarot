@@ -167,7 +167,42 @@ public class AdminUserController {
         entry.put("storeName", user.getMerchantStore() == null ? null : user.getMerchantStore().getName());
         entry.put("storeList",user.getAllMerchantStores());
         Set<AdminPermission> permissionSet = user.getAllPermissions();
+        Set<AdminRole> roleSet = user.getAllRoles();
+        if (roleSet != null && roleSet.size() > 0) {
+            for (AdminRole adminRole : roleSet) {
+                adminRole.setAllUsers(null);
+                adminRole.setAllPermissions(null);
+            }
+            entry.put("roleList", roleSet);
+        }
+
         Set<AdminPermission> tempPermission = Sets.newHashSet();
+        return getCheckedPermission(entry, permissionSet, tempPermission);
+    }
+
+    //把类转换成entry返回给前端，解耦和
+    private Map objectToEntry(AdminRole role) {
+        Map entry = new HashMap();
+        entry.put("id", role.getId());
+        entry.put("name", role.getName());
+        entry.put("description", role.getDescription());
+        Set<AdminPermission> permissionSet = role.getAllPermissions();
+        Set<AdminPermission> tempPermission = Sets.newHashSet();
+        return getCheckedPermission(entry, permissionSet, tempPermission);
+    }
+
+    //把类转换成entry返回给前端，解耦和
+    private Map objectToEntry(Role role) {
+        Map entry = new HashMap();
+        entry.put("id", role.getId());
+        entry.put("roleName", role.getRoleName());
+        entry.put("description", role.getDescription());
+        Set<AdminPermission> permissionSet = role.getAllPermissions();
+        Set<AdminPermission> tempPermission = Sets.newHashSet();
+        return getCheckedPermission(entry, permissionSet, tempPermission);
+    }
+
+    private Map getCheckedPermission (Map entry, Set<AdminPermission> permissionSet, Set<AdminPermission> tempPermission) {
         if (permissionSet != null && permissionSet.size() > 0) {
             for (AdminPermission adminPermission : permissionSet) {
                 putAllParentInSet(adminPermission, tempPermission);
@@ -176,7 +211,9 @@ public class AdminUserController {
                 adminPermission.setAllChildPermissions(null);
             }
             permissionSet.addAll(tempPermission);
-            entry.put("storePermissionList", permissionSet);
+            entry.put("checkedPermissionList", permissionSet);
+        } else {
+            entry.put("checkedPermissionList", null);
         }
         return entry;
     }
@@ -212,7 +249,7 @@ public class AdminUserController {
         }
         user = customerService.update(user);
         resp = AjaxResponse.success();
-        resp.addEntry("updateResult", user);
+        resp.addEntry("updateResult", objectToEntry(user));
         return resp;
     }
 
@@ -276,21 +313,17 @@ public class AdminUserController {
         entry.put("deactivated", customer.isDeactivated());
         entry.put("storeName", customer.getMerchantStore() == null ? null : customer.getMerchantStore().getName());
         entry.put("storeList",customer.getAllMerchantStores());
+        Set<Role> roleSet = customer.getAllRoles();
+        if (roleSet != null && roleSet.size() > 0) {
+            for (Role role : roleSet) {
+                role.setAllCustomers(null);
+                role.setAllPermissions(null);
+            }
+            entry.put("roleList",roleSet);
+        }
         Set<AdminPermission> permissionSet = customer.getAllPermissions();
         Set<AdminPermission> tempPermission = Sets.newHashSet();
-        if (permissionSet != null && permissionSet.size() > 0) {
-            for (AdminPermission adminPermission : permissionSet) {
-                putAllParentInSet(adminPermission, tempPermission);
-                adminPermission.setAllUsers(null);
-                adminPermission.setAllRoles(null);
-                adminPermission.setAllChildPermissions(null);
-            }
-            permissionSet.addAll(tempPermission);
-            entry.put("storePermissionList", permissionSet);
-        } else {
-            entry.put("storePermissionList", null);
-        }
-        return entry;
+        return getCheckedPermission(entry, permissionSet, tempPermission);
     }
 
     @RequestMapping(value = "admin/roles/paging", method = RequestMethod.GET)
@@ -303,10 +336,7 @@ public class AdminUserController {
         sortList.sort(roleList, "roleName", "asc");
         for (Role role : roleList) {
             Map entry = new HashMap();
-            entry.put("id", role.getId());
-            entry.put("roleName", role.getRoleName());
-            entry.put("description", role.getDescription());
-            resp.addDataEntry(entry);
+            resp.addDataEntry(objectToEntry(role));
         }
         return resp;
     }
@@ -356,6 +386,29 @@ public class AdminUserController {
         return resp;
     }
 
+    @RequestMapping(value = "admin/roles/bindPermissions", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse bindRolePermissions(@RequestParam(value = "bindString")String bingString, @RequestParam(value = "roleId")Long roleId, HttpServletRequest request) {
+        AjaxResponse resp;
+        try {
+            Role role = roleService.findById(roleId);
+            List<Long> bindList = JSON.parseArray(bingString, Long.class);
+            List<AdminPermission> permissionList = adminPermissionService.listByIds(bindList);
+            Set<AdminPermission> permissionSet = null;
+            if (permissionList != null) {
+                permissionSet = Sets.newHashSet(permissionList);
+            }
+            role.setAllPermissions(permissionSet);
+            role = roleService.update(role);
+            resp = AjaxResponse.success();
+            resp.addEntry("updateResult", objectToEntry(role));
+            return resp;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return AjaxResponse.failed(-1, "绑定失败");
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////
 
     @RequestMapping(value = "admin/adminRoles/paging", method = RequestMethod.GET)
@@ -368,10 +421,7 @@ public class AdminUserController {
         sortList.sort(roleList, "name", "asc");
         for (AdminRole adminRole : roleList) {
             Map entry = new HashMap();
-            entry.put("id", adminRole.getId());
-            entry.put("name", adminRole.getName());
-            entry.put("description", adminRole.getDescription());
-            resp.addDataEntry(entry);
+            resp.addDataEntry(objectToEntry(adminRole));
         }
         return resp;
     }
@@ -418,6 +468,29 @@ public class AdminUserController {
             resp.setErrorString("有其他模块关联使用该角色，不能删除！");
         }
         return resp;
+    }
+
+    @RequestMapping(value = "admin/adminRoles/bindPermissions", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse bindAdminRolePermissions(@RequestParam(value = "bindString")String bingString, @RequestParam(value = "roleId")Long roleId, HttpServletRequest request) {
+        AjaxResponse resp;
+        try {
+            AdminRole adminRole = adminRoleService.findById(roleId);
+            List<Long> bindList = JSON.parseArray(bingString, Long.class);
+            List<AdminPermission> permissionList = adminPermissionService.listByIds(bindList);
+            Set<AdminPermission> permissionSet = null;
+            if (permissionList != null) {
+                permissionSet = Sets.newHashSet(permissionList);
+            }
+            adminRole.setAllPermissions(permissionSet);
+            adminRole = adminRoleService.update(adminRole);
+            resp = AjaxResponse.success();
+            resp.addEntry("updateResult", objectToEntry(adminRole));
+            return resp;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return AjaxResponse.failed(-1, "绑定失败");
+        }
     }
 
     @ExceptionHandler({SQLException.class, Exception.class})
@@ -523,6 +596,62 @@ public class AdminUserController {
         }
     }
 
+    @RequestMapping(value = "admin/users/bindRole", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse bindUserRole(@RequestParam(value = "bindString")String bingString, @RequestParam(value = "userId")Long userId, HttpServletRequest request) {
+        AjaxResponse resp;
+        try {
+            AdminUser adminUser = userService.findById(userId);
+            if (adminUser == null) {
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"参数不正确");
+            }
+            List<Long> bindList = JSON.parseArray(bingString, Long.class);
+            Set<AdminRole> adminRoleSet = null;
+            if(bindList != null && bindList.size() > 0) {
+                List<AdminRole> adminRoleList = adminRoleService.listByIds(bindList);
+                if (adminRoleList != null) {
+                    adminRoleSet = Sets.newHashSet(adminRoleList);
+                }
+            }
+            adminUser.setAllRoles(adminRoleSet);
+            adminUser = userService.update(adminUser);
+            resp = AjaxResponse.success();
+            resp.addEntry("updateResult", objectToEntry(adminUser));
+            return resp;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return AjaxResponse.failed(-1, "绑定失败");
+        }
+    }
+
+    @RequestMapping(value = "admin/customers/bindRole", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse bindCustomerRole(@RequestParam(value = "bindString")String bingString, @RequestParam(value = "userId")Long userId, HttpServletRequest request) {
+        AjaxResponse resp;
+        try {
+            Customer customer = customerService.findById(userId);
+            if (customer == null) {
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"参数不正确");
+            }
+            List<Long> bindList = JSON.parseArray(bingString, Long.class);
+            Set<Role> adminRoleSet = null;
+            if(bindList != null && bindList.size() > 0) {
+                List<Role> customerRoleList = roleService.listByIds(bindList);
+                if (customerRoleList != null) {
+                    adminRoleSet = Sets.newHashSet(customerRoleList);
+                }
+            }
+            customer.setAllRoles(adminRoleSet);
+            customer = customerService.update(customer);
+            resp = AjaxResponse.success();
+            resp.addEntry("updateResult", objectToEntry(customer));
+            return resp;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return AjaxResponse.failed(-1, "绑定失败");
+        }
+    }
+
     @RequestMapping(value = "admin/users/bindMerchantStore", method = RequestMethod.POST)
     @ResponseBody
     public AjaxResponse bindAdminAndMerchantStore(@RequestParam(value = "bindString")String bingString, @RequestParam(value = "userId")Long userId, HttpServletRequest request) {
@@ -607,13 +736,45 @@ public class AdminUserController {
         List<AdminPermission> listParentPermission = adminPermission.getAllParentPermissions();
         if (listParentPermission != null) {
             for (AdminPermission adminPermission1 : listParentPermission) {
-                adminPermission1.setAllUsers(null);
-                adminPermission1.setAllRoles(null);
                 adminPermission1.setAllChildPermissions(null);
                 set.add(adminPermission1);
                 putAllParentInSet(adminPermission1, set);
             }
         }
+    }
+
+    @RequestMapping(value = "admin/role/listAdminRole", method = RequestMethod.GET)
+    @ResponseBody
+    public AjaxResponse getAllAdminRole() {
+        try {
+            AjaxResponse resp = new AjaxResponse();
+            List<AdminRole> result = adminRoleService.list();
+            for (AdminRole adminRole : result) {
+                resp.addDataEntry(objectToEntry(adminRole));
+            }
+            return resp;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResponse.failed(-1);
+
+    }
+
+    @RequestMapping(value = "admin/role/listCustomerRole", method = RequestMethod.GET)
+    @ResponseBody
+    public AjaxResponse getAllCustomerRole() {
+        try {
+            AjaxResponse resp = new AjaxResponse();
+            List<Role> result = roleService.list();
+            for (Role role : result) {
+                resp.addDataEntry(objectToEntry(role));
+            }
+            return resp;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResponse.failed(-1);
+
     }
 }
 
