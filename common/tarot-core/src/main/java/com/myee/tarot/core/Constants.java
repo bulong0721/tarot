@@ -192,6 +192,13 @@ public class Constants {
     public static final String BOARD_UPDATE_BASEPATH = "100/version/boardUpdate/";//自研主板升级基础路径
     public static final String MODULE_UPDATE_BASEPATH = "100/version/moduleUpdate/";//模块升级基础路径
     public static final String APP_UPDATE_BASEPATH = "100/version/appUpdate/";//应用升级基础路径
+    public static final String UPDATE_SEE_TYPE_CHECKED = "CHECKED";//升级配置文件勾选设备可见
+	public static final String UPDATE_SEE_TYPE_NONE = "NONE";//升级配置文件无设备可见，作废
+	public static final String UPDATE_SEE_TYPE_ALL = "ALL";//升级配置文件所有设备可见
+	public static final List<String> UPDATE_TYPE_EXCEPT_LIST = Arrays.asList(//升级配置文件类型排除列表，即前端用不到的都在这里配置
+			"source",
+			"metrics_frequency"
+	);
 
     public static final int SUPERMAN_EVALUATION_AVG = 1; //服务评价的类型-查平均值
     public static final int SUPERMAN_EVALUATION_DETAIL_LIST = 2; //服务评价的类型-查详情列表
@@ -421,5 +428,8 @@ public class Constants {
 	public static final String SEARCH_BEGIN_DATE = "beginDate";
 
 	public static final String SEARCH_END_DATE = "endDate";
+
+	public static final String SEARCH_UPDATE_CONFIG_SEE_TYPE = "seeType";
+
 
 }
