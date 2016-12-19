@@ -33,6 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Administrator on 2016/5/31.
@@ -307,16 +309,18 @@ public class DeviceController {
                 resp.setErrorString("结束编号不能小于开始编号");
                 return resp;
             }
-            if (StringUtil.isNullOrEmpty(deviceUsed.getBoardNo())) {
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-                resp.setErrorString("主板编号不能为空");
-                return resp;
+            String boardNo = deviceUsed.getBoardNo();
+            if (StringUtil.isNullOrEmpty(boardNo)) {
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"主板编号不能为空");
+            }
+            if (!isBoardNoOk(boardNo)) {
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"主板编号不能包含-_#以外的特殊字符,60字以内");
             }
             //校验主板编号
             if (autoEnd != null && autoStart != null) {//批量校验主板编号不能重复
                 //....预留看需求是否要验证
             } else {//单个校验主板编号不能重复
-                DeviceUsed dU = deviceUsedService.getByBoardNo(deviceUsed.getBoardNo());
+                DeviceUsed dU = deviceUsedService.getByBoardNo(boardNo);
                 if (dU != null && !dU.getId().equals(deviceUsed.getId())) { //编辑时排除当前设备
                     resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                     resp.setErrorString("门店" + dU.getStore().getName() + "已存在此主板编号，请更换主板编号");
@@ -347,7 +351,7 @@ public class DeviceController {
 
             if (autoEnd != null && autoStart != null && autoEnd >= 0 && autoStart >= 0) {//批量新增
                 String commonName = deviceUsed.getName();
-                String commonBoardNo = deviceUsed.getBoardNo();
+                String commonBoardNo = boardNo;
                 for (Long i = autoStart; i < autoEnd + 1; i++) {
                     try {
                         //重复主板编号的不添加
@@ -384,6 +388,25 @@ public class DeviceController {
             resp = AjaxResponse.failed(-1, "失败");
         }
         return resp;
+    }
+
+    //校验主板编号或设备组编号不能包含-_#以外的特殊字符,60字以内
+    private static boolean isBoardNoOk(String boardNo) {
+        String regex = "^[a-zA-Z0-9-_#]{1,60}$";
+        return match(regex, boardNo);
+    }
+
+    /**
+     * @param regex
+     * 正则表达式字符串
+     * @param str
+     * 要匹配的字符串
+     * @return 如果str 符合 regex的正则表达式格式,返回true, 否则返回 false;
+     */
+    private static boolean match(String regex, String str) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(str);
+        return matcher.matches();
     }
 
     @RequestMapping(value = {"admin/device/used/bindProductUsed", "shop/device/used/bindProductUsed"}, method = RequestMethod.POST)
@@ -718,11 +741,18 @@ public class DeviceController {
                 resp.setErrorString("结束编号不能小于开始编号");
                 return resp;
             }
+            String productCode = productUsed.getCode();
+            if (StringUtil.isNullOrEmpty(productCode)) {
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"设备组编号不能为空");
+            }
+            if (!isBoardNoOk(productCode)) {
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"设备组编号不能包含-_#以外的特殊字符,60字以内");
+            }
             //校验主板编号
             if (autoEnd != null && autoStart != null) {//批量校验设备组编号不能重复
                 //预留看需求是否要验证
             } else {//单个校验设备组编号不能重复
-                ProductUsed pU = productUsedService.getByCode(productUsed.getCode());
+                ProductUsed pU = productUsedService.getByCode(productCode);
                 if (pU != null && !pU.getId().equals(productUsed.getId())) { //编辑时排除当前设备
                     resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
                     resp.setErrorString("门店" + pU.getStore().getName() + "已存在此设备组编号，请更换编号");
