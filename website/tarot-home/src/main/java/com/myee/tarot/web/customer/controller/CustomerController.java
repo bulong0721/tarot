@@ -45,6 +45,7 @@ public class CustomerController {
         entry.put(Constants.RESPONSE_MAX_UPLOAD_SIZE,maxUploadSize);
         entry.put(Constants.RESPONSE_SESSION_TIMEOUT_URL,RESPONSE_SESSION_TIMEOUT_URL_SHOP);
         entry.put(Constants.RESPONSE_USERNAME,((Customer)request.getSession().getAttribute(Constants.CUSTOMER_USER)).getUsername());
+        entry.put(Constants.RESPONSE_USER_ALL_PERMISSIONS,request.getSession().getAttribute(Constants.RESPONSE_USER_ALL_PERMISSIONS));
         entry.put(Constants.RESPONSE_THIS_STORE_NAME, ((MerchantStore) request.getSession().getAttribute(Constants.CUSTOMER_STORE)).getName());
         entry.put(RESPONSE_ACCESS_DENI_NAME,RESPONSE_ACCESS_DENI);
         mv.addObject(Constants.RESPONSE_DOWNLOAD_BASE, JSON.toJSON(entry));

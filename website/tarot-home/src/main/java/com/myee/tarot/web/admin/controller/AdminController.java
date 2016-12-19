@@ -38,11 +38,13 @@ public class AdminController {
     public ModelAndView displayDashboard(HttpServletRequest request, HttpServletResponse response) throws Exception {
         ModelAndView mv = new ModelAndView("admin/home");
         Map<String,Object> entry = new HashMap<String ,Object>();
+        AdminUser adminUser = (AdminUser)request.getSession().getAttribute(Constants.ADMIN_USER);
         entry.put(Constants.RESPONSE_PUSH_URL,pushUrl);
         entry.put(Constants.RESPONSE_QINIU_CDN,qiniuCdn);
 		entry.put(Constants.RESPONSE_MAX_UPLOAD_SIZE,maxUploadSize);
         entry.put(Constants.RESPONSE_SESSION_TIMEOUT_URL,RESPONSE_SESSION_TIMEOUT_URL_ADMIN);
-        entry.put(Constants.RESPONSE_USERNAME,((AdminUser)request.getSession().getAttribute(Constants.ADMIN_USER)).getLogin());
+        entry.put(Constants.RESPONSE_USERNAME,adminUser.getLogin());
+        entry.put(Constants.RESPONSE_USER_ALL_PERMISSIONS,request.getSession().getAttribute(Constants.RESPONSE_USER_ALL_PERMISSIONS));
         entry.put(Constants.RESPONSE_THIS_STORE_NAME, ((MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE)).getName());
         entry.put(RESPONSE_ACCESS_DENI_NAME,RESPONSE_ACCESS_DENI);
         mv.addObject(Constants.RESPONSE_DOWNLOAD_BASE, JSON.toJSON(entry));

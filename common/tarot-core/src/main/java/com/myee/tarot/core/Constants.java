@@ -21,6 +21,7 @@ public class Constants {
 	public final static String RESPONSE_THIS_STORE_NAME    = "thisStoreName";
 	public final static String RESPONSE_SESSION_TIMEOUT_URL    = "sessionTimeoutUrl";
 	public final static String RESPONSE_DOWNLOAD_BASE    = "downloadBase";
+	public final static String RESPONSE_USER_ALL_PERMISSIONS    = "allPer";
 
 	public static final String ALL_REGIONS = "*";
 

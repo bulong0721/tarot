@@ -1,5 +1,6 @@
 package com.myee.tarot.web.filter;
 
+import com.myee.tarot.admin.util.PermissionUtil;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.customer.domain.Customer;
 import com.myee.tarot.customer.service.CustomerService;
@@ -10,10 +11,13 @@ import com.myee.tarot.core.web.util.SessionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Martin on 2016/4/20.
@@ -38,8 +42,7 @@ public class CustomerFilter extends HandlerInterceptorAdapter {
 
         } else {
             if (user == null) {
-                user = customerService.getByUsername(userName);
-                SessionUtil.setSessionAttribute(Constants.CUSTOMER_USER, user, request);
+                user = putUserSession(user,userName,request);
             }
 
             if (user == null) {
@@ -48,8 +51,7 @@ public class CustomerFilter extends HandlerInterceptorAdapter {
             }
 
             if (!user.getUsername().equals(userName)) {
-                user = customerService.getByUsername(userName);
-                SessionUtil.setSessionAttribute(Constants.CUSTOMER_USER, user, request);
+                user = putUserSession(user,userName,request);
             }
         }
 
@@ -66,5 +68,29 @@ public class CustomerFilter extends HandlerInterceptorAdapter {
         request.setAttribute(Constants.CUSTOMER_STORE, store);
         response.setCharacterEncoding("UTF-8");
         return true;
+    }
+
+    private Customer putUserSession(Customer user,String userName,HttpServletRequest request) {
+        user = customerService.getByUsername(userName);
+        SessionUtil.setSessionAttribute(Constants.CUSTOMER_USER, user, request);
+        user.getMerchantStore().getName();
+        if (user != null) {
+//                    storeCode = user.getMerchantStore().getCode();
+            //将用户所有权限写入session
+            List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+            authorities = PermissionUtil.listAuthorities(user, authorities);
+            List<String> result = null;
+            if(authorities != null && authorities.size() > 0){
+                result = new ArrayList<String>();
+                for( GrantedAuthority grantedAuthority : authorities ) {
+                    result.add(grantedAuthority.getAuthority());
+                }
+            }
+
+            request.getSession().setAttribute(Constants.RESPONSE_USER_ALL_PERMISSIONS, result);
+        } else {
+            LOGGER.warn("User name not found " + userName);
+        }
+        return user;
     }
 }
