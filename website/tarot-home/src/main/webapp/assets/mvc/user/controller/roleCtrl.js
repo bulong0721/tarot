@@ -148,7 +148,7 @@ function roleMgrCtrl($scope, cTables,cfromly, cResource, $filter, $q) {
             return deferred.promise;
         } else {//第一次需要从后台读取列表，且只返回前10个数据
             return cResource.get('./listPermission/list',{
-                isFriendly: true
+                isFriendly: false
             }).then(function(data){
                 $scope.treeData = data.rows;
                 $scope.initalBindPermissionList = data.rows;
