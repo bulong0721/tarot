@@ -181,8 +181,9 @@ function productUsedCtrl($scope, cResource, Constants, cTables, cfromly, NgTable
                 templateOptions: {
                     label: '编号',
                     required: true,
-                    placeholder: '设备组编号,100字以内',
-                    maxlength: 100,
+                    placeholder: '不能包含-_#以外的特殊字符,60字以内',
+                    maxlength: 60,
+                    pattern: '^[a-zA-Z0-9-_#]{1,60}$',
                     isSearch:true
                 },
                 hideExpression: 'model.ifBatch'

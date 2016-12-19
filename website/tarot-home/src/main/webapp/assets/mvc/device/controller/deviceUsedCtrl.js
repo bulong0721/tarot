@@ -209,7 +209,14 @@ function deviceUsedCtrl($scope, cResource, Constants, cTables, cfromly, NgTableP
             {
                 key: 'boardNo',
                 type: 'c_input',
-                templateOptions: {label: '主板编号', placeholder: '主板编号,60字以内', required: true, maxlength: 60,isSearch:true}
+                templateOptions: {
+                    label: '主板编号',
+                    placeholder: '不能包含-_#以外的特殊字符,60字以内',
+                    required: true,
+                    maxlength: 60,
+                    //pattern: '^[a-zA-Z0-9-_#]{1,60}$',
+                    isSearch:true
+                }
             },
             {
                 key: 'deviceNum',
