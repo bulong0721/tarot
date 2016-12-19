@@ -328,7 +328,6 @@ function customerMgrCtrl($scope, cTables, cResource,$filter,$q,cfromly,NgTablePa
                 if ($scope.tableOpts && rowIndex > -1) {
                     $scope.showCase.currentRowIndex = rowIndex;//记录当前选择的行，以备后续更新该行数据
                     $scope.formBindData.model = data;
-                    console.log(data)
                     $scope.formBindData.model.bindShowName = '登录名:' + (data.username || "") + ' | 姓氏:' + (data.firstName || "") + ' | 名字:' + (data.lastName || "");
                     //根据已关联的产品去勾选对应的checkbox
                     $scope.showCase.selectAll = false;
