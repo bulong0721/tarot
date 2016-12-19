@@ -41,8 +41,8 @@ public class UpdateConfig extends GenericEntity<Long, UpdateConfig> {
     @Column(name = "PATH",length = 255)
     protected String path;//配置文件下载路径
 
-    @Column(name = "BOARD_NO_LIST",columnDefinition = "TEXT")
-    private String boardNoList;//勾选设备列表
+    @Column(name = "DEVICE_GROUP_NO_LIST",columnDefinition = "TEXT")
+    private String deviceGroupNOList;//勾选设备列表
 
     @Override
     public Long getId() {
@@ -102,11 +102,11 @@ public class UpdateConfig extends GenericEntity<Long, UpdateConfig> {
         this.seeType = seeType;
     }
 
-    public String getBoardNoList() {
-        return boardNoList;
-    }
+	public String getDeviceGroupNOList() {
+		return deviceGroupNOList;
+	}
 
-    public void setBoardNoList(String boardNoList) {
-        this.boardNoList = boardNoList;
-    }
+	public void setDeviceGroupNOList(String deviceGroupNOList) {
+		this.deviceGroupNOList = deviceGroupNOList;
+	}
 }
