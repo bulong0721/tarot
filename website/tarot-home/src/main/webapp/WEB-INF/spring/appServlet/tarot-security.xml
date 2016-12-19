@@ -31,6 +31,11 @@
         <beans:property name="accessDeniedUrl" value="/admin/denied.html"/>
     </beans:bean>
 
+    <beans:bean id="customerAccessDenied"
+                class="com.myee.tarot.core.security.AdminAccessDeniedHandler">
+        <beans:property name="accessDeniedUrl" value="/shop/denied.html"/>
+    </beans:bean>
+
     <beans:bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <beans:property name="basenames">
             <beans:list>
@@ -62,9 +67,9 @@
         <intercept-url pattern="/admin/assets/**" access="permitAll"/>
         <intercept-url pattern="/code" access="permitAll"/>
         <intercept-url pattern="/code/validate" access="permitAll"/>
-        <intercept-url pattern="/admin" access="hasRole('AUTH')"/>
-        <intercept-url pattern="/admin/" access="hasRole('AUTH')"/>
-        <intercept-url pattern="/admin/**" access="hasRole('AUTH')"/>
+        <intercept-url pattern="/admin" access="hasRole('AUTH_ADMIN')"/>
+        <intercept-url pattern="/admin/" access="hasRole('AUTH_ADMIN')"/>
+        <intercept-url pattern="/admin/**" access="hasRole('AUTH_ADMIN')"/>
         <csrf disabled="true"/>
         <form-login
                 login-processing-url="/admin/j_spring_security_check"
@@ -72,6 +77,7 @@
                 authentication-success-handler-ref="userAuthenticationSuccessHandler"
                 authentication-failure-url="/admin/login.html?login_error=true"
                 default-target-url="/admin/home.html"/>
+        <!-- logout-success-url:成功注销后跳转到的页面; -->
         <logout invalidate-session="true"
                 success-handler-ref="userLogoutSuccessHandler"
                 logout-url="/admin/j_spring_security_logout"/>
@@ -105,10 +111,11 @@
                 authentication-success-handler-ref="customerAuthenticationSuccessHandler"
                 authentication-failure-url="/shop/login.html?login_error=true"
                 default-target-url="/shop/home.html"/>
+        <!-- logout-success-url:成功注销后跳转到的页面; -->
         <logout invalidate-session="true"
                 success-handler-ref="userLogoutSuccessHandler"
                 logout-url="/shop/j_spring_security_logout"/>
-        <access-denied-handler error-page="/shop/denied.html"/>
+        <access-denied-handler ref="customerAccessDenied"/>
     </http>
 
     <!-- REST services -->
