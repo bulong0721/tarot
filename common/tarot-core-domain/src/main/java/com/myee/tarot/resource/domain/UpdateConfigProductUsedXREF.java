@@ -26,7 +26,7 @@ public class UpdateConfigProductUsedXREF extends GenericEntity<Long, UpdateConfi
     @JoinColumn(name = "CODE")
     protected ProductUsed productUsed;
 
-    @Column(name = "TYPE",nullable = false,length = 10)
+    @Column(name = "TYPE",nullable = false,length = 30)
     protected String type;//配置文件类型:apk,module等
 
     @Override

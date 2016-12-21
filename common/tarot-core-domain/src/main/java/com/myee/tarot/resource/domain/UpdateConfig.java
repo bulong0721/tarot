@@ -29,10 +29,10 @@ public class UpdateConfig extends GenericEntity<Long, UpdateConfig> {
     @Column(name = "DESCRIPTION",length = 255)
     protected String description;
 
-    @Column(name = "TYPE",nullable = false,length = 10)
+    @Column(name = "TYPE",nullable = false,length = 30)
     protected String type;//配置文件类型:apk,module等
 
-    @Column(name = "SEE_TYPE",nullable = false,length = 10)
+    @Column(name = "SEE_TYPE",nullable = false,length = 30)
     private String seeType;//CHECKED：勾选设备可见，ALL：所有设备可见，NONE：所有设备不可见
 
     @Column(name = "CREATE_TIME")
