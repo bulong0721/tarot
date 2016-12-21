@@ -54,22 +54,30 @@ function ctrlManagerLoader(oclazyload, dir, ctrl) {
     ])
 }
 
-function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpProvider) {
-    $urlRouterProvider.otherwise("/merchant/shop");
-
-    $ocLazyLoadProvider.config({
-        debug: false
+//
+var controllers = {},routers = {};
+function routerAll(baseUrl){
+//遍历权限
+    angular.forEach(baseUrl.allPer, function(data){
+        var arr = data.split("_");
+        if(controllers[arr[0]] == undefined){
+            controllers[arr[0]] = {};
+        }
+        if(controllers[arr[0]][arr[1]] == undefined){
+            controllers[arr[0]][arr[1]] = [];
+        }
+        controllers[arr[0]][arr[1]].push(arr[2])
     });
 
-    $httpProvider.defaults.headers.post['Content-Type'] = undefined;
-
-    $stateProvider
-        .state('merchant', {
+//初始router
+    routers = {
+        'merchant': {
             abstract: true,
             url: "/merchant",
-            template: "<div ui-view></div>"
-        })
-        .state('merchant.shop', {
+            template: "<div ui-view></div>",
+            data: {pageTitle: '门店列表'}
+        },
+        'merchant.shop': {
             url: "/shop",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'merchantShopCtrl',
@@ -84,8 +92,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'merchant', 'shopCtrl.js');
                 }
             }
-        })
-        .state('merchant.merchant', {
+        },
+        'merchant.merchant': {
             url: "/merchant",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'merchantCtrl',
@@ -97,25 +105,17 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
                     return ctrlManagerLoader($ocLazyLoad, 'merchant', 'merchantCtrl.js')
-                },
-                /*qiniu:function($ocLazyLoad){
-                    return $ocLazyLoad.load([
-                        {
-                            serie: true,
-                            name:'ngQiniu',
-                            files: ['assets/plugins/qiniu/ngQiniu.js']
-                        }
-                    ])
-                }*/
+                }
             }
-        })
-        .state('campaign', {
+        },
+        'campaign': {
             abstract: true,
             url: "/campaign",
-            template: "<div ui-view></div>"
-        })
-        .state('campaign.priceCheck', {
-            url: "/priceCheck",
+            template: "<div ui-view></div>",
+            data: {pageTitle: '活动管理'}
+        },
+        'campaign.pricecheck': {
+            url: "/pricecheck",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'campaignCtrl',
             data: {
@@ -128,8 +128,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'campaign', 'campaignCtrl.js')
                 }
             }
-        })
-        .state('campaign.clientPrize', {
+        },
+        'campaign.clientprize': {
             url: "/clientPrize",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'clientPrizeCtrl',
@@ -143,9 +143,9 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'campaign', 'clientPrizeCtrl.js')
                 }
             }
-        })
-        .state('campaign.clientPrizeCheck', {
-            url: "/clientPrizeCheck",
+        },
+        'campaign.clientprizecheck': {
+            url: "/clientprizecheck",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'clientPrizeCheckCtrl',
             data: {
@@ -158,13 +158,14 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'campaign', 'clientPrizeCheckCtrl.js')
                 }
             }
-        })
-        .state('device', {
+        },
+        'device': {
             abstract: true,
             url: "/device",
-            template: "<div ui-view></div>"
-        })
-        .state('device.type', {
+            template: "<div ui-view></div>",
+            data: {pageTitle: '设备管理'}
+        },
+        'device.type': {
             url: "/type",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'deviceTypeCtrl',
@@ -179,8 +180,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'device', 'deviceTypeCtrl.js');
                 }
             }
-        })
-        .state('device.list', {
+        },
+        'device.list': {
             url: "/list",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: "deviceUsedCtrl",
@@ -195,8 +196,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'device', 'deviceUsedCtrl.js');
                 }
             }
-        })
-        .state('device.product', {
+        },
+        'device.product': {
             url: "/product",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'productUsedCtrl',
@@ -211,14 +212,14 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'device', 'productUsedCtrl.js');
                 }
             }
-        })
-        .state('explorer', {
+        },
+        'explorer': {
             abstract: true,
             url: "/explorer",
             template: "<div ui-view></div>",
             data: {pageTitle: '资源管理'}
-        })
-        .state('explorer.explorer', {
+        },
+        'explorer.explorer': {
             url: "/explorer",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'explorerCtrl',
@@ -234,8 +235,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'explorer', 'explorerCtrl.js');
                 }
             }
-        })
-        .state('explorer.logging', {
+        },
+        'explorer.logging': {
             url: "/logging",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'loggingCtrl',
@@ -248,14 +249,14 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'explorer', 'loggingCtrl.js')
                 }
             }
-        })
-        .state('cater', {
+        },
+        'cater': {
             abstract: true,
             url: "/cater",
             template: "<div ui-view></div>",
             data: {pageTitle: '餐厅设置'}
-        })
-        .state('cater.type', {
+        },
+        'cater.type': {
             url: "/type",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'tableTypeMgrCtrl',
@@ -268,8 +269,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'cater', 'tableTypeCtrl.js')
                 }
             }
-        })
-        .state('cater.zone', {
+        },
+        'cater.zone': {
             url: "/zone",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'tableZoneMgrCtrl',
@@ -282,8 +283,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'cater', 'tableZoneCtrl.js')
                 }
             }
-        })
-        .state('cater.table', {
+        },
+        'cater.table': {
             url: "/table",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'tableMgrCtrl',
@@ -297,14 +298,14 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'cater', 'tableCtrl.js')
                 }
             }
-        })
-        .state('superman', {
+        },
+        'superman': {
             abstract: true,
             url: "/super",
             template: "<div ui-view></div>",
             data: {pageTitle: '小超人'}
-        })
-        .state('superman.menu', {
+        },
+        'superman.menu': {
             url: "/menu",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'superMenuMgrCtrl',
@@ -317,15 +318,15 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
                 }
             }
-        })
-        .state('superman.statistic', {
+        },
+        'superman.statistic': {
             abstract: true,
             url: "/statistic",
             template: "<div ui-view></div>",
             data: {pageTitle: '统计'}
-        })
-        .state('superman.statistic.serviceEvaluation', {
-            url: "/serviceEvaluation",
+        },
+        'superman.statistic.serviceevaluation': {
+            url: "/serviceevaluation",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'evaluationCtrl',
             data: {
@@ -337,14 +338,14 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'superman', 'evaluationCtrl.js')
                 }
             }
-        })
-        .state('superman.storeResource', {
+        },
+        'superman.storeresource': {
             abstract: true,
-            url: "/storeResource",
+            url: "/storeresource",
             template: "<div ui-view></div>",
             data: {pageTitle: '本店资源查看'}
-        })
-        .state('superman.storeResource.activity', {
+        },
+        'superman.storeresource.activity': {
             url: "/activity",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'superMenuMgrCtrl',
@@ -357,8 +358,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
                 }
             }
-        })
-        .state('superman.storeResource.video', {
+        },
+        'superman.storeresource.video': {
             url: "/video",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'superMenuMgrCtrl',
@@ -371,14 +372,14 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
                 }
             }
-        })
-        .state('superman.MYResource', {
+        },
+        'superman.myresource': {
             abstract: true,
-            url: "/MYResource",
+            url: "/myresource",
             template: "<div ui-view></div>",
             data: {pageTitle: '木爷资源管理'}
-        })
-        .state('superman.MYResource.activity', {
+        },
+        'superman.myresource.activity': {
             url: "/activity",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'superMenuMgrCtrl',
@@ -391,8 +392,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
                 }
             }
-        })
-        .state('superman.MYResource.video', {
+        },
+        'superman.myresource.video': {
             url: "/video",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'superMenuMgrCtrl',
@@ -405,8 +406,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
                 }
             }
-        })
-        .state('superman.MYResource.ad', {
+        },
+        'superman.myresource.ad': {
             url: "/ad",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'superMenuMgrCtrl',
@@ -419,8 +420,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
                 }
             }
-        })
-        .state('superman.MYResource.material', {
+        },
+        'superman.myresource.material': {
             url: "/material",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'superMenuMgrCtrl',
@@ -433,14 +434,14 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
                 }
             }
-        })
-        .state('superman.push', {
+        },
+        'superman.push': {
             abstract: true,
             url: "/push",
             template: "<div ui-view></div>",
             data: {pageTitle: '木爷资源推送'}
-        })
-        .state('superman.push.activity', {
+        },
+        'superman.push.activity': {
             url: "/activity",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'superMenuMgrCtrl',
@@ -453,8 +454,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
                 }
             }
-        })
-        .state('superman.push.video', {
+        },
+        'superman.push.video': {
             url: "/video",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'superMenuMgrCtrl',
@@ -467,8 +468,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
                 }
             }
-        })
-        .state('superman.push.ad', {
+        },
+        'superman.push.ad': {
             url: "/ad",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'superMenuMgrCtrl',
@@ -481,8 +482,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
                 }
             }
-        })
-        .state('superman.push.material', {
+        },
+        'superman.push.material': {
             url: "/material",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'superMenuMgrCtrl',
@@ -495,14 +496,15 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'cater', 'superMenuCtrl.js')
                 }
             }
-        })
-        .state('dataCenter', {
+        },
+        'datacenter': {
             abstract: true,
-            url: "/dataCenter",
-            template: "<div ui-view></div>"
-        })
-        .state('dataCenter.selfCheckLog', {
-            url: "/selfCheckLog",
+            url: "/datacenter",
+            template: "<div ui-view></div>",
+            data: {pageTitle: '数据中心'}
+        },
+        'datacenter.selfchecklog': {
+            url: "/selfchecklog",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'logListCtrl',
             data: {
@@ -515,8 +517,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'datacenter', 'logCtrl.js');
                 }
             }
-        })
-        .state('dataCenter.waittoken', {
+        },
+        'datacenter.waittoken': {
             url: "/waittoken",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'waitTokenCtrl',
@@ -531,9 +533,9 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'datacenter', 'waitTokenCtrl.js')
                 }
             }
-        })
-        .state('dataCenter.voiceLog', {
-            url: "/voiceLog",
+        },
+        'datacenter.voicelog': {
+            url: "/voicelog",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'voiceLogCtrl',
             data: {
@@ -546,13 +548,14 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'datacenter', 'voiceLogCtrl.js');
                 }
             }
-        })
-        .state('user', {
+        },
+        'user': {
             abstract: true,
             url: "/user",
-            template: "<div ui-view></div>"
-        })
-        .state('user.user', {
+            template: "<div ui-view></div>",
+            data: {pageTitle: '账号管理'}
+        },
+        'user.user': {
             url: "/user",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'userMgrCtrl',
@@ -570,9 +573,9 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'user', 'userCtrl.js')
                 }
             }
-        })
-        .state('user.adminRole', {
-            url: "/adminRole",
+        },
+        'user.adminrole': {
+            url: "/adminrole",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'adminRoleMgrCtrl',
             data: {
@@ -586,9 +589,9 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'user', 'adminRoleCtrl.js')
                 }
             }
-        })
+        },
 
-        .state('user.customer', {
+        'user.customer': {
             url: "/customer",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'customerMgrCtrl',
@@ -606,8 +609,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'user', 'customerCtrl.js')
                 }
             }
-        })
-        .state('user.role', {
+        },
+        'user.role': {
             url: "/role",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'roleMgrCtrl',
@@ -622,15 +625,16 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'user', 'roleCtrl.js')
                 }
             }
-        })
+        },
 
-        .state('remote', {
+        'remote': {
             abstract: true,
             url: "/remote",
-            template: "<div ui-view></div>"
-        })
-        .state('remote.dUMonitor', {
-            url: "/dUMonitor",
+            template: "<div ui-view></div>",
+            data: {pageTitle: '远程监控'}
+        },
+        'remote.dumonitor': {
+            url: "/dumonitor",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'dUMonitorMgrCtrl',
             data: {
@@ -643,8 +647,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'remote', 'dUMonitorCtrl.js')
                 }
             }
-        })
-        .state('remote.camera', {
+        },
+        'remote.camera': {
             url: "/camera",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'camera',
@@ -658,9 +662,9 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'remote', 'camera.js')
                 }
             }
-        })
-        .state('remote.onlineDevice', {
-            url: "/onlineDevice",
+        },
+        'remote.onlinedevice': {
+            url: "/onlinedevice",
             templateUrl: "assets/mvc/desktop/view/manager.html",
             controller: 'onlineDevice',
             data: {
@@ -673,8 +677,26 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     return ctrlManagerLoader($ocLazyLoad, 'remote', 'onlineDevice.js')
                 }
             }
-        });
+        }
 
+    }
+}
+
+function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpProvider) {
+    $urlRouterProvider.otherwise("/merchant/shop");
+    $ocLazyLoadProvider.config({debug: false});
+    $httpProvider.defaults.headers.post['Content-Type'] = undefined;
+
+    //router开始
+    //遍历router配置
+    routerAll(baseUrl);
+    angular.forEach(controllers, function(data,index){
+        $stateProvider.state(index, routers[index]);
+        angular.forEach(data, function(dataChild,indexChild){
+            $stateProvider.state(index+'.'+indexChild, routers[index+'.'+indexChild]);
+        });
+    });
+    //结束
 }
 angular
     .module('myee')
@@ -689,6 +711,22 @@ angular
             userName:baseUrl.userName,
             thisStoreName:baseUrl.thisStoreName
         };
+        //获取路由配置[C:路由权限，R:路由初始化，F：对应路由icon]
+        $rootScope.routerAll = {
+            C:controllers,
+            R:routers,
+            F:{
+                'merchant':'fa-bank',
+                'campaign':'fa-calendar',
+                'cater':'fa-cutlery',
+                'device':'fa-camera-retro',
+                'explorer':'fa-share-alt',
+                'datacenter':'fa-database',
+                'user':'fa-group',
+                'remote':'fa-android'
+            }
+        }
+        //
         $rootScope.lang_zh = {
             edit:"编辑",
             update:"保存",
