@@ -123,6 +123,7 @@ public class CommonServiceImpl implements CommonService, TransactionalAspectAwar
 		}
 		String configFilePath = updateConfig.getPath();
 		configFilePath = DOWNLOAD_HOME + File.separator + Constants.ADMIN_PACK + File.separator + configFilePath;
+		LOG.info("configFilePath ={} ", configFilePath);
 		latestVersionStr = FileUtils.readTXT(configFilePath);
 		return latestVersionStr;
 	}
