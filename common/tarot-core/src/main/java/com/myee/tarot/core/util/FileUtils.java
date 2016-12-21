@@ -72,18 +72,17 @@ public class FileUtils {
      * @return
      */
     public static String readTXT(String path) {
+		logger.info("readTXT  file path={}", path);
         String res = "";
         try {
             File file = new File(path);
-            if (!file.exists()) {
-                createFileAndDir(path);
-                return res;
+            if (file.exists()) {
+				FileInputStream fis = new FileInputStream(path);
+				int length = fis.available();
+				byte[] buffer = new byte[length];
+				fis.read(buffer);
+				res = new String(buffer, "UTF-8");
             }
-            FileInputStream fis = new FileInputStream(path);
-            int length = fis.available();
-            byte[] buffer = new byte[length];
-            fis.read(buffer);
-            res = new String(buffer, "UTF-8");
         } catch (FileNotFoundException e) {
 			logger.error(" read version txt error ", e);
         } catch (Exception e) {
