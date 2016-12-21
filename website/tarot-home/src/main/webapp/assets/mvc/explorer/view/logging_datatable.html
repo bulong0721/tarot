@@ -34,7 +34,7 @@
                         <tr>
                             <th width="7%" class="center">用户</th>
                             <th width="7%" class="center">通知类型</th>
-                            <th width="50px" class="center">推送应用</th>
+                          <!--  <th width="50px" class="center">推送应用</th>-->
                             <th width="7%" class="center">推送设备</th>
                             <th width="50px" class="center">是否成功</th>
                             <th width="7%" class="center">操作类型</th>
@@ -53,7 +53,7 @@
                         <tr ng-repeat-start="row in $data">
                             <td>{{::row.userName}}</td>
                             <td>{{::row.noticeType}}</td>
-                            <td>{{::row.appId}}</td>
+                          <!--  <td>{{::row.appId}}</td>-->
                             <td>{{::row.deviceUsedName}}</td>
                             <td class="center"><span ng-class="{true: 'label label-primary', false: 'label label-danger'}[row.success]">{{row.success?'成功':'失败'}}</span></td>
                            <!-- <td>{{::row.success}}</td>-->
