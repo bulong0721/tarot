@@ -10,7 +10,7 @@
                 </div>
                 <div class="logo-element">MYEE</div>
             </li>
-            <li ng-repeat="(index,c) in routerAll.C" ng-class="{active: $state.includes(index)}">
+            <li ng-repeat="(index,c) in routerAll.C" ng-class="{active: $state.includes(index)}" ng-if="routerAll.R[index]">
                 <a ng-href=""><i class="fa fa-lg {{routerAll.F[index]}}"></i> <span class="nav-label">{{routerAll.R[index].data.pageTitle}}</span> <span
                         class="fa arrow"></span></a>
                 <ul class="nav nav-second-level" ng-if="c" ng-class="{in: $state.includes(index)}">

@@ -715,14 +715,16 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
     routerAll(baseUrl);
     var oneRouter = true;
     angular.forEach(controllers, function(data,index){
-        $stateProvider.state(index, routers[index]);
-        angular.forEach(data, function(dataChild,indexChild){
-            if(oneRouter){
-                $urlRouterProvider.otherwise('/'+index+'/'+indexChild);
-                oneRouter = false;
-            }
-            $stateProvider.state(index+'.'+indexChild, routers[index+'.'+indexChild]);
-        });
+        if(routers[index] != undefined){
+            $stateProvider.state(index, routers[index]);
+            angular.forEach(data, function(dataChild,indexChild){
+                if(oneRouter){
+                    $urlRouterProvider.otherwise('/'+index+'/'+indexChild);
+                    oneRouter = false;
+                }
+                $stateProvider.state(index+'.'+indexChild, routers[index+'.'+indexChild]);
+            });
+        }
     });
     //结束
 }
