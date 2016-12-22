@@ -722,7 +722,9 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpPro
                     $urlRouterProvider.otherwise('/'+index+'/'+indexChild);
                     oneRouter = false;
                 }
-                $stateProvider.state(index+'.'+indexChild, routers[index+'.'+indexChild]);
+                if(routers[index + '.' + indexChild] != undefined) {
+                    $stateProvider.state(index + '.' + indexChild, routers[index + '.' + indexChild]);
+                }
             });
         }
     });
