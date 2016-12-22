@@ -13,7 +13,7 @@
             <li ng-repeat="(index,c) in routerAll.C" ng-class="{active: $state.includes(index)}">
                 <a ng-href=""><i class="fa fa-lg {{routerAll.F[index]}}"></i> <span class="nav-label">{{routerAll.R[index].data.pageTitle}}</span> <span
                         class="fa arrow"></span></a>
-                <ul class="nav nav-second-level" ng-if="c" ng-class="{in: $state.includes('index')}">
+                <ul class="nav nav-second-level" ng-if="c" ng-class="{in: $state.includes(index)}">
                     <li ng-repeat="(indexChild,c) in c" ng-class="{active: $state.includes(index+'.'+indexChild)}">
                         <a ui-sref="{{index+'.'+indexChild}}">{{routerAll.R[index+'.'+indexChild].data.subTitle}}</a>
                     </li>

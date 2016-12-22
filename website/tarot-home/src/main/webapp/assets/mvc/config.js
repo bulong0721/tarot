@@ -706,16 +706,21 @@ function routerAll(baseUrl){
 }
 
 function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider,$httpProvider) {
-    $urlRouterProvider.otherwise("/merchant/shop");
+    //$urlRouterProvider.otherwise("merchant/shop");
     $ocLazyLoadProvider.config({debug: false});
     $httpProvider.defaults.headers.post['Content-Type'] = undefined;
 
     //router开始
     //遍历router配置
     routerAll(baseUrl);
+    var oneRouter = true;
     angular.forEach(controllers, function(data,index){
         $stateProvider.state(index, routers[index]);
         angular.forEach(data, function(dataChild,indexChild){
+            if(oneRouter){
+                $urlRouterProvider.otherwise('/'+index+'/'+indexChild);
+                oneRouter = false;
+            }
             $stateProvider.state(index+'.'+indexChild, routers[index+'.'+indexChild]);
         });
     });
