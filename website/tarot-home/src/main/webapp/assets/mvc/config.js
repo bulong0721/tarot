@@ -677,6 +677,29 @@ function routerAll(baseUrl){
                     return ctrlManagerLoader($ocLazyLoad, 'remote', 'onlineDevice.js')
                 }
             }
+        },
+
+        'configuration' : {
+            abstract: true,
+            url: "/configuration",
+            template: "<div ui-view></div>",
+            data: {pageTitle: '配置管理'}
+        },
+        'configuration.receiptprinted' : {
+            url: "/receiptprinted",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'receiptPrintedCtrl',
+            data: {
+                pageTitle: '配置管理',
+                subTitle: '小票模板配置',
+                datatable: 'assets/mvc/configuration/view/receipt_module_datatable.html',
+                other4: 'assets/mvc/configuration/view/receipt_module_editor.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'configuration', 'configurationCtrl.js')
+                }
+            }
         }
 
     }
@@ -723,7 +746,8 @@ angular
                 'explorer':'fa-share-alt',
                 'datacenter':'fa-database',
                 'user':'fa-group',
-                'remote':'fa-android'
+                'remote':'fa-android',
+                'configuration':'fa-android'
             }
         }
         //
