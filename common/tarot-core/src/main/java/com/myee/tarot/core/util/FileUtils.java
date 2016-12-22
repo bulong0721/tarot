@@ -74,10 +74,11 @@ public class FileUtils {
     public static String readTXT(String path) {
 		logger.info("readTXT  file path={}", path);
         String res = "";
+		FileInputStream fis = null;
         try {
             File file = new File(path);
             if (file.exists()) {
-				FileInputStream fis = new FileInputStream(path);
+				fis = new FileInputStream(path);
 				int length = fis.available();
 				byte[] buffer = new byte[length];
 				fis.read(buffer);
@@ -87,8 +88,16 @@ public class FileUtils {
 			logger.error(" read version txt error ", e);
         } catch (Exception e) {
 			logger.error(" read version txt error ", e);
-        }
-        return res;
+        }finally {
+			if(null != fis){
+				try {
+					fis.close();
+				} catch (IOException e) {
+					logger.error(" read version txt error ", e);
+				}
+			}
+		}
+		return res;
     }
 
     private static void createFileAndDir(String path) {
