@@ -19,11 +19,6 @@ public class AdminPermissionDaoImpl extends GenericEntityDaoImpl<Long, AdminPerm
     }
 
     @Override
-    public AdminPermission getByNameAndType(String name, String type) {
-        return null;
-    }
-
-    @Override
     public List<AdminPermission> listAllPermissions(Boolean isFriendly) {
         QAdminPermission qAdminPermission = QAdminPermission.adminPermission;
         JPQLQuery<AdminPermission> query = new JPAQuery(getEntityManager());
@@ -36,6 +31,7 @@ public class AdminPermissionDaoImpl extends GenericEntityDaoImpl<Long, AdminPerm
         query.where(qAdminPermission.type.eq(Constants.PERMISSION_TYPE_ALL));
         return query.fetch();
     }
+
 
     @Override
     public List<AdminPermission> listByIds(List<Long> bindList) {

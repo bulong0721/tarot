@@ -77,27 +77,38 @@ public class ConfigurationController {
                 return ajaxResponse;
             }
             MerchantStore merchantStore1 = (MerchantStore) o;
-            receiptPrinted.setStore(merchantStore1);
-            receiptPrinted.setUpdateTime(new Date());
-            ReceiptPrinted receiptPrinted1;
-            receiptPrinted1 = receiptPrintedService.update(receiptPrinted);
-            List<ReceiptPrintedItem> itemsTemp = receiptPrinted.getItems();
-            if (itemsTemp != null && itemsTemp.size() > 0) {
-                for (ReceiptPrintedItem rpItem : itemsTemp) {
-                    receiptPrintedItemService.delete(rpItem);
+            ReceiptPrinted target;
+            if (receiptPrinted.getId() != null) {
+                target = receiptPrintedService.findById(receiptPrinted.getId());
+                List<ReceiptPrintedItem> itemsTemp = target.getItems();
+                List<Long> ids = Lists.newArrayList();
+                if (itemsTemp != null && itemsTemp.size() > 0) {
+                    for (ReceiptPrintedItem item : itemsTemp) {
+                        ids.add(item.getId());
+                    }
                 }
+                receiptPrintedItemService.deleteByIds(ids);
+            } else {
+                target = new ReceiptPrinted();
             }
+            target.setStore(merchantStore1);
+            target.setUpdateTime(new Date());
+            target.setModuleName(receiptPrinted.getModuleName());
+            target.setReceiptType(receiptPrinted.getReceiptType());
+            target.setDescription(receiptPrinted.getDescription());
+            target = receiptPrintedService.update(target);
+
             List<ReceiptPrintedItem> receiptPrintedItemList = JSON.parseArray(items, ReceiptPrintedItem.class);
             List<ReceiptPrintedItem> tempReceiptPrintedItemList = Lists.newArrayList();
             if (receiptPrintedItemList != null && receiptPrintedItemList.size() > 0) {
                 for (ReceiptPrintedItem receiptPrintedItem : receiptPrintedItemList) {
-                    receiptPrintedItem.setReceiptPrinted(receiptPrinted1);
+                    receiptPrintedItem.setReceiptPrinted(target);
                     ReceiptPrintedItem receiptPrintedItem1 = receiptPrintedItemService.update(receiptPrintedItem);
                     tempReceiptPrintedItemList.add(receiptPrintedItem1);
                 }
             }
             ajaxResponse = AjaxResponse.success("添加成功");
-            ajaxResponse.addEntry("updateResult", objectToEntry(receiptPrinted1));
+            ajaxResponse.addEntry("updateResult", objectToEntry(target));
             ajaxResponse.addEntry("updateReceiptPrintedItems", tempReceiptPrintedItemList);
     } catch (Exception e) {
         LOGGER.error(e.getMessage(),e);

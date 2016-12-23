@@ -46,10 +46,7 @@
         <class>com.myee.tarot.catering.domain.TableZone</class>
 
         <class>com.myee.tarot.wechat.domain.RDiner</class>
-        <class>com.myee.tarot.wechat.domain.RDrawToken</class>
-        <class>com.myee.tarot.wechat.domain.RInstructionLog</class>
         <class>com.myee.tarot.wechat.domain.WxWaitToken</class>
-        <class>com.myee.tarot.wechat.domain.WFeedBack</class>
 
         <class>com.myee.tarot.campaign.domain.MerchantActivity</class>
         <class>com.myee.tarot.campaign.domain.MerchantPrice</class>
@@ -61,6 +58,9 @@
         <class>com.myee.tarot.metric.domain.MetricInfo</class>
         <class>com.myee.tarot.metric.domain.MetricDetail</class>
         <class>com.myee.tarot.metric.domain.SystemMetrics</class>
+
+        <class>com.myee.tarot.configuration.domain.ReceiptPrinted</class>
+        <class>com.myee.tarot.configuration.domain.ReceiptPrintedItem</class>
 
         <class>com.myee.tarot.datacenter.domain.SelfCheckLog</class>
         <class>com.myee.tarot.datacenter.domain.EventModule</class>

@@ -2,15 +2,14 @@ package com.myee.tarot.catalog.domain;
 
 import com.myee.tarot.catalog.type.ProductType;
 import com.myee.tarot.catalog.view.ProductUsedView;
+import com.myee.tarot.configuration.domain.ReceiptPrinted;
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Martin on 2016/4/18.
@@ -52,6 +51,13 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
 
     @OneToMany(mappedBy = "productUsed", targetEntity = ProductUsedAttribute.class, fetch = FetchType.LAZY)
     protected List<ProductUsedAttribute> attributes = new ArrayList<ProductUsedAttribute>();
+
+    @ManyToMany(targetEntity = ProductUsed.class, fetch = FetchType.LAZY/*cascade = CascadeType.REFRESH*/)
+    @JoinTable(name = "C_PRODUCT_USED_RECEIPT_XREF",
+            joinColumns = {@JoinColumn(name = "PRODUCT_USED_ID", nullable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "RECEIPT_ID", nullable = false)}
+    )
+    protected List<ReceiptPrinted> receiptPrinted  = new ArrayList<ReceiptPrinted>();
 
 //    @OneToMany(targetEntity = DeviceUsed.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
 //    @JoinTable(name = "C_PRODUCT_USED_DEV_XREF",
@@ -145,4 +151,11 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
 //        return deviceUsed;
 //    }
 
+    public List<ReceiptPrinted> getReceiptPrinted() {
+        return receiptPrinted;
+    }
+
+    public void setReceiptPrinted(List<ReceiptPrinted> receiptPrinted) {
+        this.receiptPrinted = receiptPrinted;
+    }
 }

@@ -13,9 +13,12 @@ public interface AdminPermissionDao extends GenericEntityDao<Long, AdminPermissi
 
     AdminPermission getByName(String name);
 
-    AdminPermission getByNameAndType(String name, String type);
-
     List<AdminPermission> listAllPermissions(Boolean isFriendly);
 
+    /**
+     * 根据选中的权限ID查询所有的权限
+     * @param bindList
+     * @return
+     */
     List<AdminPermission> listByIds(List<Long> bindList);
 }

@@ -1,0 +1,137 @@
+<div>
+    <uib-tabset>
+        <uib-tab>
+            <uib-tab-heading>
+                <i class="fa fa-info"></i>小票模板配置
+            </uib-tab-heading>
+            <div class="panel-body formly">
+                <form name="formData.form" class="formly-field" novalidate>
+                    <formly-form model="formDataReceiptModule.model" fields="formDataReceiptModule.fields" form="formDataReceiptModule.form" options="formDataReceiptModule.options">
+                        <label class="col-sm-2 control-label ">
+                            配置详细
+                        </label>
+                        <div class="panel-body col-sm-8">
+                            <div ng-if="formDataReceiptModule.model.code">
+                                <div class="btn btn-sm btn-success upMenuBut">
+                                    <i class="fa fa-upload bigger-120"></i><span>导入配置</span>
+                                    <input type="file" onchange="angular.element(this).scope().readFile(this)"/>
+                                </div>
+                                <br>
+                                <br>
+                            </div>
+
+                            <table id="details" width="45%" class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th width="15%" class="center">栏目类型</th>
+                                    <th width="10%" class="center">换行</th>
+                                    <th width="12%" class="center">字体</th>
+                                    <th width="80px" class="center">粗体</th>
+                                    <th width="10%" class="center">大小</th>
+                                    <th width="145px" class="center">对齐方式</th>
+                                    <th class="center">下划线</th>
+                                    <th width="80px" class="center">内容</th>
+                                    <th width="80px" class="center"><a ng-click="insertAttr(formDataReceiptModule.model)" tooltip-placement="top" uib-tooltip="{{lang_zh.add}}"><i class="btn-icon fa fa-plus"></i></a></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td colspan="9" class="center" ng-if="formDataReceiptModule.model.attributes.length<=0">没有查找到数据</td>
+                                </tr>
+                                <tr ng-repeat="attr in formDataReceiptModule.model.attributes" ng-switch="attr.editing" ng-if="attr.show">
+                                    <td>
+                                        <span ng-switch-default ng-if="attr.itemType == 1">变量</span>
+                                        <span ng-switch-default ng-if="attr.itemType == 0">常量</span>
+                                        <div class="controls" ng-switch-when="true">
+                                            <select ng-model="attr.itemType">
+                                                <option value="1" ng-selected="attr.itemType == 1">变量</option>
+                                                <option value="0" ng-selected="attr.itemType == 0">常量</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span ng-switch-default ng-if="attr.isNewline == 1">是</span>
+                                        <span ng-switch-default ng-if="attr.isNewline == 0">否</span>
+                                        <div class="controls" ng-switch-when="true">
+                                            <select ng-model="attr.isNewline">
+                                                <option value="1" ng-selected="attr.isNewline == 1">是</option>
+                                                <option value="0" ng-selected="attr.isNewline == 0">否</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span ng-switch-default>{{::attr.font}}</span>
+                                        <div class="controls" ng-switch-when="true">
+                                            <textarea type="text" name="attrDescription" ng-model="attr.font" placeholder="字体" class="editable-input form-control input-sm" required/>
+                                        </div>
+                                    </td>
+                                    <td class="center">
+                                        <span ng-switch-default ng-if="attr.isBold == 1">是</span>
+                                        <span ng-switch-default ng-if="attr.isBold == 0">否</span>
+                                        <div class="controls" ng-switch-when="true">
+                                            <select ng-model="attr.isBold">
+                                                <option value="1" ng-selected="attr.isBold == 1">是</option>
+                                                <option value="0" ng-selected="attr.isBold == 0">否</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td class="center">
+                                        <span ng-switch-default ng-if="attr.size == 'normal'">标准</span>
+                                        <span ng-switch-default ng-if="attr.size == 'double'">两倍</span>
+                                        <div class="controls" ng-switch-when="true">
+                                            <select ng-model="attr.size">
+                                                <option value="normal" ng-selected="attr.size == 'normal'">标准</option>
+                                                <option value="double" ng-selected="attr.size == 'double'">两倍</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td class="center">
+                                        <span ng-switch-default ng-if="attr.align == 1">左对齐</span>
+                                        <span ng-switch-default ng-if="attr.align == 2">居中</span>
+                                        <span ng-switch-default ng-if="attr.align == 3">右对齐</span>
+                                        <div class="controls" ng-switch-when="true">
+                                            <select ng-model="attr.align">
+                                                <option value="1" ng-selected="attr.align == 1">左对齐</option>
+                                                <option value="2" ng-selected="attr.align == 2">居中</option>
+                                                <option value="3" ng-selected="attr.align == 3">右对齐</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td class="center">
+                                        <span ng-switch-default ng-if="attr.isUnderline == 1">是</span>
+                                        <span ng-switch-default ng-if="attr.isUnderline == 0">否</span>
+                                        <div class="controls" ng-switch-when="true">
+                                            <select ng-model="attr.isUnderline">
+                                                <option value="1" ng-selected="attr.isUnderline == 1">是</option>
+                                                <option value="0" ng-selected="attr.isUnderline == 0">否</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td class="center">
+                                        <span ng-switch-default>{{::attr.content}}</span>
+                                        <div class="controls" ng-switch-when="true">
+                                            <textarea type="text" name="attrDescription" ng-disabled="attr.itemType == 1" ng-model="attr.content" placeholder="内容" class="editable-input form-control input-sm" required/>
+                                        </div>
+                                    </td>
+                                    <td class="center">
+                                        <a ng-switch-default ng-click="goEditAttr(formDataReceiptModule.model, attr,$index)" tooltip-placement="top" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
+                                        <a ng-switch-when="true" ng-click="updateAttr(formDataReceiptModule.model, attr,$index)" tooltip-placement="top" uib-tooltip="{{lang_zh.update}}"><i class="btn-icon fa fa-check"></i></a>
+                                        <span class="divider"></span>
+                                        <a ng-switch-default ng-click="deleteAttr(formDataReceiptModule.model, attr)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
+                                        <a ng-switch-when="true" ng-click="cancelAttr(formDataReceiptModule.model,attr)" tooltip-placement="top" uib-tooltip="{{lang_zh.cancel}}"><i class="btn-icon fa fa-close"></i></a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="text-center col-xs-8">
+                            <button class="btn btn-primary" ng-click="processSubmit()"><i class="fa fa-sm fa-check"></i>&nbsp;确定</button>
+                            <button class="btn m-l" ng-click="goDataTable()"><i class="fa fa-undo"></i>返回</button>
+                        </div>
+                    </formly-form>
+                </form>
+            </div>
+        </uib-tab>
+    </uib-tabset>
+</div>

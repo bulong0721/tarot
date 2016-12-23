@@ -58,7 +58,7 @@ function receiptPrintedCtrl($scope, cResource, Constants, cTables, cfromly, NgTa
                 $scope.formDataReceiptModule.model.attributes = [];
             }
             var goItems = [];
-            if (data.itemList == undefined) {
+            if (data.itemList == undefined || data.itemList.length == 0) {
                 cResource.get(mgrModuleNameData.api.listItems, {receiptPrintedId : data.id}).then(function(resp){
                     if (!$scope.formDataReceiptModule.model.attributes) {
                         $scope.formDataReceiptModule.model.attributes = [];
@@ -78,6 +78,7 @@ function receiptPrintedCtrl($scope, cResource, Constants, cTables, cfromly, NgTa
                             show : true
                         });
                     });
+                    $scope.formDataReceiptModule.model.attributes = goItems;
                 });
             } else {
                 angular.forEach(data.itemList, function (indexData, index, array) {
@@ -97,6 +98,7 @@ function receiptPrintedCtrl($scope, cResource, Constants, cTables, cfromly, NgTa
             }
 
             $scope.formDataReceiptModule.model.attributes = goItems;
+            console.log($scope.formDataReceiptModule.model.attributes)
         } else {
             $scope.formDataReceiptModule.model = {};
             $scope.rowIndex = -1;
@@ -115,32 +117,32 @@ function receiptPrintedCtrl($scope, cResource, Constants, cTables, cfromly, NgTa
             $scope.tableOpts.itemList = [];
         }
         angular.forEach($scope.formDataReceiptModule.model.attributes, function (indexData, index, array) {
-            items.push({
-                align : indexData.align,
-                content : indexData.content,
-                font : indexData.font,
-                isBold : indexData.isBold,
-                isNewline : indexData.isNewline,
-                isUnderline : indexData.isUnderline,
-                itemType : indexData.itemType,
-                size : indexData.size
-            });
+            if (indexData.show == true) {
+                items.push({
+                    align : indexData.align,
+                    content : indexData.content,
+                    font : indexData.font,
+                    isBold : indexData.isBold,
+                    isNewline : indexData.isNewline,
+                    isUnderline : indexData.isUnderline,
+                    itemType : indexData.itemType,
+                    size : indexData.size
+                });
+            }
         });
         $scope.disableSubmit = true;
+        console.log(items);
         cResource.save(mgrModuleNameData.api.update,{
             items : JSON.stringify(items)
         }, formly.model).then(function(response){
             $scope.disableSubmit = false;
             if ($scope.rowIndex < 0) {
-                // $scope.tableOpts.data.itemList.splice(0, 0, response.dataMap.updateReceiptPrintedItems);
-                // console.log($scope.tableOpts.data)
-                // $scope.tableOpts.data.splice(0, 0, response.dataMap.updateResult);
+                $scope.tableOpts.data.push(response.dataMap.updateResult);
             } else {
                 $scope.tableOpts.data[$scope.rowIndex] = response.dataMap.updateResult;
-                // $scope.tableOpts.data[$scope.rowIndex].itemList.splice(0, 0, response.dataMap.updateReceiptPrintedItems);
+                $scope.tableOpts.data[$scope.rowIndex].itemList.splice(0, $scope.tableOpts.data[$scope.rowIndex].itemList.length);
             }
-            $scope.tableOpts.data.push(response.dataMap.updateResult);
-            // $scope.tableOpts.itemList.push(response.dataMap.updateReceiptPrintedItems);
+            console.log($scope.tableOpts.data[$scope.rowIndex])
             $scope.goDataTable();
         });
     };
@@ -200,8 +202,9 @@ function receiptPrintedCtrl($scope, cResource, Constants, cTables, cfromly, NgTa
             //model.attributes.splice(index, 1);
             //为了文件假删除一行
             model.attributes[index].show = false;
+            // $scope.formDataReceiptModule.model.attributes.splice(0, 1);
+            // console.log(model.attributes)
         }, function () {
-            //点击取消回调
 
         });
 
