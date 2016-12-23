@@ -700,6 +700,22 @@ function routerAll(baseUrl){
                     return ctrlManagerLoader($ocLazyLoad, 'configuration', 'configurationCtrl.js')
                 }
             }
+        },
+        'configuration.update' : {
+            url: "/update",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'updateConfigCtrl',
+            data: {
+                pageTitle: '配置管理',
+                subTitle: '升级配置',
+                datatable: 'assets/mvc/configuration/view/updateConfig_datatable.html',
+                other4: 'assets/mvc/configuration/view/updateConfig_editor.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'configuration', 'updateConfigCtrl.js')
+                }
+            }
         }
 
     }

@@ -77,6 +77,15 @@ public class FileValidCreateUtil {
         }
     }
 
+    //测试
+//    public static void main(String[] args) {
+//        try {
+//            System.out.println(fileMD5("D:/Documents/muye/desktop/Cooky-C001M01A007-RK3288_V2-20161130OTA.zip"));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
     /**
      *
      * @param inputFile

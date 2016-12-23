@@ -48,7 +48,7 @@
                             <tr ng-repeat-start="row in $data">
                                 <td>{{::row.name}}</td>
                                 <td>{{::row.login}}</td>
-                                <td>{{::row.lastLogin}}</td>
+                                <td>{{::row.lastLogin | date:'yyyy-MM-dd HH:mm:ss'}}</td>
                                 <td>{{::row.loginIP}}</td>
                                 <td>{{::row.phoneNumber}}</td>
                                 <td>{{::row.storeName}}</td>

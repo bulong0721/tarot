@@ -53,9 +53,9 @@ function sizeFormatter() {
 
 //日期格式化
 function dateFormatter($filter) {
-    return function (value) {
+    return function (value,format) {
         if (value) {
-            return $filter('date')(new Date(value), 'yyyy-MM-dd HH:mm:ss');
+            return $filter('date')(new Date(value), format || 'yyyy-MM-dd HH:mm:ss');
         }
         return '-';
     }

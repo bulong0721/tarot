@@ -23,7 +23,7 @@ public class UpdateConfig extends GenericEntity<Long, UpdateConfig> {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN")
     private Long id;
 
-    @Column(name = "NAME", nullable = false,length = 30)
+    @Column(name = "NAME", nullable = false,length = 60)
     protected String name;//配置文件名
 
     @Column(name = "DESCRIPTION",length = 255)

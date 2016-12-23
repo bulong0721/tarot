@@ -90,6 +90,7 @@ public class PushController {
     public AjaxPageableResponse createResource(@RequestParam(value = "file", required = false) CommonsMultipartFile file, @RequestParam("entityText") String entityText, HttpServletRequest request) {
         MerchantStore store = (MerchantStore) request.getSession().getAttribute(Constants.ADMIN_STORE);
         JSONObject jsonObject = JSON.parseObject(entityText);
+        //salt是/会导致转对象失败，所以人为处理下
         if ("/".equals(jsonObject.getString("salt"))) {
             jsonObject.remove("salt");
             jsonObject.put("salt", store.getId());
