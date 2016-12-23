@@ -117,7 +117,7 @@ public class AdminUserController {
             return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"错误");
         }
         resp = AjaxResponse.success();
-        resp.addEntry("updateResult", objectToEntry(user));
+        resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntry(user));
         return resp;
     }
 
@@ -249,7 +249,7 @@ public class AdminUserController {
         }
         user = customerService.update(user);
         resp = AjaxResponse.success();
-        resp.addEntry("updateResult", objectToEntry(user));
+        resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntry(user));
         return resp;
     }
 
@@ -354,7 +354,7 @@ public class AdminUserController {
         }
         role = roleService.update(role);
         resp = AjaxResponse.success();
-        resp.addEntry("updateResult", role);
+        resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, role);
         return resp;
     }
 
@@ -401,7 +401,7 @@ public class AdminUserController {
             role.setAllPermissions(permissionSet);
             role = roleService.update(role);
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", objectToEntry(role));
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntry(role));
             return resp;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -439,7 +439,7 @@ public class AdminUserController {
         }
         role = adminRoleService.update(role);
         resp = AjaxResponse.success();
-        resp.addEntry("updateResult", role);
+        resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, role);
         return resp;
     }
 
@@ -485,7 +485,7 @@ public class AdminUserController {
             adminRole.setAllPermissions(permissionSet);
             adminRole = adminRoleService.update(adminRole);
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", objectToEntry(adminRole));
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntry(adminRole));
             return resp;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -588,7 +588,7 @@ public class AdminUserController {
             customer.setAllMerchantStores(merchantStoreSet);
             customer = customerService.update(customer);
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", objectToEntry(customer));
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntry(customer));
             return resp;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -616,7 +616,7 @@ public class AdminUserController {
             adminUser.setAllRoles(adminRoleSet);
             adminUser = userService.update(adminUser);
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", objectToEntry(adminUser));
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntry(adminUser));
             return resp;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -644,7 +644,7 @@ public class AdminUserController {
             customer.setAllRoles(adminRoleSet);
             customer = customerService.update(customer);
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", objectToEntry(customer));
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntry(customer));
             return resp;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -673,7 +673,7 @@ public class AdminUserController {
             adminUser.setAllMerchantStores(merchantStoreSet);
             adminUser = userService.update(adminUser);
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", objectToEntry(adminUser));
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntry(adminUser));
             return resp;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -696,7 +696,7 @@ public class AdminUserController {
             adminUser.setAllPermissions(permissionSet);
             adminUser = userService.update(adminUser);
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", objectToEntry(adminUser));
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntry(adminUser));
             return resp;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -719,7 +719,7 @@ public class AdminUserController {
             customer.setAllPermissions(permissionSet);
             customer = customerService.update(customer);
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", objectToEntry(customer));
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntry(customer));
             return resp;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

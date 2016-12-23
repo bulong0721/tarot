@@ -20,7 +20,7 @@ function deviceUsedCtrl($scope, cResource, Constants, cTables, cfromly, NgTableP
             var deferred = $q.defer();
             deferred.resolve($scope.initalBindProductList);
             return deferred.promise;
-        } else {//第一次需要从后台读取列表，且只返回前10个数据
+        } else {//第一次需要从后台读取列表
             return cResource.get('./product/used/listByStoreId').then(function(data){
                 //初始化showCase.selected数组，给全选框用，让它知道应该全选哪些
                 angular.forEach(data.rows, function (indexData, index, array) {

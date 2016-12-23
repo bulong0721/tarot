@@ -101,7 +101,7 @@ public class ClientPrizeController extends BaseController {
             clientPrize.setLeftNum(total);
             clientPrize.setStore(merchantStore);
             ClientPrize updatePrize = clientPrizeService.update(clientPrize);
-            resp.addEntry("updateResult", objectToEntry(updatePrize));
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntry(updatePrize));
             resp.setStatus(AjaxResponse.RESPONSE_STATUS_SUCCESS);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(),e);

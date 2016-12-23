@@ -1,12 +1,14 @@
 package com.myee.tarot.resource.domain;
 
 import com.myee.tarot.catalog.domain.DeviceUsed;
+import com.myee.tarot.catalog.domain.ProductUsed;
 import com.myee.tarot.catering.domain.TableType;
 import com.myee.tarot.catering.domain.TableZone;
 import com.myee.tarot.core.GenericEntity;
 import com.myee.tarot.merchant.domain.MerchantStore;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -43,6 +45,9 @@ public class UpdateConfig extends GenericEntity<Long, UpdateConfig> {
 
     @Column(name = "DEVICE_GROUP_NO_LIST",columnDefinition = "TEXT")
     private String deviceGroupNOList;//勾选设备列表,作为历史记录
+
+    @Transient //供前端显示用，不关联查询出来
+    protected List<ProductUsed> productUsed = new ArrayList<ProductUsed>();
 
     @Override
     public Long getId() {
@@ -109,4 +114,12 @@ public class UpdateConfig extends GenericEntity<Long, UpdateConfig> {
 	public void setDeviceGroupNOList(String deviceGroupNOList) {
 		this.deviceGroupNOList = deviceGroupNOList;
 	}
+
+    public List<ProductUsed> getProductUsed() {
+        return productUsed;
+    }
+
+    public void setProductUsed(List<ProductUsed> productUsed) {
+        this.productUsed = productUsed;
+    }
 }

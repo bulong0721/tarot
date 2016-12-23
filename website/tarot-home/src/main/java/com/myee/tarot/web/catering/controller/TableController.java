@@ -89,7 +89,7 @@ public class TableController {
             type = typeService.update(type);
 
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", type);
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, type);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -187,7 +187,7 @@ public class TableController {
             zone = zoneService.update(zone);
 
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", zone);
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, zone);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -370,7 +370,7 @@ public class TableController {
             }
 
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", updateResult);
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, updateResult);
 
 
         } catch (Exception e) {
@@ -501,7 +501,7 @@ public class TableController {
 
             table = tableService.update(table);
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", objectToEntry(table));
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntry(table));
             return resp;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(),e);
@@ -559,7 +559,7 @@ public class TableController {
             menuInfo = menuService.update(menuInfo);
 
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", menuInfo);
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, menuInfo);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);

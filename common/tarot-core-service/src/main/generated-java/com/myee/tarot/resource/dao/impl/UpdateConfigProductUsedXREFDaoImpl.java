@@ -49,4 +49,13 @@ public class UpdateConfigProductUsedXREFDaoImpl extends GenericEntityDaoImpl<Lon
 		}
 		return list.get(0);
 	}
+
+	@Override
+	public List<UpdateConfigProductUsedXREF> listByConfigId(Long configId) {
+		QUpdateConfigProductUsedXREF qUpdateConfig = QUpdateConfigProductUsedXREF.updateConfigProductUsedXREF;
+		JPQLQuery<UpdateConfigProductUsedXREF> query = new JPAQuery(getEntityManager());
+		query.from(qUpdateConfig);
+		query.where(qUpdateConfig.updateConfig.id.eq(configId)).orderBy(qUpdateConfig.productUsed.code.asc());
+		return query.fetch();
+	}
 }

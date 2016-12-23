@@ -4,8 +4,8 @@ angular.module('myee', [])
 /**
  * updateConfigCtrl - controller
  */
-updateConfigCtrl.$inject = ['$scope','$resource', 'cResource', '$filter', 'cfromly', 'Constants', 'cAlerts', 'toaster', '$rootScope', '$timeout', '$q','cTables'];
-function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constants, cAlerts, toaster, $rootScope, $timeout, $q,cTables) {
+updateConfigCtrl.$inject = ['$scope','$resource', 'cResource', '$filter', 'cfromly', 'Constants', 'cAlerts', 'toaster', '$rootScope', '$timeout', '$q','cTables','NgTableParams'];
+function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constants, cAlerts, toaster, $rootScope, $timeout, $q,cTables, NgTableParams) {
     var lang = $rootScope.lang_zh;
     var iDatatable = 0, iConfig = 1;
     $scope.activeTab = iDatatable;
@@ -67,32 +67,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
                 ngModelAttrs: {style: {attribute: 'style'}},
                 templateOptions: {label: '描述', placeholder: '描述,255字以内', rows: 10, style: 'max-width:500px',maxlength:255,isSearch:false}
             }
-            //{
-            //    key: 'code',
-            //    type: 'c_select',
-            //    className: 'c_select',
-            //    templateOptions: {
-            //        label: '设备组',
-            //        required: true,
-            //        options: getProductUsedList()
-            //    },
-            //    controller: ['$scope', function (formlyScope) {
-            //        formlyScope.$watch('model.code', function (newValue, oldValue, theScope) {
-            //            //这里的formlyScope和theScope都是formly作用域
-            //            if (newValue != '' && newValue !== oldValue) {
-            //                var code = newValue;
-            //                //每次读取文件前先清空缓存
-            //                initialConfig();
-            //                var data = {
-            //                    "name": $scope.mgrUpdateConfigData.constant.FILE_NAME_MODULE,
-            //                    "path": $scope.mgrUpdateConfigData.constant.BASE_PATH_MODULE + code + "/" + $scope.mgrUpdateConfigData.constant.FILE_NAME_MODULE,
-            //                    "salt": Constants.thisMerchantStore.id
-            //                }
-            //                $scope.loadConfigFile(code, "模块配置读取失败！", data, $scope.mgrUpdateConfigData.constant.TYPE_MODULE);
-            //            }
-            //        });
-            //    }]
-            //}
         ],
         api: {
             read: './updateConfig/paging',
@@ -106,12 +80,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
             FILE_NAME_NO_EXTERN: 4,
             FILE_NAME_WITH_EXTERN: 2,
             FILE_EXTERN: 3,
-            //TYPE_MODULE: 'module',
-            //TYPE_APK: 'apk',
-            //TYPE_AGENT: 'agent',
-            //TYPE_AGENT_PATCH: 'agent_patch',
-            //TYPE_SELF_DESIGN_PAD: 'self_design_pad',
-            //FORCE_UPDATE_DEFAULT: 'N',
             DEFAULT_MERCHANT_STORE: 100,
             BASE_INFO_MODULE:{
                 TYPE: 'module',
@@ -149,18 +117,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
                 BASE_PATH: 'version/self_design_padUpdate/',
                 FORCE_UPDATE_DEFAULT: 'Y',
             },
-            //BASE_PATH_MODULE: 'version/moduleUpdate/',
-            //FILE_NAME_MODULE: 'moduleUpdateConfig.txt',
-            //BASE_PATH_APK: 'version/apkUpdate/',
-            //FILE_NAME_APK: 'apkUpdateConfig.txt',
-            //BASE_PATH_AGENT: 'tinker/agent/',
-            //FILE_NAME_AGENT: 'agentUpdateConfig.txt',
-            //BASE_PATH_AGENT_PATCH: 'tinker/agentPatch/',
-            //FILE_NAME_AGENT_PATCH: 'agent_patchUpdateConfig.txt',
-            //BASE_PATH_BOARD_UPDATE: 'version/boardUpdate/',
-            //FILE_NAME_EXAMPLE_BOARD_UPDATE: 'Cooky-C001M01A001-RK3288_v2-20160804ota.zip',
-            //FILE_NAME_SELF_DESIGN_PAD: 'self_design_padUpdateConfig.txt',
-
         }
     };
     //自动生成文件名对照表
@@ -234,38 +190,12 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
             var baseInfo = getBaseInfoByType(type);
             data.name = baseInfo.FILE_NAME;
             $scope.loadConfigFile(baseInfo.GET_FILE_FAIL_MSG, data, type);
-
-            //if (type == $scope.mgrUpdateConfigData.constant.BASE_INFO_MODULE.TYPE) {
-            //    data.name = $scope.mgrUpdateConfigData.constant.BASE_INFO_MODULE.FILE_NAME;
-            //    $scope.loadConfigFile("模块配置读取失败！", data, type);
-            //}
-            //else if (type == $scope.mgrUpdateConfigData.constant.BASE_INFO_APK.TYPE) {
-            //    //递归调用本函数取获取应用配置信息
-            //    data.name = $scope.mgrUpdateConfigData.constant.BASE_INFO_APK.FILE_NAME;
-            //    $scope.loadConfigFile("应用配置读取失败！", data, type);
-            //}
-            //else if (type == $scope.mgrUpdateConfigData.constant.BASE_INFO_AGENT.TYPE) {
-            //    data.name = $scope.mgrUpdateConfigData.constant.BASE_INFO_AGENT.FILE_NAME;
-            //    $scope.loadConfigFile("agent配置读取失败！", data, type);
-            //}
-            //else if (type == $scope.mgrUpdateConfigData.constant.BASE_INFO_AGENT_PATCH.TYPE) {
-            //    data.name = $scope.mgrUpdateConfigData.constant.BASE_INFO_AGENT_PATCH.FILE_NAME;
-            //    $scope.loadConfigFile("agentPatch配置读取失败！", data, type);
-            //}
-            //else if (type == $scope.mgrUpdateConfigData.constant.BASE_INFO_SELF_DESIGN_PAD.TYPE) {
-            //    data.name = $scope.mgrUpdateConfigData.constant.BASE_INFO_SELF_DESIGN_PAD.FILE_NAME;
-            //    $scope.loadConfigFile("自研平板配置读取失败！", data, type);
-            //}
         } else {
-            //$scope.formDataUpdateConfig.model = {};
             $scope.rowIndex = -1;
             $scope.createTimeMills = new Date().getTime();
             $scope.createTimeStamp = $filter('dateFormatter')($scope.createTimeMills,'yyyyMMddHHmmss');
         }
-
-
         $scope.activeTab = iConfig;
-        //$scope.showTypeAgent = $scope.showTypeAgentPatch = true;
     };
 
     function initialConfig() {
@@ -282,10 +212,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
     function initialParams() {
         $scope.submitResult = [];
         $scope.createTimeStamp = '';//创建时间，用于存储路径当文件夹名用
-        //$scope.submitModuleResult = [];
-        //$scope.submitApkResult = [];
-        //$scope.submitAgentResult = [];
-        //$scope.submitAgentPatchResult = [];
     }
 
     //选择类型的时候加载配置文件
@@ -317,31 +243,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
                     };
                     $scope.formDataUpdateConfig.model.attributes.push(attr);
                 });
-                //if ($scope.mgrUpdateConfigData.constant.SWITCH_MERCHANT_STORE == 100 && ( type == $scope.mgrUpdateConfigData.constant.TYPE_AGENT || type == $scope.mgrUpdateConfigData.constant.TYPE_AGENT_PATCH )) {
-                //    if($filter('isHasProp')(obj)){
-                //        attr = agentObjToCommon(obj, type);
-                //        $scope.formDataUpdateConfig.model.attributes.push(attr);
-                //    }
-                //}
-                //else {
-                //    angular.forEach(obj, function (indexData, index, array) {
-                //        //indexData等价于array[index]
-                //        attr = {
-                //            name: indexData.name,
-                //            version: indexData.version,
-                //            force_update: indexData.force_update,
-                //            description: indexData.description,
-                //            //type: type,
-                //            md5: indexData.md5,
-                //            web: indexData.web,
-                //            uploadState: false,
-                //            md5InputValid: false,
-                //            show: true,
-                //            editing: false
-                //        };
-                //        $scope.formDataUpdateConfig.model.attributes.push(attr);
-                //    });
-                //}
             }
         });
     }
@@ -355,22 +256,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
         }
     }
 
-    ////查询推送设备组下拉框内容
-    //function getProductUsedList() {
-    //    return cResource.query('./product/used/listByStore4Select');
-    //}
-
-
-
-    ////校验是否选择了设备组
-    //function checkProductUsedCodeOK(code) {
-    //    if (!code || code == '') {
-    //        $filter('toasterManage')(5, "请先选择要升级的设备组!",false);
-    //        //toaster.error({body: "请先选择要升级的设备组!"});
-    //        return false;
-    //    }
-    //    return true;
-    //}
     //校验参数是否为空
     function checkParamOK(param,msg) {
         if (!param || param == '') {
@@ -382,11 +267,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
 
     //formly提交config
     $scope.configSubmit = function () {
-        //var code = $scope.formDataUpdateConfig.model.code;
-        ////校验是否选择了设备组
-        //if (!checkProductUsedCodeOK(code)) {
-        //    return false;
-        //}
         if (!checkParamOK($scope.formDataUpdateConfig.model.type,'请选择类型') || !checkParamOK($scope.formDataUpdateConfig.model.seeType,'请选择设备可见范围')) {
             return false;
         }
@@ -433,18 +313,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
                     web: indexData.web
                 };
                 $scope.submitResult.push(attr);
-                //if (indexData.type == $scope.mgrUpdateConfigData.constant.TYPE_MODULE) {
-                //    $scope.submitModuleResult.push(attr);
-                //}
-                //else if (indexData.type == $scope.mgrUpdateConfigData.constant.TYPE_APK) {
-                //    $scope.submitApkResult.push(attr);
-                //}
-                //else if (indexData.type == $scope.mgrUpdateConfigData.constant.TYPE_AGENT) {
-                //    $scope.submitAgentResult.push(change4Agent(attr));
-                //}
-                //else if (indexData.type == $scope.mgrUpdateConfigData.constant.TYPE_AGENT_PATCH) {
-                //    $scope.submitAgentPatchResult.push(change4Agent(attr));
-                //}
             }
         });
         //若有检测不通过，则不提交
@@ -469,66 +337,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
                 "content": $scope.submitResult.length > 0 ? $scope.submitResult : []
             })
         };
-
-        //promises.push(
-        //    $resource(mgrUpdateConfigData.api.create).save(data, {}).$promise
-        //);
-
-        //promises.push(
-        //    $resource(mgrUpdateConfigData.api.create).save({
-        //        entityText: JSON.stringify({
-        //            "salt": "/",
-        //            "path": $scope.mgrUpdateConfigData.constant.BASE_PATH_APK + code,
-        //            "ifEditor": true,
-        //            "type": 1,
-        //            "name": $scope.mgrUpdateConfigData.constant.FILE_NAME_APK,
-        //            "content": $scope.submitApkResult.length > 0 ? $scope.submitApkResult : []
-        //        })
-        //    }, {}).$promise
-        //);
-        //
-        ////console.log(changeToVersionInfoXML($scope.submitApkResult));
-        //promises.push(
-        //    $resource(mgrUpdateConfigData.api.create).save({
-        //        entityText: JSON.stringify({
-        //            "salt": "/",
-        //            "path": $scope.mgrUpdateConfigData.constant.BASE_PATH_AGENT,
-        //            "ifEditor": true,
-        //            "type": 1,
-        //            "name": $scope.mgrUpdateConfigData.constant.FILE_NAME_AGENT,
-        //            //"content": changeToVersionInfoXML($scope.submitAgentResult)
-        //            "content": ($scope.mgrUpdateConfigData.constant.SWITCH_MERCHANT_STORE == 100 && $scope.submitAgentResult.length > 0) ? $scope.submitAgentResult[0] : {}
-        //        })
-        //    }, {}).$promise
-        //);
-        //
-        //promises.push(
-        //    $resource(mgrUpdateConfigData.api.create).save({
-        //        entityText: JSON.stringify({
-        //            "salt": "/",
-        //            "path": $scope.mgrUpdateConfigData.constant.BASE_PATH_AGENT_PATCH,
-        //            "ifEditor": true,
-        //            "type": 1,
-        //            "name": $scope.mgrUpdateConfigData.constant.FILE_NAME_AGENT_PATCH,
-        //            //"content": changeToVersionInfoXML($scope.submitAgentPatchResult)
-        //            "content": ($scope.mgrUpdateConfigData.constant.SWITCH_MERCHANT_STORE == 100 && $scope.submitAgentPatchResult.length > 0) ? $scope.submitAgentPatchResult[0] : {}
-        //        })
-        //    }, {}).$promise
-        //);
-
-        //存储表中结果到文件 {"salt":100,"path":"catch","ifEditor":true,"type":1,"name":"test.txt","content":"tetst"}
-        //$q.all(promises).then(function (respArray) {//返回结果的序列顺序跟上面参数的promise数组顺序一致
-        //    angular.forEach(respArray, function (indexData, index, array) {
-        //        //indexData等价于array[index]
-        //        if (0 != indexData.status) {
-        //            $filter('toasterManage')(5, "保存配置文件失败!",false);
-        //            return;
-        //        }
-        //    });
-        //    $filter('toasterManage')(5, "保存配置文件成功!",true);
-        //
-        //    $scope.goDataTable();
-        //});
 
         var formly = $scope.formDataUpdateConfig;
         console.log(formly)
@@ -572,39 +380,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
         }
 
     };
-
-    ////把通用字段修改成agent配套字段
-    //function change4Agent(attr) {
-    //    return {
-    //        name: attr.name,
-    //        versionName: '',
-    //        versionCode: attr.version,
-    //        description: attr.description,
-    //        url: attr.web,
-    //        verification: attr.md5
-    //    }
-    //}
-
-    //把agent字段修改成通用字段
-    //function agentObjToCommon(indexData, type) {
-    //    var obj = {};
-    //    if ($filter('isHasProp')(indexData)) {
-    //        obj = {
-    //            name: indexData.name,
-    //            version: indexData.versionCode,
-    //            force_update: '',
-    //            description: indexData.description,
-    //            //type: type,
-    //            md5: indexData.verification,
-    //            web: indexData.url,
-    //            uploadState: false,
-    //            md5InputValid: false,
-    //            show: true,
-    //            editing: false
-    //        }
-    //    }
-    //    return obj;
-    //}
 
     //formly返回
     $scope.configGoDataTable = function () {
@@ -663,11 +438,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
         }
         else if( $scope.formDataUpdateConfig.model.type == mgrUpdateConfigData.constant.BASE_INFO_SELF_DESIGN_PAD.TYPE
             && !checkBoardUpdateFileNameOK(fileName) ) {
-            //$timeout(function () {
-            //    $filter('toasterManage')(5,"请选择自研平板升级文件！例如："
-            //        + $scope.mgrUpdateConfigData.constant.BASE_INFO_SELF_DESIGN_PAD.FILE_NAME_EXAMPLE
-            //        ,false);
-            //}, 0);
             return false;
         }
 
@@ -676,25 +446,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
         //自研平板的存储路径是从文件名计算出来的
         var pathNoFileName = getNoFileNamePathByType(baseInfo,fileName);
         $scope.selfDesignPadFileName = fileName;//缓存自研平板文件名
-        //if ($scope.formDataUpdateConfig.model.type == $scope.mgrUpdateConfigData.constant.BASE_INFO_MODULE.TYPE) {
-        //    path = $scope.mgrUpdateConfigData.constant.BASE_INFO_MODULE.BASE_PATH + $scope.createTimeStamp;
-        //}
-        //else if ($scope.formDataUpdateConfig.model.type == $scope.mgrUpdateConfigData.constant.BASE_INFO_APK.TYPE) {
-        //    path = $scope.mgrUpdateConfigData.constant.BASE_INFO_APK.BASE_PATH + $scope.createTimeStamp;
-        //}
-        //else if ($scope.formDataUpdateConfig.model.type == $scope.mgrUpdateConfigData.constant.BASE_INFO_AGENT.TYPE) {
-        //    path = $scope.mgrUpdateConfigData.constant.BASE_INFO_AGENT.BASE_PATH + $scope.createTimeStamp;
-        //}
-        //else if ($scope.formDataUpdateConfig.model.type == $scope.mgrUpdateConfigData.constant.BASE_INFO_AGENT_PATCH.TYPE) {
-        //    path = $scope.mgrUpdateConfigData.constant.BASE_INFO_AGENT_PATCH.BASE_PATH + $scope.createTimeStamp;
-        //}
-        //else if ($scope.formDataUpdateConfig.model.type == $scope.mgrUpdateConfigData.constant.BASE_INFO_SELF_DESIGN_PAD.TYPE) {
-        //    path = $scope.mgrUpdateConfigData.constant.BASE_INFO_SELF_DESIGN_PAD.BASE_PATH + $scope.createTimeStamp;
-        //}
-        //else {
-        //    $filter('toasterManage')(5, "类型设置不正确，保存失败!",false);
-        //    return;
-        //}
         fd.append('file', _file);
         //先校验文件是否存在，若存在则不让重复上传——目前应该只对自研平板有效，其他模块的上传时间肯定不相同
         cResource.get($scope.mgrUpdateConfigData.api.isFileExist,{path: pathNoFileName,storeId:mgrUpdateConfigData.constant.DEFAULT_MERCHANT_STORE}).then(function(res){
@@ -706,7 +457,7 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
             } else {
                 if( res.rows[0].fileIsExist ) {
                     $timeout(function () {
-                        $filter('toasterManage')(5, fileName + "文件已存在，请先删除旧文件!",false);
+                        $filter('toasterManage')(5, fileName + "文件已存在，请先在资源管理中删除旧升级包文件!",false);
                     }, 0);
                     angular.element('#file'+index)[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
                 } else {
@@ -752,8 +503,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
 
     //校验一行数据是否符合要求
     function checkThisRowOK(thisRow,index,attrs) {
-        //console.log(thisRow.type)
-        //console.log(!(thisRow.type == $scope.mgrUpdateConfigData.constant.TYPE_AGENT || thisRow.type == $scope.mgrUpdateConfigData.constant.TYPE_AGENT_PATCH ));
         var checkOK = true;
         if ($filter('isNullOrEmptyString')(thisRow)
             || $filter('isNullOrEmptyString')(thisRow.name)
@@ -766,13 +515,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
             checkOK = false;
             return checkOK;
         }
-        //if (thisRow.type == $scope.mgrUpdateConfigData.constant.TYPE_APK && (typeof thisRow.version != 'number')) {
-        //    $timeout(function () {
-        //        $filter('toasterManage')(5,"类型为“应用”的请填写纯数字版本信息!",false);
-        //    }, 0);
-        //    checkOK = false;
-        //    return checkOK;
-        //}
         angular.forEach(attrs, function (indexData, attrsIndex, array) {
             //indexData等价于array[index]
             //for循环终止条件，只要有一条数据校验不通过，就停止循环
@@ -802,30 +544,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
         return checkOK;
     }
 
-    //下载配置文件函数
-    //$scope.downloadConfig = function (type) {
-    //    ////校验是否选择了设备组
-    //    //if (!checkProductUsedCodeOK($scope.formDataUpdateConfig.model.code)) {
-    //    //    return '';
-    //    //}
-    //
-    //    var baseUrl = $rootScope.baseUrl.pushUrl
-    //        + Constants.thisMerchantStore.id
-    //        + "/";
-    //    if (type == $scope.mgrUpdateConfigData.constant.TYPE_APK) {
-    //        return baseUrl
-    //            + $scope.mgrUpdateConfigData.constant.BASE_PATH_APK
-    //            + $scope.formDataUpdateConfig.model.code
-    //            + "/" + $scope.mgrUpdateConfigData.constant.FILE_NAME_APK;
-    //    }
-    //    else if (type == $scope.mgrUpdateConfigData.constant.TYPE_MODULE) {
-    //        return baseUrl
-    //            + $scope.mgrUpdateConfigData.constant.BASE_PATH_MODULE
-    //            + $scope.formDataUpdateConfig.model.code
-    //            + "/" + $scope.mgrUpdateConfigData.constant.FILE_NAME_MODULE;
-    //    }
-    //}
-
     //读取用户本地配置文件到表格
     /**  读取Json文件内容 **/
     $scope.readFile = function (input) {
@@ -850,15 +568,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
                 var obj = JSON.parse(this.result);
                 var attr = [];
                 angular.forEach(obj, function (indexData, index, array) {
-                    //var type;
-                    ////读取模块配置文件
-                    //if (file_name == $scope.mgrUpdateConfigData.constant.FILE_NAME_MODULE) {
-                    //    type = $scope.mgrUpdateConfigData.constant.TYPE_MODULE;
-                    //}
-                    ////读取APK模块配置文件
-                    //else if (file_name == $scope.mgrUpdateConfigData.constant.FILE_NAME_APK) {
-                    //    type = $scope.mgrUpdateConfigData.constant.TYPE_APK;
-                    //}
                     //indexData等价于array[index]
                     attr.push({
                         name: indexData.name,
@@ -891,39 +600,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
         }
     }
 
-    //判断是不是要显示agent和agentPatch类型
-    //function checkAgentORPatch(model) {
-    //    //新增一行，判断是否有agent类型配置了，如果有了，则不再显示
-    //    if (isOneType($scope.mgrUpdateConfigData.constant.TYPE_AGENT, model.attributes)) {
-    //        $scope.showTypeAgent = false;
-    //    }
-    //    else {
-    //        $scope.showTypeAgent = true;
-    //    }
-    //    //新增一行，判断是否有agentPatch类型配置了，如果有了，则不再显示
-    //    if (isOneType($scope.mgrUpdateConfigData.constant.TYPE_AGENT_PATCH, model.attributes)) {
-    //        $scope.showTypeAgentPatch = false;
-    //    }
-    //    else {
-    //        $scope.showTypeAgentPatch = true;
-    //    }
-    //}
-
-    //判断agent或agentPatch是不是已经有了，如果已经有了，返回true
-    //function isOneType(typeName, attrs) {
-    //    var isOne = false;
-    //    angular.forEach(attrs, function (indexData, index, array) {
-    //        //indexData等价于array[index]
-    //        if (isOne == true) {
-    //            return false;
-    //        }
-    //        if (indexData.show && typeName == indexData.type) {
-    //            isOne = true;
-    //        }
-    //    });
-    //    return isOne;
-    //}
-
     //计算attr列表有效数据的长度
     function getUsefulAttrLength(attrs) {
         var length = 0;
@@ -937,11 +613,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
     }
 
     $scope.insertAttr = function (model) {
-        ////校验是否选择了设备组
-        //if (!checkProductUsedCodeOK($scope.formDataUpdateConfig.model.code)) {
-        //    return '';
-        //}
-
         //校验是否选择了类型
         if (!checkParamOK($scope.formDataUpdateConfig.model.type,'请选择类型')) {
             return false;
@@ -961,9 +632,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
                 }
             }
         }
-
-        //判断是不是要显示agent和agentPatch类型
-        //checkAgentORPatch(model);
 
         //判断agent/agentPatch/self_design_board的数据是否已经有一条
         if(($scope.formDataUpdateConfig.model.type == mgrUpdateConfigData.constant.BASE_INFO_AGENT.TYPE
@@ -1053,64 +721,6 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
         return resultName;
     }
 
-
-
-    //自研平板升级文件上传-------------------------------------
-    //$scope.boardUpdateFile = function (input) {
-    //    var _file = input.files[0];
-    //    var file_name = $filter('getFileName')(_file.name, $scope.mgrUpdateConfigData.constant.FILE_NAME_WITH_EXTERN);
-    //    if (!checkBoardUpdateFileNameOK(file_name)) {
-    //        //$timeout(function () {
-    //        //    $filter('toasterManage')(5,"请选择自研平板升级文件！例如："
-    //        //        + $scope.mgrUpdateConfigData.constant.BASE_INFO_SELF_DESIGN_PAD.FILE_NAME_EXAMPLE
-    //        //        ,false);
-    //        //}, 0);
-    //        return false;
-    //    }
-    //
-    //    var versionSplit = file_name.split("-");
-    //    var projName = versionSplit[0];
-    //    var softVer = versionSplit[1];
-    //    var hardVer = versionSplit[2];
-    //
-    //    //上传升级文件
-    //    var fd = new FormData();
-    //    var path = $scope.mgrUpdateConfigData.constant.BASE_PATH_BOARD_UPDATE
-    //        + projName + "/" + hardVer + "/" + softVer + "/" + _file.name;
-    //    fd.append('file', _file);
-    //    console.log(path)
-    //    cResource.get($scope.mgrUpdateConfigData.api.isFileExist,{path: path,storeId:100}).then(function(res){
-    //        if (0 != res.status) {
-    //            $timeout(function () {
-    //                $filter('toasterManage')(5, _file.name + "查询是否存在失败!",false);
-    //            }, 0);
-    //            return false;
-    //        } else {
-    //            if( res.rows[0].fileIsExist ) {
-    //                $timeout(function () {
-    //                    $filter('toasterManage')(5, _file.name + "文件已存在，请先删除旧文件!",false);
-    //                }, 0);
-    //                angular.element('#boardUpdateFile')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
-    //            } else {
-    //                cResource.upload($scope.mgrUpdateConfigData.api.uploadFile,{'type': 'file', path: path}, fd).then(function(res){
-    //                    if (0 != res.status) {
-    //                        $timeout(function () {
-    //                            $filter('toasterManage')(5, _file.name + "上传失败!",false);
-    //                        }, 0);
-    //                        return;
-    //                    } else {
-    //                        $timeout(function () {
-    //                            $filter('toasterManage')(5, _file.name + "上传成功!",true);
-    //                        }, 0);
-    //                    }
-    //                    angular.element('#boardUpdateFile')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
-    //                });
-    //            }
-    //        }
-    //    });
-    //
-    //}
-
     //校验平板升级文件名，例如Cooky-C001M01A001-RK3288_v2-20160804ota.zip
     function checkBoardUpdateFileNameOK(fileName){
         var lowerFileName = fileName.toLowerCase();
@@ -1143,4 +753,147 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
         }
         return ok;
     }
+
+//绑定设备组-----------------------------------------------------------------------------------------------------
+    var iBind = 2;
+    //绑定产品相关参数
+    var vm = $scope.showCase = {};
+    vm.selected = [];
+    vm.selectAll = false;
+    vm.toggleAll = toggleAll;
+    vm.toggleOne = toggleOne;
+
+    function initalBindProduct() {
+        if ($scope.initalBindProductList) {//如果已经从后台读取过数据了，则不再访问后台获取列表
+            var deferred = $q.defer();
+            deferred.resolve($scope.initalBindProductList);
+            return deferred.promise;
+        } else {//第一次需要从后台读取列表
+            return cResource.get('./product/used/list').then(function(data){
+                //初始化showCase.selected数组，给全选框用，让它知道应该全选哪些
+                angular.forEach(data.rows, function (indexData, index, array) {
+                    //indexData等价于array[index]
+                    $scope.showCase.selected[indexData.id] = false;
+                });
+                $scope.initalBindProductList = data.rows;
+
+                return data.rows;
+            });
+        }
+    }
+
+    function toggleAll(selectAll, selectedItems) {
+        for (var id in selectedItems) {
+            if (selectedItems.hasOwnProperty(id)) {
+                selectedItems[id] = selectAll;
+            }
+        }
+    }
+
+    function toggleOne(selectedItems) {
+        for (var id in selectedItems) {
+            if (selectedItems.hasOwnProperty(id)) {
+                if (!selectedItems[id]) {
+                    vm.selectAll = false;
+                    return;
+                }
+            }
+        }
+        vm.selectAll = true;
+    }
+
+    //绑定产品相关业务逻辑-----------------------------
+    $scope.formBindData = {};
+    $scope.showInfoEditor = false;
+    $scope.showBindEditor = false;
+
+    $scope.showCase.currentRowIndex = 0;
+
+    $scope.filterBindOptions = function () {
+        var deferred = $q.defer();
+        //tables获取数据,获取该门店下可绑定的所有设备
+        $scope.tableBindOpts = new NgTableParams({}, {
+            counts: [],
+            dataset: $filter('filter')($scope.initalBindProductList, $scope.showCase.nameFilter || "")//根据搜索字段过滤数组中数据
+        });
+        $scope.loadByInit = true;
+        $scope.tableOpts.page(1);
+        $scope.tableBindOpts.reload();
+        deferred.resolve($scope.tableBindOpts);
+        return deferred.promise;
+    }
+
+    $scope.goDeviceBindProductEditor = function (rowIndex) {
+        initalBindProduct().then(function () {
+            $scope.filterBindOptions().then(function () {
+                $scope.addNew = true;
+
+                if ($scope.tableOpts && rowIndex > -1) {
+                    $scope.showCase.currentRowIndex = rowIndex;//记录当前选择的行，以备后续更新该行数据
+
+                    var data = $scope.tableOpts.data[rowIndex];
+                    $scope.formBindData.model = data;
+                    $scope.formBindData.model.bindShowName = '设备名称:' + (data.name || "") + ' | 门店名称:' + (Constants.thisMerchantStore.name || "") + ' | 主板编号:' + (data.boardNo || "") + ' | 设备号:' + (data.deviceNum || "");
+
+                    //根据已关联的产品去勾选对应的checkbox
+                    $scope.showCase.selectAll = false;
+                    $scope.showCase.toggleAll(false, $scope.showCase.selected);//先取消所有checkbox的勾选状态
+                    for (var value in data.productUsedList) {
+                        //console.log("value"+value)
+                        var productId = data.productUsedList[value].id;
+                        $scope.showCase.selected[productId] = true;
+                        $scope.showCase.toggleOne($scope.showCase.selected);//判断全选框是否要被checked
+                    }
+
+                    $scope.addNew = false;
+                    $scope.rowIndex = rowIndex;
+                } else {
+                    $scope.formBindData.model = {};
+                }
+                $scope.activeTab = iBind;
+                $scope.showInfoEditor = false;
+                $scope.showBindEditor = true;
+            });
+        });
+    };
+
+    $scope.processBindSubmit = function () {
+        var result = [];
+
+        angular.forEach($scope.showCase.selected, function (data, index, array) {
+            //data等价于array[index]
+            if (data == true) {
+                result.push(index);
+            }
+        });
+
+        cResource.save('./updateConfig/bindProductUsed',{
+            'bindString': JSON.stringify(result),
+            'configId': $scope.formBindData.model.id
+        }, {}).then(function(respSucc){
+            //用js离线刷新表格数据
+            $scope.tableOpts.data[$scope.showCase.currentRowIndex].productUsedList = [];//先清空
+            angular.forEach($scope.showCase.selected, function (data, index, array) {
+                //data等价于array[index]
+                if (data == true) {
+                    var length = $scope.initalBindProductList.length;
+                    for (i = 0; i < length; i++) {
+                        var data2 = $scope.initalBindProductList[i];
+                        if (data2.id == index) {
+                            $scope.tableOpts.data[$scope.showCase.currentRowIndex].productUsedList.push({
+                                id: index,
+                                code: data2.code,
+                                name: data2.name,
+                                productNum: data2.productNum
+                            });
+                            break;
+                        }
+                    }
+                }
+            });
+            $scope.goDataTable();
+        });
+    };
+
+
 }

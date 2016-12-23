@@ -7,6 +7,8 @@ import com.myee.tarot.resource.service.UpdateConfigProductUsedXREFService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * Project Name : tarot
@@ -29,5 +31,9 @@ public class UpdateConfigProductUsedXREFServiceImpl extends GenericEntityService
 
 	public UpdateConfigProductUsedXREF getByTypeAndDeviceGroupNO(String type, String deviceGroupNO) {
 		return updateConfigProductUsedXREFDao.getByTypeAndDeviceGroupNO(type, deviceGroupNO);
+	}
+
+	public List<UpdateConfigProductUsedXREF> listByConfigId(Long configId) {
+		return updateConfigProductUsedXREFDao.listByConfigId(configId);
 	}
 }

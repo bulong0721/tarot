@@ -252,7 +252,7 @@ public class RollManageController extends BaseController {
             rollMain = rollMainService.update(rollMain);
 
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", rollMain);
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, rollMain);
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
@@ -387,7 +387,7 @@ public class RollManageController extends BaseController {
         entity = rollDetailService.update(entity);
         entity.setRollMain(null);
         resp = AjaxResponse.success();
-        resp.addEntry("updateResult", entity);
+        resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, entity);
         return resp;
     }
 

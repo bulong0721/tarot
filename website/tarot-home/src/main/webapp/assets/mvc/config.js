@@ -228,7 +228,7 @@ function routerAll(baseUrl){
                 datatable: 'assets/mvc/explorer/view/explorer_datatable.html',
                 editor: 'assets/mvc/explorer/view/explorer_editor.html',
                 other1: 'assets/mvc/explorer/view/explorer_push.html',
-                other2: 'assets/mvc/explorer/view/explorer_updateConfig.html',
+                //other2: 'assets/mvc/explorer/view/explorer_updateConfig.html',
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
@@ -709,7 +709,8 @@ function routerAll(baseUrl){
                 pageTitle: '配置管理',
                 subTitle: '升级配置',
                 datatable: 'assets/mvc/configuration/view/updateConfig_datatable.html',
-                other4: 'assets/mvc/configuration/view/updateConfig_editor.html'
+                editor: 'assets/mvc/configuration/view/updateConfig_editor.html',
+                other1: 'assets/mvc/configuration/view/bind_product_used.html'
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {

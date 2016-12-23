@@ -46,7 +46,10 @@ public class ProductUsedDaoImpl extends GenericEntityDaoImpl<Long, ProductUsed> 
         QProductUsed qProductUsed = QProductUsed.productUsed;
         JPQLQuery<ProductUsed> query = new JPAQuery(getEntityManager());
         query.from(qProductUsed);
-        query.where(qProductUsed.store.id.eq(id));
+        if( id != null ) {
+            query.where(qProductUsed.store.id.eq(id));
+        }
+
         if (whereRequest.getQueryObj() != null) {
             JSONObject map = JSON.parseObject(whereRequest.getQueryObj());
             Object optionType = map.get(Constants.SEARCH_OPTION_TYPE);

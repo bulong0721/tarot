@@ -23,7 +23,7 @@ public class UpdateConfigProductUsedXREF extends GenericEntity<Long, UpdateConfi
     protected UpdateConfig updateConfig;
 
     @ManyToOne(targetEntity = ProductUsed.class, optional = false)
-    @JoinColumn(name = "CODE")
+    @JoinColumn(name = "PRODUCT_USED_ID")
     protected ProductUsed productUsed;
 
     @Column(name = "TYPE",nullable = false,length = 30)

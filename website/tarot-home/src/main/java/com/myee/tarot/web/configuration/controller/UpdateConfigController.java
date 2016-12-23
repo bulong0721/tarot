@@ -1,13 +1,23 @@
-package com.myee.tarot.web.files.controller;
+package com.myee.tarot.web.configuration.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.myee.djinn.dto.NoticeType;
+import com.myee.tarot.catalog.domain.DeviceUsed;
+import com.myee.tarot.catalog.domain.ProductUsed;
+import com.myee.tarot.catalog.domain.ProductUsedAttribute;
+import com.myee.tarot.catalog.service.ProductUsedService;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.*;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.resource.domain.UpdateConfig;
+import com.myee.tarot.resource.domain.UpdateConfigProductUsedXREF;
+import com.myee.tarot.resource.service.UpdateConfigProductUsedXREFService;
 import com.myee.tarot.resource.service.UpdateConfigService;
 import com.myee.tarot.resource.type.UpdateConfigSeeType;
+import com.myee.tarot.web.device.controller.AttributeDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +25,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -30,6 +41,10 @@ public class UpdateConfigController {
 
     @Autowired
     private UpdateConfigService updateConfigService;
+    @Autowired
+    private UpdateConfigProductUsedXREFService updateConfigProductUsedXREFService;
+    @Autowired
+    private ProductUsedService productUsedService;
 
     @RequestMapping(value = {"admin/updateConfig/update"}, method = RequestMethod.POST)
     @ResponseBody
@@ -55,7 +70,7 @@ public class UpdateConfigController {
             updateConfig = updateConfigService.update(updateConfig);
 
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", objectToEntry(updateConfig));
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntry(updateConfig));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"出错");
@@ -74,6 +89,56 @@ public class UpdateConfigController {
 //            return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"出错");
 //        }
 //    }
+
+    @RequestMapping(value = {"admin/updateConfig/bindProductUsed"}, method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse deviceUsedBindProductUsed(@RequestParam(value = "bindString") String bindString, @RequestParam(value = "configId") Long configId, HttpServletRequest request) {
+        try {
+            AjaxResponse resp;
+            List<Long> bindList = JSON.parseArray(bindString, Long.class);
+            UpdateConfig updateConfig = updateConfigService.findById(configId);
+            if (updateConfig == null) {
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"配置项不存在");
+            }
+            List<ProductUsed> productUsedList = productUsedService.listByIDs(bindList);
+
+            if(productUsedList == null || productUsedList.size() == 0) {
+                return AjaxResponse.failed(-1, "设备组参数无效");
+            }
+            updateConfig.setProductUsed(productUsedList);
+            updateConfig.setDeviceGroupNOList(bindString);
+            updateConfig = updateConfigService.update(updateConfig);
+
+            //手动更新关联关系表
+            UpdateConfigProductUsedXREF updateConfigProductUsedXREF = null;
+            String type = updateConfig.getType();
+            for (ProductUsed productUsed : productUsedList) {
+                UpdateConfigProductUsedXREF updateConfigProductUsedXREF_DB = null;
+                //同一类型下同一设备的绑定关系只能有一条记录，自研平板类型除外
+                if( !type.equals(Constants.UPDATE_TYPE_SELF_DESIGN_BOARD) ){
+                    updateConfigProductUsedXREF_DB = updateConfigProductUsedXREFService.getByTypeAndDeviceGroupNO(updateConfig.getType(),productUsed.getCode());
+                }
+                if(updateConfigProductUsedXREF_DB != null) {
+                    updateConfigProductUsedXREF = updateConfigProductUsedXREF_DB;
+                }
+                else {
+                    updateConfigProductUsedXREF = new UpdateConfigProductUsedXREF();
+                }
+                updateConfigProductUsedXREF.setProductUsed(productUsed);
+                updateConfigProductUsedXREF.setUpdateConfig(updateConfig);
+                updateConfigProductUsedXREF.setType(updateConfig.getType());
+                updateConfigProductUsedXREFService.update(updateConfigProductUsedXREF);
+            }
+
+            resp = AjaxResponse.success();
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntry(updateConfig));
+            return resp;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(),e);
+            return AjaxResponse.failed(-1, "失败");
+        }
+
+    }
 
     @RequestMapping(value = {"admin/updateConfig/paging"}, method = RequestMethod.GET)
     @ResponseBody
@@ -143,7 +208,40 @@ public class UpdateConfigController {
         entry.put("createTime", updateConfig.getCreateTime());
         entry.put("path", updateConfig.getPath());
         entry.put("boardNoList", updateConfig.getPath());
+        entry.put("productUsedList", listBindProductUsedByConfig(updateConfig));
         return entry;
+    }
+
+    //根据UpdateConfig去查询关联的设备组.传入对象中如果已经有关联设备组列表了，就不去数据库查了
+    private List<ProductUsed> listBindProductUsedByConfig(UpdateConfig updateConfig) {
+        if(updateConfig == null || updateConfig.getId() == null) {
+            return Collections.EMPTY_LIST;
+        }
+        //传入对象如果已经有关联列表了，就不去数据库查了
+        List<ProductUsed> listAlready = updateConfig.getProductUsed();
+        List<ProductUsed> listResult = new ArrayList<ProductUsed>();
+        if( listAlready != null && listAlready.size() > 0 ) {
+            for( ProductUsed productUsed : listAlready ) {
+                listResult.add(prepareObject(productUsed));
+            }
+            return listResult;
+        }
+        //传入对象没有关联列表则取数据库查
+        List<UpdateConfigProductUsedXREF> updateConfigProductUsedXREFList = updateConfigProductUsedXREFService.listByConfigId(updateConfig.getId());
+        if( updateConfigProductUsedXREFList == null || updateConfigProductUsedXREFList.size() == 0 ) {
+            return Collections.EMPTY_LIST;
+        }
+        for( UpdateConfigProductUsedXREF updateConfigProductUsedXREF : updateConfigProductUsedXREFList ) {
+            listResult.add(prepareObject(updateConfigProductUsedXREF.getProductUsed()));
+        }
+        return listResult;
+    }
+
+    //把productUsed关联会无限循环的字段设为null
+    private ProductUsed prepareObject(ProductUsed productUsed) {
+        productUsed.setDeviceUsed(null);
+        productUsed.setAttributes(null);
+        return productUsed;
     }
 
     @ExceptionHandler({SQLException.class, Exception.class})

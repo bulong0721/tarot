@@ -3,6 +3,8 @@ package com.myee.tarot.resource.service;
 import com.myee.tarot.core.service.GenericEntityService;
 import com.myee.tarot.resource.domain.UpdateConfigProductUsedXREF;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * Project Name : tarot
@@ -15,4 +17,6 @@ import com.myee.tarot.resource.domain.UpdateConfigProductUsedXREF;
 public interface UpdateConfigProductUsedXREFService extends GenericEntityService<Long, UpdateConfigProductUsedXREF> {
 
 	UpdateConfigProductUsedXREF getByTypeAndDeviceGroupNO(String type, String deviceGroupNO);
+
+	List<UpdateConfigProductUsedXREF> listByConfigId(Long configId);
 }

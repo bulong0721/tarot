@@ -116,7 +116,7 @@ public class PictureManageController extends BaseController {
             picture = pictureService.update(picture);
 
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", picture);
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, picture);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);

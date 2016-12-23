@@ -67,30 +67,28 @@
                                 <a ng-href="{{row.path?baseUrl.pushUrl+'100/'+row.path:''}}" tooltip-placement="top" uib-tooltip="{{lang_zh.download}}" download><i class="btn-icon fa fa-download"></i></a>
                                 <span class="divider"></span>
                                 <a ng-click="goEditor($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
-                                <span class="divider"></span>
-                                <a ng-click="doDelete($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
+                                <!--<span class="divider"></span>-->
+                                <!--<a ng-click="doDelete($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>-->
                             </td>
                         </tr>
                         <tr ng-repeat-end ng-if="row.showDetail">
-                            <td colspan="5">
+                            <td colspan="4" width="40%">
                                 <table id="details2" width="45%" class="table table-bordered">
                                     <thead>
-                                    <tr class="center">
-                                        <th width="20%" class="center">关联设备名称</th>
-                                        <th width="20%" class="center">关联设备主板编号</th>
-                                        <th width="20%" class="center">关联设备号</th>
-                                        <th class="center">关联手机号</th>
+                                    <tr>
+                                        <th width="33%" class="center">关联设备组编号</th>
+                                        <th width="33%" class="center">关联设备组名称</th>
+                                        <th class="center">关联设备组版本</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr>
-                                        <td colspan="4" class="center" ng-if="row.deviceUsedList<=0">没有查找到数据</td>
+                                        <td colspan="4" class="center" ng-if="!row.productUsedList || row.productUsedList<=0">没有查找到数据</td>
                                     </tr>
-                                    <tr class="center" ng-repeat="bind in row.deviceUsedList">
-                                        <td>{{::bind.name}}</td>
-                                        <td>{{::bind.boardNo}}</td>
-                                        <td>{{::bind.deviceNum}}</td>
-                                        <td>{{::bind.phone}}</td>
+                                    <tr ng-repeat="bind in row.productUsedList">
+                                        <td class="center">{{::bind.code}}</td>
+                                        <td class="center">{{::bind.name}}</td>
+                                        <td class="center">{{::bind.productNum}}</td>
                                     </tr>
                                     </tbody>
                                 </table>

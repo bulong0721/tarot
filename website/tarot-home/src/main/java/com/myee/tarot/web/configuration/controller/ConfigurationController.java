@@ -108,7 +108,7 @@ public class ConfigurationController {
                 }
             }
             ajaxResponse = AjaxResponse.success("添加成功");
-            ajaxResponse.addEntry("updateResult", objectToEntry(target));
+            ajaxResponse.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntry(target));
             ajaxResponse.addEntry("updateReceiptPrintedItems", tempReceiptPrintedItemList);
     } catch (Exception e) {
         LOGGER.error(e.getMessage(),e);

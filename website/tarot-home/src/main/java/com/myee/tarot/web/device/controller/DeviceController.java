@@ -108,7 +108,7 @@ public class DeviceController {
             }
             device = deviceService.update(device);
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", objectToEntry(device));
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntry(device));
             return resp;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -176,7 +176,7 @@ public class DeviceController {
         entity = deviceAttributeService.update(entity);
         entity.setDevice(null);
         resp = AjaxResponse.success();
-        resp.addEntry("updateResult", entity);
+        resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, entity);
         return resp;
     }
 
@@ -382,7 +382,7 @@ public class DeviceController {
             }
 
             resp = AjaxResponse.success("批量添加将跳过重复主板编号设备");
-            resp.addEntry("updateResult", updateResult);
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, updateResult);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(-1, "失败");
@@ -424,7 +424,7 @@ public class DeviceController {
 
             deviceUsed = deviceUsedService.update(deviceUsed);
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", objectToEntry(deviceUsed));
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntry(deviceUsed));
             return resp;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(),e);
@@ -579,7 +579,7 @@ public class DeviceController {
 
         entity.setDeviceUsed(null);
         resp = AjaxResponse.success();
-        resp.addEntry("updateResult", entity);
+        resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, entity);
         return resp;
     }
 
@@ -672,7 +672,7 @@ public class DeviceController {
     @RequestMapping(value = {"admin/product/used/listByStoreId", "shop/product/used/listByStoreId"}, method = RequestMethod.GET)
     public
     @ResponseBody
-    AjaxPageableResponse productUsedlistByStoreId(HttpServletRequest request, WhereRequest whereRequest) {
+    AjaxPageableResponse productUsedListByStoreId(HttpServletRequest request, WhereRequest whereRequest) {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         String currentUser = request.getRemoteUser();
         try {
@@ -696,9 +696,28 @@ public class DeviceController {
         return resp;
     }
 
+    //获取所有设备组接口
+    @RequestMapping(value = {"admin/product/used/list"}, method = RequestMethod.GET)
+    @ResponseBody
+    public AjaxPageableResponse productUsedList(HttpServletRequest request, WhereRequest whereRequest) {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
+        try {
+            whereRequest.setCount(-1);//不分页，查询所有结果
+            PageResult<ProductUsed> pageList = productUsedService.pageByStore(null, whereRequest);
+            List<ProductUsed> productUsedList = pageList.getList();
+            for (ProductUsed productUsed : productUsedList) {
+                resp.addDataEntry(objectToEntry(productUsed));
+            }
+            resp.setRecordsTotal(pageList.getRecordsTotal());
+        } catch (Exception e) {
+            LOGGER.error("Error while paging products", e);
+        }
+        return resp;
+    }
+
     @RequestMapping(value = {"admin/product/used/listByStore4Select", "shop/product/used/listByStore4Select"}, method = RequestMethod.GET)
     @ResponseBody
-    public List productUsedList(HttpServletRequest request) {
+    public List productUsedListByStore4Select(HttpServletRequest request) {
         AjaxResponse resp = new AjaxResponse();
         try {
             Object o = request.getSession().getAttribute(Constants.ADMIN_STORE);
@@ -795,7 +814,7 @@ public class DeviceController {
             }
 
             resp = AjaxResponse.success("批量添加将跳过重复编号设备组");
-            resp.addEntry("updateResult", updateResult);
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, updateResult);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(-1, "失败");
@@ -820,7 +839,7 @@ public class DeviceController {
 
             productUsed = productUsedService.update(productUsed);
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", objectToEntry(productUsed));
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntry(productUsed));
             return resp;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(),e);
@@ -910,7 +929,7 @@ public class DeviceController {
 //        entity.getProductUsed().setAttributes(null);
         entity.setProductUsed(null);
         resp = AjaxResponse.success();
-        resp.addEntry("updateResult", entity);
+        resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, entity);
         return resp;
     }
 
