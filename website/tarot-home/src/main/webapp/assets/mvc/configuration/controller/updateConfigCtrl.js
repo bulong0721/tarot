@@ -57,6 +57,7 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
                 templateOptions: {
                     required: true,
                     label: '设备可见范围',
+                    placeholder: '设备组名称',
                     options: getSeeTypeList(),
                     isSearch:true
                 }
@@ -448,7 +449,7 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
         $scope.selfDesignPadFileName = fileName;//缓存自研平板文件名
         fd.append('file', _file);
         //先校验文件是否存在，若存在则不让重复上传——目前应该只对自研平板有效，其他模块的上传时间肯定不相同
-        cResource.get($scope.mgrUpdateConfigData.api.isFileExist,{path: pathNoFileName,storeId:mgrUpdateConfigData.constant.DEFAULT_MERCHANT_STORE}).then(function(res){
+        cResource.get($scope.mgrUpdateConfigData.api.isFileExist,{path: pathNoFileName +'/'+ fileName,storeId:mgrUpdateConfigData.constant.DEFAULT_MERCHANT_STORE}).then(function(res){
             if (0 != res.status) {
                 $timeout(function () {
                     $filter('toasterManage')(5, fileName + "查询是否存在失败!",false);
@@ -502,13 +503,17 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
     }
 
     //校验一行数据是否符合要求
-    function checkThisRowOK(thisRow,index,attrs) {
+    //noCheckNull:是否需要校验字段为空，默认不传该参数或该参数为false则校验；该参数为true则不校验
+    function checkThisRowOK(thisRow,index,attrs,noCheckNull) {
         var checkOK = true;
-        if ($filter('isNullOrEmptyString')(thisRow)
-            || $filter('isNullOrEmptyString')(thisRow.name)
-            || $filter('isNullOrEmptyString')(thisRow.version)
-            //|| $filter('isNullOrEmptyString')(thisRow.type)
-            || $filter('isNullOrEmptyString')(thisRow.force_update) ) {
+        if (!noCheckNull &&
+            ($filter('isNullOrEmptyString')(thisRow)
+                || $filter('isNullOrEmptyString')(thisRow.name)
+                || $filter('isNullOrEmptyString')(thisRow.version)
+                //|| $filter('isNullOrEmptyString')(thisRow.type)
+                || $filter('isNullOrEmptyString')(thisRow.force_update)
+            )
+        ) {
             $timeout(function () {
                 $filter('toasterManage')(5,"请填写完整信息!",false);
             }, 0);
@@ -677,6 +682,13 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
             if (thisRow.name != autoName) {
                 $filter('toasterManage')(5,"上传的文件名与模块或应用名不一致!",false);
                 angular.element('#file'+index)[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
+                return false;
+            }
+
+            //校验同一类型下不允许重复名称
+            if( thisRow.show && !checkThisRowOK(thisRow,index,$scope.formDataUpdateConfig.model.attributes,true)) {
+                angular.element('#file'+index)[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
+                $scope.formDataUpdateConfig.model.attributes[index].name = '';//校验失败，清空自动生成的名称
                 return false;
             }
         }, 0);
