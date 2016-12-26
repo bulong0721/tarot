@@ -494,13 +494,13 @@ function advancedSearch(){
     return {
         template: [
             '<ul class="form-inline" ng-keyup="search($event)">',
-            '<li ng-if="!sHigh"><div class="form-group"><input placeholder="{{title}}" ng-model="where.queryName" type="text" class="form-control" style="width:200px;"/></div></li>',
+            '<li ng-if="!sHigh && title"><div class="form-group"><input placeholder="{{title}}" ng-model="where.queryName" type="text" class="form-control" style="width:200px;"/></div></li>',
             '<li ng-if="datepicker"><div class="form-group m-l"><c-Datepicker placeholder="开始日期" model="where.queryObj.beginDate" style="width:150px;"></c-Datepicker><i class="fa fa-exchange"></i><c-Datepicker placeholder="结束日期" model="where.queryObj.endDate" style="width:150px;"></c-Datepicker></div></li>',
             '<li class="searchHigh" ng-if="sHigh"><div class="form-group searchHigh" ng-repeat="f in mgrData" ng-if="f.templateOptions.isSearch">',
             '<input ng-if="f.type == \'c_input\' || f.type == \'c_textarea\'" ng-model="where.queryObj[f.key]" type="text" class="form-control" placeholder="{{f.templateOptions.label}}"/>',
             '<select ng-if="f.type == \'c_select\'" ng-model="where.queryObj[f.key]" ng-init="where.queryObj[f.key]=\'\'" class="form-control m-l-sm">',
             '<option value="" selected="selected">选择{{f.templateOptions.label}}</option>',
-            '<option ng-repeat="o in f.templateOptions.options" value="{{o.id}}">{{o.name}}</option>',
+            '<option ng-repeat="o in f.templateOptions.options" value="{{o.id || o.value}}">{{o.name}}</option>',
             '</select></div></li>',
             '<li><button class="btn btn-sm btn-danger m-l" type="button" ng-click="search()"><i class="fa fa-search"></i><span class="bold">搜索</span></button><span ng-if="!advancedSearch" class="m-l-xs" ng-click="sHighBut()">{{sHigh?"简化搜索":"高级搜索"}}</span></li>',
             '</ul>'

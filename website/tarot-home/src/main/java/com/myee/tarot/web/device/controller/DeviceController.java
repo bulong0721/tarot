@@ -954,8 +954,8 @@ public class DeviceController {
     @RequestMapping(value = {"admin/product/type/productOpts", "shop/product/type/productOpts"}, method = RequestMethod.GET)
     public
     @ResponseBody
-    List<ProductType> productUsedType(Model model, HttpServletRequest request) {
-        return ProductType.getProductTypeList();
+    List productUsedType(Model model, HttpServletRequest request) {
+        return ProductType.getProductTypeList4Select();
     }
 
 }

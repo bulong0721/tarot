@@ -50,6 +50,18 @@ public class ProductType implements GenericEnumType, Comparable<ProductType>, Se
         return productTypeList;
     }
 
+    public static List getProductTypeList4Select() {
+        List resp = new ArrayList();
+        Set keySet = TYPES.keySet();
+        for (Object keyName : keySet) {
+            Map entry = new HashMap();
+            entry.put("name", (TYPES.get(keyName)).getFriendlyType());
+            entry.put("value", keyName);
+            resp.add(entry);
+        }
+        return resp;
+    }
+
     @Override
     public String getType() {
         return type;
