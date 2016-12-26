@@ -18,7 +18,9 @@ import org.springframework.stereotype.Repository;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -52,12 +54,17 @@ public class NotificationDaoImpl extends GenericEntityDaoImpl<Long, Notification
 				dateString = dateString.replace("Z", " ");
 				query.where(qNotification.createTime.after(format.parse(dateString)));
 			}
-			obj = map.get(Constants.SEARCH_END_DATE);
+			obj = map.get(Constants.SEARCH_END_DATE); //往前一天的0点作为查询时间
 			if (obj != null && !StringUtil.isBlank(obj.toString())) {
 				String dateString = obj.toString();
 				dateString = dateString.replace("T", " ");
 				dateString = dateString.replace("Z", " ");
-				query.where(qNotification.createTime.before(format.parse(dateString)));
+				Date endDate = format.parse(dateString);
+				Calendar calendar = new GregorianCalendar();
+				calendar.setTime(endDate);
+				calendar.add(calendar.DATE,1);//把日期往后增加一天.整数往后推,负数往前移动
+				endDate=calendar.getTime();   //这个时间就是日期往后推一天的结果
+				query.where(qNotification.createTime.before(endDate));
 			}
 		}
         query.where(qNotification.store.id.eq(id));
