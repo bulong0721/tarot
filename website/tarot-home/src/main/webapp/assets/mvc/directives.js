@@ -310,14 +310,19 @@ function alerts(){
 
 /*cDatepicker*/
 function cDatepicker(){
+    function formatDate (strTime) {
+        return new Date(strTime);
+    }
+    var d = formatDate((new Date()),"yyyy-MM-dd");
     return {
-        template:'<div class="input-group"><input uib-datepicker-popup placeholder="{{placeholder}}" type="text"  ng-model="model" class="form-control" ng-click="datepicker.open($event)" is-open="datepicker.opened" datepicker-options="datepicker.dateOptions" /> <span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datepicker.open($event)"><i class="fa fa-calendar"></i></button></span> </div>',
+        template:'<div class="input-group"><input uib-datepicker-popup placeholder="{{placeholder}}" type="text"  ng-model="model" ng-model-options="{ timezone: \'+0800\' }" class="form-control" ng-click="datepicker.open($event)" is-open="datepicker.opened" datepicker-options="datepicker.dateOptions" /> <span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datepicker.open($event)"><i class="fa fa-calendar"></i></button></span> </div>',
         replace: true,
         scope:{
             placeholder:'@placeholder',
             model:'='
         },
         link:function(scope,ele,attr){
+            scope.model = new Date(d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate());
             //datepicker配置
             scope.datepicker = {
                 opened:false,
