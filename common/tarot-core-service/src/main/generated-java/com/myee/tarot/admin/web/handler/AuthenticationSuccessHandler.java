@@ -1,7 +1,10 @@
 package com.myee.tarot.admin.web.handler;
 
+import com.alibaba.fastjson.JSON;
 import com.myee.tarot.admin.domain.AdminUser;
 import com.myee.tarot.admin.service.AdminUserService;
+import com.myee.tarot.common.domain.LoginLog;
+import com.myee.tarot.common.service.LoginLogService;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.StringUtil;
 import org.slf4j.Logger;
@@ -25,6 +28,9 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
     @Autowired
     private AdminUserService userService;
 
+	@Autowired
+	private LoginLogService loginLogService;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         // last access timestamp
@@ -36,7 +42,28 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
             user.setLastLogin(new Date());
 
             userService.update(user);
-            String securityCode = request.getParameter(Constants.REQUEST_SECURITY_CODE);
+			//将登录日志记录到数据库
+
+			LoginLog loginLog = new LoginLog();
+			String ip = request.getHeader("x-forwarded-for");
+			if(ip == null || ip.length() == 0 ||"unknown".equalsIgnoreCase(ip)) {
+				ip = request.getHeader("Proxy-Client-IP");
+			}
+			if(ip == null || ip.length() == 0 ||"unknown".equalsIgnoreCase(ip)) {
+				ip = request.getHeader("WL-Proxy-Client-IP");
+			}
+			if(ip == null || ip.length() == 0 ||"unknown".equalsIgnoreCase(ip)) {
+				ip = request.getRemoteAddr();
+			}
+			loginLog.setLoginIP(ip);
+			loginLog.setLoginTime(new Date());
+			loginLog.setType(1);
+			loginLog.setUserId(user.getId());
+			String loginAddress = Address.getSingleInstance().getAddress(ip);
+			loginLog.setLoginAddress(loginAddress);
+			loginLogService.create(loginLog);
+			LOGGER.info("ip={} LoginAddres={}",ip,loginAddress);
+			String securityCode = request.getParameter(Constants.REQUEST_SECURITY_CODE);
             String sessionCode = (String) request.getSession().getAttribute(Constants.SESSION_SECURITY_CODE);
             if(StringUtil.isNullOrEmpty(sessionCode) || !sessionCode.equalsIgnoreCase(securityCode)){
                 authentication.setAuthenticated(false);
