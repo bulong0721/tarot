@@ -41,7 +41,7 @@ function sideNavigation($timeout) {
 
 /**
  * minimalizaSidebar - Directive for minimalize sidebar
-*/
+ */
 function minimalizaSidebar($timeout) {
     return {
         restrict: 'A',
@@ -155,11 +155,11 @@ function switchMerchant(Constants,$resource,$state,$rootScope,NgTableParams,toas
                 //    deferred.resolve($scope.initalBindProductList);
                 //    return deferred.promise;
                 //} else {//第一次需要从后台读取列表
-                    return $resource($scope.mgrData.api.read).get().$promise.then(function(data){
-                        //初始化showCase.selected数组，给全选框用，让它知道应该全选哪些
-                        $scope.initalBindProductList = data.rows;
-                        return data.rows;
-                    });
+                return $resource($scope.mgrData.api.read).get().$promise.then(function(data){
+                    //初始化showCase.selected数组，给全选框用，让它知道应该全选哪些
+                    $scope.initalBindProductList = data.rows;
+                    return data.rows;
+                });
                 //}
             }
 
@@ -297,8 +297,8 @@ function breadcrumb(){
 }
 
 /*
-* alerts
-* */
+ * alerts
+ * */
 function alerts(){
     return {
         template:'<div class="modal-header"> <h4 class="modal-title">{{title}}</h4> </div> <div class="modal-footer"> <button class="btn-xs btn-primary" type="button" ng-click="ok()">确定</button> <button class="btn-xs btn-warning" type="button" ng-click="cancel()">取消</button> </div>',
@@ -339,8 +339,8 @@ function cDatepicker(){
 }
 
 /*
-* 视频播放
-* */
+ * 视频播放
+ * */
 function cVideo(){
     return {
         link: function (scope, ele,attr) {
@@ -483,6 +483,47 @@ function cameraVideo($ocLazyLoad){
     }
 }
 
+/*
+    *高级搜索
+    *<advanced-search title="" mgrdata="{{mgrData.fields}}" datepicker="true" shigh="true"></advanced-search>
+    *mgrdata 搜索列表
+    *datepicker是否有时间参数
+    *shigh设置默认高级是否显示
+ */
+function advancedSearch(){
+    return {
+        template: [
+            '<ul class="form-inline" ng-keyup="search($event)">',
+            '<li ng-if="!sHigh"><div class="form-group"><input placeholder="{{title}}" ng-model="where.queryName" type="text" class="form-control" style="width:200px;"/></div></li>',
+            '<li ng-if="datepicker"><div class="form-group m-l"><c-Datepicker placeholder="开始日期" model="where.queryObj.beginDate" style="width:150px;"></c-Datepicker><i class="fa fa-exchange"></i><c-Datepicker placeholder="结束日期" model="where.queryObj.endDate" style="width:150px;"></c-Datepicker></div></li>',
+            '<li class="searchHigh" ng-if="sHigh"><div class="form-group searchHigh" ng-repeat="f in mgrData" ng-if="f.templateOptions.isSearch">',
+            '<input ng-if="f.type == \'c_input\' || f.type == \'c_textarea\'" ng-model="where.queryObj[f.key]" type="text" class="form-control" placeholder="{{f.templateOptions.label}}"/>',
+            '<select ng-if="f.type == \'c_select\'" ng-model="where.queryObj[f.key]" ng-init="where.queryObj[f.key]=\'\'" class="form-control m-l-sm">',
+            '<option value="" selected="selected">选择{{f.templateOptions.label}}</option>',
+            '<option ng-repeat="o in f.templateOptions.options" value="{{o.id}}">{{o.name}}</option>',
+            '</select></div></li>',
+            '<li><button class="btn btn-sm btn-danger m-l" type="button" ng-click="search()"><i class="fa fa-search"></i><span class="bold">搜索</span></button><span ng-if="!advancedSearch" class="m-l-xs" ng-click="sHighBut()">{{sHigh?"简化搜索":"高级搜索"}}</span></li>',
+            '</ul>'
+        ].join(' '),
+        replace: true,
+        link:function(scope,ele,attr){
+            scope.advancedSearch = false;
+            //判断sHigh使用service or directives
+            if(attr.shigh){
+                scope.sHigh = attr.shigh;
+                scope.advancedSearch = true;
+            }
+            scope.title = attr.title;//简单搜索的input title
+            scope.datepicker = attr.datepicker || false;//是否显示时间控件
+            if(attr.mgrdata){
+                scope.mgrData = JSON.parse(attr.mgrdata);//搜索列表
+            }else{
+                scope.advancedSearch = true;
+            }
+        }
+    }
+}
+
 /**
  *
  * Pass all functions into module
@@ -502,4 +543,5 @@ angular
     .directive('metrics', metrics)
     .directive('copyToClip', copyToClip)
     .directive('iboxToolsFullScreen', iboxToolsFullScreen)
+    .directive('advancedSearch', advancedSearch)
     .directive('cameraVideo', cameraVideo);
