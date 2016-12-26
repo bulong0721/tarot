@@ -461,7 +461,7 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
                     }, 0);
                     angular.element('#file'+index)[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
                 } else {
-                    cResource.upload($scope.mgrUpdateConfigData.api.uploadFile,{'type': 'file',storeId:mgrUpdateConfigData.constant.DEFAULT_MERCHANT_STORE, path: pathNoFileName + '/' + fileName}, fd).then(function(res){
+                    cResource.upload($scope.mgrUpdateConfigData.api.uploadFile,{'type': 'file',storeId:mgrUpdateConfigData.constant.DEFAULT_MERCHANT_STORE, path: pathNoFileName}, fd).then(function(res){
                         if (0 != res.status) {
                             $timeout(function () {
                                 $filter('toasterManage')(5, fileName + "上传失败!",false);

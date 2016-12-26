@@ -773,7 +773,7 @@ angular
                 'datacenter':'fa-database',
                 'user':'fa-group',
                 'remote':'fa-android',
-                'configuration':'fa-android'
+                'configuration':'fa-wrench'
             }
         }
         //
