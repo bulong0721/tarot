@@ -490,10 +490,10 @@ function cameraVideo($ocLazyLoad){
     *datepicker是否有时间参数
     *shigh设置默认高级是否显示
  */
-function advancedSearch(){
+function advancedSearch($filter){
     return {
         template: [
-            '<ul class="form-inline" ng-keyup="search($event)">',
+            '<div class="alert alert-info" ng-if="show"><ul class="form-inline" ng-keyup="search($event)">',
             '<li ng-if="!sHigh && title"><div class="form-group"><input placeholder="{{title}}" ng-model="where.queryName" type="text" class="form-control" style="width:200px;"/></div></li>',
             '<li ng-if="datepicker"><div class="form-group m-l"><c-Datepicker placeholder="开始日期" model="where.queryObj.beginDate" style="width:150px;"></c-Datepicker><i class="fa fa-exchange"></i><c-Datepicker placeholder="结束日期" model="where.queryObj.endDate" style="width:150px;"></c-Datepicker></div></li>',
             '<li class="searchHigh" ng-if="sHigh"><div class="form-group searchHigh" ng-repeat="f in mgrData" ng-if="f.templateOptions.isSearch">',
@@ -503,26 +503,65 @@ function advancedSearch(){
             '<option ng-repeat="o in f.templateOptions.options" value="{{o.id || o.value}}">{{o.name}}</option>',
             '</select></div></li>',
             '<li><button class="btn btn-sm btn-danger m-l" type="button" ng-click="search()"><i class="fa fa-search"></i><span class="bold">搜索</span></button><span ng-if="!advancedSearch" class="m-l-xs" ng-click="sHighBut()">{{sHigh?"简化搜索":"高级搜索"}}</span></li>',
-            '</ul>'
+            '</ul></div>'
         ].join(' '),
         replace: true,
         link:function(scope,ele,attr){
-            scope.advancedSearch = false;
-            //判断sHigh使用service or directives
-            if(attr.shigh){
-                scope.sHigh = attr.shigh;
-                scope.advancedSearch = true;
-            }
-            scope.title = attr.title;//简单搜索的input title
-            scope.datepicker = attr.datepicker || false;//是否显示时间控件
-            if(attr.mgrdata){
-                scope.mgrData = JSON.parse(attr.mgrdata);//搜索列表
-            }else{
-                scope.advancedSearch = true;
+            scope.show = $filter('routers')('r');
+            if(scope.show){
+                scope.advancedSearch = false;
+                //判断sHigh使用service or directives
+                if(attr.shigh){
+                    scope.sHigh = attr.shigh;
+                    scope.advancedSearch = true;
+                }
+                scope.title = attr.title;//简单搜索的input title
+                scope.datepicker = attr.datepicker || false;//是否显示时间控件
+                if(attr.mgrdata){
+                    scope.mgrData = JSON.parse(attr.mgrdata);//搜索列表
+                }else{
+                    scope.advancedSearch = true;
+                }
             }
         }
     }
 }
+
+/**
+ * dataTable的管理权限控制
+ * */
+function tableRights($filter){
+    return {
+        template:'<a class="line" ng-if="show" tooltip-placement="top" uib-tooltip="{{tooltip}}"><i class="btn-icon fa {{tclass}}"></i></a>',
+        //replace: true,
+        scope: {
+            "tooltip": "@tooltip",
+            "type": "@type",
+            "tclass":"@tclass"
+        },
+        link:function(scope,ele,attr){
+            scope.show = $filter('routers')(scope.type);
+        }
+    }
+}
+
+/**
+ * addRights的管理权限控制
+ */
+function addRights($filter){
+    return {
+        template:'<a ng-if="show" class="btn btn-sm btn-danger"><i class="ace-icon fa fa-plus bigger-120"></i>{{content}}</a>',
+        //replace: true,
+        scope: {
+            "content": "@content",
+        },
+        link:function(scope,ele,attr){
+            scope.show = $filter('routers')('u');
+        }
+    }
+}
+
+
 
 /**
  *
@@ -544,4 +583,6 @@ angular
     .directive('copyToClip', copyToClip)
     .directive('iboxToolsFullScreen', iboxToolsFullScreen)
     .directive('advancedSearch', advancedSearch)
+    .directive('tableRights', tableRights)
+    .directive('addRights', addRights)
     .directive('cameraVideo', cameraVideo);

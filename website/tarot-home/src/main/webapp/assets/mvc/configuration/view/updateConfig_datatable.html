@@ -1,11 +1,11 @@
-<a class="btn btn-sm btn-danger" ng-click="goEditor()"><i class="fa fa-plus bigger-120"></i>&nbsp;新增配置</a>
+<add-rights ng-click="goEditor()" content=" 新增配置"></add-rights>
 <!--<div class="btn btn-sm btn-success upMenuBut m-l">-->
     <!--<i class="fa fa-upload bigger-120"></i><span>自研平板</span>-->
     <!--<input type="file" id="boardUpdateFile" onchange="angular.element(this).scope().boardUpdateFile(this)"/>-->
 <!--</div>-->
 <div class="space-6"></div>
-<div class="alert alert-info">
-    <advanced-search title="" mgrdata="{{mgrUpdateConfigData.fields}}" datepicker="true" shigh="true"></advanced-search>
+
+<advanced-search title="" mgrdata="{{mgrUpdateConfigData.fields}}" datepicker="true" shigh="true"></advanced-search>
 
     <!--<ul class="form-inline" ng-keyup="search($event)">-->
         <!--<li>-->
@@ -29,7 +29,7 @@
             <!--&lt;!&ndash;<span ng-click="sHighBut()">{{sHigh?'简化搜索':'高级搜索'}}</span>&ndash;&gt;-->
         <!--</li>-->
     <!--</ul>-->
-</div>
+
 <div class="space-6"></div>
 <div class="row">
     <div class="col-xs-12">
@@ -60,15 +60,14 @@
                             <td>{{::row.seeTypeName}}</td>
                             <td class="center">{{::row.createTime | date:'yyyy-MM-dd HH:mm:ss'}}</td>
                             <td class="center"><copy-to-clip content="row.path?baseUrl.pushUrl+'100/'+row.path:''"></copy-to-clip></td>
-                            <td class="center">
-                                <a ng-click="goDeviceBindProductEditor($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.bindDevice}}"><i class="btn-icon fa fa-link"></i></a>
+                            <td class="center works">
+                                <table-rights tooltip="{{lang_zh.bindDevice}}" ng-click="goDeviceBindProductEditor($index)" type="u" tclass="fa-link"></table-rights>
                             </td>
-                            <td class="center">
-                                <a ng-click="row.showDetail=!row.showDetail" tooltip-placement="top" uib-tooltip="{{lang_zh.bindDeviceDetail}}"><i class="btn-icon fa fa-bars"></i></a>
-                                <span class="divider"></span>
-                                <a ng-href="{{row.path?baseUrl.pushUrl+'100/'+row.path:''}}" tooltip-placement="top" uib-tooltip="{{lang_zh.download}}" download><i class="btn-icon fa fa-download"></i></a>
-                                <span class="divider"></span>
-                                <a ng-click="goEditor($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
+                            <td class="center works">
+                                <table-rights tooltip="{{lang_zh.bindDeviceDetail}}" ng-click="row.showDetail=!row.showDetail" type="u" tclass="fa-bars"></table-rights>
+                                <table-rights tooltip="{{lang_zh.download}}" ng-href="{{row.path?baseUrl.pushUrl+'100/'+row.path:''}}" type="r" tclass="fa-download"></table-rights>
+                                <table-rights tooltip="{{lang_zh.edit}}" ng-click="goEditor($index)" type="u" tclass="fa-pencil"></table-rights>
+
                                 <!--<span class="divider"></span>-->
                                 <!--<a ng-click="doDelete($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>-->
                             </td>

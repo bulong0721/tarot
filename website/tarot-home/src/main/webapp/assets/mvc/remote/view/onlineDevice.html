@@ -1,11 +1,4 @@
-<div class="alert alert-info">
-    <div class="form-inline" ng-keyup="search($event)">
-        <div class="form-group">
-            <input placeholder="设备名称" ng-model="where.queryObj.deviceName" type="text" class="form-control" style="width:200px;"/>
-        </div>
-        <button class="btn btn-sm btn-danger m-l" type="button" ng-click="search()"><i class="fa fa-search"></i><span class="bold">搜索</span></button>
-    </div>
-</div>
+<advanced-search title="" mgrdata="{{mgrData.fields}}" shigh="true"></advanced-search>
 <div class="space-6"></div>
 <div class="row">
     <div class="col-xs-12">

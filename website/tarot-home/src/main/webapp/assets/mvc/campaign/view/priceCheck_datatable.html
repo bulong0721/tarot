@@ -1,5 +1,5 @@
 <!--<a class="btn btn-sm btn-danger" ng-click="goEditor()"><i class="ace-icon fa fa-plus bigger-120"></i>新增商户</a>-->
-<div class="alert alert-info">
+<div class="alert alert-info" ng-if="'r' | routers">
     <div class="form-inline">
         <div class="form-group">
             <input placeholder="优惠码" ng-model="where.queryName" ng-keyup="search($event)" type="text" class="form-control" style="width:200px;"/>

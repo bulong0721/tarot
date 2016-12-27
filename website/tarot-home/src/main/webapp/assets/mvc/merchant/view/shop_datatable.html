@@ -1,9 +1,9 @@
-<a class="btn btn-sm btn-danger" ng-click="goEditorCustom()"><i class="ace-icon fa fa-plus bigger-120"></i>新增门店</a>
-<i class="ace-icon fa fa-question-circle" tooltip-placement="right" uib-tooltip="{{tips}}"></i>
+<add-rights ng-click="goEditorCustom()" content="新增门店"></add-rights>
+<i ng-if="'r' | routers" class="ace-icon fa fa-question-circle" tooltip-placement="right" uib-tooltip="{{tips}}"></i>
 <div class="space-6"></div>
-<div class="alert alert-info">
-    <advanced-search title="门店名称" mgrdata="{{mgrData.fields}}"></advanced-search>
-</div>
+
+<advanced-search title="门店名称" mgrdata="{{mgrData.fields}}"></advanced-search>
+
 <div class="space-6"></div>
 <div class="row">
     <div class="col-xs-12">
@@ -40,16 +40,14 @@
                         <td><div class="cropLongString-120">{{::row.address.address}}</div></td>
                         <td>{{::row.phone}}</td>
                         <td>{{::row.code}}</td>
-                        <td class="center">
-                            <a ng-click="goShopBindEditor($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.flowSet}}"><i class="btn-icon fa fa-share"></i></a>
-                            <span class="divider"></span>
-                            <a ng-click="row.showDetail=!row.showDetail" tooltip-placement="top" uib-tooltip="{{lang_zh.flowDetail}}"><i class="btn-icon fa fa-bars"></i></a>
+                        <td class="center works">
+                            <table-rights tooltip="{{lang_zh.flowSet}}" ng-click="goShopBindEditor($index)" type="u" tclass="fa-share"></table-rights>
+                            <table-rights tooltip="{{lang_zh.flowDetail}}" ng-click="row.showDetail=!row.showDetail" type="r" tclass="fa-bars"></table-rights>
                         </td>
-                        <td class="center">
-                            <a ng-click="goEditorCustom($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
-                            <span class="divider"></span>
-                            <a ng-if="row.id != thisStoreId" ng-click="doDelete($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
-                            <a ng-if="row.id == thisStoreId" tooltip-placement="top" uib-tooltip="{{lang_zh.noDeleteThisShop}}"><i class="btn-icon fa fa-ban"></i></a>
+                        <td class="center works">
+                            <table-rights tooltip="{{lang_zh.edit}}" ng-click="goEditorCustom($index)" type="u" tclass="fa-pencil"></table-rights>
+                            <table-rights ng-if="row.id != thisStoreId" tooltip="{{lang_zh.delete}}" ng-click="doDelete($index)" type="d" tclass="fa-trash-o"></table-rights>
+                            <table-rights ng-if="row.id == thisStoreId" tooltip="{{lang_zh.noDeleteThisShop}}" type="d" tclass="fa-ban"></table-rights>
                         </td>
                     </tr>
                     <tr ng-repeat-end ng-if="row.showDetail">

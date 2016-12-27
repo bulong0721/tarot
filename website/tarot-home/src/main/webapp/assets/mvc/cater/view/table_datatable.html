@@ -1,9 +1,9 @@
-<a class="btn btn-sm btn-danger" ng-click="goEditorCustom()"><i class="ace-icon fa fa-plus bigger-120"></i>新增餐桌</a>
+<add-rights ng-click="goEditorCustom()" content="新增餐桌"></add-rights>
 <!--<a class="btn btn-sm btn-danger" ng-click="goBatchBindEditor()"><i class="ace-icon fa fa-link bigger-120"></i>批量关联</a>-->
 <div class="space-6"></div>
-<div class="alert alert-info">
-    <advanced-search title="餐桌名称" mgrdata="{{mgrData.fields}}"></advanced-search>
-</div>
+
+<advanced-search title="餐桌名称" mgrdata="{{mgrData.fields}}"></advanced-search>
+
 <div class="space-6"></div>
 <div class="row">
     <div class="col-xs-12">
@@ -34,15 +34,14 @@
                             <td>{{::row.textId}}</td>
                             <td class="center">{{::row.tableType.name}}</td>
                             <td class="center">{{::row.tableZone.name}}</td>
-                            <td class="center">
-                                <a ng-click="goDeviceBindProductEditor($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.bindDevice}}"><i class="btn-icon fa fa-link"></i></a>
+                            <td class="center works">
+                                <table-rights tooltip="{{lang_zh.bindDevice}}" ng-click="goDeviceBindProductEditor($index)" type="u" tclass="fa-link"></table-rights>
                             </td>
-                            <td class="center">
-                                <a ng-click="row.showDetail=!row.showDetail" tooltip-placement="top" uib-tooltip="{{lang_zh.bindDeviceDetail}}"><i class="btn-icon fa fa-bars"></i></a>
-                                <span class="divider"></span>
-                                <a ng-click="goEditorCustom($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
-                                <span class="divider"></span>
-                                <a ng-click="doDelete($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
+                            <td class="center works">
+                                <table-rights tooltip="{{lang_zh.bindDeviceDetail}}" ng-click="row.showDetail=!row.showDetail" type="r" tclass="fa-bars"></table-rights>
+                                <!--<a ng-click="row.showDetail=!row.showDetail" tooltip-placement="top" uib-tooltip="{{lang_zh.bindDeviceDetail}}"><i class="btn-icon fa fa-bars"></i></a>-->
+                                <table-rights tooltip="{{lang_zh.edit}}" ng-click="goEditorCustom($index)" type="u" tclass="fa-pencil"></table-rights>
+                                <table-rights tooltip="{{lang_zh.delete}}" ng-click="doDelete($index)" type="d" tclass="fa-trash-o"></table-rights>
                             </td>
                         </tr>
                         <tr ng-repeat-end ng-if="row.showDetail">

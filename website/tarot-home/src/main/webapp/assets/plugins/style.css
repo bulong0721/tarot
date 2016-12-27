@@ -10137,6 +10137,8 @@ table th,table td {white-space:nowrap;}
 .tableXyAuto {overflow-x: auto;}
 .tableXyAuto td,.tableXyAuto tr {white-space:nowrap;}
 .table.ng-table td, .table.table-bordered>tbody>tr>td{ vertical-align: middle;}
+.works table-rights a {border-left: #aaa 1px solid; padding: 0 8px;}
+.works table-rights:first-child a {border-left: none;}
 
 /*.wrapper-content {padding: 15px 0px 20px;}*/
 .navbar {

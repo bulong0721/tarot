@@ -8,6 +8,7 @@ angular
     .filter('isNullOrEmptyString',isNullOrEmptyString)
     .filter('isHasProp',isHasProp)
     .filter('toasterManage',toasterManage)
+    .filter('routers',routers)
 
 //判断对象是否是空或空字符
 function isNullOrEmptyString(){
@@ -188,5 +189,15 @@ function toasterManage(toaster){
             default :
                 toaster.error({body: message});
         }
+    }
+}
+
+/**
+*判断路由增删改查的权限
+*/
+function routers($rootScope,$state){
+    return function(contr){
+        var arr = $state.current.name.split("."),contrs = $rootScope.routerAll.C[arr[0]][arr[1]];
+        return contrs.indexOf(contr) >=0?true:false;
     }
 }

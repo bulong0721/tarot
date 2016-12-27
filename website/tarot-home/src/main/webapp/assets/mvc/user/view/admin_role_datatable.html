@@ -1,9 +1,7 @@
-<a class="btn btn-sm btn-danger" ng-click="goEditor()"><i class="ace-icon fa fa-plus bigger-120"></i>新增角色</a>
-<i class="ace-icon fa fa-question-circle" tooltip-placement="right" uib-tooltip="{{tips}}"></i>
+<add-rights ng-click="goEditor()" content="新增角色"></add-rights>
+<i ng-if="'r' | routers" class="ace-icon fa fa-question-circle" tooltip-placement="right" uib-tooltip="{{tips}}"></i>
 <div class="space-6"></div>
-<div class="alert alert-info">
-    <advanced-search title="角色名"></advanced-search>
-</div>
+<advanced-search title="角色名"></advanced-search>
 <div class="space-6"></div>
 <div class="row">
     <div class="col-xs-12">
@@ -25,12 +23,10 @@
                         <tr ng-repeat="row in $data">
                             <td>{{::row.name}}</td>
                             <td><div class="cropLongString-320">{{::row.description}}</div></td>
-                            <td class="center">
-                                <a ng-click="goEditor($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
-                                <span class="divider"></span>
-                                <a ng-click="doDelete($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
-                                <span class="divider"></span>
-                                <a ng-click="goAssignPermission($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.assignPermission}}"><i class="btn-icon fa fa-star"></i></a>
+                            <td class="center works">
+                                <table-rights tooltip="{{lang_zh.edit}}" ng-click="goEditor($index)" type="u" tclass="fa-pencil"></table-rights>
+                                <table-rights tooltip="{{lang_zh.delete}}" ng-click="doDelete($index)" type="d" tclass="fa-trash-o"></table-rights>
+                                <table-rights tooltip="{{lang_zh.assignPermission}}" ng-click="goAssignPermission($index)" type="u" tclass="fa-star"></table-rights>
                             </td>
                         </tr>
                         </tbody>

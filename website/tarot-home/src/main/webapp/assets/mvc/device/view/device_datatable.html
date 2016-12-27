@@ -1,9 +1,7 @@
-<a class="btn btn-sm btn-danger" ng-click="goEditor()"><i class="ace-icon fa fa-plus bigger-120"></i>新增类型</a>
-<i class="ace-icon fa fa-question-circle" tooltip-placement="right" uib-tooltip="{{tips}}"></i>
+<add-rights ng-click="goEditor()" content="新增类型"></add-rights>
+<i ng-if="'r' | routers" class="ace-icon fa fa-question-circle" tooltip-placement="right" uib-tooltip="{{tips}}"></i>
 <div class="space-6"></div>
-<div class="alert alert-info">
-    <advanced-search title="设备类型名称" mgrdata="{{mgrData.fields}}"></advanced-search>
-</div>
+<advanced-search title="设备类型名称" mgrdata="{{mgrData.fields}}"></advanced-search>
 <div class="space-6"></div>
 <div class="row">
     <div class="col-xs-12">
@@ -27,12 +25,10 @@
                             <td>{{::row.name}}</td>
                             <td>{{::row.versionNum}}</td>
                             <td><div class="cropLongString-320">{{::row.description}}</div></td>
-                            <td class="center">
-                                <a ng-click="row.showDetail=!row.showDetail" tooltip-placement="top" uib-tooltip="{{lang_zh.attrDetail}}"><i class="btn-icon fa fa-bars"></i></a>
-                                <span class="divider"></span>
-                                <a ng-click="goEditor($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
-                                <span class="divider"></span>
-                                <a ng-click="doDelete($index)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
+                            <td class="center works">
+                                <table-rights tooltip="{{lang_zh.attrDetail}}" ng-click="row.showDetail=!row.showDetail" type="u" tclass="fa-bars"></table-rights>
+                                <table-rights tooltip="{{lang_zh.edit}}" ng-click="goEditor($index)" type="u" tclass="fa-pencil"></table-rights>
+                                <table-rights tooltip="{{lang_zh.delete}}" ng-click="doDelete(row, attr)" type="d" tclass="fa-trash-o"></table-rights>
                             </td>
                         </tr>
                         <tr ng-repeat-end ng-if="row.showDetail">
@@ -61,12 +57,11 @@
                                                 <input type="text" name="attrValue" ng-model="attr.value" placeholder="255字以内" class="editable-input form-control input-sm" required/>
                                             </div>
                                         </td>
-                                        <td class="center">
-                                            <a ng-switch-default ng-click="attr.editing=true" tooltip-placement="top" uib-tooltip="{{lang_zh.edit}}"><i class="btn-icon fa fa-pencil"></i></a>
-                                            <a ng-switch-when="true" ng-click="updateAttr(row, attr)" tooltip-placement="top" uib-tooltip="{{lang_zh.update}}"><i class="btn-icon fa fa-check"></i></a>
-                                            <span class="divider"></span>
-                                            <a ng-switch-default ng-click="deleteAttr(row, attr)" tooltip-placement="top" uib-tooltip="{{lang_zh.delete}}"><i class="btn-icon fa fa-trash-o"></i></a>
-                                            <a ng-switch-when="true" ng-click="cancelAttr(row,attr)" tooltip-placement="top" uib-tooltip="{{lang_zh.cancel}}"><i class="btn-icon fa fa-close"></i></a>
+                                        <td class="center works">
+                                            <table-rights ng-switch-default tooltip="{{lang_zh.edit}}" ng-click="attr.editing=true" type="u" tclass="fa-pencil"></table-rights>
+                                            <table-rights ng-switch-when="true" tooltip="{{lang_zh.update}}" ng-click="updateAttr(row, attr)" type="u" tclass="fa-check"></table-rights>
+                                            <table-rights ng-switch-default tooltip="{{lang_zh.delete}}" ng-click="deleteAttr(row, attr)" type="d" tclass="fa-trash-o"></table-rights>
+                                            <table-rights ng-switch-when="true" tooltip="{{lang_zh.cancel}}" ng-click="cancelAttr(row, attr)" type="d" tclass="fa-close"></table-rights>
                                         </td>
                                     </tr>
                                     </tbody>
