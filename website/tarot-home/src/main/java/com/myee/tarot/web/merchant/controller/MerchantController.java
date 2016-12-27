@@ -2,10 +2,14 @@ package com.myee.tarot.web.merchant.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
+import com.myee.tarot.admin.domain.AdminUser;
+import com.myee.tarot.admin.service.AdminUserService;
 import com.myee.tarot.core.Constants;
 import com.myee.tarot.core.util.*;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
+import com.myee.tarot.customer.domain.Customer;
+import com.myee.tarot.customer.service.CustomerService;
 import com.myee.tarot.merchant.domain.Merchant;
 import com.myee.tarot.merchant.domain.MerchantStore;
 import com.myee.tarot.merchant.service.MerchantService;
@@ -49,6 +53,10 @@ public class MerchantController {
     private MerchantStoreService merchantStoreService;
     @Autowired
     private GeoZoneService geoZoneService;
+    @Autowired
+    private AdminUserService userService;
+    @Autowired
+    private CustomerService customerService;
     @Autowired
     private SaleCorpMerchantService saleCorpMerchantService;
     @Value("${cleverm.push.dirs}")
@@ -103,9 +111,9 @@ public class MerchantController {
                 merchantStoreService.update(merchantStore);
             }
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", objectToEntry(merchant1));
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntry(merchant1));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
@@ -122,7 +130,7 @@ public class MerchantController {
             Merchant merchant1 = merchantService.findById(id);//id由前端切换商户传进来
             resp.addDataEntry(objectToEntry(merchant1));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
         }
@@ -143,7 +151,7 @@ public class MerchantController {
             Merchant merchant1 = (Merchant) request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
             resp.addDataEntry(objectToEntry(merchant1));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
         }
@@ -183,7 +191,7 @@ public class MerchantController {
             Merchant merchant = merchantService.findById(merchantDelete.getId());
             if (merchant != null) merchantService.delete(merchant);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("删除出错");
         }
@@ -201,7 +209,7 @@ public class MerchantController {
                 resp.addDataEntry(objectToEntry(merchant));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
         }
@@ -210,7 +218,7 @@ public class MerchantController {
 
     @RequestMapping(value = "admin/merchant/paging", method = RequestMethod.GET)
     @ResponseBody
-//    @PreAuthorize("hasAnyAuthority('MERCHANT_MANAGE','MERCHANT_STORE_R')")
+//    @PreAuthorize("hasAnyAuthority('PERMIT_ALL','MERCHANT_MANAGE','MERCHANT_STORE_R')")
     public AjaxPageableResponse pageMerchant(HttpServletRequest request, WhereRequest whereRequest) throws Exception {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
@@ -222,7 +230,7 @@ public class MerchantController {
             }
             resp.setRecordsTotal(pageList.getRecordsTotal());
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             resp.setErrorString("出错");
         }
         return resp;
@@ -238,7 +246,7 @@ public class MerchantController {
                 resp.add(objectToEntry(merchant));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
         return resp;
     }
@@ -353,9 +361,9 @@ public class MerchantController {
                 }
             }
             resp = AjaxResponse.success();
-            resp.addEntry("updateResult", objectToEntryAdd(merchantStore, bindStores));
+            resp.addEntry(Constants.RESPONSE_UPDATE_RESULT, objectToEntryAdd(merchantStore, bindStores));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
             return resp;
@@ -379,7 +387,7 @@ public class MerchantController {
             MerchantStore merchantStore1 = merchantStoreService.findById(id);//id由前端切换商户传进来
             resp.addDataEntry(objectToEntry(merchantStore1));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
         }
@@ -411,31 +419,77 @@ public class MerchantController {
             MerchantStore merchantStore = merchantStoreService.findById(merchantStoreDelete.getId());
             if (merchantStore != null) merchantStoreService.delete(merchantStore);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("该门店在被其他模块使用，无法删除");
         }
         return resp;
     }
 
-    @RequestMapping(value = {"admin/merchantStore/list", "shop/merchantStore/list"}, method = RequestMethod.GET)
+//    @RequestMapping(value = {"admin/merchantStore/list", "shop/merchantStore/list"}, method = RequestMethod.GET)
+//    @ResponseBody
+//    public AjaxPageableResponse listMerchantStore(WhereRequest whereRequest, HttpServletRequest request) throws Exception {
+//        AjaxPageableResponse resp = new AjaxPageableResponse();
+//        try {
+//            String path = request.getServletPath();
+//            if (path.contains("/admin/")) {
+//                PageResult<MerchantStore> pageList = merchantStoreService.pageListByMerchant(null, whereRequest);
+//                List<MerchantStore> merchantStoreList = pageList.getList();
+//                for (MerchantStore merchantStore : merchantStoreList) {
+//                    resp.addDataEntry(objectToEntry(merchantStore));
+//                }
+//                resp.setRecordsTotal(pageList.getRecordsTotal());
+//            } else if (path.contains("/shop/")) {
+//                resp.setRecordsTotal(0);
+//            }
+//        } catch (Exception e) {
+//            LOGGER.error(e.getMessage(), e);
+//            resp.setErrorString("出错");
+//        }
+//        return resp;
+//    }
+
+    @RequestMapping(value = {"admin/merchantStore/listSwitch", "shop/merchantStore/listSwitch"}, method = RequestMethod.GET)
     @ResponseBody
-    public AjaxPageableResponse listMerchantStore(WhereRequest whereRequest, HttpServletRequest request) throws Exception {
+    public AjaxPageableResponse listSwitchMerchantStore(WhereRequest whereRequest, HttpServletRequest request) throws Exception {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
             String path = request.getServletPath();
+            //从用户自身和用户绑定的门店取可切换的列表
+            Set<MerchantStore> storeSet = null;
+            MerchantStore defaultStore = null;//用户绑定的默认门店
             if (path.contains("/admin/")) {
-                PageResult<MerchantStore> pageList = merchantStoreService.pageListByMerchant(null, whereRequest);
-                List<MerchantStore> merchantStoreList = pageList.getList();
-                for (MerchantStore merchantStore : merchantStoreList) {
+                Object o = request.getSession().getAttribute(Constants.ADMIN_USER);
+                if(o == null ){
+                    return AjaxPageableResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"获取用户信息错误！");
+                }
+                AdminUser adminUser = userService.findById(((AdminUser) o).getId());
+                storeSet = adminUser.getAllMerchantStores();
+                defaultStore = adminUser.getMerchantStore();
+            } else if (path.contains("/shop/")) {
+                Object o = request.getSession().getAttribute(Constants.CUSTOMER_USER);
+                if(o == null ){
+                    return AjaxPageableResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"获取用户信息错误！");
+                }
+                Customer customer = customerService.findById(((Customer)o).getId());
+                storeSet = customer.getAllMerchantStores();
+                defaultStore = customer.getMerchantStore();
+            }
+            if(defaultStore == null) {
+                return AjaxPageableResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"用户信息错误！未绑定默认门店！");
+            }
+            resp.addDataEntry(objectToEntry(defaultStore));
+            if(storeSet != null && storeSet.size() > 0) {
+                for (MerchantStore merchantStore : storeSet) {
+                    //添加列表时排除用户绑定的默认门店，使列表不重复
+                    if(merchantStore.getName().equals(defaultStore.getName())){
+                        continue;
+                    }
                     resp.addDataEntry(objectToEntry(merchantStore));
                 }
-                resp.setRecordsTotal(pageList.getRecordsTotal());
-            } else if (path.contains("/shop/")) {
-                resp.setRecordsTotal(0);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             resp.setErrorString("出错");
         }
         return resp;
@@ -460,20 +514,22 @@ public class MerchantController {
                 resp.addDataEntry(objectToEntry(merchantStore));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
         }
         return resp;
     }
 
+    //根据切换的商户查询旗下所有门店
     @RequestMapping(value = "admin/merchantStore/pagingByMerchant", method = RequestMethod.GET)
     @ResponseBody
     public AjaxPageableResponse pagingMerchantStoreByMerchant(HttpServletRequest request, WhereRequest whereRequest) throws Exception {
         AjaxPageableResponse resp = new AjaxPageableResponse();
         try {
             //从session中取账号关联的商户信息
-            if (request.getSession().getAttribute(Constants.ADMIN_MERCHANT) == null) {
+            Object o1 = request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
+            if ( o1 == null) {
                 resp.setErrorString("请先切换商户");
                 return resp;
             }
@@ -497,7 +553,52 @@ public class MerchantController {
             }
             resp.setRecordsTotal(pageList.getRecordsTotal());
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
+            resp.setErrorString("出错");
+        }
+        return resp;
+    }
+
+    //根据用户绑定门店及当前切换的商户查找
+    @RequestMapping(value = "admin/merchantStore/pagingByMerchantUser", method = RequestMethod.GET)
+    @ResponseBody
+    public AjaxPageableResponse pagingByMerchantUser(HttpServletRequest request, WhereRequest whereRequest) throws Exception {
+        AjaxPageableResponse resp = new AjaxPageableResponse();
+        try {
+            //从session中取账号关联的商户信息
+            Object o1 = request.getSession().getAttribute(Constants.ADMIN_MERCHANT);
+            if ( o1 == null) {
+                resp.setErrorString("请先切换商户");
+                return resp;
+            }
+            Long thisMerchantId = ((Merchant)o1).getId();
+            Object o = request.getSession().getAttribute(Constants.ADMIN_USER);
+            if( o == null ) {
+                return AjaxPageableResponse.failed(-1,"请先登录");
+            }
+            Set<MerchantStore> merchantStoreList = ((AdminUser)o).getAllMerchantStores();
+            if( merchantStoreList != null && merchantStoreList.size() > 0) {
+                for (MerchantStore merchantStore : merchantStoreList) {
+                    Long merchantStoreId = merchantStore.getId();
+                    MerchantStore merchantStoreDB = merchantStoreService.findById(merchantStoreId);
+                    //只取当前切换门店所属商户下的门店
+                    if( !merchantStoreDB.getMerchant().getId().equals(thisMerchantId) ) {
+                        continue;
+                    }
+                    SaleCorpMerchant saleCorpMerchant = saleCorpMerchantService.findByMerchantId(merchantStoreId);
+                    List<MerchantStore> bindStores = Lists.newArrayList();
+                    if (saleCorpMerchant != null && !StringUtil.isBlank(saleCorpMerchant.getRelatedMerchants())) {
+                        List<Long> bindStore = JSON.parseArray(saleCorpMerchant.getRelatedMerchants(), Long.class);
+                        for (Long storeId : bindStore) {
+                            MerchantStore store = merchantStoreService.findById(storeId);
+                            bindStores.add(store);
+                        }
+                    }
+                    resp.addDataEntry(objectToEntryAdd(merchantStoreDB, bindStores));
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             resp.setErrorString("出错");
         }
         return resp;
@@ -528,7 +629,7 @@ public class MerchantController {
             }
             return resp.getRows();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
@@ -541,17 +642,34 @@ public class MerchantController {
         try {
             if (id == null) {
                 //抛出异常给异常处理机制
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-                resp.setErrorString("请切换门店！");
-                return resp;
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"请切换门店！");
             }
             Long numFind = merchantStoreService.getCountById(id, null);
             if (numFind != 1L) {
                 //抛出异常给异常处理机制
-                resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
-                resp.setErrorString("要切换的商户信息错误");
-                return resp;
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"要切换的商户信息错误");
             }
+
+            Object o = request.getSession().getAttribute(Constants.ADMIN_USER);
+            if(o == null ){
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"获取用户信息错误！");
+            }
+            AdminUser adminUser = (AdminUser)o;
+            Set<MerchantStore> storeSet = adminUser.getAllMerchantStores();
+            //校验要切换的门店id是否在用户可操作门店列表里面,或者是用户自身所属的门店
+            boolean isPermit = id.equals(adminUser.getMerchantStore().getId());
+            if( storeSet != null && storeSet.size() > 0 ){
+                for( MerchantStore store : storeSet ){
+                    if( store.getId().equals(id) ){
+                        isPermit = true;
+                        break;
+                    }
+                }
+            }
+            if(!isPermit){
+                return AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE,"没有操作该门店权限！");
+            }
+
             MerchantStore merchantStoreOld = merchantStoreService.findById(id);
             Merchant merchantOld = merchantService.findById(merchantStoreOld.getMerchant().getId());
             //把商户信息写入session
@@ -559,7 +677,7 @@ public class MerchantController {
             request.getSession().setAttribute(Constants.ADMIN_MERCHANT, merchantOld);
             resp.addDataEntry(objectToEntry(merchantStoreOld));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("切换出错");
         }
@@ -587,7 +705,7 @@ public class MerchantController {
             entry.put("merchant", merchant);
             resp.addDataEntry(entry);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             resp = AjaxResponse.failed(AjaxResponse.RESPONSE_STATUS_FAIURE);
             resp.setErrorString("出错");
         }
@@ -605,7 +723,7 @@ public class MerchantController {
             }
             return resp;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
         }
         return AjaxResponse.failed(-1);
 
