@@ -37,7 +37,7 @@
                             <td class="center works">
                                 <table-rights tooltip="{{lang_zh.attrDetail}}" ng-click="row.showDetail=!row.showDetail" type="u" tclass="fa-bars"></table-rights>
                                 <table-rights tooltip="{{lang_zh.edit}}" ng-click="goEditorCustom($index)" type="u" tclass="fa-pencil"></table-rights>
-                                <table-rights tooltip="{{lang_zh.delete}}" ng-click="doDelete(row, attr)" type="d" tclass="fa-trash-o"></table-rights>
+                                <table-rights tooltip="{{lang_zh.delete}}" ng-click="doDelete($index)" type="d" tclass="fa-trash-o"></table-rights>
                             </td>
                         </tr>
                         <tr ng-repeat-end ng-if="row.showDetail">
