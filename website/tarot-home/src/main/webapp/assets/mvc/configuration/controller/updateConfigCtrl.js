@@ -268,6 +268,7 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
 
     //formly提交config
     $scope.configSubmit = function () {
+        initialParams();
         if (!checkParamOK($scope.formDataUpdateConfig.model.type,'请选择类型') || !checkParamOK($scope.formDataUpdateConfig.model.seeType,'请选择设备可见范围')) {
             return false;
         }
@@ -281,7 +282,7 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
             }
             //校验信息填写是否完整,只校验没有假删除的
             if (indexData.show && !checkThisRowOK(indexData,index,$scope.formDataUpdateConfig.model.attributes)) {
-                initialParams();
+                //initialParams();
                 checkAllRowOK = false;
                 return false;
             }
@@ -289,7 +290,7 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
                 $timeout(function () {
                     $filter('toasterManage')(5, "有未保存的行，请点击√保存!",false);
                 }, 0);
-                initialParams();
+                //initialParams();
                 checkAllRowOK = false;
                 return false;
             }
@@ -298,7 +299,7 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
                 $timeout(function () {
                     $filter('toasterManage')(5, indexData.name + "请上传文件并保存!",false);
                 }, 0);
-                initialParams();
+                //initialParams();
                 checkAllRowOK = false;
                 return false;
             }
@@ -357,7 +358,7 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
                 console.log(model)
                 var dataConfig = {
                     id:model.id,
-                    name:$scope.submitResult.length > 0 ? ($scope.submitResult[0].name+$scope.submitResult[0].version) :baseInfo.FILE_NAME,
+                    name:$scope.submitResult.length > 0 ? ($scope.submitResult[0].name+ '_' +$scope.submitResult[0].version) :baseInfo.FILE_NAME,
                     description:model.description || '',
                     type:model.type,
                     seeType:model.seeType,
