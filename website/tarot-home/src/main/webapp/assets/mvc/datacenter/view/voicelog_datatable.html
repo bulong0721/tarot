@@ -1,9 +1,9 @@
 <div class="alert alert-info"  ng-if="'r' | routers">
     <div class="form-inline">
         <div class="form-group">
-            <c-Datepicker placeholder="开始日期" model="where.beginDate" style="width:150px;"></c-Datepicker>
+            <c-Datepicker placeholder="开始日期" model="where.beginDate"  style="width:150px;"></c-Datepicker>
             <i class="fa fa-exchange"></i>
-            <c-Datepicker placeholder="结束日期" model="where.endDate" style="width:150px;"></c-Datepicker>
+            <c-Datepicker placeholder="结束日期" model="where.endDate" day="1" style="width:150px;"></c-Datepicker>
         </div>
         <select class="form-control" style="width:100px;" ng-model="where.voiceLogType">
             <option value="">类型</option>

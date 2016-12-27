@@ -310,18 +310,23 @@ function alerts(){
 
 /*cDatepicker*/
 function cDatepicker(){
-    function formatDate (strTime) {
-        return new Date(strTime);
+
+    function fd(day){
+        var now = new Date();
+        now.setDate(now.getDate()+day);
+        return now;
     }
-    var d = formatDate((new Date()),"yyyy-MM-dd");
+
     return {
         template:'<div class="input-group"><input uib-datepicker-popup placeholder="{{placeholder}}" type="text"  ng-model="model" ng-model-options="{ timezone: \'+0800\' }" class="form-control" ng-click="datepicker.open($event)" is-open="datepicker.opened" datepicker-options="datepicker.dateOptions" /> <span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datepicker.open($event)"><i class="fa fa-calendar"></i></button></span> </div>',
         replace: true,
         scope:{
             placeholder:'@placeholder',
-            model:'='
+            model:'=',
+            day:'='
         },
         link:function(scope,ele,attr){
+            var d = fd(scope.day?parseInt(scope.day):0);
             scope.model = new Date(d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate());
             //datepicker配置
             scope.datepicker = {
@@ -495,7 +500,7 @@ function advancedSearch($filter){
         template: [
             '<div class="alert alert-info" ng-if="show"><ul class="form-inline" ng-keyup="search($event)">',
             '<li ng-if="!sHigh && title"><div class="form-group"><input placeholder="{{title}}" ng-model="where.queryName" type="text" class="form-control" style="width:200px;"/></div></li>',
-            '<li ng-if="datepicker"><div class="form-group m-l"><c-Datepicker placeholder="开始日期" model="where.queryObj.beginDate" style="width:150px;"></c-Datepicker><i class="fa fa-exchange"></i><c-Datepicker placeholder="结束日期" model="where.queryObj.endDate" style="width:150px;"></c-Datepicker></div></li>',
+            '<li ng-if="datepicker"><div class="form-group m-l"><c-Datepicker placeholder="开始日期" model="where.queryObj.beginDate" style="width:150px;"></c-Datepicker><i class="fa fa-exchange"></i><c-Datepicker placeholder="结束日期" day="1" model="where.queryObj.endDate" style="width:150px;"></c-Datepicker></div></li>',
             '<li class="searchHigh" ng-if="sHigh"><div class="form-group searchHigh" ng-repeat="f in mgrData" ng-if="f.templateOptions.isSearch">',
             '<input ng-if="f.type == \'c_input\' || f.type == \'c_textarea\'" ng-model="where.queryObj[f.key]" type="text" class="form-control" placeholder="{{f.templateOptions.label}}"/>',
             '<select ng-if="f.type == \'c_select\'" ng-model="where.queryObj[f.key]" ng-init="where.queryObj[f.key]=\'\'" class="form-control m-l-sm">',
