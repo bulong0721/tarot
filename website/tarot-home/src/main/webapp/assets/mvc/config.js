@@ -236,20 +236,6 @@ function routerAll(baseUrl){
                 }
             }
         },
-        'explorer.logging': {
-            url: "/logging",
-            templateUrl: "assets/mvc/desktop/view/manager.html",
-            controller: 'loggingCtrl',
-            data: {
-                subTitle: '资源日志',
-                datatable: 'assets/mvc/explorer/view/logging_datatable.html'
-            },
-            resolve: {
-                loadPlugin: function ($ocLazyLoad) {
-                    return ctrlManagerLoader($ocLazyLoad, 'explorer', 'loggingCtrl.js')
-                }
-            }
-        },
         'cater': {
             abstract: true,
             url: "/cater",
@@ -546,6 +532,20 @@ function routerAll(baseUrl){
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {
                     return ctrlManagerLoader($ocLazyLoad, 'datacenter', 'voiceLogCtrl.js');
+                }
+            }
+        },
+        'datacenter.logging': {
+            url: "/logging",
+            templateUrl: "assets/mvc/desktop/view/manager.html",
+            controller: 'loggingCtrl',
+            data: {
+                subTitle: '资源日志',
+                datatable: 'assets/mvc/datacenter/view/logging_datatable.html'
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return ctrlManagerLoader($ocLazyLoad, 'datacenter', 'loggingCtrl.js')
                 }
             }
         },
