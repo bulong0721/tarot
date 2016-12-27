@@ -18,5 +18,7 @@ public interface UpdateConfigProductUsedXREFService extends GenericEntityService
 
 	UpdateConfigProductUsedXREF getByTypeAndDeviceGroupNO(String type, String deviceGroupNO);
 
+	List<UpdateConfigProductUsedXREF> listByTypeAndDeviceGroupNO(String type, String deviceGroupNO);
+
 	List<UpdateConfigProductUsedXREF> listByConfigId(Long configId);
 }

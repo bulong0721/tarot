@@ -18,5 +18,7 @@ public interface UpdateConfigProductUsedXREFDao extends GenericEntityDao<Long, U
 
 	UpdateConfigProductUsedXREF getByTypeAndDeviceGroupNO(String type, String deviceGroupNO);
 
+	List<UpdateConfigProductUsedXREF> listByTypeAndDeviceGroupNO(String type, String deviceGroupNO);
+
 	List<UpdateConfigProductUsedXREF> listByConfigId(Long configId);
 }

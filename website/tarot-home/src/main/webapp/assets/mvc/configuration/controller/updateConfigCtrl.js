@@ -127,7 +127,7 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
         {key:'odin',name:'Odin',type:$scope.mgrUpdateConfigData.constant.BASE_INFO_APK.TYPE},
         {key:'M03',name:'starline',type:$scope.mgrUpdateConfigData.constant.BASE_INFO_MODULE.TYPE},
         {key:'M04',name:'sensor',type:$scope.mgrUpdateConfigData.constant.BASE_INFO_MODULE.TYPE},
-        {key:'M06',name:'move',type:$scope.mgrUpdateConfigData.constant.BASE_INFO_MODULE.TYPE},
+        {key:'M06',name:'base',type:$scope.mgrUpdateConfigData.constant.BASE_INFO_MODULE.TYPE},
         {key:'M07',name:'power',type:$scope.mgrUpdateConfigData.constant.BASE_INFO_MODULE.TYPE},
         {key:'patch_signed_7zip',name:'agentPatch',type:$scope.mgrUpdateConfigData.constant.BASE_INFO_AGENT_PATCH.TYPE},
         {key:'Djinn',name:'agent',type:$scope.mgrUpdateConfigData.constant.BASE_INFO_AGENT.TYPE},
@@ -207,12 +207,12 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
             },
             fields: $scope.mgrUpdateConfigData.fields
         };
+        $scope.createTimeStamp = '';//创建时间，用于存储路径当文件夹名用
         initialParams();
     }
 
     function initialParams() {
         $scope.submitResult = [];
-        $scope.createTimeStamp = '';//创建时间，用于存储路径当文件夹名用
     }
 
     //选择类型的时候加载配置文件
@@ -340,8 +340,8 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
         };
 
         var formly = $scope.formDataUpdateConfig;
-        console.log(formly)
-        console.log(formly.form.$valid)
+        //console.log(formly)
+        //console.log(formly.form.$valid)
         if (formly.form.$valid) {
             $scope.disableSubmit = true;
             formly.options.updateInitialValue();
@@ -354,8 +354,10 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
                 $filter('toasterManage')(5, "保存配置文件成功!",true);
                 //保存配置记录到数据库
                 var model = formly.model;
+                console.log(model)
                 var dataConfig = {
-                    name:baseInfo.FILE_NAME,
+                    id:model.id,
+                    name:$scope.submitResult.length > 0 ? ($scope.submitResult[0].name+$scope.submitResult[0].version) :baseInfo.FILE_NAME,
                     description:model.description || '',
                     type:model.type,
                     seeType:model.seeType,

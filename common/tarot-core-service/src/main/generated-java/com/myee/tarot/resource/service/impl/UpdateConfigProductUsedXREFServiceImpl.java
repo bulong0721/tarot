@@ -33,6 +33,10 @@ public class UpdateConfigProductUsedXREFServiceImpl extends GenericEntityService
 		return updateConfigProductUsedXREFDao.getByTypeAndDeviceGroupNO(type, deviceGroupNO);
 	}
 
+	public List<UpdateConfigProductUsedXREF> listByTypeAndDeviceGroupNO(String type, String deviceGroupNO) {
+		return updateConfigProductUsedXREFDao.listByTypeAndDeviceGroupNO(type,deviceGroupNO);
+	}
+
 	public List<UpdateConfigProductUsedXREF> listByConfigId(Long configId) {
 		return updateConfigProductUsedXREFDao.listByConfigId(configId);
 	}

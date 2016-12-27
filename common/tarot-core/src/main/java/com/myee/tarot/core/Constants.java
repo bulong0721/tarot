@@ -197,7 +197,8 @@ public class Constants {
     public static final String UPDATE_SEE_TYPE_CHECKED = "CHECKED";//升级配置文件勾选设备可见
 	public static final String UPDATE_SEE_TYPE_NONE = "NONE";//升级配置文件无设备可见，作废
 	public static final String UPDATE_SEE_TYPE_ALL = "ALL";//升级配置文件所有设备可见
-	public static final String UPDATE_TYPE_SELF_DESIGN_BOARD = "self_design_pad";//升级配置文件类型自研平板
+	public static final String UPDATE_TYPE_SELF_DESIGN_PAD = "self_design_pad";//升级配置文件类型自研平板
+	public static final String UPDATE_FILENAME_SELF_DESIGN_PAD = "self_design_padUpdateConfig.txt";//自研平板升级配置文件名
 	public static final List<String> UPDATE_TYPE_EXCEPT_LIST = Arrays.asList(//升级配置文件类型排除列表，即前端用不到的都在这里配置
 			"source",
 			"metrics_frequency"

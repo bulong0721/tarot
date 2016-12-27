@@ -51,6 +51,23 @@ public class UpdateConfigProductUsedXREFDaoImpl extends GenericEntityDaoImpl<Lon
 	}
 
 	@Override
+	public List<UpdateConfigProductUsedXREF> listByTypeAndDeviceGroupNO(String type, String deviceGroupNO) {
+		QUpdateConfigProductUsedXREF qUpdateConfig = QUpdateConfigProductUsedXREF.updateConfigProductUsedXREF;
+		JPQLQuery<UpdateConfigProductUsedXREF> query = new JPAQuery(getEntityManager());
+		query.from(qUpdateConfig);
+		if (StringUtil.isNullOrEmpty(type) || StringUtil.isNullOrEmpty(deviceGroupNO)) {
+			throw new IllegalArgumentException("type and deviceGroupNO must be not null");
+		}
+		query.where(qUpdateConfig.type.eq(type));
+		ProductUsed productUsed = productUsedDao.getByCode(deviceGroupNO);
+		if(null == productUsed){
+			return null;
+		}
+		query.where(qUpdateConfig.productUsed.eq(productUsed)).orderBy(qUpdateConfig.id.desc());
+		return query.fetch();
+	}
+
+	@Override
 	public List<UpdateConfigProductUsedXREF> listByConfigId(Long configId) {
 		QUpdateConfigProductUsedXREF qUpdateConfig = QUpdateConfigProductUsedXREF.updateConfigProductUsedXREF;
 		JPQLQuery<UpdateConfigProductUsedXREF> query = new JPAQuery(getEntityManager());
