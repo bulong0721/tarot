@@ -52,13 +52,6 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
     @OneToMany(mappedBy = "productUsed", targetEntity = ProductUsedAttribute.class, fetch = FetchType.LAZY)
     protected List<ProductUsedAttribute> attributes = new ArrayList<ProductUsedAttribute>();
 
-    @ManyToMany(targetEntity = ProductUsed.class, fetch = FetchType.LAZY/*cascade = CascadeType.REFRESH*/)
-    @JoinTable(name = "C_PRODUCT_USED_RECEIPT_XREF",
-            joinColumns = {@JoinColumn(name = "PRODUCT_USED_ID", nullable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "RECEIPT_ID", nullable = false)}
-    )
-    protected List<ReceiptPrinted> receiptPrinted  = new ArrayList<ReceiptPrinted>();
-
 //    @OneToMany(targetEntity = DeviceUsed.class, cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
 //    @JoinTable(name = "C_PRODUCT_USED_DEV_XREF",
 //            joinColumns = {@JoinColumn(name = "PRODUCT_USED_ID", nullable = false, updatable = false)},
@@ -150,12 +143,4 @@ public class ProductUsed extends GenericEntity<Long, ProductUsed> {
 //    public Map<String, DeviceUsed> getDeviceUsed() {
 //        return deviceUsed;
 //    }
-
-    public List<ReceiptPrinted> getReceiptPrinted() {
-        return receiptPrinted;
-    }
-
-    public void setReceiptPrinted(List<ReceiptPrinted> receiptPrinted) {
-        this.receiptPrinted = receiptPrinted;
-    }
 }
