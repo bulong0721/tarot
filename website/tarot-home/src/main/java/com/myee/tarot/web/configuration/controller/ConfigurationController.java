@@ -2,19 +2,24 @@ package com.myee.tarot.web.configuration.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
+import com.myee.djinn.endpoint.TrunkingInterface;
+import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
+import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catalog.domain.ProductUsed;
 import com.myee.tarot.catalog.service.ProductUsedService;
-import com.myee.tarot.configuration.ReceiptPrintedItemService;
+import com.myee.tarot.configuration.service.ReceiptPrintedItemService;
 import com.myee.tarot.configuration.domain.ReceiptPrinted;
 import com.myee.tarot.configuration.domain.ReceiptPrintedItem;
 import com.myee.tarot.configuration.service.ReceiptPrintedService;
 import com.myee.tarot.core.Constants;
-import com.myee.tarot.core.exception.ServiceException;
 import com.myee.tarot.core.util.DateUtil;
 import com.myee.tarot.core.util.PageResult;
+import com.myee.tarot.core.util.StringUtil;
 import com.myee.tarot.core.util.ajax.AjaxPageableResponse;
 import com.myee.tarot.core.util.ajax.AjaxResponse;
 import com.myee.tarot.merchant.domain.MerchantStore;
+import com.myee.tarot.resource.domain.Notification;
+import com.myee.tarot.resource.service.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +45,12 @@ public class ConfigurationController {
 
     @Autowired
     private ProductUsedService productUsedService;
+
+    @Autowired
+    private ServerBootstrap serverBootstrap;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @RequestMapping(value = {"admin/configuration/receiptPrinted/paging"}, method = RequestMethod.GET)
     @ResponseBody
@@ -80,14 +91,7 @@ public class ConfigurationController {
             ReceiptPrinted target;
             if (receiptPrinted.getId() != null) {
                 target = receiptPrintedService.findById(receiptPrinted.getId());
-                List<ReceiptPrintedItem> itemsTemp = target.getItems();
-                List<Long> ids = Lists.newArrayList();
-                if (itemsTemp != null && itemsTemp.size() > 0) {
-                    for (ReceiptPrintedItem item : itemsTemp) {
-                        ids.add(item.getId());
-                    }
-                }
-                receiptPrintedItemService.deleteByIds(ids);
+                receiptPrintedItemService.deleteByReceiptPrintedId(receiptPrinted.getId());
             } else {
                 target = new ReceiptPrinted();
             }
@@ -162,6 +166,82 @@ public class ConfigurationController {
         return ajaxResponse;
     }
 
+    @RequestMapping(value = {"admin/configuration/receiptPrinted/push2ProductUsed"}, method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResponse deviceUsedBindProductUsed(@RequestParam(value = "pushString") String pushString, @RequestParam(value = "receiptPrintedId") Long receiptPrintedId, HttpServletRequest request) {
+        TrunkingInterface endpointInterface = null;
+        try {
+            AjaxResponse ajaxResponse = new AjaxResponse();
+            ReceiptPrinted receiptPrinted = receiptPrintedService.findById(receiptPrintedId);
+            List<ReceiptPrintedItem> list = receiptPrinted.getItems();
+            String moduleContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+            moduleContent += "<" + (receiptPrinted.getReceiptType() == "1"? "lottery" : "waittoken") + ">\n";
+            for (int i = 0; i < list.size(); i++) {
+                moduleContent += "<" + (list.get(i).isItemType()? "variable" : "text") +
+                        (list.get(i).isNewline()? " isnewline=\"true\"" : " isnewline=\"false\"") +
+                        (StringUtil.isNullOrEmpty(list.get(i).getFont())? "" : " font=" + list.get(i).getFont()) +
+                        (list.get(i).isBold()? " isbold=\"true\"" : " isbold=\"false\"") +
+                        (list.get(i).isUnderline()? " isunderline=\"true\"" : " isunderline=\"false\"") +
+                        (StringUtil.isNullOrEmpty(list.get(i).getAlign())? "" : " align="+list.get(i).getAlign()) +
+                        (StringUtil.isNullOrEmpty(list.get(i).getSize())? "" : " size="+list.get(i).getSize()) + ">" +
+                        list.get(i).getContent() +
+                        "</" + (list.get(i).isItemType()? "variable" : "text") + ">\n";
+            }
+            moduleContent += "</" + (receiptPrinted.getReceiptType() == "1"? "lottery" : "waittoken") + ">";
+            List<Long> ids = JSON.parseArray(pushString, Long.class);
+            List<ProductUsed> productUsedList  = productUsedService.listByIDs(ids);
+            receiptPrinted.setProductUsed(productUsedList);
+            try {
+                PageResult<ReceiptPrinted> receiptPrintedPageResult = receiptPrintedService.listByProductUsed(productUsedList);
+                List<ReceiptPrinted> list1 = receiptPrintedPageResult.getList();
+                for (ReceiptPrinted rp : list1) {
+                    if (rp.getReceiptType().equals(receiptPrinted.getReceiptType())) {
+
+                    }
+                }
+                receiptPrintedService.update(receiptPrinted);
+            } catch (Exception e) {
+                return AjaxResponse.failed(-2, "入库错误");
+            }
+            if (productUsedList != null && productUsedList.size() > 0) {
+                for (int i = 0; i < productUsedList.size(); i++) {
+                    if (moduleContent == null || StringUtil.isNullOrEmpty(moduleContent)) {
+                        return AjaxResponse.failed(-1, "数据有误");
+                    }
+                    for (DeviceUsed deviceUsed : productUsedList.get(i).getDeviceUsed()) {
+                        if (deviceUsed.getDevice().getName().equals(Constants.DEVICE_NAME_BREAST)) {
+                            endpointInterface = serverBootstrap.getClient(TrunkingInterface.class, deviceUsed.getBoardNo());
+                        }
+                    }
+                }
+                if (endpointInterface == null) {
+                    return AjaxResponse.failed(-3, "获取接口出错");
+                }
+                boolean isSuccess = false;
+                Notification notification = new Notification();
+                //入库
+                String notificationUUID = UUID.randomUUID().toString();
+                notification.setUuid(notificationUUID);
+                isSuccess = endpointInterface.receiveReceiptModule(moduleContent);
+                if (isSuccess) {
+                    notification.setSuccess(true);
+                    notification.setComment("推送成功");
+                    notificationService.update(notification);
+                    return AjaxResponse.success("推送成功");
+                } else {
+                    notification.setSuccess(false);
+                    notification.setComment("发送失败，客户端出错");
+                    notificationService.update(notification);
+                    return AjaxResponse.failed(-6, "发送失败，客户端出错");
+                }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return AjaxResponse.failed(-2, "连接客户端错误");
+            }
+            return null;
+    }
+
     private Map<String, Object> objectToEntry(ReceiptPrinted receiptPrinted) {
         Map entry = new HashMap();
         entry.put("id", receiptPrinted.getId());
@@ -179,10 +259,11 @@ public class ConfigurationController {
         List<ProductUsed> list = receiptPrinted.getProductUsed();
         if (list != null && list.size() > 0) {
             for (ProductUsed productUsed : list) {
-                productUsed.setReceiptPrinted(null);
+                productUsed.setAttributes(null);
+                productUsed.setDeviceUsed(null);
             }
         }
-        entry.put("productUsed", list);
+        entry.put("productUsedList", list);
         return entry;
     }
 }
