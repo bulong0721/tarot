@@ -13,5 +13,5 @@ public interface ReceiptPrintedItemDao extends GenericEntityDao<Long, ReceiptPri
 
     public List<ReceiptPrintedItem> listAllByReceiptPrintedId(Long id);
 
-    void deleteByIds(List<Long> ids);
+    void deleteByReceiptPrintedId(Long id);
 }

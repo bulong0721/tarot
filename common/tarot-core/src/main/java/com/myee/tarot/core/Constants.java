@@ -86,6 +86,7 @@ public class Constants {
 	//设备查找的类型名称
 	public final static String DEVICE_NAME_PAD = "平板";
 	//public final static String DEVICE_NAME_CAMERA = "摄像头";
+	public final static String DEVICE_NAME_BREAST = "胸控";
 
 	//rtmp 处理
 	public final static Integer RTMP_START = 0;  //开启推流
@@ -203,6 +204,9 @@ public class Constants {
 			"source",
 			"metrics_frequency"
 	);
+
+	public static final String RECEIPT_TYPE_LOTTERY = "lottery";
+	public static final String RECEIPT_TYPE_WAITTOKEN = "waittoken";
 
     public static final int SUPERMAN_EVALUATION_AVG = 1; //服务评价的类型-查平均值
     public static final int SUPERMAN_EVALUATION_DETAIL_LIST = 2; //服务评价的类型-查详情列表
@@ -434,6 +438,5 @@ public class Constants {
 	public static final String SEARCH_END_DATE = "endDate";
 
 	public static final String SEARCH_UPDATE_CONFIG_SEE_TYPE = "seeType";
-
 
 }

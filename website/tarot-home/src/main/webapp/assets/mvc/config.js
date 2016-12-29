@@ -693,7 +693,8 @@ function routerAll(baseUrl){
                 pageTitle: '配置管理',
                 subTitle: '小票模板配置',
                 datatable: 'assets/mvc/configuration/view/receipt_module_datatable.html',
-                other4: 'assets/mvc/configuration/view/receipt_module_editor.html'
+                other4: 'assets/mvc/configuration/view/receipt_module_editor.html',
+                other1: 'assets/mvc/configuration/view/bind_product_used.html'
             },
             resolve: {
                 loadPlugin: function ($ocLazyLoad) {

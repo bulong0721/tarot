@@ -34,11 +34,7 @@ public class ReceiptPrinted extends GenericEntity<Long, ReceiptPrinted> {
     @Column(name = "UPDATE_TIME")
     private Date updateTime; //修改时间
 
-    @ManyToMany(targetEntity = ProductUsed.class, fetch = FetchType.LAZY/*cascade = CascadeType.REFRESH*/)
-    @JoinTable(name = "C_PRODUCT_USED_RECEIPT_XREF",
-            joinColumns = {@JoinColumn(name = "RECEIPT_ID", nullable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "PRODUCT_USED_ID", nullable = false)}
-    )
+    @Transient //供前端显示用，不关联查询出来
     protected List<ProductUsed> productUsed = new ArrayList<ProductUsed>();
 
     @ManyToOne(targetEntity = MerchantStore.class, optional = false)

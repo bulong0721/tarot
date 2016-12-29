@@ -30,9 +30,6 @@ public class ReceiptPrintedDaoImpl extends GenericEntityDaoImpl<Long, ReceiptPri
         QReceiptPrinted qReceiptPrinted = QReceiptPrinted.receiptPrinted;
         JPQLQuery<ReceiptPrinted> query = new JPAQuery(getEntityManager());
         query.from(qReceiptPrinted);
-        if (productUsedList != null && productUsedList.size() > 0) {
-            query.where(qReceiptPrinted.productUsed.contains((Expression<ProductUsed>) productUsedList));
-        }
         pageList.setRecordsTotal(query.fetchCount());
         pageList.setList(query.fetch());
         return pageList;

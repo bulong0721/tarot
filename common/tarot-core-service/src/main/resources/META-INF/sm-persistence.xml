@@ -62,6 +62,7 @@
 
         <class>com.myee.tarot.configuration.domain.ReceiptPrinted</class>
         <class>com.myee.tarot.configuration.domain.ReceiptPrintedItem</class>
+        <class>com.myee.tarot.configuration.domain.ReceiptProductUsedXref</class>
 
         <class>com.myee.tarot.datacenter.domain.SelfCheckLog</class>
         <class>com.myee.tarot.datacenter.domain.EventModule</class>

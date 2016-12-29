@@ -35,7 +35,7 @@ public class ReceiptPrintedItem extends GenericEntity<Long, ReceiptPrintedItem> 
     private String size; //大小
 
     @Column(name= "ALIGN")
-    private int align; //对齐方式(1.左对齐，2，居中，3.右对齐)
+    private String align; //对齐方式(1.左对齐，2，居中，3.右对齐)
 
     @Column(name= "IS_UNDERLINE")
     private boolean isUnderline; //是否有下划线
@@ -93,11 +93,11 @@ public class ReceiptPrintedItem extends GenericEntity<Long, ReceiptPrintedItem> 
         this.size = size;
     }
 
-    public int getAlign() {
+    public String getAlign() {
         return align;
     }
 
-    public void setAlign(int align) {
+    public void setAlign(String align) {
         this.align = align;
     }
 

@@ -11,16 +11,20 @@
                             配置详细
                         </label>
                         <div class="panel-body col-sm-8">
-                            <div ng-if="formDataReceiptModule.model.code">
+                            <div>
                                 <div class="btn btn-sm btn-success upMenuBut">
                                     <i class="fa fa-upload bigger-120"></i><span>导入配置</span>
                                     <input type="file" onchange="angular.element(this).scope().readFile(this)"/>
+                                </div>
+                                <div class="btn btn-sm btn-success upMenuBut">
+                                    <i class="fa fa-upload bigger-120"></i><span>{{previewButtonName? "配置模板" : "预览模板" }}</span>
+                                    <input type="button" ng-click="preview()"/>
                                 </div>
                                 <br>
                                 <br>
                             </div>
 
-                            <table id="details" width="45%" class="table table-bordered">
+                            <table id="details" width="45%" class="table table-bordered" ng-if="previewButtonName==false">
                                 <thead>
                                 <tr>
                                     <th width="15%" class="center">栏目类型</th>
@@ -86,14 +90,14 @@
                                         </div>
                                     </td>
                                     <td class="center">
-                                        <span ng-switch-default ng-if="attr.align == 1">左对齐</span>
-                                        <span ng-switch-default ng-if="attr.align == 2">居中</span>
-                                        <span ng-switch-default ng-if="attr.align == 3">右对齐</span>
+                                        <span ng-switch-default ng-if="attr.align == 'left'">左对齐</span>
+                                        <span ng-switch-default ng-if="attr.align == 'center'">居中</span>
+                                        <span ng-switch-default ng-if="attr.align == 'right'">右对齐</span>
                                         <div class="controls" ng-switch-when="true">
                                             <select ng-model="attr.align">
-                                                <option value="1" ng-selected="attr.align == 1">左对齐</option>
-                                                <option value="2" ng-selected="attr.align == 2">居中</option>
-                                                <option value="3" ng-selected="attr.align == 3">右对齐</option>
+                                                <option value="left" ng-selected="attr.align == 'left'">左对齐</option>
+                                                <option value="center" ng-selected="attr.align == 'center'">居中</option>
+                                                <option value="right" ng-selected="attr.align == 'right'">右对齐</option>
                                             </select>
                                         </div>
                                     </td>
@@ -123,6 +127,66 @@
                                 </tr>
                                 </tbody>
                             </table>
+
+                            <div ng-if="previewButtonName" class="panel-body formly">
+                                <!--<div>
+                                    <header><span>标题</span><header>
+                                        <div class="main">
+                                            <p style=""><span>s11</span><span>s12</span></p>
+                                            <p ><span>s11</span><span>s12</span></p>
+                                            <p><span>s11</span><span>s12</span></p>
+                                            <p><span>s11</span><span>s12</span></p>
+                                            <p><span>s11</span><span>s12</span></p>
+                                        </div>
+                                        <footer><p>底部<br />底部<br /></p></footer>
+                                </div>-->
+
+
+
+                                <div class="previewReciptModule">
+                                    <p ng-repeat="row in formDataReceiptModule.model.attributes" >
+                                        <!--<span style="font-family: {{row.font}}; font-weight: {{row.font == true? 'bold' : 'normal' }}; display:block; text-align:{{row.align}}; font-size: 20px; " >-->
+                                            <span style="font-family: {{row.font}}; font-weight: {{row.font == true? 'bold' : 'normal'}}; display:{{row.itemType == 1? 'none' : 'block'}}; text-align:{{row.align}}; font-size: 20px; " >
+                                                {{row.content.length == 0 && row.itemType == 1? "XXX" : row.content}}
+                                            </span>
+                                        <!--</span><br>-->
+                                    </p>
+                                    <!--<span style="font-family: 宋体; font-weight: bold; display:block; text-align:center; font-size: 10px;" >
+                                        -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;
+                                    </span><br>
+                                    <span style="font-family: 宋体; font-weight: normal; display:block; text-align:center; font-size: 20px; " >
+                                        抽奖号码：<span style="font-family: 宋体; font-weight: bold; display:block; text-align:center; font-size: 20px; " >xxx</span>
+                                    </span>
+                                    <br>
+                                    <span style="font-family: 宋体; font-weight: bold; display:block; text-align:center; font-size: 10px; " >
+                                    </span><br>
+                                    <span style="font-family: 宋体; font-weight: bold; display:block; text-align:center; font-size: 20px; " >
+                                        祝您好运!
+                                    </span><br>
+                                    <br>
+                                    <span style="font-family: 宋体; font-weight: bold; display:block; text-align:center; font-size: 10px; " >
+                                        友情提示：
+                                    </span>
+                                    <span style="font-family: 宋体; font-weight: bold; display:block; text-align:center; font-size: 10px; " >
+                                        此券仅限当天使用，过期作废！
+                                    </span><br>
+                                    <span style="font-family: 宋体; font-weight: bold; display:block; text-align:center; font-size: 10px; " >
+                                        打印时间：
+                                    </span>
+                                    <span style="font-family: 宋体; font-weight: bold; display:block; text-align:center; font-size: 10px; " >
+                                        xxx
+                                    </span>
+                                    <span style="font-family: 宋体; font-weight: bold; display:block; text-align:center; font-size: 10px;" >
+                                        -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;
+                                    </span><br>
+                                    <span style="font-family: 宋体; font-weight: bold; display:block; text-align:center; font-size: 10px;" >
+                                        *本系统由（木爷机器人）提供*
+                                    </span><br>
+                                    <span style="font-family: 宋体; font-weight: bold; display:block; text-align:center; font-size: 10px;" >
+                                        技术支持或合作请致电4001-618-638
+                                    </span><br>-->
+                                </div>
+                            </div>
                         </div>
 
                         <div class="text-center col-xs-8">

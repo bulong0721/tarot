@@ -10529,3 +10529,8 @@ ul.form-inline span {vertical-align: middle;}
 .inputMd5 {width:80px;}
 .checkMd5MarkRight {color:green}
 .checkMd5MarkWrong {color:red}
+
+/* 打印小票模板预览 */
+.previewReciptModule {
+    border-style: solid;
+}

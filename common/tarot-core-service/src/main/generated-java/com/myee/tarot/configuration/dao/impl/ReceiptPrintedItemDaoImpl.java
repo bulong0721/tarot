@@ -36,11 +36,11 @@ public class ReceiptPrintedItemDaoImpl extends GenericEntityDaoImpl<Long, Receip
     }
 
     @Override
-    public void deleteByIds(List<Long> ids) {
+    public void deleteByReceiptPrintedId(Long id) {
         QReceiptPrintedItem qReceiptPrintedItem = QReceiptPrintedItem.receiptPrintedItem;
         JPADeleteClause query = new JPADeleteClause(getEntityManager(), qReceiptPrintedItem);
-        if (ids != null && ids.size() > 0) {
-            query.where(qReceiptPrintedItem.id.in(ids));
+        if (id != null) {
+            query.where(qReceiptPrintedItem.receiptPrinted.id.eq(id));
         }
         query.execute();
     }
