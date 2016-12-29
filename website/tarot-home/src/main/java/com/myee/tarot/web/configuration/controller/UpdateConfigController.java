@@ -9,6 +9,7 @@ import com.myee.djinn.dto.NoticeType;
 import com.myee.djinn.endpoint.TrunkingInterface;
 import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
 import com.myee.tarot.catalog.domain.DeviceUsed;
+import com.myee.tarot.catalog.domain.DeviceUsedAttribute;
 import com.myee.tarot.catalog.domain.ProductUsed;
 import com.myee.tarot.catalog.domain.ProductUsedAttribute;
 import com.myee.tarot.catalog.service.ProductUsedService;
@@ -230,49 +231,72 @@ public class UpdateConfigController {
                 return AjaxResponse.failed(-1,"该设备组未关联设备");
             }
 
-            Map result = new HashMap();
+//            Map result = new HashMap();
             String boardNo = null;
             String returnKey = null;
             String version = null;
             TrunkingInterface endpointInterface = null;
             for(DeviceUsed deviceUsed : deviceUsedList) {
+                Map entry = new HashMap();
                 boardNo = deviceUsed.getBoardNo();
-                returnKey = deviceUsed.getName() + "_" + boardNo;
+                entry.put(Constants.RESPONSE_DEVICE_USED,objectToEntry(deviceUsed));
+
                 if(!map.containsKey(boardNo)) {
-                    result.put(returnKey,"离线");
+                    entry.put(Constants.RESPONSE_CODE,-1);
+                    entry.put(Constants.RESPONSE_MESSAGE,Constants.MESSAGE_DEVICE+Constants.MESSAGE_OFFLINE);
+                    resp.addDataEntry(entry);
                     continue;
                 }
 
                 try {
                     endpointInterface = serverBootstrap.getClient(TrunkingInterface.class, boardNo);
                     version = endpointInterface.lastVersion();
-                    result.put( returnKey , version );
+                    JSONArray jsonArray = JSON.parseArray(version);
+                    String type = "";
+                    String typeName = "";
+                    JSONArray jsonArrayResult = new JSONArray();
+                    if( jsonArray != null && jsonArray.size() > 0 ) {
+                        for( Object obj : jsonArray ) {
+                            JSONObject jsonObject = JSON.parseObject(obj.toString());
+                            type = jsonObject.getString(Constants.SEARCH_OPTION_TYPE);
+                            typeName =  (type == null || "".equals(type)) ? "" : com.myee.djinn.dto.NoticeType.getValue(type);
+                            jsonObject.put(Constants.SEARCH_OPTION_TYPE, typeName);
+                            jsonArrayResult.add(jsonObject);
+                        }
+                    }
+
+                    entry.put(Constants.RESPONSE_VERSION, jsonArrayResult);
                 } catch (Exception e) {
-                    result.put(returnKey,"离线");
+                    entry.put(Constants.RESPONSE_CODE,-1);
+                    entry.put(Constants.RESPONSE_MESSAGE,Constants.MESSAGE_DEVICE+Constants.MESSAGE_OFFLINE);
+                    resp.addDataEntry(entry);
                     continue;
                 }
+                entry.put(Constants.RESPONSE_CODE,0);
+                entry.put(Constants.RESPONSE_MESSAGE,"查询成功");
+                resp.addDataEntry(entry);
             }
 
-//            DeviceUsed deviceUsed;
-//            for (Map.Entry<String, Channel> entry : map.entrySet()) {
-//                String boardNo = entry.getKey();
-//                Channel channel = entry.getValue();
-//                deviceUsed = deviceUsedService.getByBoardNo(boardNo);
-//                if(null != deviceUsed && null != channel){
-//                    String deviceName = deviceUsed.getName();
-//                    if(StringUtil.isNullOrEmpty(deviceNameCondition) ){
-//                        resp.addDataEntry(objectToEntry(deviceUsed,channel));
-//                    }else if(deviceName.indexOf(deviceNameCondition) >= 0){
-//                        resp.addDataEntry(objectToEntry(deviceUsed,channel));
-//                    }
-//                }
-//            }
-            resp.addDataEntry(result);
             return resp;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return AjaxResponse.failed(-1, "查询出错");
         }
+    }
+
+    //把类转换成entry返回给前端，解耦和
+    private Map objectToEntry(DeviceUsed deviceUsed) {
+        Map entry = new HashMap();
+        entry.put("id", deviceUsed.getId());
+        entry.put("name", deviceUsed.getName());
+        entry.put("boardNo", deviceUsed.getBoardNo());
+        entry.put("deviceNum", deviceUsed.getDeviceNum());
+        entry.put("description", deviceUsed.getDescription());
+        entry.put("phone", deviceUsed.getPhone());
+        //清空关联的设备类型的属性，防止前端无限循环
+        deviceUsed.getDevice().setAttributes(null);
+        entry.put("device", deviceUsed.getDevice());
+        return entry;
     }
 
     //把类转换成entry返回给前端，解耦和

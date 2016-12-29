@@ -14,6 +14,9 @@ public class Constants {
 	public final static String SHOP_URI               = "/shop";
 	public final static String ACCESS_DENI_MESSAGE    = "detailMessage";
 
+	public final static String MESSAGE_DEVICE    = "设备";
+	public final static String MESSAGE_OFFLINE    = "离线";
+
 	public final static String RESPONSE_PUSH_URL    = "pushUrl";
 	public final static String RESPONSE_QINIU_CDN    = "qiniuCdn";
 	public final static String RESPONSE_MAX_UPLOAD_SIZE    = "maxUploadSize";
@@ -23,6 +26,10 @@ public class Constants {
 	public final static String RESPONSE_DOWNLOAD_BASE    = "downloadBase";
 	public final static String RESPONSE_USER_ALL_PERMISSIONS    = "allPer";
 	public final static String RESPONSE_UPDATE_RESULT    = "updateResult";
+	public final static String RESPONSE_DEVICE_USED    = "deviceUsed";
+	public final static String RESPONSE_CODE    = "code";
+	public final static String RESPONSE_MESSAGE    = "message";
+	public final static String RESPONSE_VERSION    = "version";
 
 	public static final String ALL_REGIONS = "*";
 

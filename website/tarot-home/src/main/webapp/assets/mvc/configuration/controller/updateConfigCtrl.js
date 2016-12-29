@@ -176,11 +176,11 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
             $scope.formDataUpdateConfig.model = angular.copy(data);
             //复制完model参数后初始化attr列表
             $scope.formDataUpdateConfig.model.attributes = [];
+            $scope.formDataUpdateConfig.model.attrTemp = [];
             $scope.createTimeMills = $scope.formDataUpdateConfig.model.createTime;
             $scope.createTimeStamp = $filter('dateFormatter')($scope.createTimeMills,'yyyyMMddHHmmss');
             $scope.rowIndex = rowIndex;
 
-            console.log($scope.formDataUpdateConfig.model)
             //读取配置文件
             var type = $scope.formDataUpdateConfig.model.type;
             var data = {
@@ -203,7 +203,8 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
         //formly配置项config
         $scope.formDataUpdateConfig = {
             model:{
-                attributes : []
+                attributes : [],
+                attrTemp: [] //用于配置详细编辑一行时临时存储编辑结果
             },
             fields: $scope.mgrUpdateConfigData.fields
         };
@@ -413,13 +414,15 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
     //编辑一行属性
     $scope.goEditAttr = function (model, thisRow, index) {
         $scope.formDataUpdateConfig.model.attributes[index].editing=true;
+        $scope.formDataUpdateConfig.model.attrTemp[index] = angular.copy(thisRow);
         $scope.typeDisabled = true;//禁止修改类型
     }
 
     //提交一行属性
-    $scope.updateAttr = function (model, thisRow, index) {
-        //console.log(thisRow)
-        if (!checkThisRowOK(thisRow,index,$scope.formDataUpdateConfig.model.attributes)) {
+    $scope.updateAttr = function (model, thisRowTemp, index) {
+        console.log(thisRowTemp)
+        console.log(model)
+        if (!checkThisRowOK(thisRowTemp,index,$scope.formDataUpdateConfig.model.attributes)) {
             return;
         }
         var _file = $scope.fileList[index];
@@ -434,7 +437,7 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
         //if (thisRow.name != $filter('getFileName')(_file.name, $scope.mgrUpdateConfigData.constant.FILE_NAME_NO_EXTERN)) {
         //除了自研平板，其他名字都是从对照表取
         if ($scope.formDataUpdateConfig.model.type != mgrUpdateConfigData.constant.BASE_INFO_SELF_DESIGN_PAD.TYPE
-                && thisRow.name != calNameByFileName(fileName,thisRow,index) ) {
+                && thisRowTemp.name != calNameByFileName(fileName,thisRowTemp,index) ) {
             $timeout(function () {
                 $filter('toasterManage')(5, "上传的文件名与模块名不匹配!",false);
             }, 0);
@@ -476,10 +479,12 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
                             $timeout(function () {
                                 $filter('toasterManage')(5, fileName + "上传成功!",true);
                             }, 0);
+                            //复制当前编辑的临时一行到我们要上传的数组
+                            $scope.formDataUpdateConfig.model.attributes[index] = angular.copy(thisRowTemp);
                             $scope.formDataUpdateConfig.model.attributes[index].md5 = res.dataMap.tree.md5;
                             $scope.formDataUpdateConfig.model.attributes[index].web = baseUrl.pushUrl + res.dataMap.tree.downloadPath;
                             $scope.formDataUpdateConfig.model.attributes[index].uploadState = true;
-                            thisRow.editing = false;
+                            $scope.formDataUpdateConfig.model.attributes[index].editing = false;
                         }
                     });
                 }
@@ -562,6 +567,7 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
         if (targetFileName != file_name) {
             $timeout(function () {
                 $filter('toasterManage')(5,"请选择" + targetFileName + "文件!",false);
+                angular.element('#importFile')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
             }, 0);
             return;
         }
@@ -594,6 +600,7 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
                 //手动渲染。。。可以研究有什么更好的
                 $scope.$apply(function () {
                     $scope.formDataUpdateConfig.model.attributes = $scope.formDataUpdateConfig.model.attributes.concat(attr);
+                    angular.element('#importFile')[0].value = '';//清空input[type=file]value[ 垃圾方式 建议不要使用]
                 });
 
                 reader.close();
@@ -770,12 +777,15 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
     }
 
     //查询设备当前版本信息---------------------
-    $scope.searchVersion = function ( index ) {
-        console.log($scope.initalBindProductList[index]);
-        cResource.get('./updateConfig/getProductUsedInfo',{productUsedId:$scope.initalBindProductList[index].id}).then(function(data){
-            console.log(data)
-
-        });
+    $scope.bindDeviceDetail = [];
+    $scope.searchVersion = function ( index,thisRow ) {
+        if(!thisRow.showDetail) {
+            cResource.get('./updateConfig/getProductUsedInfo',{productUsedId:$scope.initalBindProductList[index].id}).then(function(data){
+                console.log(data)
+                $scope.bindDeviceDetail[index] = data.rows;
+            });
+        }
+        thisRow.showDetail=!thisRow.showDetail;
     }
 
 
