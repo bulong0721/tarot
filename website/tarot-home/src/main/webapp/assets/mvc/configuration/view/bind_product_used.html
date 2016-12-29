@@ -19,7 +19,7 @@
                                             <th width="15%" ng-show="false">id</th>
                                             <th width="15%" class="center">设备组编号</th>
                                             <th width="15%" class="center">设备组名称</th>
-                                            <th width="15%" class="center">设备组版本</th>
+                                            <th width="15%" class="center">操作</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -31,7 +31,9 @@
                                             <td ng-show="false">{{::row.id}}</td>
                                             <td>{{::row.code}}</td>
                                             <td>{{::row.name}}</td>
-                                            <td>{{::row.productNum}}</td>
+                                            <td  class="center works">
+                                                <table-rights tooltip="{{lang_zh.searchVersion}}" ng-click="searchVersion($index)" type="r" tclass="fa-search"></table-rights>
+                                            </td>
                                         </tr>
                                         </tbody>
                                     </table>

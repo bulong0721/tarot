@@ -10106,6 +10106,7 @@ th.center, td.center {
 }
 
 /*/!*====================================new style====================================*!/*/
+.nav.metismenu {padding-bottom: 40px;}
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button{  -webkit-appearance: none !important;  margin: 0;  }
 input[type="number"]{-moz-appearance:textfield; text-align: right}

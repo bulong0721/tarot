@@ -6,6 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.myee.djinn.dto.NoticeType;
+import com.myee.djinn.endpoint.TrunkingInterface;
+import com.myee.djinn.rpc.bootstrap.ServerBootstrap;
 import com.myee.tarot.catalog.domain.DeviceUsed;
 import com.myee.tarot.catalog.domain.ProductUsed;
 import com.myee.tarot.catalog.domain.ProductUsedAttribute;
@@ -21,6 +23,7 @@ import com.myee.tarot.resource.service.UpdateConfigProductUsedXREFService;
 import com.myee.tarot.resource.service.UpdateConfigService;
 import com.myee.tarot.resource.type.UpdateConfigSeeType;
 import com.myee.tarot.web.device.controller.AttributeDTO;
+import io.netty.channel.Channel;
 import org.apache.commons.io.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +41,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Created by Chay on 2016/12/15.
@@ -56,6 +60,8 @@ public class UpdateConfigController {
     private UpdateConfigProductUsedXREFService updateConfigProductUsedXREFService;
     @Autowired
     private ProductUsedService productUsedService;
+    @Autowired
+    private ServerBootstrap serverBootstrap;
 
     @RequestMapping(value = {"admin/updateConfig/update"}, method = RequestMethod.POST)
     @ResponseBody
@@ -201,6 +207,71 @@ public class UpdateConfigController {
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return null;
+        }
+    }
+
+    @RequestMapping(value = {"admin/updateConfig/getProductUsedInfo"}, method = RequestMethod.GET)
+    @ResponseBody
+    public AjaxResponse getProductUsedInfo(@RequestParam(value = "productUsedId") Long productUsedId, HttpServletRequest request, WhereRequest whereRequest) {
+        try {
+            AjaxResponse resp = new AjaxResponse();
+
+            ConcurrentMap<String, Channel> map = serverBootstrap.getAllChannels();
+            if ( null == productUsedId || "".equals(productUsedId) ) {
+                return AjaxResponse.failed(-1,"参数错误");
+            }
+            ProductUsed productUsed = productUsedService.findById(productUsedId);
+            if(productUsed == null) {
+                return AjaxResponse.failed(-1,"设备组不存在");
+            }
+
+            List<DeviceUsed> deviceUsedList = productUsed.getDeviceUsed();
+            if( deviceUsedList == null || deviceUsedList.size() == 0 ) {
+                return AjaxResponse.failed(-1,"该设备组未关联设备");
+            }
+
+            Map result = new HashMap();
+            String boardNo = null;
+            String returnKey = null;
+            String version = null;
+            TrunkingInterface endpointInterface = null;
+            for(DeviceUsed deviceUsed : deviceUsedList) {
+                boardNo = deviceUsed.getBoardNo();
+                returnKey = deviceUsed.getName() + "_" + boardNo;
+                if(!map.containsKey(boardNo)) {
+                    result.put(returnKey,"离线");
+                    continue;
+                }
+
+                try {
+                    endpointInterface = serverBootstrap.getClient(TrunkingInterface.class, boardNo);
+                    version = endpointInterface.lastVersion();
+                    result.put( returnKey , version );
+                } catch (Exception e) {
+                    result.put(returnKey,"离线");
+                    continue;
+                }
+            }
+
+//            DeviceUsed deviceUsed;
+//            for (Map.Entry<String, Channel> entry : map.entrySet()) {
+//                String boardNo = entry.getKey();
+//                Channel channel = entry.getValue();
+//                deviceUsed = deviceUsedService.getByBoardNo(boardNo);
+//                if(null != deviceUsed && null != channel){
+//                    String deviceName = deviceUsed.getName();
+//                    if(StringUtil.isNullOrEmpty(deviceNameCondition) ){
+//                        resp.addDataEntry(objectToEntry(deviceUsed,channel));
+//                    }else if(deviceName.indexOf(deviceNameCondition) >= 0){
+//                        resp.addDataEntry(objectToEntry(deviceUsed,channel));
+//                    }
+//                }
+//            }
+            resp.addDataEntry(result);
+            return resp;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return AjaxResponse.failed(-1, "查询出错");
         }
     }
 

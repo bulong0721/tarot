@@ -184,6 +184,7 @@ public class AdminUserController {
     private Map objectToEntry(AdminRole role) {
         Map entry = new HashMap();
         entry.put("id", role.getId());
+        entry.put("roleName", role.getName());//与name是重复字段，主要是为了跟前端模板匹配显示使用。用户绑定角色页面使用的少一个前端模板页面。
         entry.put("name", role.getName());
         entry.put("description", role.getDescription());
         Set<AdminPermission> permissionSet = role.getAllPermissions();

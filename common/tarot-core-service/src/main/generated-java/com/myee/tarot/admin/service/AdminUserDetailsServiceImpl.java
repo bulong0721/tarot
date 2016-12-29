@@ -15,7 +15,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Jeff Fischer
@@ -33,7 +35,7 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService, Transact
             throw new UsernameNotFoundException("The user was not found");
         }
 
-        List<GrantedAuthority> authorities =  new ArrayList<GrantedAuthority>();
+        Set<GrantedAuthority> authorities =  new HashSet<GrantedAuthority>();
         authorities = PermissionUtil.listAuthorities(adminUser,authorities);
         /*List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         for (AdminRole role : adminUser.getAllRoles()) {

@@ -769,6 +769,16 @@ function updateConfigCtrl($scope,$resource, cResource, $filter, cfromly, Constan
         return ok;
     }
 
+    //查询设备当前版本信息---------------------
+    $scope.searchVersion = function ( index ) {
+        console.log($scope.initalBindProductList[index]);
+        cResource.get('./updateConfig/getProductUsedInfo',{productUsedId:$scope.initalBindProductList[index].id}).then(function(data){
+            console.log(data)
+
+        });
+    }
+
+
 //绑定设备组-----------------------------------------------------------------------------------------------------
     var iBind = 2;
     //绑定产品相关参数

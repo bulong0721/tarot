@@ -16,8 +16,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Martin on 2016/4/20.
@@ -111,7 +110,7 @@ public class AdminFilter extends HandlerInterceptorAdapter {
         if (user != null) {
 //                    storeCode = user.getMerchantStore().getCode();
             //将用户所有权限写入session
-            List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+            Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
             authorities = PermissionUtil.listAuthorities(user,authorities);
             List<String> result = null;
             if(authorities != null && authorities.size() > 0){
@@ -120,7 +119,8 @@ public class AdminFilter extends HandlerInterceptorAdapter {
                     result.add(grantedAuthority.getAuthority());
                 }
             }
-
+            //对返回的权限列表进行排序，默认sort是按照字符串排序，非数值。可以复写comapare方法来自定义排序。
+            Collections.sort(result);
             request.getSession().setAttribute(Constants.RESPONSE_USER_ALL_PERMISSIONS, result);
         } else {
             LOGGER.warn("User name not found " + userName);

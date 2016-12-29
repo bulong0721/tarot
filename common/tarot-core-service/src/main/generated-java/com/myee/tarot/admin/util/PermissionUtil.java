@@ -20,7 +20,7 @@ import java.util.Set;
 public class PermissionUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(PermissionUtil.class);
 
-    public static List<GrantedAuthority> listAuthorities(AdminUser adminUser,List<GrantedAuthority> authorities) {
+    public static Set<GrantedAuthority> listAuthorities(AdminUser adminUser,Set<GrantedAuthority> authorities) {
         Set<AdminRole> adminRoles = adminUser.getAllRoles();
         Set<AdminPermission> adminPermissions = adminUser.getAllPermissions();
         if( adminRoles != null && adminRoles.size() > 0 ) {
@@ -44,7 +44,7 @@ public class PermissionUtil {
         return authorities;
     }
 
-    public static List<GrantedAuthority> listAuthorities(Customer customer,List<GrantedAuthority> authorities) {
+    public static Set<GrantedAuthority> listAuthorities(Customer customer,Set<GrantedAuthority> authorities) {
         Set<Role> customerAllRoles = customer.getAllRoles();
         Set<AdminPermission> customerAllPermissions = customer.getAllPermissions();
         if ( customerAllRoles != null && customerAllRoles.size() > 0 ) {

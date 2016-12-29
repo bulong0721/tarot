@@ -15,10 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Martin on 2016/4/11.
@@ -42,7 +39,7 @@ public class CustomerDetailsServiceImpl implements UserDetailsService, Transacti
 
 //        List<GrantedAuthority> grantedAuthorities = createGrantedAuthorities(roleService.listByCustomerId(customer.getId()));
 //        List<GrantedAuthority> grantedAuthorities = createGrantedAuthorities(customer.getAllRoles());
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+        Set<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>();
         grantedAuthorities = PermissionUtil.listAuthorities(customer,grantedAuthorities);
 
         for (String perm : DEFAULT_PERMISSIONS) {

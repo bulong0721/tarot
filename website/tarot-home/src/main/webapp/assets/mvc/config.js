@@ -796,6 +796,7 @@ angular
             flowDetail:"引流详细",
             flowSet:"设置引流",
             thisShop:"当前切换的门店",
+            searchVersion:"查询版本",
             switch:"切换",
             noDeleteThisShop:"当前切换的门店，不能删除",
             noDeleteThisMerchant:"当前切换的门店所属的商户，不能删除",

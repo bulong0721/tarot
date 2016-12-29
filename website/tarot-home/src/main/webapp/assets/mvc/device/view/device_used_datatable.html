@@ -47,7 +47,9 @@
                                     <tr>
                                         <th width="35%" class="center">属性名</th>
                                         <th width="45%" class="center">属性值</th>
-                                        <th class="center"><a ng-click="insertAttr(row)" tooltip-placement="top" uib-tooltip="{{lang_zh.add}}"><i class="btn-icon fa fa-plus"></i></a></th>
+                                        <th class="center">
+                                            <table-rights tooltip="{{lang_zh.add}}" ng-click="insertAttr(row)" type="u" tclass="fa-plus"></table-rights>
+                                        </th>
                                     </tr>
                                     </thead>
                                     <tbody>

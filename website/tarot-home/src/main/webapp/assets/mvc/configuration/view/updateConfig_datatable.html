@@ -61,7 +61,7 @@
                             <td class="center">{{::row.createTime | date:'yyyy-MM-dd HH:mm:ss'}}</td>
                             <td class="center"><copy-to-clip content="row.path?baseUrl.pushUrl+'100/'+row.path:''"></copy-to-clip></td>
                             <td class="center works">
-                                <table-rights tooltip="{{lang_zh.bindDevice}}" ng-click="goDeviceBindProductEditor($index)" type="u" tclass="fa-link"></table-rights>
+                                <table-rights tooltip="{{lang_zh.bindProduct}}" ng-click="goDeviceBindProductEditor($index)" type="u" tclass="fa-link"></table-rights>
                             </td>
                             <td class="center works">
                                 <table-rights tooltip="{{lang_zh.bindDeviceDetail}}" ng-click="row.showDetail=!row.showDetail" type="u" tclass="fa-bars"></table-rights>
