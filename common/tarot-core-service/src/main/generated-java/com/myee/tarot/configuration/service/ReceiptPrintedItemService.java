@@ -1,4 +1,4 @@
-package com.myee.tarot.configuration;
+package com.myee.tarot.configuration.service;
 
 import com.myee.tarot.configuration.domain.ReceiptPrintedItem;
 import com.myee.tarot.core.service.GenericEntityService;
@@ -12,5 +12,5 @@ public interface ReceiptPrintedItemService extends GenericEntityService<Long, Re
 
     List<ReceiptPrintedItem> listAllByReceiptPrintedId (Long id);
 
-    void deleteByIds(List<Long> ids);
+    void deleteByReceiptPrintedId(Long id);
 }
